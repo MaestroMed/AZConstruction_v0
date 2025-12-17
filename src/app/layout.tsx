@@ -59,7 +59,13 @@ export const metadata: Metadata = {
     address: false,
     telephone: false,
   },
-  metadataBase: new URL(process.env.NEXTAUTH_URL || "https://zaconstruction.fr"),
+  metadataBase: new URL(
+    process.env.NEXTAUTH_URL?.startsWith("http") 
+      ? process.env.NEXTAUTH_URL 
+      : process.env.NEXTAUTH_URL 
+        ? `https://${process.env.NEXTAUTH_URL}` 
+        : "https://zaconstruction.fr"
+  ),
   alternates: {
     canonical: "/",
   },
