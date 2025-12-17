@@ -20,10 +20,15 @@ const useCloudinary = !!(
   process.env.CLOUDINARY_API_SECRET
 );
 
-async function uploadToCloudinary(buffer: Buffer, fileName: string, folder: string = "az-construction") {
-  const { uploadImage } = await import("@/lib/cloudinary");
-  const base64 = `data:image/png;base64,${buffer.toString("base64")}`;
-  return uploadImage(base64, { folder });
+async function uploadToCloudinary(buffer: Buffer, fileName: string, mimeType: string, folder: string = "az-construction") {
+  try {
+    const { uploadImage } = await import("@/lib/cloudinary");
+    const base64 = `data:${mimeType};base64,${buffer.toString("base64")}`;
+    return uploadImage(base64, { folder });
+  } catch (error) {
+    console.error("Cloudinary import/upload error:", error);
+    throw error;
+  }
 }
 
 async function uploadToVercelBlob(buffer: Buffer, fileName: string, contentType: string) {
@@ -101,7 +106,7 @@ export async function POST(request: NextRequest) {
       // 2. Essayer Cloudinary
       if (useCloudinary && fileType === "image") {
         try {
-          const result = await uploadToCloudinary(buffer, file.name, folder);
+          const result = await uploadToCloudinary(buffer, file.name, file.type, folder);
           uploadedFiles.push({
             id: result.publicId,
             originalName: file.name,

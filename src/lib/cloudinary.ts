@@ -1,11 +1,21 @@
 import { v2 as cloudinary } from "cloudinary";
 
-// Configuration Cloudinary
-cloudinary.config({
-  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
-  api_key: process.env.CLOUDINARY_API_KEY,
-  api_secret: process.env.CLOUDINARY_API_SECRET,
-});
+// Lazy configuration de Cloudinary
+let isConfigured = false;
+
+function ensureCloudinaryConfig() {
+  if (!isConfigured) {
+    if (!process.env.CLOUDINARY_CLOUD_NAME || !process.env.CLOUDINARY_API_KEY || !process.env.CLOUDINARY_API_SECRET) {
+      throw new Error("Cloudinary is not configured. Please set CLOUDINARY_CLOUD_NAME, CLOUDINARY_API_KEY, and CLOUDINARY_API_SECRET environment variables.");
+    }
+    cloudinary.config({
+      cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+      api_key: process.env.CLOUDINARY_API_KEY,
+      api_secret: process.env.CLOUDINARY_API_SECRET,
+    });
+    isConfigured = true;
+  }
+}
 
 export interface UploadResult {
   url: string;
@@ -22,6 +32,7 @@ export async function uploadImage(
     transformation?: object[];
   }
 ): Promise<UploadResult> {
+  ensureCloudinaryConfig();
   const folder = options?.folder || "az-construction";
 
   return new Promise((resolve, reject) => {
@@ -72,6 +83,7 @@ export async function uploadImage(
 
 export async function deleteImage(publicId: string): Promise<boolean> {
   try {
+    ensureCloudinaryConfig();
     await cloudinary.uploader.destroy(publicId);
     return true;
   } catch (error) {
@@ -84,6 +96,7 @@ export async function getOptimizedUrl(
   publicId: string,
   options?: { width?: number; height?: number; crop?: string }
 ): Promise<string> {
+  ensureCloudinaryConfig();
   return cloudinary.url(publicId, {
     fetch_format: "auto",
     quality: "auto",
