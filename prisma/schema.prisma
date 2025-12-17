@@ -358,6 +358,52 @@ model Message {
 }
 
 // ============================================
+// SITE SETTINGS (Global Configuration)
+// ============================================
+
+model SiteSettings {
+  id              String   @id @default("default")
+  
+  // Logos
+  logoUrl         String?
+  logoLightUrl    String?
+  faviconUrl      String?
+  showLogoInHeader Boolean  @default(true)
+  
+  // Hero Section
+  heroTitle       String?
+  heroSubtitle    String?
+  heroImageUrl    String?
+  heroCtaText     String?
+  heroCtaLink     String?
+  
+  // Promo Banner
+  promoEnabled    Boolean  @default(false)
+  promoText       String?
+  promoLink       String?
+  
+  // Contact Info
+  companyName     String?
+  phone           String?
+  email           String?
+  address         String?
+  
+  // Social Links
+  facebook        String?
+  instagram       String?
+  linkedin        String?
+  
+  // SEO
+  siteTitle       String?
+  siteDescription String?
+  
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+  
+  @@map("site_settings")
+}
+
+// ============================================
 // CMS PAGES
 // ============================================
 

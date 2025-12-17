@@ -79,16 +79,42 @@ export default function ParametresPage() {
   const logoLightInputRef = React.useRef<HTMLInputElement>(null);
   const faviconInputRef = React.useRef<HTMLInputElement>(null);
 
-  // Charger les paramètres depuis localStorage
+  const [loading, setLoading] = React.useState(true);
+
+  // Charger les paramètres depuis l'API (base de données)
   React.useEffect(() => {
-    const saved = localStorage.getItem("az_settings");
-    if (saved) {
+    const loadSettings = async () => {
       try {
-        setSettings({ ...defaultSettings, ...JSON.parse(saved) });
+        const response = await fetch("/api/settings");
+        if (response.ok) {
+          const data = await response.json();
+          if (data.settings) {
+            // Mapper les champs de l'API vers le format local
+            const apiSettings = data.settings;
+            setSettings({
+              ...defaultSettings,
+              raisonSociale: apiSettings.companyName || defaultSettings.raisonSociale,
+              telephone: apiSettings.phone || defaultSettings.telephone,
+              email: apiSettings.email || defaultSettings.email,
+              adresse: apiSettings.address || defaultSettings.adresse,
+              facebook: apiSettings.facebook || defaultSettings.facebook,
+              instagram: apiSettings.instagram || defaultSettings.instagram,
+              linkedin: apiSettings.linkedin || defaultSettings.linkedin,
+              showLogoInHeader: apiSettings.showLogoInHeader ?? defaultSettings.showLogoInHeader,
+              logoUrl: apiSettings.logoUrl || "",
+              logoLightUrl: apiSettings.logoLightUrl || "",
+              faviconUrl: apiSettings.faviconUrl || "",
+            });
+          }
+        }
       } catch (e) {
-        console.error("Erreur parsing settings:", e);
+        console.error("Erreur chargement settings:", e);
+      } finally {
+        setLoading(false);
       }
-    }
+    };
+    
+    loadSettings();
   }, []);
 
   const handleUpload = async (file: File, type: "logo" | "logoLight" | "favicon") => {
@@ -146,12 +172,36 @@ export default function ParametresPage() {
   const handleSave = async () => {
     setSaving(true);
     try {
-      localStorage.setItem("az_settings", JSON.stringify(settings));
+      // Mapper vers le format de l'API
+      const apiPayload = {
+        companyName: settings.raisonSociale,
+        phone: settings.telephone,
+        email: settings.email,
+        address: settings.adresse,
+        facebook: settings.facebook,
+        instagram: settings.instagram,
+        linkedin: settings.linkedin,
+        showLogoInHeader: settings.showLogoInHeader,
+        logoUrl: settings.logoUrl,
+        logoLightUrl: settings.logoLightUrl,
+        faviconUrl: settings.faviconUrl,
+      };
+      
+      const response = await fetch("/api/settings", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(apiPayload),
+      });
+      
+      if (!response.ok) {
+        throw new Error("Erreur API");
+      }
+      
       // Déclencher un événement pour mettre à jour les autres composants
       window.dispatchEvent(new CustomEvent("az_settings_updated", { detail: settings }));
-      await new Promise((resolve) => setTimeout(resolve, 500));
-      toast.success("Paramètres enregistrés");
-    } catch {
+      toast.success("Paramètres enregistrés en base de données");
+    } catch (error) {
+      console.error("Erreur sauvegarde:", error);
       toast.error("Erreur lors de la sauvegarde");
     } finally {
       setSaving(false);

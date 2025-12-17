@@ -132,51 +132,43 @@ export default function Header() {
   // Détermine si la page a un fond sombre
   const isDarkBackground = darkBackgroundPages.includes(pathname);
 
-  // Charger les paramètres depuis localStorage
+  // Charger les paramètres depuis l'API (base de données)
   React.useEffect(() => {
-    const loadSettings = () => {
+    const loadSettings = async () => {
       try {
-        const saved = localStorage.getItem("az_settings");
-        console.log("[Header] Loading settings from localStorage:", saved);
-        if (saved) {
-          const parsed = JSON.parse(saved);
-          console.log("[Header] Parsed settings:", parsed);
-          console.log("[Header] logoUrl:", parsed.logoUrl);
-          console.log("[Header] logoLightUrl:", parsed.logoLightUrl);
-          console.log("[Header] showLogoInHeader:", parsed.showLogoInHeader);
-          setSettings(parsed);
+        // D'abord essayer l'API (base de données)
+        const response = await fetch("/api/settings");
+        if (response.ok) {
+          const data = await response.json();
+          if (data.settings) {
+            setSettings(data.settings);
+            return;
+          }
         }
       } catch (e) {
-        console.error("[Header] Erreur parsing settings:", e);
+        console.error("[Header] Erreur chargement settings API:", e);
+      }
+      
+      // Fallback: localStorage (pour compatibilité)
+      try {
+        const saved = localStorage.getItem("az_settings");
+        if (saved) {
+          setSettings(JSON.parse(saved));
+        }
+      } catch (e) {
+        console.error("[Header] Erreur parsing localStorage:", e);
       }
     };
     
-    // Charger immédiatement
     loadSettings();
     
-    // Re-charger à chaque focus pour capturer les changements
-    const handleFocus = () => loadSettings();
-    
-    // Écouter les changements dans localStorage (pour mise à jour entre onglets)
-    const handleStorageChange = (e: StorageEvent) => {
-      if (e.key === "az_settings") {
-        console.log("[Header] Storage event detected");
-        loadSettings();
-      }
-    };
-    
-    // Écouter l'événement personnalisé (pour mise à jour dans le même onglet)
+    // Écouter l'événement personnalisé (pour mise à jour dans le même onglet après save admin)
     const handleSettingsUpdate = (e: CustomEvent) => {
-      console.log("[Header] Custom event detected:", e.detail);
       setSettings(e.detail);
     };
     
-    window.addEventListener("focus", handleFocus);
-    window.addEventListener("storage", handleStorageChange);
     window.addEventListener("az_settings_updated", handleSettingsUpdate as EventListener);
     return () => {
-      window.removeEventListener("focus", handleFocus);
-      window.removeEventListener("storage", handleStorageChange);
       window.removeEventListener("az_settings_updated", handleSettingsUpdate as EventListener);
     };
   }, []);
@@ -192,13 +184,12 @@ export default function Header() {
   
   // Vérifier si on doit afficher le logo uploadé
   // Priorité : logoLightUrl (version claire) > logoUrl (version standard)
-  const logoToShow = settings.logoLightUrl || settings.logoUrl;
+  const customLogo = settings.logoLightUrl || settings.logoUrl;
   // Par défaut showLogoInHeader = true si undefined
   const showLogoEnabled = settings.showLogoInHeader !== false;
-  const showCustomLogo = !!logoToShow && showLogoEnabled;
-  
-  // Debug
-  console.log("[Header] logoToShow:", logoToShow, "showLogoEnabled:", showLogoEnabled, "showCustomLogo:", showCustomLogo);
+  // On utilise le logo custom SEULEMENT s'il est uploadé et commence par http ou data: (base64)
+  const hasValidCustomLogo = !!customLogo && (customLogo.startsWith("http") || customLogo.startsWith("data:") || customLogo.startsWith("/"));
+  const showCustomLogo = hasValidCustomLogo && showLogoEnabled;
 
   // Le header doit avoir un fond si on est scrollé OU si la page a un fond clair
   const shouldHaveBackground = isScrolled || !isDarkBackground;
@@ -216,18 +207,19 @@ export default function Header() {
         <nav className="flex items-center justify-between">
           {/* Logo */}
           <Link href="/" className="flex items-center gap-3 group">
-            {showCustomLogo ? (
+            {showCustomLogo && customLogo ? (
               /* Logo personnalisé uploadé depuis le back-office + texte "Construction" */
               <div className="relative flex items-center gap-4">
                 {/* Logo agrandi */}
                 <div className="relative p-2.5 rounded-xl bg-white/10 backdrop-blur-sm border border-white/20 group-hover:bg-white/15 group-hover:border-cyan-glow/30 transition-all duration-300 shadow-lg">
                   <Image
-                    src={logoToShow!}
+                    src={customLogo}
                     alt="AZ"
                     width={200}
                     height={64}
                     className="h-14 w-auto object-contain"
                     priority
+                    unoptimized={customLogo.startsWith("data:")}
                   />
                   {/* Effet glow subtil au hover */}
                   <div className="absolute inset-0 rounded-xl bg-gradient-to-r from-cyan-glow/0 via-cyan-glow/5 to-cyan-glow/0 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
