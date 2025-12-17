@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import Stripe from "stripe";
-import { auth } from "@/lib/auth/auth";
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/lib/auth/auth";
 import { withRateLimit } from "@/lib/rate-limit";
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
@@ -13,7 +14,7 @@ export async function POST(request: NextRequest) {
   if (rateLimitResponse) return rateLimitResponse;
 
   try {
-    const session = await auth();
+    const session = await getServerSession(authOptions);
     if (!session?.user) {
       return NextResponse.json({ error: "Non authentifié" }, { status: 401 });
     }
@@ -50,7 +51,7 @@ export async function POST(request: NextRequest) {
       })),
       metadata: {
         orderId,
-        userId: session.user.id,
+        userId: (session.user as { id?: string }).id || "",
         depositOnly: depositOnly.toString(),
       },
       success_url: `${process.env.NEXTAUTH_URL}/compte/commandes/${orderId}?success=true`,
@@ -66,5 +67,3 @@ export async function POST(request: NextRequest) {
     );
   }
 }
-
-

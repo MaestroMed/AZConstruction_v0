@@ -1,19 +1,23 @@
-import NextAuth from "next-auth";
-import Credentials from "next-auth/providers/credentials";
+import CredentialsProvider from "next-auth/providers/credentials";
 import { compare } from "bcryptjs";
-import { authConfig } from "./auth.config";
 import { prisma } from "@/lib/prisma";
 import { z } from "zod";
+import type { NextAuthOptions } from "next-auth";
 
 const loginSchema = z.object({
   email: z.string().email(),
   password: z.string().min(6),
 });
 
-export const { handlers, auth, signIn, signOut } = NextAuth({
-  ...authConfig,
+export const authOptions: NextAuthOptions = {
+  pages: {
+    signIn: "/login",
+    signOut: "/",
+    error: "/login",
+    newUser: "/register",
+  },
   providers: [
-    Credentials({
+    CredentialsProvider({
       name: "credentials",
       credentials: {
         email: { label: "Email", type: "email" },
@@ -46,8 +50,8 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
             email: user.email,
             name: `${user.prenom || ""} ${user.nom || ""}`.trim() || user.email,
             type: user.type,
-            nom: user.nom,
-            prenom: user.prenom,
+            nom: user.nom ?? undefined,
+            prenom: user.prenom ?? undefined,
           };
         } catch (error) {
           console.error("Auth error:", error);
@@ -56,12 +60,32 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
       },
     }),
   ],
+  callbacks: {
+    async jwt({ token, user }) {
+      if (user) {
+        token.id = user.id;
+        token.type = (user as { type?: string }).type;
+        token.nom = (user as { nom?: string }).nom;
+        token.prenom = (user as { prenom?: string }).prenom;
+      }
+      return token;
+    },
+    async session({ session, token }) {
+      if (token && session.user) {
+        (session.user as { id?: string }).id = token.id as string;
+        (session.user as { type?: string }).type = token.type as string;
+        (session.user as { nom?: string }).nom = token.nom as string;
+        (session.user as { prenom?: string }).prenom = token.prenom as string;
+      }
+      return session;
+    },
+  },
   session: {
     strategy: "jwt",
     maxAge: 30 * 24 * 60 * 60, // 30 jours
   },
   secret: process.env.NEXTAUTH_SECRET,
-});
+};
 
 // Types étendus pour l'utilisateur
 declare module "next-auth" {
@@ -88,5 +112,3 @@ declare module "next-auth/jwt" {
     prenom?: string;
   }
 }
-
-
