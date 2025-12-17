@@ -4,9 +4,20 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth/auth";
 import { withRateLimit } from "@/lib/rate-limit";
 
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
-  apiVersion: "2025-12-15.clover",
-});
+// Lazy initialization pour éviter les erreurs au build
+let stripeInstance: Stripe | null = null;
+
+function getStripe(): Stripe {
+  if (!stripeInstance) {
+    if (!process.env.STRIPE_SECRET_KEY) {
+      throw new Error("STRIPE_SECRET_KEY is not configured");
+    }
+    stripeInstance = new Stripe(process.env.STRIPE_SECRET_KEY, {
+      apiVersion: "2025-12-15.clover",
+    });
+  }
+  return stripeInstance;
+}
 
 export async function POST(request: NextRequest) {
   // Rate limiting
@@ -34,6 +45,8 @@ export async function POST(request: NextRequest) {
       totalAmount = Math.round(totalAmount * 0.3);
     }
 
+    const stripe = getStripe();
+    
     // Créer la session Stripe Checkout
     const checkoutSession = await stripe.checkout.sessions.create({
       payment_method_types: ["card"],
