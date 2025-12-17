@@ -414,3 +414,4 @@ export async function seedProducts(prisma: PrismaClient) {
 
   console.log(`  ✅ ${totalConfigs} product option configs created`);
 }
+

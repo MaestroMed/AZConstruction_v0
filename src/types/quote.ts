@@ -141,3 +141,4 @@ export const civiliteLabels: Record<Civilite, string> = {
   M: 'Monsieur',
   Mme: 'Madame',
 };
+

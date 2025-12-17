@@ -475,3 +475,4 @@ function DefaultModel({ w, h, materialProps }: Omit<ModelPartProps, 'style'>) {
 }
 
 export default ProceduralModel;
+

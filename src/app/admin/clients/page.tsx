@@ -39,11 +39,16 @@ export default function ClientsPage() {
         const saved = localStorage.getItem("az_clients");
         if (saved) {
           const parsed = JSON.parse(saved);
-          setClients(parsed.map((c: Client) => ({
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          setClients(parsed.map((c: any) => ({
             ...c,
             createdAt: new Date(c.createdAt),
             lastLogin: c.lastLogin ? new Date(c.lastLogin) : undefined,
-            type: c.type === "professionnel" ? "client_pro" : "client_particulier",
+            type: c.type === "professionnel" || c.type === "client_pro" ? "client_pro" : "client_particulier",
+            ordersCount: c.ordersCount || 0,
+            totalSpent: c.totalSpent || 0,
+            validated: c.validated !== false,
+            active: c.active !== false,
           })));
         }
       } catch (e) {

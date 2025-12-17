@@ -23,3 +23,4 @@ export async function seedAdmin(prisma: PrismaClient) {
   console.log("  ✅ Admin user created:", admin.email);
   return admin;
 }
+

@@ -29,3 +29,4 @@ export async function seedAll(prisma: PrismaClient) {
   await seedPages(prisma);
   await seedRealizations(prisma);
 }
+

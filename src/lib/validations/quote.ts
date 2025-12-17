@@ -128,3 +128,4 @@ export type ContactInfoInput = z.infer<typeof contactInfoSchema>;
 export type ProjectInfoInput = z.infer<typeof projectInfoSchema>;
 export type AdresseChantierInput = z.infer<typeof adresseChantierSchema>;
 export type QuoteRequestInput = z.infer<typeof quoteRequestSchema>;
+

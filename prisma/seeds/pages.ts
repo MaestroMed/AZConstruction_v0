@@ -181,3 +181,4 @@ export async function seedPages(prisma: PrismaClient) {
 
   console.log(`  ✅ ${cmsPages.length} CMS pages created`);
 }
+
