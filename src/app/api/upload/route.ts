@@ -1,7 +1,4 @@
 import { NextRequest, NextResponse } from "next/server";
-import { writeFile, mkdir } from "fs/promises";
-import { existsSync } from "fs";
-import path from "path";
 import { v4 as uuidv4 } from "uuid";
 
 // Types de fichiers autorisés
@@ -12,6 +9,9 @@ const ALLOWED_TYPES = {
 };
 
 const MAX_FILE_SIZE = 50 * 1024 * 1024; // 50MB
+
+// Vérifier si Vercel Blob est configuré
+const useVercelBlob = !!process.env.BLOB_READ_WRITE_TOKEN;
 
 // Vérifier si Cloudinary est configuré
 const useCloudinary = !!(
@@ -24,6 +24,15 @@ async function uploadToCloudinary(buffer: Buffer, fileName: string, folder: stri
   const { uploadImage } = await import("@/lib/cloudinary");
   const base64 = `data:image/png;base64,${buffer.toString("base64")}`;
   return uploadImage(base64, { folder });
+}
+
+async function uploadToVercelBlob(buffer: Buffer, fileName: string, contentType: string) {
+  const { put } = await import("@vercel/blob");
+  const blob = await put(fileName, buffer, {
+    access: "public",
+    contentType,
+  });
+  return blob;
 }
 
 export async function POST(request: NextRequest) {
@@ -66,8 +75,30 @@ export async function POST(request: NextRequest) {
 
       const bytes = await file.arrayBuffer();
       const buffer = Buffer.from(bytes);
+      const uniqueName = `${folder}/${uuidv4()}-${file.name}`;
 
-      // Upload vers Cloudinary si configuré, sinon local
+      // 1. Essayer Vercel Blob (recommandé pour Vercel)
+      if (useVercelBlob) {
+        try {
+          const blob = await uploadToVercelBlob(buffer, uniqueName, file.type);
+          uploadedFiles.push({
+            id: uuidv4(),
+            originalName: file.name,
+            fileName: uniqueName,
+            url: blob.url,
+            type: fileType,
+            size: file.size,
+            mimeType: file.type,
+            provider: "vercel-blob",
+            uploadedAt: new Date().toISOString(),
+          });
+          continue;
+        } catch (blobError) {
+          console.error("Vercel Blob upload failed:", blobError);
+        }
+      }
+
+      // 2. Essayer Cloudinary
       if (useCloudinary && fileType === "image") {
         try {
           const result = await uploadToCloudinary(buffer, file.name, folder);
@@ -84,17 +115,25 @@ export async function POST(request: NextRequest) {
             provider: "cloudinary",
             uploadedAt: new Date().toISOString(),
           });
+          continue;
         } catch (cloudinaryError) {
-          console.error("Cloudinary upload failed, falling back to local:", cloudinaryError);
-          // Fallback to local upload
-          const localResult = await uploadLocal(buffer, file, fileType);
-          uploadedFiles.push(localResult);
+          console.error("Cloudinary upload failed:", cloudinaryError);
         }
-      } else {
-        // Upload local
-        const localResult = await uploadLocal(buffer, file, fileType);
-        uploadedFiles.push(localResult);
       }
+
+      // 3. Fallback: retourner l'image en base64 pour stockage côté client
+      const base64 = `data:${file.type};base64,${buffer.toString("base64")}`;
+      uploadedFiles.push({
+        id: uuidv4(),
+        originalName: file.name,
+        fileName: file.name,
+        url: base64,
+        type: fileType,
+        size: file.size,
+        mimeType: file.type,
+        provider: "base64",
+        uploadedAt: new Date().toISOString(),
+      });
     }
 
     return NextResponse.json({
@@ -110,96 +149,50 @@ export async function POST(request: NextRequest) {
   }
 }
 
-async function uploadLocal(buffer: Buffer, file: File, fileType: string) {
-  const uploadDir = path.join(process.cwd(), "public", "uploads");
-  
-  if (!existsSync(uploadDir)) {
-    await mkdir(uploadDir, { recursive: true });
-  }
-
-  const ext = path.extname(file.name);
-  const uniqueName = `${uuidv4()}${ext}`;
-  const filePath = path.join(uploadDir, uniqueName);
-
-  await writeFile(filePath, buffer);
-
-  return {
-    id: uuidv4(),
-    originalName: file.name,
-    fileName: uniqueName,
-    url: `/uploads/${uniqueName}`,
-    type: fileType,
-    size: file.size,
-    mimeType: file.type,
-    provider: "local",
-    uploadedAt: new Date().toISOString(),
-  };
-}
-
 export async function GET() {
-  // Retourner la liste des fichiers uploadés
-  // Dans une vraie application, cela viendrait de la base de données
-  const uploadDir = path.join(process.cwd(), "public", "uploads");
-  
-  if (!existsSync(uploadDir)) {
-    return NextResponse.json({ files: [] });
+  // Pour Vercel Blob, on peut lister les fichiers
+  if (useVercelBlob) {
+    try {
+      const { list } = await import("@vercel/blob");
+      const { blobs } = await list();
+      
+      const fileList = blobs.map((blob) => ({
+        id: blob.pathname,
+        fileName: blob.pathname,
+        url: blob.url,
+        type: "image",
+        size: blob.size,
+        uploadedAt: blob.uploadedAt.toISOString(),
+      }));
+      
+      return NextResponse.json({ files: fileList });
+    } catch (error) {
+      console.error("Error listing blobs:", error);
+    }
   }
 
-  const fs = await import("fs/promises");
-  const files = await fs.readdir(uploadDir);
-  
-  const fileList = await Promise.all(
-    files.map(async (fileName) => {
-      const filePath = path.join(uploadDir, fileName);
-      const stats = await fs.stat(filePath);
-      const ext = path.extname(fileName).toLowerCase();
-      
-      let type = "unknown";
-      if ([".jpg", ".jpeg", ".png", ".webp", ".gif", ".svg"].includes(ext)) {
-        type = "image";
-      } else if ([".pdf"].includes(ext)) {
-        type = "document";
-      } else if ([".glb", ".gltf"].includes(ext)) {
-        type = "model";
-      }
-
-      return {
-        id: fileName,
-        fileName,
-        url: `/uploads/${fileName}`,
-        type,
-        size: stats.size,
-        uploadedAt: stats.mtime.toISOString(),
-      };
-    })
-  );
-
-  return NextResponse.json({ files: fileList });
+  // Retourner une liste vide si pas de storage configuré
+  return NextResponse.json({ files: [] });
 }
 
 export async function DELETE(request: NextRequest) {
   try {
     const { searchParams } = new URL(request.url);
-    const fileName = searchParams.get("file");
+    const url = searchParams.get("url");
 
-    if (!fileName) {
+    if (!url) {
       return NextResponse.json(
-        { error: "Nom de fichier requis" },
+        { error: "URL du fichier requise" },
         { status: 400 }
       );
     }
 
-    const filePath = path.join(process.cwd(), "public", "uploads", fileName);
-
-    if (!existsSync(filePath)) {
-      return NextResponse.json(
-        { error: "Fichier non trouvé" },
-        { status: 404 }
-      );
+    // Pour Vercel Blob
+    if (useVercelBlob && url.includes("blob.vercel-storage.com")) {
+      const { del } = await import("@vercel/blob");
+      await del(url);
+      return NextResponse.json({ success: true });
     }
-
-    const fs = await import("fs/promises");
-    await fs.unlink(filePath);
 
     return NextResponse.json({ success: true });
   } catch (error) {
@@ -210,4 +203,3 @@ export async function DELETE(request: NextRequest) {
     );
   }
 }
-

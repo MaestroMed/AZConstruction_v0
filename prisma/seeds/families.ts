@@ -66,3 +66,4 @@ export async function seedFamilies(prisma: PrismaClient) {
   console.log(`  ✅ ${productFamilies.length} product families created`);
 }
 
+

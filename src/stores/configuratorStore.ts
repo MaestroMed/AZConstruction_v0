@@ -209,3 +209,4 @@ export const useConfigCamera = () => useConfiguratorStore((s) => ({
   autoRotate: s.autoRotate,
 }));
 
+

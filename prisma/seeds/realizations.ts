@@ -211,3 +211,4 @@ export async function seedRealizations(prisma: PrismaClient) {
   console.log(`  ✅ ${realizations.length} realizations created with images`);
 }
 
+

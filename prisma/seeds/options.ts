@@ -242,3 +242,4 @@ export async function seedOptions(prisma: PrismaClient) {
   console.log(`  ✅ ${productOptions.length} product options created`);
 }
 
+

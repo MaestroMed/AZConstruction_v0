@@ -249,3 +249,4 @@ export async function seedColors(prisma: PrismaClient) {
   console.log(`  ✅ ${ralColors.length} RAL colors created`);
 }
 
+

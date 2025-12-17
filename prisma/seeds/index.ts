@@ -30,3 +30,4 @@ export async function seedAll(prisma: PrismaClient) {
   await seedRealizations(prisma);
 }
 
+

@@ -24,3 +24,4 @@ export async function seedAdmin(prisma: PrismaClient) {
   return admin;
 }
 
+
