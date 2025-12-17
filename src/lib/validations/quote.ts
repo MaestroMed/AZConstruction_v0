@@ -69,10 +69,10 @@ export const adresseChantierSchema = z.object({
 export const projectInfoSchema = z.object({
   adresseChantier: adresseChantierSchema,
   typeProjet: z.enum(['neuf', 'renovation', 'remplacement'], {
-    errorMap: () => ({ message: 'Veuillez sélectionner un type de projet' }),
+    message: 'Veuillez sélectionner un type de projet',
   }),
   delaiSouhaite: z.enum(['urgent', '1-3mois', '3-6mois', 'flexible'], {
-    errorMap: () => ({ message: 'Veuillez sélectionner un délai' }),
+    message: 'Veuillez sélectionner un délai',
   }),
   poseRequise: z.boolean(),
   commentaire: z
@@ -114,9 +114,7 @@ export const quoteRequestSchema = z.object({
   projectInfo: projectInfoSchema,
   screenshotDataUrl: z.string().optional(),
   rgpdAccepted: z.literal(true, {
-    errorMap: () => ({
-      message: 'Vous devez accepter la politique de confidentialité',
-    }),
+    message: 'Vous devez accepter la politique de confidentialité',
   }),
 });
 
@@ -128,4 +126,5 @@ export type ContactInfoInput = z.infer<typeof contactInfoSchema>;
 export type ProjectInfoInput = z.infer<typeof projectInfoSchema>;
 export type AdresseChantierInput = z.infer<typeof adresseChantierSchema>;
 export type QuoteRequestInput = z.infer<typeof quoteRequestSchema>;
+
 
