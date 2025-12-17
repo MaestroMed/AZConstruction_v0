@@ -43,11 +43,20 @@ export default function ProductsPage() {
         const saved = localStorage.getItem("az_products");
         if (saved) {
           const parsed = JSON.parse(saved);
-          setProducts(parsed.map((p: Product) => ({
-            ...p,
-            createdAt: new Date(p.createdAt),
-            famille: { id: p.famille, nom: families.find(f => f.id === p.famille)?.nom || p.famille, slug: p.famille },
-          })));
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          setProducts(parsed.map((p: any) => {
+            const familleId = typeof p.famille === "string" ? p.famille : p.famille?.id || "";
+            return {
+              ...p,
+              createdAt: new Date(p.createdAt),
+              famille: { 
+                id: familleId, 
+                nom: families.find(f => f.id === familleId)?.nom || familleId, 
+                slug: familleId 
+              },
+              active: p.active !== false,
+            };
+          }));
         }
       } catch (e) {
         console.error("Erreur chargement produits:", e);
