@@ -155,7 +155,7 @@ export default function RealizationsSection() {
                         {realization.imageUrl ? (
                           <Image
                             src={realization.imageUrl}
-                            alt={realization.title}
+                            alt={realization.title || "Réalisation AZ Construction"}
                             fill
                             className="object-cover transition-transform duration-700 group-hover:scale-110"
                           />

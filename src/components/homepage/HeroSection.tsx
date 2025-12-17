@@ -5,20 +5,117 @@ import { motion } from "framer-motion";
 import { ArrowRight, Play } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
-import { Button } from "@/components/ui/Button";
 import ConfiguratorPreview from "./ConfiguratorPreview";
 
-// Image de l'atelier - à remplacer par le chemin réel après upload
-const HERO_IMAGE = "/images/hero/atelier-facade.jpg";
+// Image par défaut
+const DEFAULT_HERO_IMAGE = "/images/hero/atelier-facade.jpg";
+
+interface HeroSettings {
+  backgroundImage: string;
+  backgroundOverlayOpacity: number;
+  badge: string;
+  badgeEnabled: boolean;
+  headline: string;
+  headlineAccent: string;
+  headlineEnd: string;
+  subheadline: string;
+  ctaPrimaryText: string;
+  ctaPrimaryLink: string;
+  ctaSecondaryText: string;
+  ctaSecondaryLink: string;
+  promoEnabled: boolean;
+  promoText: string;
+  promoLink: string;
+  promoBgColor: string;
+  statsEnabled: boolean;
+  stat1Value: string;
+  stat1Label: string;
+  stat2Value: string;
+  stat2Label: string;
+  stat3Value: string;
+  stat3Label: string;
+}
+
+const defaultSettings: HeroSettings = {
+  backgroundImage: DEFAULT_HERO_IMAGE,
+  backgroundOverlayOpacity: 70,
+  badge: "Fabrication française depuis 2015",
+  badgeEnabled: true,
+  headline: "L'acier sur",
+  headlineAccent: "mesure",
+  headlineEnd: "vite et bien.",
+  subheadline: "Expert en métallerie sur mesure : garde-corps, escaliers, portes, fenêtres, portails et clôtures. Profilés Jansen.",
+  ctaPrimaryText: "Configurer mon projet",
+  ctaPrimaryLink: "/produits",
+  ctaSecondaryText: "Voir nos réalisations",
+  ctaSecondaryLink: "/realisations",
+  promoEnabled: false,
+  promoText: "",
+  promoLink: "",
+  promoBgColor: "#dc2626",
+  statsEnabled: true,
+  stat1Value: "10",
+  stat1Label: "Années d'expertise",
+  stat2Value: "1500+",
+  stat2Label: "Projets réalisés",
+  stat3Value: "1800m²",
+  stat3Label: "D'atelier",
+};
 
 export default function HeroSection() {
+  const [settings, setSettings] = React.useState<HeroSettings>(defaultSettings);
+
+  // Charger les paramètres depuis localStorage
+  React.useEffect(() => {
+    const loadSettings = () => {
+      const saved = localStorage.getItem("az_hero_settings");
+      if (saved) {
+        try {
+          setSettings({ ...defaultSettings, ...JSON.parse(saved) });
+        } catch (e) {
+          console.error("Erreur parsing hero settings:", e);
+        }
+      }
+    };
+
+    loadSettings();
+
+    // Écouter les mises à jour
+    const handleUpdate = (e: CustomEvent) => {
+      setSettings({ ...defaultSettings, ...e.detail });
+    };
+
+    window.addEventListener("az_hero_updated", handleUpdate as EventListener);
+    return () => {
+      window.removeEventListener("az_hero_updated", handleUpdate as EventListener);
+    };
+  }, []);
+
+  const heroImage = settings.backgroundImage || DEFAULT_HERO_IMAGE;
+
   return (
-    <section className="relative min-h-screen overflow-hidden bg-[#0a0f1a]">
+    <>
+      {/* Promo Banner */}
+      {settings.promoEnabled && settings.promoText && (
+        <div
+          className="fixed top-0 left-0 right-0 z-[60] py-2.5 px-4 text-center text-white text-sm font-medium"
+          style={{ backgroundColor: settings.promoBgColor }}
+        >
+          {settings.promoLink ? (
+            <Link href={settings.promoLink} className="hover:underline">
+              {settings.promoText}
+            </Link>
+          ) : (
+            settings.promoText
+          )}
+        </div>
+      )}
+    <section className={`relative min-h-screen overflow-hidden bg-[#0a0f1a] ${settings.promoEnabled ? "mt-10" : ""}`}>
       {/* Background Image - Photo de l'atelier */}
       <div className="absolute inset-0">
         <Image
-          src={HERO_IMAGE}
-          alt="AZ Construction - Atelier de métallerie"
+          src={heroImage || "/images/hero/atelier-facade.jpg"}
+          alt="AZ Construction - Atelier de métallerie sur mesure"
           fill
           priority
           className="object-cover object-center"
@@ -28,7 +125,10 @@ export default function HeroSection() {
           }}
         />
         {/* Overlay gradient sophistiqué style Apple */}
-        <div className="absolute inset-0 bg-gradient-to-r from-[#0a0f1a]/95 via-[#0a0f1a]/70 to-[#0a0f1a]/40" />
+        <div 
+          className="absolute inset-0 bg-gradient-to-r from-[#0a0f1a]/95 via-[#0a0f1a]/70 to-[#0a0f1a]/40"
+          style={{ opacity: settings.backgroundOverlayOpacity / 100 }}
+        />
         <div className="absolute inset-0 bg-gradient-to-t from-[#0a0f1a] via-transparent to-[#0a0f1a]/30" />
       </div>
 
@@ -61,22 +161,24 @@ export default function HeroSection() {
             className="relative max-w-2xl"
           >
             {/* Badge */}
-            <motion.div
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: 0.1 }}
-              className="inline-flex items-center gap-2 px-4 py-2 bg-white/5 backdrop-blur-sm border border-white/10 rounded-full text-sm text-white/70 mb-8"
-            >
-              <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
-              Fabrication française depuis 2015
-            </motion.div>
+            {settings.badgeEnabled && (
+              <motion.div
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6, delay: 0.1 }}
+                className="inline-flex items-center gap-2 px-4 py-2 bg-white/5 backdrop-blur-sm border border-white/10 rounded-full text-sm text-white/70 mb-8"
+              >
+                <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+                {settings.badge}
+              </motion.div>
+            )}
 
             {/* Headline - Style Apple : clean, bold, minimal */}
             <h1 className="font-display text-5xl md:text-6xl lg:text-7xl font-semibold text-white leading-[1.05] tracking-tight mb-6">
-              L&apos;acier sur{" "}
+              {settings.headline}{" "}
               <span className="relative inline-block">
                 <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-blue-400">
-                  mesure
+                  {settings.headlineAccent}
                 </span>
                 <motion.span
                   className="absolute -bottom-2 left-0 w-full h-[3px] bg-gradient-to-r from-cyan-400 to-blue-400 rounded-full"
@@ -86,7 +188,7 @@ export default function HeroSection() {
                 />
               </span>
               <br />
-              <span className="text-white/90">vite et bien.</span>
+              <span className="text-white/90">{settings.headlineEnd}</span>
             </h1>
 
             {/* Subheadline */}
@@ -96,8 +198,7 @@ export default function HeroSection() {
               transition={{ duration: 0.8, delay: 0.3 }}
               className="text-lg md:text-xl text-white/60 max-w-lg leading-relaxed mb-10"
             >
-              Expert en métallerie sur mesure : garde-corps, escaliers, 
-              portes, fenêtres, portails et clôtures. Profilés Jansen.
+              {settings.subheadline}
             </motion.p>
 
             {/* CTA Buttons - Style Apple */}
@@ -107,45 +208,47 @@ export default function HeroSection() {
               transition={{ duration: 0.6, delay: 0.4 }}
               className="flex flex-col sm:flex-row gap-4"
             >
-              <Link href="/produits">
+              <Link href={settings.ctaPrimaryLink}>
                 <button className="group relative inline-flex items-center justify-center gap-3 px-8 py-4 bg-white text-[#0a0f1a] font-semibold rounded-full text-base overflow-hidden transition-all hover:shadow-lg hover:shadow-white/20">
-                  <span className="relative z-10">Configurer mon projet</span>
+                  <span className="relative z-10">{settings.ctaPrimaryText}</span>
                   <ArrowRight className="w-5 h-5 relative z-10 transition-transform group-hover:translate-x-1" />
                   <div className="absolute inset-0 bg-gradient-to-r from-cyan-400 to-blue-400 opacity-0 group-hover:opacity-100 transition-opacity" />
                   <span className="absolute inset-0 z-10 flex items-center justify-center gap-3 text-white opacity-0 group-hover:opacity-100 transition-opacity">
-                    <span>Configurer mon projet</span>
+                    <span>{settings.ctaPrimaryText}</span>
                     <ArrowRight className="w-5 h-5 transition-transform group-hover:translate-x-1" />
                   </span>
                 </button>
               </Link>
-              <Link href="/realisations">
+              <Link href={settings.ctaSecondaryLink}>
                 <button className="group inline-flex items-center justify-center gap-3 px-8 py-4 bg-transparent border border-white/20 text-white font-medium rounded-full text-base hover:bg-white/5 hover:border-white/30 transition-all">
                   <Play className="w-4 h-4" />
-                  Voir nos réalisations
+                  {settings.ctaSecondaryText}
                 </button>
               </Link>
             </motion.div>
 
             {/* Stats - Style Apple minimal */}
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ duration: 0.8, delay: 0.6 }}
-              className="flex gap-12 mt-16 pt-10 border-t border-white/10"
-            >
-              {[
-                { value: "10", label: "Années d'expertise" },
-                { value: "1500+", label: "Projets réalisés" },
-                { value: "1800m²", label: "D'atelier" },
-              ].map((stat, i) => (
-                <div key={i} className="text-left">
-                  <div className="font-display text-3xl md:text-4xl font-bold text-white mb-1">
-                    {stat.value}
+            {settings.statsEnabled && (
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ duration: 0.8, delay: 0.6 }}
+                className="flex gap-12 mt-16 pt-10 border-t border-white/10"
+              >
+                {[
+                  { value: settings.stat1Value, label: settings.stat1Label },
+                  { value: settings.stat2Value, label: settings.stat2Label },
+                  { value: settings.stat3Value, label: settings.stat3Label },
+                ].map((stat, i) => (
+                  <div key={i} className="text-left">
+                    <div className="font-display text-3xl md:text-4xl font-bold text-white mb-1">
+                      {stat.value}
+                    </div>
+                    <div className="text-sm text-white/50">{stat.label}</div>
                   </div>
-                  <div className="text-sm text-white/50">{stat.label}</div>
-                </div>
-              ))}
-            </motion.div>
+                ))}
+              </motion.div>
+            )}
           </motion.div>
 
           {/* Right Column - Configurator Preview */}
@@ -185,5 +288,6 @@ export default function HeroSection() {
         </motion.div>
       </motion.div>
     </section>
+    </>
   );
 }

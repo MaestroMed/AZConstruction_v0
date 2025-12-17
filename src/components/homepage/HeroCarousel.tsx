@@ -102,7 +102,7 @@ export default function HeroCarousel() {
           {images[currentIndex] ? (
             <Image
               src={images[currentIndex]}
-              alt="AZ Construction - Réalisation"
+              alt={`AZ Construction - Réalisation ${currentIndex + 1}`}
               fill
               priority={currentIndex === 0}
               className="object-cover object-center"

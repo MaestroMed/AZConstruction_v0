@@ -2,7 +2,7 @@
 
 import * as React from "react";
 import Link from "next/link";
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import {
   ArrowLeft,
   Mail,
@@ -16,85 +16,150 @@ import {
   Save,
   CheckCircle,
   XCircle,
+  Loader2,
+  Trash2,
 } from "lucide-react";
 import { StatusBadge } from "@/components/admin/ui/DataTable";
 import { Input, Switch } from "@/components/admin/ui/FormFields";
+import { ConfirmDialog } from "@/components/admin/ui/Modal";
 import { format } from "date-fns";
 import { fr } from "date-fns/locale";
 import { toast } from "sonner";
 
-// Mock client data
-const mockClient = {
-  id: "2",
-  type: "client_pro",
-  email: "contact@martin-construction.fr",
-  nom: "Martin",
-  raisonSociale: "SARL Martin Construction",
-  siret: "123 456 789 00012",
-  tvaIntra: "FR12345678901",
-  telephone: "03 20 12 34 56",
-  remisePercent: 15,
-  validated: true,
-  active: true,
-  createdAt: new Date("2023-06-20"),
-  lastLogin: new Date("2024-12-15"),
-  addresses: [
-    {
-      id: "1",
-      label: "Siège social",
-      rue: "45 Avenue de l'Industrie",
-      codePostal: "59000",
-      ville: "Lille",
-      isDefault: true,
-    },
-    {
-      id: "2",
-      label: "Entrepôt",
-      rue: "Zone Industrielle Nord",
-      codePostal: "59160",
-      ville: "Lomme",
-      isDefault: false,
-    },
-  ],
-  orders: [
-    { id: "2", numero: "ORD-2024-0155", date: new Date("2024-12-15"), total: 8920, status: "payee" },
-    { id: "10", numero: "ORD-2024-0142", date: new Date("2024-11-28"), total: 15600, status: "livree" },
-    { id: "15", numero: "ORD-2024-0128", date: new Date("2024-10-15"), total: 24350, status: "livree" },
-  ],
-  quotes: [
-    { id: "2", numero: "DEV-2024-0088", date: new Date("2024-12-10"), total: 24350, status: "envoye" },
-    { id: "8", numero: "DEV-2024-0075", date: new Date("2024-09-20"), total: 18500, status: "accepte" },
-  ],
-  stats: {
-    totalOrders: 24,
-    totalSpent: 156780,
-    avgOrderValue: 6532.5,
-    lastOrderDate: new Date("2024-12-15"),
-  },
-};
+interface Client {
+  id: string;
+  type: "particulier" | "professionnel" | "client_particulier" | "client_pro";
+  email: string;
+  nom?: string;
+  prenom?: string;
+  raisonSociale?: string;
+  siret?: string;
+  tvaIntra?: string;
+  telephone?: string;
+  adresse?: string;
+  codePostal?: string;
+  ville?: string;
+  remisePercent?: number;
+  validated?: boolean;
+  active?: boolean;
+  notes?: string;
+  createdAt: string;
+  lastLogin?: string;
+  ordersCount?: number;
+  totalSpent?: number;
+}
 
 export default function ClientDetailPage() {
   const params = useParams();
-  const [client, setClient] = React.useState(mockClient);
-  const [remise, setRemise] = React.useState(client.remisePercent);
+  const router = useRouter();
+  const [client, setClient] = React.useState<Client | null>(null);
+  const [loading, setLoading] = React.useState(true);
+  const [remise, setRemise] = React.useState(0);
   const [isEditing, setIsEditing] = React.useState(false);
+  const [deleteOpen, setDeleteOpen] = React.useState(false);
 
-  const isPro = client.type === "client_pro";
+  // Charger le client
+  React.useEffect(() => {
+    const loadClient = () => {
+      try {
+        const saved = localStorage.getItem("az_clients");
+        if (saved) {
+          const clients = JSON.parse(saved);
+          const found = clients.find((c: Client) => c.id === params.id);
+          if (found) {
+            setClient(found);
+            setRemise(found.remisePercent || 0);
+          }
+        }
+      } catch (e) {
+        console.error("Erreur chargement client:", e);
+      } finally {
+        setLoading(false);
+      }
+    };
+    loadClient();
+  }, [params.id]);
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center py-20">
+        <Loader2 className="w-8 h-8 animate-spin text-cyan-500" />
+      </div>
+    );
+  }
+
+  if (!client) {
+    return (
+      <div className="text-center py-20">
+        <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
+          <User className="w-8 h-8 text-gray-400" />
+        </div>
+        <h3 className="text-lg font-semibold text-gray-900 mb-2">Client introuvable</h3>
+        <p className="text-gray-500 mb-6">Ce client n'existe pas ou a été supprimé.</p>
+        <Link
+          href="/admin/clients"
+          className="inline-flex items-center gap-2 px-4 py-2 bg-cyan-500 text-white rounded-lg text-sm font-medium hover:bg-cyan-600"
+        >
+          <ArrowLeft className="w-4 h-4" />
+          Retour aux clients
+        </Link>
+      </div>
+    );
+  }
+
+  const isPro = client.type === "client_pro" || client.type === "professionnel";
+  const clientName = client.raisonSociale || `${client.prenom || ""} ${client.nom || ""}`.trim() || client.email;
 
   const handleSaveRemise = () => {
-    // TODO: API call
+    const saved = localStorage.getItem("az_clients");
+    if (saved) {
+      const clients = JSON.parse(saved);
+      const updated = clients.map((c: Client) =>
+        c.id === client.id ? { ...c, remisePercent: remise } : c
+      );
+      localStorage.setItem("az_clients", JSON.stringify(updated));
+      setClient({ ...client, remisePercent: remise });
+    }
     toast.success("Remise mise à jour");
     setIsEditing(false);
   };
 
   const handleValidate = () => {
+    const saved = localStorage.getItem("az_clients");
+    if (saved) {
+      const clients = JSON.parse(saved);
+      const updated = clients.map((c: Client) =>
+        c.id === client.id ? { ...c, validated: true } : c
+      );
+      localStorage.setItem("az_clients", JSON.stringify(updated));
+      setClient({ ...client, validated: true });
+    }
     toast.success("Compte professionnel validé");
   };
 
   const handleToggleActive = () => {
-    // TODO: API call
-    setClient({ ...client, active: !client.active });
-    toast.success(client.active ? "Compte désactivé" : "Compte réactivé");
+    const newActive = !client.active;
+    const saved = localStorage.getItem("az_clients");
+    if (saved) {
+      const clients = JSON.parse(saved);
+      const updated = clients.map((c: Client) =>
+        c.id === client.id ? { ...c, active: newActive } : c
+      );
+      localStorage.setItem("az_clients", JSON.stringify(updated));
+      setClient({ ...client, active: newActive });
+    }
+    toast.success(newActive ? "Compte réactivé" : "Compte désactivé");
+  };
+
+  const handleDelete = () => {
+    const saved = localStorage.getItem("az_clients");
+    if (saved) {
+      const clients = JSON.parse(saved);
+      const updated = clients.filter((c: Client) => c.id !== client.id);
+      localStorage.setItem("az_clients", JSON.stringify(updated));
+    }
+    toast.success("Client supprimé");
+    router.push("/admin/clients");
   };
 
   return (
@@ -110,27 +175,25 @@ export default function ClientDetailPage() {
           </Link>
           <div>
             <div className="flex items-center gap-3">
-              <h1 className="text-2xl font-bold text-gray-900">
-                {client.raisonSociale || `${client.nom}`}
-              </h1>
+              <h1 className="text-2xl font-bold text-gray-900">{clientName}</h1>
               {isPro && (
                 <span className="text-xs bg-blue-100 text-blue-700 px-2 py-1 rounded">
                   PRO
                 </span>
               )}
-              {!client.validated && (
+              {!client.validated && isPro && (
                 <span className="text-xs bg-amber-100 text-amber-700 px-2 py-1 rounded">
                   Non validé
                 </span>
               )}
             </div>
             <p className="text-gray-500 mt-1">
-              Client depuis {format(client.createdAt, "MMMM yyyy", { locale: fr })}
+              Client depuis {format(new Date(client.createdAt), "MMMM yyyy", { locale: fr })}
             </p>
           </div>
         </div>
         <div className="flex items-center gap-3">
-          {!client.validated && (
+          {!client.validated && isPro && (
             <>
               <button
                 onClick={handleValidate}
@@ -151,6 +214,12 @@ export default function ClientDetailPage() {
             <Mail className="w-4 h-4" />
             Contacter
           </button>
+          <button
+            onClick={() => setDeleteOpen(true)}
+            className="p-2 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors"
+          >
+            <Trash2 className="w-5 h-5" />
+          </button>
         </div>
       </div>
 
@@ -160,10 +229,10 @@ export default function ClientDetailPage() {
           {/* Stats */}
           <div className="grid sm:grid-cols-4 gap-4">
             {[
-              { label: "Commandes", value: client.stats.totalOrders },
-              { label: "CA Total", value: `${(client.stats.totalSpent / 1000).toFixed(1)}k €` },
-              { label: "Panier moyen", value: `${client.stats.avgOrderValue.toFixed(0)} €` },
-              { label: "Dernière commande", value: format(client.stats.lastOrderDate, "dd/MM/yy") },
+              { label: "Commandes", value: client.ordersCount || 0 },
+              { label: "CA Total", value: `${((client.totalSpent || 0) / 1000).toFixed(1)}k €` },
+              { label: "Panier moyen", value: client.ordersCount ? `${Math.round((client.totalSpent || 0) / client.ordersCount)} €` : "0 €" },
+              { label: "Remise", value: isPro && client.remisePercent ? `-${client.remisePercent}%` : "-" },
             ].map((stat) => (
               <div key={stat.label} className="bg-white rounded-xl border border-gray-200 p-4">
                 <p className="text-sm text-gray-500">{stat.label}</p>
@@ -172,85 +241,38 @@ export default function ClientDetailPage() {
             ))}
           </div>
 
-          {/* Recent orders */}
+          {/* Notes */}
+          {client.notes && (
+            <div className="bg-white rounded-xl border border-gray-200 p-6">
+              <h2 className="text-lg font-semibold text-gray-900 mb-3">Notes internes</h2>
+              <p className="text-gray-600 whitespace-pre-wrap">{client.notes}</p>
+            </div>
+          )}
+
+          {/* Empty states for orders/quotes */}
           <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
             <div className="flex items-center justify-between p-6 border-b border-gray-100">
               <h2 className="text-lg font-semibold text-gray-900 flex items-center gap-2">
                 <ShoppingCart className="w-5 h-5" />
                 Commandes récentes
               </h2>
-              <Link
-                href={`/admin/commandes?client=${client.id}`}
-                className="text-sm text-cyan-600 hover:text-cyan-700"
-              >
-                Voir tout →
-              </Link>
             </div>
-            <div className="divide-y divide-gray-100">
-              {client.orders.map((order) => (
-                <Link
-                  key={order.id}
-                  href={`/admin/commandes/${order.id}`}
-                  className="flex items-center justify-between p-4 hover:bg-gray-50 transition-colors"
-                >
-                  <div>
-                    <p className="font-medium text-gray-900">{order.numero}</p>
-                    <p className="text-sm text-gray-500">
-                      {format(order.date, "dd MMMM yyyy", { locale: fr })}
-                    </p>
-                  </div>
-                  <div className="flex items-center gap-4">
-                    <StatusBadge
-                      status={order.status === "payee" ? "Payée" : order.status === "livree" ? "Livrée" : order.status}
-                      variant={order.status === "livree" ? "success" : "info"}
-                    />
-                    <span className="font-semibold text-gray-900">
-                      {order.total.toLocaleString("fr-FR")} €
-                    </span>
-                  </div>
-                </Link>
-              ))}
+            <div className="p-8 text-center text-gray-500">
+              <ShoppingCart className="w-12 h-12 mx-auto mb-3 text-gray-300" />
+              <p>Aucune commande pour ce client</p>
             </div>
           </div>
 
-          {/* Quotes */}
           <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
             <div className="flex items-center justify-between p-6 border-b border-gray-100">
               <h2 className="text-lg font-semibold text-gray-900 flex items-center gap-2">
                 <FileText className="w-5 h-5" />
                 Devis
               </h2>
-              <Link
-                href={`/admin/devis?client=${client.id}`}
-                className="text-sm text-cyan-600 hover:text-cyan-700"
-              >
-                Voir tout →
-              </Link>
             </div>
-            <div className="divide-y divide-gray-100">
-              {client.quotes.map((quote) => (
-                <Link
-                  key={quote.id}
-                  href={`/admin/devis/${quote.id}`}
-                  className="flex items-center justify-between p-4 hover:bg-gray-50 transition-colors"
-                >
-                  <div>
-                    <p className="font-medium text-gray-900">{quote.numero}</p>
-                    <p className="text-sm text-gray-500">
-                      {format(quote.date, "dd MMMM yyyy", { locale: fr })}
-                    </p>
-                  </div>
-                  <div className="flex items-center gap-4">
-                    <StatusBadge
-                      status={quote.status === "envoye" ? "Envoyé" : quote.status === "accepte" ? "Accepté" : quote.status}
-                      variant={quote.status === "accepte" ? "success" : "info"}
-                    />
-                    <span className="font-semibold text-gray-900">
-                      {quote.total.toLocaleString("fr-FR")} €
-                    </span>
-                  </div>
-                </Link>
-              ))}
+            <div className="p-8 text-center text-gray-500">
+              <FileText className="w-12 h-12 mx-auto mb-3 text-gray-300" />
+              <p>Aucun devis pour ce client</p>
             </div>
           </div>
         </div>
@@ -270,29 +292,48 @@ export default function ClientDetailPage() {
                   </a>
                 </div>
               </div>
-              <div className="flex items-start gap-3">
-                <Phone className="w-5 h-5 text-gray-400 mt-0.5" />
-                <div>
-                  <p className="text-sm text-gray-500">Téléphone</p>
-                  <p className="text-gray-900">{client.telephone}</p>
+              {client.telephone && (
+                <div className="flex items-start gap-3">
+                  <Phone className="w-5 h-5 text-gray-400 mt-0.5" />
+                  <div>
+                    <p className="text-sm text-gray-500">Téléphone</p>
+                    <p className="text-gray-900">{client.telephone}</p>
+                  </div>
                 </div>
-              </div>
+              )}
+              {client.adresse && (
+                <div className="flex items-start gap-3">
+                  <MapPin className="w-5 h-5 text-gray-400 mt-0.5" />
+                  <div>
+                    <p className="text-sm text-gray-500">Adresse</p>
+                    <p className="text-gray-900">
+                      {client.adresse}
+                      <br />
+                      {client.codePostal} {client.ville}
+                    </p>
+                  </div>
+                </div>
+              )}
               {isPro && (
                 <>
-                  <div className="flex items-start gap-3">
-                    <Building className="w-5 h-5 text-gray-400 mt-0.5" />
-                    <div>
-                      <p className="text-sm text-gray-500">SIRET</p>
-                      <p className="text-gray-900 font-mono">{client.siret}</p>
+                  {client.siret && (
+                    <div className="flex items-start gap-3">
+                      <Building className="w-5 h-5 text-gray-400 mt-0.5" />
+                      <div>
+                        <p className="text-sm text-gray-500">SIRET</p>
+                        <p className="text-gray-900 font-mono">{client.siret}</p>
+                      </div>
                     </div>
-                  </div>
-                  <div className="flex items-start gap-3">
-                    <Building className="w-5 h-5 text-gray-400 mt-0.5" />
-                    <div>
-                      <p className="text-sm text-gray-500">TVA Intra.</p>
-                      <p className="text-gray-900 font-mono">{client.tvaIntra}</p>
+                  )}
+                  {client.tvaIntra && (
+                    <div className="flex items-start gap-3">
+                      <Building className="w-5 h-5 text-gray-400 mt-0.5" />
+                      <div>
+                        <p className="text-sm text-gray-500">TVA Intra.</p>
+                        <p className="text-gray-900 font-mono">{client.tvaIntra}</p>
+                      </div>
                     </div>
-                  </div>
+                  )}
                 </>
               )}
             </div>
@@ -331,7 +372,7 @@ export default function ClientDetailPage() {
                 ) : (
                   <div className="flex items-center justify-between">
                     <div>
-                      <p className="text-3xl font-bold text-cyan-600">-{client.remisePercent}%</p>
+                      <p className="text-3xl font-bold text-cyan-600">-{client.remisePercent || 0}%</p>
                       <p className="text-sm text-gray-500">sur tous les produits</p>
                     </div>
                     <button
@@ -346,56 +387,37 @@ export default function ClientDetailPage() {
             </div>
           )}
 
-          {/* Addresses */}
-          <div className="bg-white rounded-xl border border-gray-200 p-6">
-            <div className="flex items-center justify-between mb-4">
-              <h2 className="text-lg font-semibold text-gray-900">Adresses</h2>
-              <button className="text-sm text-cyan-600 hover:text-cyan-700">
-                + Ajouter
-              </button>
-            </div>
-            <div className="space-y-4">
-              {client.addresses.map((address) => (
-                <div key={address.id} className="p-3 bg-gray-50 rounded-lg">
-                  <div className="flex items-center justify-between mb-1">
-                    <span className="text-sm font-medium text-gray-700">{address.label}</span>
-                    {address.isDefault && (
-                      <span className="text-xs bg-cyan-100 text-cyan-700 px-2 py-0.5 rounded">
-                        Par défaut
-                      </span>
-                    )}
-                  </div>
-                  <p className="text-sm text-gray-600">{address.rue}</p>
-                  <p className="text-sm text-gray-600">
-                    {address.codePostal} {address.ville}
-                  </p>
-                </div>
-              ))}
-            </div>
-          </div>
-
           {/* Account status */}
           <div className="bg-white rounded-xl border border-gray-200 p-6">
             <h2 className="text-lg font-semibold text-gray-900 mb-4">Statut du compte</h2>
             <Switch
               label="Compte actif"
-              description={client.active ? "Le client peut se connecter et commander" : "Le client ne peut plus se connecter"}
-              checked={client.active}
+              description={client.active !== false ? "Le client peut se connecter et commander" : "Le client ne peut plus se connecter"}
+              checked={client.active !== false}
               onChange={handleToggleActive}
             />
             <div className="mt-4 pt-4 border-t border-gray-100">
               <p className="text-sm text-gray-500">
                 Dernière connexion:{" "}
                 {client.lastLogin
-                  ? format(client.lastLogin, "dd/MM/yyyy à HH:mm")
+                  ? format(new Date(client.lastLogin), "dd/MM/yyyy à HH:mm")
                   : "Jamais"}
               </p>
             </div>
           </div>
         </div>
       </div>
+
+      {/* Delete confirmation */}
+      <ConfirmDialog
+        isOpen={deleteOpen}
+        onClose={() => setDeleteOpen(false)}
+        onConfirm={handleDelete}
+        title="Supprimer le client"
+        message={`Êtes-vous sûr de vouloir supprimer "${clientName}" ? Cette action est irréversible.`}
+        confirmText="Supprimer"
+        variant="danger"
+      />
     </div>
   );
 }
-
-

@@ -475,7 +475,7 @@ export default function ContactPage() {
         </div>
       </section>
 
-      {/* Map Section */}
+      {/* Map Section - Google Maps Embed */}
       <section className="py-16 bg-gray-50">
         <div className="container mx-auto px-6">
           <motion.div
@@ -488,8 +488,8 @@ export default function ContactPage() {
               Venez nous rendre visite
             </h2>
             <p className="text-gray-600 max-w-2xl mx-auto">
-              Nos ateliers sont ouverts aux visiteurs sur rendez-vous. Venez découvrir
-              notre savoir-faire et discuter de votre projet.
+              Nos ateliers de 1800m² sont ouverts aux visiteurs sur rendez-vous. 
+              Venez découvrir notre savoir-faire et discuter de votre projet.
             </p>
           </motion.div>
 
@@ -499,26 +499,80 @@ export default function ContactPage() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
           >
-            <div className="relative h-96 bg-gradient-to-br from-gray-200 to-gray-300">
-              {/* Placeholder for map - in production, integrate Google Maps or Mapbox */}
-              <div className="absolute inset-0 flex items-center justify-center">
-                <div className="text-center">
-                  <MapPin className="w-16 h-16 text-blue-corporate mx-auto mb-4" />
-                  <p className="text-lg font-semibold text-navy-dark mb-2">
-                    23 Chemin du Bac des Aubins
-                  </p>
-                  <p className="text-gray-600 mb-4">95820 Bruyères-sur-Oise</p>
-                  <a
-                    href="https://maps.google.com/?q=23+Chemin+du+Bac+des+Aubins+95820+Bruyères-sur-Oise"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  >
-                    <Button icon={<ArrowRight className="w-4 h-4" />}>
-                      Ouvrir dans Google Maps
-                    </Button>
-                  </a>
+            {/* Google Maps Embed */}
+            <div className="relative h-[450px] w-full">
+              <iframe
+                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2608.892!2d2.3316!3d49.1394!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x47e63f8a2b6d7c7d%3A0x0!2s23%20Chemin%20du%20Bac%20des%20Aubins%2C%2095820%20Bruy%C3%A8res-sur-Oise!5e0!3m2!1sfr!2sfr!4v1700000000000!5m2!1sfr!2sfr"
+                width="100%"
+                height="100%"
+                style={{ border: 0 }}
+                allowFullScreen
+                loading="lazy"
+                referrerPolicy="no-referrer-when-downgrade"
+                className="absolute inset-0"
+                title="AZ Construction - Localisation"
+              />
+            </div>
+            
+            {/* Info bar sous la carte */}
+            <div className="bg-gradient-to-r from-navy-dark to-blue-corporate p-6 flex flex-wrap items-center justify-between gap-4">
+              <div className="flex items-center gap-4">
+                <div className="w-12 h-12 rounded-xl bg-white/10 flex items-center justify-center">
+                  <MapPin className="w-6 h-6 text-cyan-glow" />
+                </div>
+                <div>
+                  <p className="text-white font-semibold">23 Chemin du Bac des Aubins</p>
+                  <p className="text-white/70 text-sm">95820 Bruyères-sur-Oise</p>
                 </div>
               </div>
+              <div className="flex gap-3">
+                <a
+                  href="https://www.google.com/maps/dir//23+Chemin+du+Bac+des+Aubins+95820+Bruyères-sur-Oise"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-2 px-5 py-2.5 bg-cyan-glow text-navy-dark font-semibold rounded-xl hover:bg-cyan-400 transition-colors"
+                >
+                  <ArrowRight className="w-4 h-4" />
+                  Itinéraire
+                </a>
+              </div>
+            </div>
+          </motion.div>
+
+          {/* Transports */}
+          <motion.div
+            className="mt-8 grid md:grid-cols-3 gap-6"
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ delay: 0.2 }}
+          >
+            <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-100">
+              <div className="w-10 h-10 rounded-lg bg-blue-50 flex items-center justify-center mb-4">
+                <span className="text-xl">🚗</span>
+              </div>
+              <h4 className="font-semibold text-navy-dark mb-2">En voiture</h4>
+              <p className="text-sm text-gray-600">
+                Sortie A1 (Survilliers), puis D922 direction Bruyères-sur-Oise. Parking gratuit sur place.
+              </p>
+            </div>
+            <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-100">
+              <div className="w-10 h-10 rounded-lg bg-green-50 flex items-center justify-center mb-4">
+                <span className="text-xl">🚆</span>
+              </div>
+              <h4 className="font-semibold text-navy-dark mb-2">En train</h4>
+              <p className="text-sm text-gray-600">
+                Gare de Bruyères-sur-Oise (Ligne H), puis 10 min à pied ou taxi.
+              </p>
+            </div>
+            <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-100">
+              <div className="w-10 h-10 rounded-lg bg-purple-50 flex items-center justify-center mb-4">
+                <span className="text-xl">📍</span>
+              </div>
+              <h4 className="font-semibold text-navy-dark mb-2">Coordonnées GPS</h4>
+              <p className="text-sm text-gray-600 font-mono">
+                49.1394° N, 2.3316° E
+              </p>
             </div>
           </motion.div>
         </div>

@@ -1,0 +1,278 @@
+# Page snapshot
+
+```yaml
+- generic [ref=e1]:
+  - generic [ref=e6] [cursor=pointer]:
+    - button "Open Next.js Dev Tools" [ref=e7]:
+      - img [ref=e8]
+    - generic [ref=e11]:
+      - button "Open issues overlay" [ref=e12]:
+        - generic [ref=e13]:
+          - generic [ref=e14]: "1"
+          - generic [ref=e15]: "2"
+        - generic [ref=e16]:
+          - text: Issue
+          - generic [ref=e17]: s
+      - button "Collapse issues badge" [ref=e18]:
+        - img [ref=e19]
+  - generic [ref=e21]:
+    - banner [ref=e22]:
+      - navigation [ref=e24]:
+        - link "Construction" [ref=e25] [cursor=pointer]:
+          - /url: /
+          - img [ref=e27]
+          - generic [ref=e33]: Construction
+        - generic [ref=e34]:
+          - link "« Produits" [ref=e35] [cursor=pointer]:
+            - /url: /produits
+            - generic [ref=e36]:
+              - generic [ref=e37]: «
+              - text: Produits
+          - link "« Réalisations" [ref=e38] [cursor=pointer]:
+            - /url: /realisations
+            - generic [ref=e39]:
+              - generic [ref=e40]: «
+              - text: Réalisations
+          - link "« Solutions Pro" [ref=e41] [cursor=pointer]:
+            - /url: /solutions-pro
+            - generic [ref=e42]:
+              - generic [ref=e43]: «
+              - text: Solutions Pro
+          - link "« Habitat" [ref=e44] [cursor=pointer]:
+            - /url: /habitat
+            - generic [ref=e45]:
+              - generic [ref=e46]: «
+              - text: Habitat
+          - link "★ Thermolaquage" [ref=e47] [cursor=pointer]:
+            - /url: /services/thermolaquage
+            - generic [ref=e48]:
+              - generic [ref=e49]: ★
+              - text: Thermolaquage
+          - link "« À propos" [ref=e50] [cursor=pointer]:
+            - /url: /a-propos
+            - generic [ref=e51]:
+              - generic [ref=e52]: «
+              - text: À propos
+          - link "« Contact" [ref=e53] [cursor=pointer]:
+            - /url: /contact
+            - generic [ref=e54]:
+              - generic [ref=e55]: «
+              - text: Contact
+        - link "Espace client" [ref=e57] [cursor=pointer]:
+          - /url: /login
+          - button "Espace client" [ref=e58]:
+            - img [ref=e59]
+            - text: Espace client
+    - main [ref=e62]:
+      - generic [ref=e63]:
+        - generic [ref=e65]:
+          - link "Retour aux produits" [ref=e66] [cursor=pointer]:
+            - /url: /produits
+            - img [ref=e67]
+            - text: Retour aux produits
+          - generic [ref=e69]:
+            - heading "Configurateur Portail" [level=1] [ref=e70]
+            - paragraph [ref=e71]: Configurez votre portail sur mesure
+        - generic [ref=e74]:
+          - button "Dimensions" [ref=e75]:
+            - img [ref=e76]
+            - generic [ref=e82]: Dimensions
+          - button "Style" [ref=e84]:
+            - img [ref=e85]
+            - generic [ref=e91]: Style
+          - button "Options" [ref=e93]:
+            - img [ref=e94]
+            - generic [ref=e97]: Options
+          - button "Couleur" [ref=e99]:
+            - img [ref=e100]
+            - generic [ref=e103]: Couleur
+        - generic [ref=e105]:
+          - generic [ref=e108]:
+            - generic [ref=e109]:
+              - generic [ref=e110]:
+                - generic [ref=e111]: Aperçu 3D interactif
+                - generic [ref=e112]:
+                  - button "Arrêter la rotation" [ref=e113]:
+                    - img [ref=e114]
+                  - button "Plein écran" [ref=e117]:
+                    - img [ref=e118]
+              - generic [ref=e124]:
+                - button "AR non disponible" [disabled]:
+                  - img
+                  - text: AR non disponible
+            - generic [ref=e126]:
+              - generic [ref=e127]:
+                - img [ref=e132]
+                - paragraph [ref=e134]: Génération du modèle 3D...
+              - generic [ref=e144]: 350 × 180 cm
+            - generic [ref=e146]:
+              - button "Devis PDF" [ref=e148] [cursor=pointer]:
+                - img [ref=e149]
+                - generic [ref=e152]: Devis PDF
+              - button "Image" [ref=e154] [cursor=pointer]:
+                - img [ref=e155]
+                - generic [ref=e158]: Image
+              - button "Partager" [ref=e160] [cursor=pointer]:
+                - img [ref=e161]
+                - generic [ref=e167]: Partager
+          - generic [ref=e168]:
+            - generic [ref=e171]:
+              - heading "Dimensions" [level=2] [ref=e172]:
+                - img [ref=e173]
+                - text: Dimensions
+              - generic [ref=e179]:
+                - generic [ref=e180]:
+                  - generic [ref=e181]:
+                    - generic [ref=e182]: Largeur
+                    - generic [ref=e183]: 350 cm
+                  - slider [active] [ref=e184] [cursor=pointer]: "200"
+                  - generic [ref=e185]:
+                    - generic [ref=e186]: 200 cm
+                    - generic [ref=e187]: 600 cm
+                - generic [ref=e188]:
+                  - generic [ref=e189]:
+                    - generic [ref=e190]: Hauteur
+                    - generic [ref=e191]: 180 cm
+                  - slider [ref=e192] [cursor=pointer]: "180"
+                  - generic [ref=e193]:
+                    - generic [ref=e194]: 100 cm
+                    - generic [ref=e195]: 250 cm
+                - generic [ref=e196]:
+                  - generic [ref=e197]: Matériau
+                  - generic [ref=e198]:
+                    - button "Acier thermolaqué" [ref=e199]:
+                      - generic [ref=e200]: Acier thermolaqué
+                    - button "Aluminium +30%" [ref=e201]:
+                      - generic [ref=e202]: Aluminium
+                      - generic [ref=e203]: +30%
+                    - button "Inox 304 +80%" [ref=e204]:
+                      - generic [ref=e205]: Inox 304
+                      - generic [ref=e206]: +80%
+            - generic [ref=e207]:
+              - button "Précédent" [disabled]:
+                - img
+                - text: Précédent
+              - button "Suivant" [ref=e208] [cursor=pointer]:
+                - text: Suivant
+                - img [ref=e209]
+            - generic [ref=e212]:
+              - heading "Votre Portail" [level=3] [ref=e213]
+              - generic [ref=e214]:
+                - generic [ref=e215]:
+                  - generic [ref=e216]: Dimensions
+                  - generic [ref=e217]: 350 × 180 cm
+                - generic [ref=e218]:
+                  - generic [ref=e219]: Matériau
+                  - generic [ref=e220]: Acier thermolaqué
+                - generic [ref=e221]:
+                  - generic [ref=e222]: Style
+                  - generic [ref=e223]: Contemporain
+                - generic [ref=e224]:
+                  - generic [ref=e225]: Couleur
+                  - generic [ref=e228]: Gris anthracite
+              - generic [ref=e229]:
+                - generic [ref=e230]:
+                  - generic [ref=e231]: Prix estimé
+                  - generic [ref=e232]: 1,890€
+                - paragraph [ref=e233]: TTC, hors pose
+              - generic [ref=e234]:
+                - button "Ajouter au panier" [ref=e235] [cursor=pointer]:
+                  - text: Ajouter au panier
+                  - img [ref=e236]
+                - button "Demander un devis" [ref=e240] [cursor=pointer]:
+                  - text: Demander un devis
+                  - img [ref=e241]
+                - button "Réinitialiser" [ref=e244]:
+                  - img [ref=e245]
+                  - text: Réinitialiser
+    - contentinfo [ref=e248]:
+      - generic [ref=e250]:
+        - generic [ref=e251]:
+          - link "Construction" [ref=e252] [cursor=pointer]:
+            - /url: /
+            - img [ref=e254]
+            - generic [ref=e259]: Construction
+          - paragraph [ref=e260]: "Expert en métallerie sur mesure : garde-corps, escaliers, portes, fenêtres, portails et clôtures. Profilés Jansen. 1800m² d'atelier."
+          - generic [ref=e261]:
+            - link "01 23 45 67 89" [ref=e262] [cursor=pointer]:
+              - /url: tel:+33123456789
+              - img [ref=e263]
+              - generic [ref=e265]: 01 23 45 67 89
+            - link "contact@zaconstruction.fr" [ref=e266] [cursor=pointer]:
+              - /url: mailto:contact@zaconstruction.fr
+              - img [ref=e267]
+              - generic [ref=e270]: contact@zaconstruction.fr
+            - generic [ref=e271]:
+              - img [ref=e272]
+              - generic [ref=e275]:
+                - text: 23 Chemin du Bac des Aubins
+                - text: 95820 Bruyères-sur-Oise, France
+        - generic [ref=e276]:
+          - heading "Produits" [level=4] [ref=e277]
+          - list [ref=e278]:
+            - listitem [ref=e279]:
+              - link "Garde-corps" [ref=e280] [cursor=pointer]:
+                - /url: /produits/garde-corps
+            - listitem [ref=e281]:
+              - link "Escaliers" [ref=e282] [cursor=pointer]:
+                - /url: /produits/escaliers
+            - listitem [ref=e283]:
+              - link "Portes & Fenêtres" [ref=e284] [cursor=pointer]:
+                - /url: /produits/portes
+            - listitem [ref=e285]:
+              - link "Portails & Clôtures" [ref=e286] [cursor=pointer]:
+                - /url: /produits/portails
+            - listitem [ref=e287]:
+              - link "Grilles de ventilation" [ref=e288] [cursor=pointer]:
+                - /url: /produits/grilles-ventilation
+        - generic [ref=e289]:
+          - heading "Entreprise" [level=4] [ref=e290]
+          - list [ref=e291]:
+            - listitem [ref=e292]:
+              - link "À propos" [ref=e293] [cursor=pointer]:
+                - /url: /a-propos
+            - listitem [ref=e294]:
+              - link "Réalisations" [ref=e295] [cursor=pointer]:
+                - /url: /realisations
+            - listitem [ref=e296]:
+              - link "Solutions Pro" [ref=e297] [cursor=pointer]:
+                - /url: /solutions-pro
+            - listitem [ref=e298]:
+              - link "Habitat" [ref=e299] [cursor=pointer]:
+                - /url: /habitat
+            - listitem [ref=e300]:
+              - link "Contact" [ref=e301] [cursor=pointer]:
+                - /url: /contact
+        - generic [ref=e302]:
+          - heading "Informations" [level=4] [ref=e303]
+          - list [ref=e304]:
+            - listitem [ref=e305]:
+              - link "FAQ" [ref=e306] [cursor=pointer]:
+                - /url: /faq
+            - listitem [ref=e307]:
+              - link "Mentions légales" [ref=e308] [cursor=pointer]:
+                - /url: /mentions-legales
+            - listitem [ref=e309]:
+              - link "CGV" [ref=e310] [cursor=pointer]:
+                - /url: /cgv
+            - listitem [ref=e311]:
+              - link "Politique de confidentialité" [ref=e312] [cursor=pointer]:
+                - /url: /confidentialite
+      - generic [ref=e315]:
+        - paragraph [ref=e316]: © 2025 AZ Construction. Tous droits réservés.
+        - generic [ref=e317]:
+          - link "Facebook" [ref=e318] [cursor=pointer]:
+            - /url: https://facebook.com
+            - img [ref=e319]
+          - link "Twitter" [ref=e321] [cursor=pointer]:
+            - /url: https://twitter.com
+            - img [ref=e322]
+          - link "Instagram" [ref=e324] [cursor=pointer]:
+            - /url: https://instagram.com
+            - img [ref=e325]
+          - link "LinkedIn" [ref=e328] [cursor=pointer]:
+            - /url: https://linkedin.com
+            - img [ref=e329]
+  - region "Notifications alt+T"
+  - alert [ref=e333]
+```

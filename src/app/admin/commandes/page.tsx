@@ -25,79 +25,6 @@ interface Order {
   itemsCount: number;
 }
 
-const mockOrders: Order[] = [
-  {
-    id: "1",
-    numero: "ORD-2024-0156",
-    user: { prenom: "Jean", nom: "Dupont", email: "jean.dupont@email.com", type: "client_particulier" },
-    dateCommande: new Date("2024-12-15T10:30:00"),
-    statusCommande: "en_preparation",
-    statusPaiement: "paye",
-    totalTTC: 3450,
-    itemsCount: 1,
-  },
-  {
-    id: "2",
-    numero: "ORD-2024-0155",
-    user: { raisonSociale: "SARL Martin Construction", email: "contact@martin-construction.fr", type: "client_pro" },
-    dateCommande: new Date("2024-12-15T07:15:00"),
-    statusCommande: "payee",
-    statusPaiement: "paye",
-    totalTTC: 8920,
-    itemsCount: 5,
-  },
-  {
-    id: "3",
-    numero: "ORD-2024-0154",
-    user: { prenom: "Marie", nom: "Lambert", email: "marie.lambert@email.com", type: "client_particulier" },
-    dateCommande: new Date("2024-12-14T14:20:00"),
-    statusCommande: "en_fabrication",
-    statusPaiement: "paye",
-    totalTTC: 12500,
-    itemsCount: 1,
-  },
-  {
-    id: "4",
-    numero: "ORD-2024-0153",
-    user: { raisonSociale: "SAS Habitat Pro", email: "pro@habitat-pro.fr", type: "client_pro" },
-    dateCommande: new Date("2024-12-14T09:45:00"),
-    statusCommande: "expediee",
-    statusPaiement: "paye",
-    totalTTC: 4780,
-    itemsCount: 1,
-  },
-  {
-    id: "5",
-    numero: "ORD-2024-0152",
-    user: { prenom: "François", nom: "Petit", email: "f.petit@email.com", type: "client_particulier" },
-    dateCommande: new Date("2024-12-13T16:00:00"),
-    statusCommande: "livree",
-    statusPaiement: "paye",
-    totalTTC: 1950,
-    itemsCount: 1,
-  },
-  {
-    id: "6",
-    numero: "ORD-2024-0151",
-    user: { prenom: "Claire", nom: "Moreau", email: "c.moreau@email.com", type: "client_particulier" },
-    dateCommande: new Date("2024-12-12T11:30:00"),
-    statusCommande: "en_attente_paiement",
-    statusPaiement: "en_attente",
-    totalTTC: 2890,
-    itemsCount: 2,
-  },
-];
-
-const statuses = [
-  { id: "all", label: "Toutes", count: 6 },
-  { id: "en_attente_paiement", label: "En attente", count: 1 },
-  { id: "payee", label: "Payées", count: 1 },
-  { id: "en_preparation", label: "En préparation", count: 1 },
-  { id: "en_fabrication", label: "En fabrication", count: 1 },
-  { id: "expediee", label: "Expédiées", count: 1 },
-  { id: "livree", label: "Livrées", count: 1 },
-];
-
 const getStatusVariant = (status: string): "success" | "warning" | "error" | "info" | "default" => {
   const map: Record<string, "success" | "warning" | "error" | "info" | "default"> = {
     payee: "success",
@@ -125,8 +52,51 @@ const getStatusLabel = (status: string) => {
 };
 
 export default function OrdersPage() {
-  const [orders] = React.useState<Order[]>(mockOrders);
+  const [orders, setOrders] = React.useState<Order[]>([]);
   const [selectedStatus, setSelectedStatus] = React.useState("all");
+  const [loading, setLoading] = React.useState(true);
+
+  // Charger les commandes depuis localStorage
+  React.useEffect(() => {
+    const loadOrders = () => {
+      try {
+        const saved = localStorage.getItem("az_orders");
+        if (saved) {
+          const parsed = JSON.parse(saved);
+          setOrders(parsed.map((o: Order) => ({
+            ...o,
+            dateCommande: new Date(o.dateCommande),
+          })));
+        }
+      } catch (e) {
+        console.error("Erreur chargement commandes:", e);
+      } finally {
+        setLoading(false);
+      }
+    };
+    loadOrders();
+  }, []);
+
+  // Compteurs dynamiques
+  const counts = React.useMemo(() => ({
+    all: orders.length,
+    en_attente_paiement: orders.filter((o) => o.statusCommande === "en_attente_paiement").length,
+    payee: orders.filter((o) => o.statusCommande === "payee").length,
+    en_preparation: orders.filter((o) => o.statusCommande === "en_preparation").length,
+    en_fabrication: orders.filter((o) => o.statusCommande === "en_fabrication").length,
+    expediee: orders.filter((o) => o.statusCommande === "expediee").length,
+    livree: orders.filter((o) => o.statusCommande === "livree").length,
+  }), [orders]);
+
+  const statuses = [
+    { id: "all", label: "Toutes", count: counts.all },
+    { id: "en_attente_paiement", label: "En attente", count: counts.en_attente_paiement },
+    { id: "payee", label: "Payées", count: counts.payee },
+    { id: "en_preparation", label: "En préparation", count: counts.en_preparation },
+    { id: "en_fabrication", label: "En fabrication", count: counts.en_fabrication },
+    { id: "expediee", label: "Expédiées", count: counts.expediee },
+    { id: "livree", label: "Livrées", count: counts.livree },
+  ];
 
   const filteredOrders = selectedStatus === "all"
     ? orders
@@ -284,13 +254,32 @@ export default function OrdersPage() {
         ))}
       </div>
 
-      {/* Table */}
-      <DataTable
-        columns={columns}
-        data={filteredOrders}
-        searchPlaceholder="Rechercher une commande..."
-        onExport={() => console.log("Export orders")}
-      />
+      {/* Table ou état vide */}
+      {loading ? (
+        <div className="bg-white rounded-xl border border-gray-200 p-12 text-center">
+          <div className="w-8 h-8 border-2 border-cyan-500 border-t-transparent rounded-full animate-spin mx-auto mb-4" />
+          <p className="text-gray-500">Chargement...</p>
+        </div>
+      ) : filteredOrders.length === 0 ? (
+        <div className="bg-white rounded-xl border border-gray-200 p-12 text-center">
+          <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
+            <FileText className="w-8 h-8 text-gray-400" />
+          </div>
+          <h3 className="text-lg font-semibold text-gray-900 mb-2">Aucune commande</h3>
+          <p className="text-gray-500 mb-6 max-w-sm mx-auto">
+            {selectedStatus === "all"
+              ? "Les commandes apparaîtront ici lorsque des clients passeront commande."
+              : "Aucune commande avec ce statut."}
+          </p>
+        </div>
+      ) : (
+        <DataTable
+          columns={columns}
+          data={filteredOrders}
+          searchPlaceholder="Rechercher une commande..."
+          onExport={() => console.log("Export orders")}
+        />
+      )}
     </div>
   );
 }

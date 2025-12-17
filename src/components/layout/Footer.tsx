@@ -244,6 +244,44 @@ export default function Footer() {
         </div>
       </div>
 
+      {/* Mini Map */}
+      <div className="border-t border-white/10">
+        <div className="container mx-auto px-6 py-8">
+          <div className="grid lg:grid-cols-2 gap-8 items-center">
+            <div>
+              <h4 className="font-semibold text-white mb-2 flex items-center gap-2">
+                <MapPin className="w-5 h-5 text-cyan-glow" />
+                Nos ateliers
+              </h4>
+              <p className="text-white/60 text-sm mb-4">
+                1800m² dédiés à la fabrication sur mesure de vos projets de métallerie.
+                Venez nous rencontrer sur rendez-vous.
+              </p>
+              <a
+                href="https://www.google.com/maps/dir//23+Chemin+du+Bac+des+Aubins+95820+Bruyères-sur-Oise"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-2 px-4 py-2 bg-cyan-glow/20 text-cyan-glow rounded-lg text-sm font-medium hover:bg-cyan-glow/30 transition-colors"
+              >
+                Obtenir l&apos;itinéraire
+              </a>
+            </div>
+            <div className="rounded-xl overflow-hidden h-48 lg:h-40">
+              <iframe
+                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2608.892!2d2.3316!3d49.1394!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x47e63f8a2b6d7c7d%3A0x0!2s23%20Chemin%20du%20Bac%20des%20Aubins%2C%2095820%20Bruy%C3%A8res-sur-Oise!5e0!3m2!1sfr!2sfr!4v1700000000000!5m2!1sfr!2sfr"
+                width="100%"
+                height="100%"
+                style={{ border: 0, filter: "grayscale(0.5) contrast(1.1)" }}
+                allowFullScreen
+                loading="lazy"
+                referrerPolicy="no-referrer-when-downgrade"
+                title="AZ Construction - Localisation"
+              />
+            </div>
+          </div>
+        </div>
+      </div>
+
       {/* Bottom Bar */}
       <div className="border-t border-white/10">
         <div className="container mx-auto px-6 py-6">

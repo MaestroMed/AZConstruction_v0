@@ -90,7 +90,7 @@ function SortableRealization({
         {realization.imageUrl ? (
           <Image
             src={realization.imageUrl}
-            alt={realization.titre}
+            alt={realization.titre || "Réalisation AZ Construction"}
             fill
             className="object-cover"
             onError={(e) => {
@@ -595,7 +595,7 @@ function RealizationModal({
                 <div key={index} className="relative aspect-square rounded-lg overflow-hidden bg-gray-100">
                   <Image
                     src={url}
-                    alt={`Image ${index + 1}`}
+                    alt={`${formData.titre || "Réalisation"} - Image ${index + 1}`}
                     fill
                     className="object-cover"
                   />

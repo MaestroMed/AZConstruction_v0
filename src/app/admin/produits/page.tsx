@@ -20,89 +20,47 @@ interface Product {
   createdAt: Date;
 }
 
-// Mock data
-const mockProducts: Product[] = [
-  {
-    id: "1",
-    slug: "porte-jansen-design",
-    nom: "Porte Jansen Design",
-    description: "Porte d'entrée en profilés Jansen",
-    famille: { id: "3", nom: "Portes", slug: "portes" },
-    prixBaseHT: 2850,
-    actif: true,
-    imageUrl: "/images/products/porte-jansen.jpg",
-    createdAt: new Date("2024-01-15"),
-  },
-  {
-    id: "2",
-    slug: "garde-corps-verre",
-    nom: "Garde-corps Verre & Inox",
-    description: "Garde-corps en verre trempé avec fixations inox",
-    famille: { id: "2", nom: "Garde-corps", slug: "garde-corps" },
-    prixBaseHT: 450,
-    actif: true,
-    createdAt: new Date("2024-02-10"),
-  },
-  {
-    id: "3",
-    slug: "escalier-helicoidal",
-    nom: "Escalier Hélicoïdal",
-    description: "Escalier hélicoïdal en acier avec marches bois",
-    famille: { id: "3", nom: "Escaliers", slug: "escaliers" },
-    prixBaseHT: 8500,
-    actif: true,
-    createdAt: new Date("2024-03-05"),
-  },
-  {
-    id: "4",
-    slug: "fenetre-atelier",
-    nom: "Fenêtre Atelier Jansen",
-    description: "Fenêtre style atelier en profilés Jansen",
-    famille: { id: "4", nom: "Fenêtres", slug: "fenetres" },
-    prixBaseHT: 280,
-    actif: true,
-    createdAt: new Date("2024-04-20"),
-  },
-  {
-    id: "5",
-    slug: "grille-acoustique",
-    nom: "Grille Acoustique Premium",
-    description: "Grille de ventilation avec atténuation acoustique",
-    famille: { id: "5", nom: "Grilles de ventilation", slug: "grilles-ventilation" },
-    prixBaseHT: 12500,
-    actif: true,
-    createdAt: new Date("2024-05-12"),
-  },
-  {
-    id: "6",
-    slug: "porte-coupe-feu",
-    nom: "Porte Coupe-feu EI60",
-    description: "Porte coupe-feu certifiée EI60",
-    famille: { id: "3", nom: "Portes", slug: "portes" },
-    prixBaseHT: 4200,
-    actif: false,
-    createdAt: new Date("2024-06-01"),
-  },
-];
-
 const families = [
   { id: "all", nom: "Toutes les familles" },
-  { id: "1", nom: "Garde-corps" },
-  { id: "2", nom: "Garde-corps" },
-  { id: "3", nom: "Escaliers" },
-  { id: "4", nom: "Fenêtres" },
-  { id: "5", nom: "Grilles de ventilation" },
-  { id: "6", nom: "Portails" },
-  { id: "7", nom: "Clôtures" },
+  { id: "garde-corps", nom: "Garde-corps" },
+  { id: "escaliers", nom: "Escaliers" },
+  { id: "portes", nom: "Portes" },
+  { id: "fenetres", nom: "Fenêtres" },
+  { id: "portails", nom: "Portails" },
+  { id: "clotures", nom: "Clôtures" },
+  { id: "grilles-ventilation", nom: "Grilles de ventilation" },
 ];
 
 export default function ProductsPage() {
-  const [products] = React.useState<Product[]>(mockProducts);
+  const [products, setProducts] = React.useState<Product[]>([]);
   const [selectedFamily, setSelectedFamily] = React.useState("all");
+  const [loading, setLoading] = React.useState(true);
+
+  // Charger les produits depuis localStorage
+  React.useEffect(() => {
+    const loadProducts = () => {
+      try {
+        const saved = localStorage.getItem("az_products");
+        if (saved) {
+          const parsed = JSON.parse(saved);
+          setProducts(parsed.map((p: Product) => ({
+            ...p,
+            createdAt: new Date(p.createdAt),
+            famille: { id: p.famille, nom: families.find(f => f.id === p.famille)?.nom || p.famille, slug: p.famille },
+          })));
+        }
+      } catch (e) {
+        console.error("Erreur chargement produits:", e);
+      } finally {
+        setLoading(false);
+      }
+    };
+    loadProducts();
+  }, []);
 
   const filteredProducts = selectedFamily === "all"
     ? products
-    : products.filter((p) => p.famille.id === selectedFamily);
+    : products.filter((p) => p.famille.slug === selectedFamily || p.famille.id === selectedFamily);
 
   const columns: ColumnDef<Product>[] = [
     {
@@ -243,13 +201,41 @@ export default function ProductsPage() {
         ))}
       </div>
 
-      {/* Table */}
-      <DataTable
-        columns={columns}
-        data={filteredProducts}
-        searchPlaceholder="Rechercher un produit..."
-        onExport={() => console.log("Export products")}
-      />
+      {/* Table ou état vide */}
+      {loading ? (
+        <div className="bg-white rounded-xl border border-gray-200 p-12 text-center">
+          <div className="w-8 h-8 border-2 border-cyan-500 border-t-transparent rounded-full animate-spin mx-auto mb-4" />
+          <p className="text-gray-500">Chargement...</p>
+        </div>
+      ) : filteredProducts.length === 0 ? (
+        <div className="bg-white rounded-xl border border-gray-200 p-12 text-center">
+          <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
+            <Package className="w-8 h-8 text-gray-400" />
+          </div>
+          <h3 className="text-lg font-semibold text-gray-900 mb-2">Aucun produit</h3>
+          <p className="text-gray-500 mb-6 max-w-sm mx-auto">
+            {selectedFamily === "all"
+              ? "Commencez par ajouter votre premier produit au catalogue."
+              : "Aucun produit dans cette famille."}
+          </p>
+          {selectedFamily === "all" && (
+            <Link
+              href="/admin/produits/nouveau"
+              className="inline-flex items-center gap-2 px-4 py-2 bg-cyan-500 text-white rounded-lg text-sm font-medium hover:bg-cyan-600 transition-colors"
+            >
+              <Plus className="w-4 h-4" />
+              Ajouter un produit
+            </Link>
+          )}
+        </div>
+      ) : (
+        <DataTable
+          columns={columns}
+          data={filteredProducts}
+          searchPlaceholder="Rechercher un produit..."
+          onExport={() => console.log("Export products")}
+        />
+      )}
     </div>
   );
 }

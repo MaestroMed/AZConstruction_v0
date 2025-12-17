@@ -991,7 +991,7 @@ export default function ConfigurateurPage() {
                   <div className="flex justify-between items-center">
                     <span className="text-white/70">Prix estimé</span>
                     <span className="text-3xl font-bold text-cyan-glow">
-                      {price.toLocaleString()}€
+                      {new Intl.NumberFormat('fr-FR').format(price)}€
                     </span>
                   </div>
                   <p className="text-xs text-white/50 mt-1">TTC, hors pose</p>

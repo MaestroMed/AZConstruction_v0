@@ -27,106 +27,48 @@ interface Client {
   totalSpent: number;
 }
 
-const mockClients: Client[] = [
-  {
-    id: "1",
-    type: "client_particulier",
-    email: "jean.dupont@email.com",
-    nom: "Dupont",
-    prenom: "Jean",
-    telephone: "06 12 34 56 78",
-    validated: true,
-    active: true,
-    createdAt: new Date("2024-01-15"),
-    lastLogin: new Date("2024-12-15"),
-    ordersCount: 3,
-    totalSpent: 8450,
-  },
-  {
-    id: "2",
-    type: "client_pro",
-    email: "contact@martin-construction.fr",
-    nom: "Martin",
-    raisonSociale: "SARL Martin Construction",
-    siret: "123 456 789 00012",
-    telephone: "03 20 12 34 56",
-    remisePercent: 15,
-    validated: true,
-    active: true,
-    createdAt: new Date("2023-06-20"),
-    lastLogin: new Date("2024-12-15"),
-    ordersCount: 24,
-    totalSpent: 156780,
-  },
-  {
-    id: "3",
-    type: "client_particulier",
-    email: "marie.lambert@email.com",
-    nom: "Lambert",
-    prenom: "Marie",
-    telephone: "06 98 76 54 32",
-    validated: true,
-    active: true,
-    createdAt: new Date("2024-03-10"),
-    lastLogin: new Date("2024-12-14"),
-    ordersCount: 2,
-    totalSpent: 15600,
-  },
-  {
-    id: "4",
-    type: "client_pro",
-    email: "pro@habitat-pro.fr",
-    raisonSociale: "SAS Habitat Pro",
-    siret: "987 654 321 00023",
-    telephone: "05 56 78 90 12",
-    remisePercent: 20,
-    validated: true,
-    active: true,
-    createdAt: new Date("2023-02-15"),
-    lastLogin: new Date("2024-12-14"),
-    ordersCount: 45,
-    totalSpent: 287500,
-  },
-  {
-    id: "5",
-    type: "client_particulier",
-    email: "f.petit@email.com",
-    nom: "Petit",
-    prenom: "François",
-    telephone: "06 45 67 89 01",
-    validated: true,
-    active: true,
-    createdAt: new Date("2024-06-05"),
-    lastLogin: new Date("2024-12-13"),
-    ordersCount: 1,
-    totalSpent: 1950,
-  },
-  {
-    id: "6",
-    type: "client_pro",
-    email: "contact@batiment-plus.fr",
-    raisonSociale: "EURL Bâtiment Plus",
-    siret: "456 789 123 00034",
-    telephone: "04 91 23 45 67",
-    remisePercent: 10,
-    validated: false,
-    active: true,
-    createdAt: new Date("2024-12-10"),
-    ordersCount: 0,
-    totalSpent: 0,
-  },
-];
-
-const tabs = [
-  { id: "all", label: "Tous", count: 6 },
-  { id: "particulier", label: "Particuliers", count: 3 },
-  { id: "pro", label: "Professionnels", count: 3 },
-  { id: "pending", label: "En attente", count: 1 },
-];
-
 export default function ClientsPage() {
-  const [clients] = React.useState<Client[]>(mockClients);
+  const [clients, setClients] = React.useState<Client[]>([]);
   const [selectedTab, setSelectedTab] = React.useState("all");
+  const [loading, setLoading] = React.useState(true);
+
+  // Charger les clients depuis localStorage
+  React.useEffect(() => {
+    const loadClients = () => {
+      try {
+        const saved = localStorage.getItem("az_clients");
+        if (saved) {
+          const parsed = JSON.parse(saved);
+          setClients(parsed.map((c: Client) => ({
+            ...c,
+            createdAt: new Date(c.createdAt),
+            lastLogin: c.lastLogin ? new Date(c.lastLogin) : undefined,
+            type: c.type === "professionnel" ? "client_pro" : "client_particulier",
+          })));
+        }
+      } catch (e) {
+        console.error("Erreur chargement clients:", e);
+      } finally {
+        setLoading(false);
+      }
+    };
+    loadClients();
+  }, []);
+
+  // Compteurs dynamiques
+  const counts = React.useMemo(() => ({
+    all: clients.length,
+    particulier: clients.filter((c) => c.type === "client_particulier").length,
+    pro: clients.filter((c) => c.type === "client_pro").length,
+    pending: clients.filter((c) => !c.validated).length,
+  }), [clients]);
+
+  const tabs = [
+    { id: "all", label: "Tous", count: counts.all },
+    { id: "particulier", label: "Particuliers", count: counts.particulier },
+    { id: "pro", label: "Professionnels", count: counts.pro },
+    { id: "pending", label: "En attente", count: counts.pending },
+  ];
 
   const filteredClients = React.useMemo(() => {
     switch (selectedTab) {
@@ -345,13 +287,41 @@ export default function ClientsPage() {
         </div>
       )}
 
-      {/* Table */}
-      <DataTable
-        columns={columns}
-        data={filteredClients}
-        searchPlaceholder="Rechercher un client..."
-        onExport={() => console.log("Export clients")}
-      />
+      {/* Table ou état vide */}
+      {loading ? (
+        <div className="bg-white rounded-xl border border-gray-200 p-12 text-center">
+          <div className="w-8 h-8 border-2 border-cyan-500 border-t-transparent rounded-full animate-spin mx-auto mb-4" />
+          <p className="text-gray-500">Chargement...</p>
+        </div>
+      ) : filteredClients.length === 0 ? (
+        <div className="bg-white rounded-xl border border-gray-200 p-12 text-center">
+          <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
+            <Plus className="w-8 h-8 text-gray-400" />
+          </div>
+          <h3 className="text-lg font-semibold text-gray-900 mb-2">Aucun client</h3>
+          <p className="text-gray-500 mb-6 max-w-sm mx-auto">
+            {selectedTab === "all" 
+              ? "Commencez par ajouter votre premier client."
+              : "Aucun client dans cette catégorie."}
+          </p>
+          {selectedTab === "all" && (
+            <Link
+              href="/admin/clients/nouveau"
+              className="inline-flex items-center gap-2 px-4 py-2 bg-cyan-500 text-white rounded-lg text-sm font-medium hover:bg-cyan-600 transition-colors"
+            >
+              <Plus className="w-4 h-4" />
+              Ajouter un client
+            </Link>
+          )}
+        </div>
+      ) : (
+        <DataTable
+          columns={columns}
+          data={filteredClients}
+          searchPlaceholder="Rechercher un client..."
+          onExport={() => console.log("Export clients")}
+        />
+      )}
     </div>
   );
 }

@@ -1,41 +1,22 @@
-import { auth } from "@/lib/auth/auth";
 import { NextResponse } from "next/server";
+import type { NextRequest } from "next/server";
 
-export default auth((req) => {
-  const { nextUrl, auth: session } = req;
-  const isLoggedIn = !!session?.user;
-  const isAdmin = session?.user?.type === "admin";
+// Middleware simplifié pour Next.js 16
+// L'authentification est gérée côté client et dans les API routes
+export function middleware(request: NextRequest) {
+  const { pathname } = request.nextUrl;
   
-  // Routes protégées admin
-  if (nextUrl.pathname.startsWith("/admin")) {
-    if (!isLoggedIn) {
-      return NextResponse.redirect(new URL("/login?callbackUrl=/admin", nextUrl));
-    }
-    if (!isAdmin) {
-      return NextResponse.redirect(new URL("/compte?error=unauthorized", nextUrl));
-    }
-  }
+  // Pour l'instant, on laisse passer toutes les requêtes
+  // L'authentification sera vérifiée dans les pages/API
+  // TODO: Intégrer auth() quand next-auth sera compatible avec Next.js 16
   
-  // Routes protégées compte client
-  if (nextUrl.pathname.startsWith("/compte")) {
-    if (!isLoggedIn) {
-      return NextResponse.redirect(new URL("/login?callbackUrl=" + nextUrl.pathname, nextUrl));
-    }
-  }
-  
-  // Rate limiting basique pour les API
-  if (nextUrl.pathname.startsWith("/api/") && !nextUrl.pathname.includes("/auth/")) {
-    // Le rate limiting avancé est géré dans chaque route
-  }
-
   return NextResponse.next();
-});
+}
 
 export const config = {
   matcher: [
     "/admin/:path*",
     "/compte/:path*",
-    "/api/:path*",
   ],
 };
 

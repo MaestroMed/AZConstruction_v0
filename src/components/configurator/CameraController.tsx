@@ -47,26 +47,42 @@ export function CameraController({
   const [isTransitioning, setIsTransitioning] = React.useState(false);
 
   // Effet pour animer vers une nouvelle position
+  const isTransitioningRef = React.useRef(false);
+  const animationFrameRef = React.useRef<number | null>(null);
+
   React.useEffect(() => {
-    if (!controlsRef.current || isTransitioning) return;
+    // Attendre que les controls soient montés
+    if (!controlsRef.current) return;
+    if (isTransitioningRef.current) return;
 
     const targetConfig = CAMERA_POSITIONS[targetPosition];
     if (!targetConfig) return;
 
+    // Capturer la référence actuelle
+    const controls = controlsRef.current;
+    if (!controls || !controls.target) return;
+
+    isTransitioningRef.current = true;
     setIsTransitioning(true);
 
     const startPosition = camera.position.clone();
     const endPosition = new THREE.Vector3(...targetConfig.position);
-    const startTarget = controlsRef.current.target.clone();
+    const startTarget = controls.target.clone();
     const endTarget = new THREE.Vector3(...targetConfig.target);
 
-    let progress = 0;
     const duration = 1000; // ms
     const startTime = Date.now();
 
     const animate = () => {
+      // Vérifier que les controls sont toujours valides
+      if (!controlsRef.current || !controlsRef.current.target) {
+        isTransitioningRef.current = false;
+        setIsTransitioning(false);
+        return;
+      }
+
       const elapsed = Date.now() - startTime;
-      progress = Math.min(elapsed / duration, 1);
+      const progress = Math.min(elapsed / duration, 1);
       
       // Easing function (ease-out cubic)
       const eased = 1 - Math.pow(1 - progress, 3);
@@ -76,14 +92,23 @@ export function CameraController({
       controlsRef.current.update();
 
       if (progress < 1) {
-        requestAnimationFrame(animate);
+        animationFrameRef.current = requestAnimationFrame(animate);
       } else {
+        isTransitioningRef.current = false;
         setIsTransitioning(false);
       }
     };
 
     animate();
-  }, [targetPosition, camera, isTransitioning]);
+
+    // Cleanup
+    return () => {
+      if (animationFrameRef.current) {
+        cancelAnimationFrame(animationFrameRef.current);
+      }
+      isTransitioningRef.current = false;
+    };
+  }, [targetPosition, camera]);
 
   return (
     <OrbitControls

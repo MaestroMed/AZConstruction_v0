@@ -26,80 +26,9 @@ interface Quote {
   itemsCount: number;
 }
 
-const mockQuotes: Quote[] = [
-  {
-    id: "1",
-    numero: "DEV-2024-0089",
-    user: { prenom: "Antoine", nom: "Bernard", email: "a.bernard@email.com", type: "client_particulier" },
-    dateDemande: new Date("2024-12-12T10:00:00"),
-    dateExpiration: new Date("2024-12-27T23:59:59"),
-    status: "en_attente",
-    totalTTC: 5600,
-    itemsCount: 2,
-  },
-  {
-    id: "2",
-    numero: "DEV-2024-0088",
-    user: { raisonSociale: "EURL Bâtiment Plus", email: "contact@batiment-plus.fr", type: "client_pro" },
-    dateDemande: new Date("2024-12-10T14:30:00"),
-    dateExpiration: new Date("2024-12-25T23:59:59"),
-    status: "envoye",
-    totalTTC: 24350,
-    itemsCount: 14,
-  },
-  {
-    id: "3",
-    numero: "DEV-2024-0087",
-    user: { prenom: "Sophie", nom: "Martin", email: "sophie.martin@email.com", type: "client_particulier" },
-    dateDemande: new Date("2024-12-08T09:15:00"),
-    dateExpiration: new Date("2024-12-23T23:59:59"),
-    status: "en_attente",
-    totalTTC: 2890,
-    itemsCount: 2,
-  },
-  {
-    id: "4",
-    numero: "DEV-2024-0086",
-    user: { raisonSociale: "SARL Rénovation Express", email: "devis@renovation-express.fr", type: "client_pro" },
-    dateDemande: new Date("2024-12-05T11:00:00"),
-    dateExpiration: new Date("2024-12-20T23:59:59"),
-    status: "accepte",
-    totalTTC: 19000,
-    itemsCount: 2,
-  },
-  {
-    id: "5",
-    numero: "DEV-2024-0085",
-    user: { prenom: "Pierre", nom: "Durand", email: "p.durand@email.com", type: "client_particulier" },
-    dateDemande: new Date("2024-12-01T16:45:00"),
-    dateExpiration: new Date("2024-12-16T23:59:59"),
-    status: "expire",
-    totalTTC: 4500,
-    itemsCount: 1,
-  },
-  {
-    id: "6",
-    numero: "DEV-2024-0084",
-    user: { prenom: "Marc", nom: "Lefebvre", email: "m.lefebvre@email.com", type: "client_particulier" },
-    dateDemande: new Date("2024-11-28T10:00:00"),
-    dateExpiration: new Date("2024-12-13T23:59:59"),
-    status: "refuse",
-    totalTTC: 8200,
-    itemsCount: 3,
-  },
-];
-
-const statuses = [
-  { id: "all", label: "Tous", count: 6 },
-  { id: "en_attente", label: "En attente", count: 2 },
-  { id: "envoye", label: "Envoyés", count: 1 },
-  { id: "accepte", label: "Acceptés", count: 1 },
-  { id: "refuse", label: "Refusés", count: 1 },
-  { id: "expire", label: "Expirés", count: 1 },
-];
-
 const getStatusVariant = (status: string): "success" | "warning" | "error" | "info" | "default" => {
   const map: Record<string, "success" | "warning" | "error" | "info" | "default"> = {
+    brouillon: "default",
     en_attente: "warning",
     envoye: "info",
     accepte: "success",
@@ -111,6 +40,7 @@ const getStatusVariant = (status: string): "success" | "warning" | "error" | "in
 
 const getStatusLabel = (status: string) => {
   const map: Record<string, string> = {
+    brouillon: "Brouillon",
     en_attente: "En attente",
     envoye: "Envoyé",
     accepte: "Accepté",
@@ -121,8 +51,59 @@ const getStatusLabel = (status: string) => {
 };
 
 export default function QuotesPage() {
-  const [quotes] = React.useState<Quote[]>(mockQuotes);
+  const [quotes, setQuotes] = React.useState<Quote[]>([]);
   const [selectedStatus, setSelectedStatus] = React.useState("all");
+  const [loading, setLoading] = React.useState(true);
+
+  // Charger les devis depuis localStorage
+  React.useEffect(() => {
+    const loadQuotes = () => {
+      try {
+        const saved = localStorage.getItem("az_quotes");
+        if (saved) {
+          const parsed = JSON.parse(saved);
+          setQuotes(parsed.map((q: { id: string; numero: string; clientName: string; clientEmail: string; clientType: string; createdAt: string; expiresAt: string; status: string; totalTTC: number; items: unknown[] }) => ({
+            id: q.id,
+            numero: q.numero,
+            user: {
+              nom: q.clientName,
+              email: q.clientEmail,
+              type: q.clientType === "professionnel" ? "client_pro" : "client_particulier",
+            },
+            dateDemande: new Date(q.createdAt),
+            dateExpiration: new Date(q.expiresAt),
+            status: q.status,
+            totalTTC: q.totalTTC,
+            itemsCount: q.items?.length || 0,
+          })));
+        }
+      } catch (e) {
+        console.error("Erreur chargement devis:", e);
+      } finally {
+        setLoading(false);
+      }
+    };
+    loadQuotes();
+  }, []);
+
+  // Compteurs dynamiques
+  const counts = React.useMemo(() => ({
+    all: quotes.length,
+    brouillon: quotes.filter((q) => q.status === "brouillon").length,
+    en_attente: quotes.filter((q) => q.status === "en_attente").length,
+    envoye: quotes.filter((q) => q.status === "envoye").length,
+    accepte: quotes.filter((q) => q.status === "accepte").length,
+    refuse: quotes.filter((q) => q.status === "refuse").length,
+    expire: quotes.filter((q) => q.status === "expire").length,
+  }), [quotes]);
+
+  const statuses = [
+    { id: "all", label: "Tous", count: counts.all },
+    { id: "brouillon", label: "Brouillons", count: counts.brouillon },
+    { id: "en_attente", label: "En attente", count: counts.en_attente },
+    { id: "envoye", label: "Envoyés", count: counts.envoye },
+    { id: "accepte", label: "Acceptés", count: counts.accepte },
+  ];
 
   const filteredQuotes = selectedStatus === "all"
     ? quotes
@@ -311,13 +292,41 @@ export default function QuotesPage() {
         ))}
       </div>
 
-      {/* Table */}
-      <DataTable
-        columns={columns}
-        data={filteredQuotes}
-        searchPlaceholder="Rechercher un devis..."
-        onExport={() => console.log("Export quotes")}
-      />
+      {/* Table ou état vide */}
+      {loading ? (
+        <div className="bg-white rounded-xl border border-gray-200 p-12 text-center">
+          <div className="w-8 h-8 border-2 border-cyan-500 border-t-transparent rounded-full animate-spin mx-auto mb-4" />
+          <p className="text-gray-500">Chargement...</p>
+        </div>
+      ) : filteredQuotes.length === 0 ? (
+        <div className="bg-white rounded-xl border border-gray-200 p-12 text-center">
+          <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
+            <Plus className="w-8 h-8 text-gray-400" />
+          </div>
+          <h3 className="text-lg font-semibold text-gray-900 mb-2">Aucun devis</h3>
+          <p className="text-gray-500 mb-6 max-w-sm mx-auto">
+            {selectedStatus === "all"
+              ? "Créez votre premier devis pour un client."
+              : "Aucun devis avec ce statut."}
+          </p>
+          {selectedStatus === "all" && (
+            <Link
+              href="/admin/devis/nouveau"
+              className="inline-flex items-center gap-2 px-4 py-2 bg-cyan-500 text-white rounded-lg text-sm font-medium hover:bg-cyan-600 transition-colors"
+            >
+              <Plus className="w-4 h-4" />
+              Créer un devis
+            </Link>
+          )}
+        </div>
+      ) : (
+        <DataTable
+          columns={columns}
+          data={filteredQuotes}
+          searchPlaceholder="Rechercher un devis..."
+          onExport={() => console.log("Export quotes")}
+        />
+      )}
     </div>
   );
 }
