@@ -34,13 +34,13 @@ export const metadata: Metadata = {
     "laquage poudre paris",
   ],
   alternates: {
-    canonical: "https://azconstruction.fr/services/thermolaquage/ile-de-france",
+    canonical: "https://zaconstruction.fr/services/thermolaquage/ile-de-france",
   },
   openGraph: {
     title: "Thermolaquage Île-de-France | AZ Construction",
     description:
       "Service de thermolaquage professionnel en Île-de-France. Enlèvement et livraison gratuits.",
-    url: "https://azconstruction.fr/services/thermolaquage/ile-de-france",
+    url: "https://zaconstruction.fr/services/thermolaquage/ile-de-france",
     siteName: "AZ Construction",
     locale: "fr_FR",
     type: "website",

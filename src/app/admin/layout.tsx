@@ -325,7 +325,7 @@ export default function AdminLayout({
                   Administrateur
                 </p>
                 <p className="text-xs text-gray-500 truncate">
-                  admin@azconstruction.fr
+                  admin@zaconstruction.fr
                 </p>
               </div>
             )}

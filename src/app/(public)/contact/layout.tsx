@@ -13,13 +13,13 @@ export const metadata: Metadata = {
     "contact thermolaquage",
   ],
   alternates: {
-    canonical: "https://azconstruction.fr/contact",
+    canonical: "https://zaconstruction.fr/contact",
   },
   openGraph: {
     title: "Contactez-nous | AZ Construction",
     description:
       "Devis gratuit sous 24h. Métallerie sur mesure et thermolaquage professionnel.",
-    url: "https://azconstruction.fr/contact",
+    url: "https://zaconstruction.fr/contact",
     siteName: "AZ Construction",
     locale: "fr_FR",
     type: "website",
@@ -30,13 +30,13 @@ export const metadata: Metadata = {
 const contactSchema = {
   "@context": "https://schema.org",
   "@type": "LocalBusiness",
-  "@id": "https://azconstruction.fr/#organization",
+  "@id": "https://zaconstruction.fr/#organization",
   name: "AZ Construction",
   description:
     "Expert en métallerie sur mesure et thermolaquage professionnel en Île-de-France",
-  url: "https://azconstruction.fr",
+  url: "https://zaconstruction.fr",
   telephone: "+33123456789",
-  email: "contact@azconstruction.fr",
+  email: "contact@zaconstruction.fr",
   address: {
     "@type": "PostalAddress",
     streetAddress: "23 Chemin du Bac des Aubins",

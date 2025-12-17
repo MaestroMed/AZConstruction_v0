@@ -58,8 +58,8 @@ export default function MentionsLegalesPage() {
                 </p>
                 <p>
                   <strong className="text-navy-dark">Email :</strong>{" "}
-                  <a href="mailto:contact@azconstruction.fr" className="text-blue-corporate hover:underline">
-                    contact@azconstruction.fr
+                  <a href="mailto:contact@zaconstruction.fr" className="text-blue-corporate hover:underline">
+                    contact@zaconstruction.fr
                   </a>
                 </p>
               </div>

@@ -53,7 +53,7 @@ export default function ConfidentialitePage() {
                 <p><strong className="text-navy-dark">AZ Construction SARL</strong></p>
                 <p>23 Chemin du Bac des Aubins</p>
                 <p>95820 Bruyères-sur-Oise, France</p>
-                <p>Email : <a href="mailto:dpo@azconstruction.fr" className="text-blue-corporate hover:underline">dpo@azconstruction.fr</a></p>
+                <p>Email : <a href="mailto:dpo@zaconstruction.fr" className="text-blue-corporate hover:underline">dpo@zaconstruction.fr</a></p>
               </div>
             </section>
 
@@ -154,8 +154,8 @@ export default function ConfidentialitePage() {
                 </ul>
                 <p>
                   Pour exercer ces droits, contactez-nous à{" "}
-                  <a href="mailto:dpo@azconstruction.fr" className="text-blue-corporate hover:underline">
-                    dpo@azconstruction.fr
+                  <a href="mailto:dpo@zaconstruction.fr" className="text-blue-corporate hover:underline">
+                    dpo@zaconstruction.fr
                   </a>{" "}
                   ou par courrier à notre adresse.
                 </p>

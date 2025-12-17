@@ -14,13 +14,13 @@ export const metadata: Metadata = {
     "devis métallerie",
   ],
   alternates: {
-    canonical: "https://azconstruction.fr/faq",
+    canonical: "https://zaconstruction.fr/faq",
   },
   openGraph: {
     title: "Questions Fréquentes | AZ Construction",
     description:
       "Toutes les réponses à vos questions sur nos services de métallerie et thermolaquage.",
-    url: "https://azconstruction.fr/faq",
+    url: "https://zaconstruction.fr/faq",
     siteName: "AZ Construction",
     locale: "fr_FR",
     type: "website",

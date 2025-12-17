@@ -21,13 +21,13 @@ export const metadata: Metadata = {
     "traitement anticorrosion",
   ],
   alternates: {
-    canonical: "https://azconstruction.fr/services/thermolaquage",
+    canonical: "https://zaconstruction.fr/services/thermolaquage",
   },
   openGraph: {
     title: "Thermolaquage Professionnel | AZ Construction",
     description:
       "Service de thermolaquage poudre epoxy. 200+ couleurs RAL, garantie 10 ans, devis gratuit sous 24h.",
-    url: "https://azconstruction.fr/services/thermolaquage",
+    url: "https://zaconstruction.fr/services/thermolaquage",
     siteName: "AZ Construction",
     locale: "fr_FR",
     type: "website",
@@ -67,13 +67,13 @@ const jsonLd = {
     // LocalBusiness
     {
       "@type": "LocalBusiness",
-      "@id": "https://azconstruction.fr/#organization",
+      "@id": "https://zaconstruction.fr/#organization",
       name: "AZ Construction",
       description:
         "Expert en métallerie sur mesure et thermolaquage professionnel en Île-de-France",
-      url: "https://azconstruction.fr",
+      url: "https://zaconstruction.fr",
       telephone: "+33123456789",
-      email: "contact@azconstruction.fr",
+      email: "contact@zaconstruction.fr",
       address: {
         "@type": "PostalAddress",
         streetAddress: "23 Chemin du Bac des Aubins",
@@ -115,12 +115,12 @@ const jsonLd = {
     // Service Thermolaquage
     {
       "@type": "Service",
-      "@id": "https://azconstruction.fr/services/thermolaquage/#service",
+      "@id": "https://zaconstruction.fr/services/thermolaquage/#service",
       name: "Thermolaquage Poudre Epoxy",
       description:
         "Service professionnel de thermolaquage poudre epoxy. Protection maximale anticorrosion, 200+ couleurs RAL disponibles, garantie 10 ans.",
       provider: {
-        "@id": "https://azconstruction.fr/#organization",
+        "@id": "https://zaconstruction.fr/#organization",
       },
       serviceType: "Thermolaquage",
       areaServed: [
@@ -171,7 +171,7 @@ const jsonLd = {
     // FAQPage
     {
       "@type": "FAQPage",
-      "@id": "https://azconstruction.fr/services/thermolaquage/#faq",
+      "@id": "https://zaconstruction.fr/services/thermolaquage/#faq",
       mainEntity: [
         {
           "@type": "Question",
@@ -223,19 +223,19 @@ const jsonLd = {
           "@type": "ListItem",
           position: 1,
           name: "Accueil",
-          item: "https://azconstruction.fr",
+          item: "https://zaconstruction.fr",
         },
         {
           "@type": "ListItem",
           position: 2,
           name: "Services",
-          item: "https://azconstruction.fr/services",
+          item: "https://zaconstruction.fr/services",
         },
         {
           "@type": "ListItem",
           position: 3,
           name: "Thermolaquage",
-          item: "https://azconstruction.fr/services/thermolaquage",
+          item: "https://zaconstruction.fr/services/thermolaquage",
         },
       ],
     },

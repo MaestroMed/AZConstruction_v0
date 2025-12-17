@@ -546,7 +546,7 @@ export function QuoteNotificationEmail({
           <tr>
             <td style={{ padding: "12px 32px 32px", textAlign: "center" }}>
               <a
-                href={`https://azconstruction.fr/admin/devis`}
+                href={`https://zaconstruction.fr/admin/devis`}
                 style={{
                   display: "inline-block",
                   padding: "14px 32px",

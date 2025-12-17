@@ -32,13 +32,13 @@ export const metadata: Metadata = {
     "laquage poudre 95",
   ],
   alternates: {
-    canonical: "https://azconstruction.fr/services/thermolaquage/val-doise-95",
+    canonical: "https://zaconstruction.fr/services/thermolaquage/val-doise-95",
   },
   openGraph: {
     title: "Thermolaquage Val-d'Oise (95) | AZ Construction",
     description:
       "Thermolaquage professionnel dans le Val-d'Oise. Atelier à Bruyères-sur-Oise.",
-    url: "https://azconstruction.fr/services/thermolaquage/val-doise-95",
+    url: "https://zaconstruction.fr/services/thermolaquage/val-doise-95",
     siteName: "AZ Construction",
     locale: "fr_FR",
     type: "website",

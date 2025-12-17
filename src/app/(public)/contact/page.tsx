@@ -155,10 +155,10 @@ export default function ContactPage() {
                     <div>
                       <h3 className="font-semibold text-navy-dark mb-1">Email</h3>
                       <a
-                        href="mailto:contact@azconstruction.fr"
+                        href="mailto:contact@zaconstruction.fr"
                         className="text-gray-600 hover:text-cyan-glow transition-colors"
                       >
-                        contact@azconstruction.fr
+                        contact@zaconstruction.fr
                       </a>
                       <p className="text-sm text-gray-400 mt-1">
                         Réponse sous 24h

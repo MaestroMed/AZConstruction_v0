@@ -56,7 +56,7 @@ const defaultSettings: SiteSettings = {
   ville: "Bruyères-sur-Oise",
   pays: "France",
   telephone: "+33 1 23 45 67 89",
-  email: "contact@azconstruction.fr",
+  email: "contact@zaconstruction.fr",
   siret: "123 456 789 00012",
   tvaIntra: "FR12345678901",
   facebook: "https://facebook.com/azconstruction",

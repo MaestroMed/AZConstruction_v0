@@ -31,13 +31,13 @@ export const metadata: Metadata = {
     "blanc RAL",
   ],
   alternates: {
-    canonical: "https://azconstruction.fr/couleurs-ral",
+    canonical: "https://zaconstruction.fr/couleurs-ral",
   },
   openGraph: {
     title: "Nuancier RAL Thermolaquage | AZ Construction",
     description:
       "200+ couleurs RAL disponibles pour thermolaquage. Trouvez la teinte parfaite pour votre projet.",
-    url: "https://azconstruction.fr/couleurs-ral",
+    url: "https://zaconstruction.fr/couleurs-ral",
     siteName: "AZ Construction",
     locale: "fr_FR",
     type: "website",

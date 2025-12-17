@@ -170,7 +170,7 @@ const QuoteDocument: React.FC<{ data: QuoteData }> = ({ data }) => (
           <Text style={{ marginTop: 10 }}>23 Chemin du Bac des Aubins</Text>
           <Text>95820 Bruyères-sur-Oise</Text>
           <Text>Tél: +33 1 23 45 67 89</Text>
-          <Text>contact@azconstruction.fr</Text>
+          <Text>contact@zaconstruction.fr</Text>
         </View>
         <View style={styles.devisInfo}>
           <Text style={styles.devisNumber}>DEVIS N°{data.numero}</Text>

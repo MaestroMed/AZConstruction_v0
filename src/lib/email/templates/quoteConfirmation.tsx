@@ -374,7 +374,7 @@ export function QuoteConfirmationEmail({
           <tr>
             <td style={{ padding: "0 32px 32px", textAlign: "center" }}>
               <a
-                href="https://azconstruction.fr/compte/devis"
+                href="https://zaconstruction.fr/compte/devis"
                 style={{
                   display: "inline-block",
                   padding: "14px 32px",
@@ -418,7 +418,7 @@ export function QuoteConfirmationEmail({
                   textAlign: "center",
                 }}
               >
-                📞 01 23 45 67 89 | ✉️ contact@azconstruction.fr
+                📞 01 23 45 67 89 | ✉️ contact@zaconstruction.fr
               </p>
             </td>
           </tr>

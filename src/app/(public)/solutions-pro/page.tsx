@@ -511,7 +511,7 @@ export default function SolutionsProPage() {
                       </div>
                     </a>
                     <a
-                      href="mailto:pro@azconstruction.fr"
+                      href="mailto:pro@zaconstruction.fr"
                       className="flex items-center gap-4 text-white hover:text-cyan-glow transition-colors"
                     >
                       <div className="w-12 h-12 rounded-xl bg-white/10 flex items-center justify-center">
@@ -519,7 +519,7 @@ export default function SolutionsProPage() {
                       </div>
                       <div>
                         <p className="text-sm text-white/60">Email</p>
-                        <p className="font-semibold">pro@azconstruction.fr</p>
+                        <p className="font-semibold">pro@zaconstruction.fr</p>
                       </div>
                     </a>
                   </div>

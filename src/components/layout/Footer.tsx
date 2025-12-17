@@ -174,11 +174,11 @@ export default function Footer() {
                 <span>01 23 45 67 89</span>
               </a>
               <a
-                href="mailto:contact@azconstruction.fr"
+                href="mailto:contact@zaconstruction.fr"
                 className="flex items-center gap-3 text-white/70 hover:text-cyan-glow transition-colors"
               >
                 <Mail className="w-4 h-4" />
-                <span>contact@azconstruction.fr</span>
+                <span>contact@zaconstruction.fr</span>
               </a>
               <div className="flex items-start gap-3 text-white/70">
                 <MapPin className="w-4 h-4 mt-0.5 flex-shrink-0" />

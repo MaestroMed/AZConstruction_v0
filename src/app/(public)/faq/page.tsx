@@ -129,7 +129,7 @@ const faqCategories = [
       {
         question: "Que faire en cas de problème après la pose ?",
         answer:
-          "Contactez notre service après-vente au 01 23 45 67 89 ou par email à sav@azconstruction.fr. Nous nous engageons à prendre en charge votre demande sous 48h et à intervenir rapidement si nécessaire.",
+          "Contactez notre service après-vente au 01 23 45 67 89 ou par email à sav@zaconstruction.fr. Nous nous engageons à prendre en charge votre demande sous 48h et à intervenir rapidement si nécessaire.",
       },
       {
         question: "Proposez-vous des pièces détachées ?",
