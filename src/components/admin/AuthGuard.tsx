@@ -4,7 +4,7 @@ import * as React from "react";
 import { useRouter } from "next/navigation";
 import { Loader2, Lock, Eye, EyeOff } from "lucide-react";
 
-const ADMIN_PASSWORD = process.env.NEXT_PUBLIC_ADMIN_PASSWORD || "AZAdmin2024!";
+const ADMIN_PASSWORD = process.env.NEXT_PUBLIC_ADMIN_PASSWORD || "AZConstruct2024!";
 const SESSION_KEY = "az_admin_session";
 const SESSION_DURATION = 24 * 60 * 60 * 1000; // 24 heures
 
