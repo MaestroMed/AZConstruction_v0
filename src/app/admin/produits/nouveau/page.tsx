@@ -201,7 +201,7 @@ export default function NouveauProduitPage() {
             <Select
               label="Famille de produit *"
               value={form.famille}
-              onChange={(e) => updateField("famille", e.target.value)}
+              onChange={(value) => updateField("famille", value)}
               error={errors.famille}
               options={[{ value: "", label: "Sélectionner une famille" }, ...productFamilies]}
             />
