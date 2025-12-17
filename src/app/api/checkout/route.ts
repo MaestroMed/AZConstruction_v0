@@ -4,7 +4,7 @@ import { auth } from "@/lib/auth/auth";
 import { withRateLimit } from "@/lib/rate-limit";
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
-  apiVersion: "2025-03-31.basil",
+  apiVersion: "2025-12-15.clover",
 });
 
 export async function POST(request: NextRequest) {
