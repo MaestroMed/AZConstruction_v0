@@ -419,7 +419,7 @@ export default function NouveauDevisPage() {
             <Select
               label="Validité du devis"
               value={form.validite.toString()}
-              onChange={(e) => setForm({ ...form, validite: Number(e.target.value) })}
+              onChange={(value) => setForm({ ...form, validite: Number(value) })}
               options={[
                 { value: "7", label: "7 jours" },
                 { value: "15", label: "15 jours" },
