@@ -1,7 +1,15 @@
+import "dotenv/config";
 import { PrismaClient, UserType, OptionType } from "@prisma/client";
+import { PrismaPg } from "@prisma/adapter-pg";
+import { Pool } from "pg";
 import { hash } from "bcryptjs";
 
-const prisma = new PrismaClient();
+// Prisma 7 avec adaptateur PostgreSQL
+const pool = new Pool({
+  connectionString: process.env.DATABASE_URL,
+});
+const adapter = new PrismaPg(pool);
+const prisma = new PrismaClient({ adapter });
 
 async function main() {
   console.log("🌱 Seeding database...");
