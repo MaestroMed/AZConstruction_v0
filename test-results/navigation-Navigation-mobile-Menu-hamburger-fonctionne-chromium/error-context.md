@@ -1,0 +1,394 @@
+# Page snapshot
+
+```yaml
+- generic [ref=e1]:
+  - generic [ref=e2]:
+    - banner [ref=e3]:
+      - generic [ref=e4]:
+        - navigation [ref=e5]:
+          - link "Construction" [ref=e6] [cursor=pointer]:
+            - /url: /
+            - img [ref=e8]
+            - generic [ref=e14]: Construction
+          - button "Toggle menu" [active] [ref=e15]:
+            - img [ref=e16]
+        - generic [ref=e20]:
+          - link "«Produits" [ref=e21] [cursor=pointer]:
+            - /url: /produits
+          - link "«Réalisations" [ref=e22] [cursor=pointer]:
+            - /url: /realisations
+          - link "«Solutions Pro" [ref=e23] [cursor=pointer]:
+            - /url: /solutions-pro
+          - link "«Habitat" [ref=e24] [cursor=pointer]:
+            - /url: /habitat
+          - link "«Thermolaquage" [ref=e25] [cursor=pointer]:
+            - /url: /services/thermolaquage
+          - link "«À propos" [ref=e26] [cursor=pointer]:
+            - /url: /a-propos
+          - link "«Contact" [ref=e27] [cursor=pointer]:
+            - /url: /contact
+          - link "Espace client" [ref=e29] [cursor=pointer]:
+            - /url: /login
+            - button "Espace client" [ref=e30]:
+              - img [ref=e31]
+              - text: Espace client
+    - main [ref=e34]:
+      - generic [ref=e35]:
+        - img "AZ Construction - Atelier de métallerie" [ref=e37]
+        - generic [ref=e42]:
+          - generic [ref=e43]: Fabrication française depuis 2015
+          - heading "L'acier sur mesure vite et bien." [level=1] [ref=e45]:
+            - text: L'acier sur
+            - generic [ref=e46]: mesure
+            - text: vite et bien.
+          - paragraph [ref=e48]: "Expert en métallerie sur mesure : garde-corps, escaliers, portes, fenêtres, portails et clôtures. Profilés Jansen."
+          - generic [ref=e49]:
+            - link "Configurer mon projet Configurer mon projet" [ref=e50] [cursor=pointer]:
+              - /url: /produits
+              - button "Configurer mon projet Configurer mon projet" [ref=e51]:
+                - generic [ref=e52]: Configurer mon projet
+                - img [ref=e53]
+                - generic [ref=e56]:
+                  - generic [ref=e57]: Configurer mon projet
+                  - img [ref=e58]
+            - link "Voir nos réalisations" [ref=e60] [cursor=pointer]:
+              - /url: /realisations
+              - button "Voir nos réalisations" [ref=e61]:
+                - img [ref=e62]
+                - text: Voir nos réalisations
+          - generic [ref=e64]:
+            - generic [ref=e65]:
+              - generic [ref=e66]: "10"
+              - generic [ref=e67]: Années d'expertise
+            - generic [ref=e68]:
+              - generic [ref=e69]: 1500+
+              - generic [ref=e70]: Projets réalisés
+            - generic [ref=e71]:
+              - generic [ref=e72]: 1800m²
+              - generic [ref=e73]: D'atelier
+      - generic [ref=e80]:
+        - link "Atelier 1 800 m² Capacité de production industrielle pour tous vos projets d'envergure." [ref=e82] [cursor=pointer]:
+          - /url: /a-propos
+          - generic [ref=e84]:
+            - img [ref=e87]
+            - generic [ref=e89]:
+              - generic [ref=e90]:
+                - heading "Atelier 1 800 m²" [level=3] [ref=e91]
+                - img [ref=e92]
+              - paragraph [ref=e94]: Capacité de production industrielle pour tous vos projets d'envergure.
+        - link "Réactivité Devis rapide et délais de fabrication optimisés pour votre satisfaction." [ref=e96] [cursor=pointer]:
+          - /url: /contact
+          - generic [ref=e98]:
+            - img [ref=e101]
+            - generic [ref=e104]:
+              - generic [ref=e105]:
+                - heading "Réactivité" [level=3] [ref=e106]
+                - img [ref=e107]
+              - paragraph [ref=e109]: Devis rapide et délais de fabrication optimisés pour votre satisfaction.
+        - link "Thermolaquage Pro 200+ couleurs RAL, garantie 10 ans. Protection durable haut de gamme. Service Premium" [ref=e111] [cursor=pointer]:
+          - /url: /services/thermolaquage
+          - generic [ref=e113]:
+            - img [ref=e116]
+            - generic [ref=e120]:
+              - generic [ref=e121]:
+                - heading "Thermolaquage Pro" [level=3] [ref=e122]
+                - img [ref=e123]
+              - paragraph [ref=e125]: 200+ couleurs RAL, garantie 10 ans. Protection durable haut de gamme.
+              - generic [ref=e126]: Service Premium
+      - generic [ref=e131]:
+        - generic [ref=e132]:
+          - generic [ref=e133]:
+            - img [ref=e134]
+            - generic [ref=e137]: Service Premium
+          - heading "Thermolaquage Professionnel" [level=2] [ref=e138]
+          - paragraph [ref=e139]: Finition haut de gamme pour tous vos ouvrages métalliques. Notre atelier équipé d'une cabine de 8m et d'un four XXL garantit une qualité industrielle pour vos portails, garde-corps, escaliers et structures.
+          - generic [ref=e140]:
+            - generic [ref=e141]:
+              - img [ref=e142]
+              - generic [ref=e144]: Garantie 10 ans
+            - generic [ref=e145]:
+              - img [ref=e146]
+              - generic [ref=e152]: 200+ couleurs RAL
+            - generic [ref=e153]:
+              - img [ref=e154]
+              - generic [ref=e156]: Traitement express 48h
+          - generic [ref=e157]:
+            - generic [ref=e158]:
+              - img [ref=e159]
+              - generic [ref=e162]: Résistance UV maximale
+            - generic [ref=e163]:
+              - img [ref=e164]
+              - generic [ref=e167]: Zéro COV - Écologique
+            - generic [ref=e168]:
+              - img [ref=e169]
+              - generic [ref=e172]: Finition uniforme
+            - generic [ref=e173]:
+              - img [ref=e174]
+              - generic [ref=e177]: Anti-corrosion 25+ ans
+          - generic [ref=e178]:
+            - link "Découvrir le service" [ref=e179] [cursor=pointer]:
+              - /url: /services/thermolaquage
+              - button "Découvrir le service" [ref=e180]:
+                - text: Découvrir le service
+                - img [ref=e181]
+            - link "01 23 45 67 89" [ref=e183] [cursor=pointer]:
+              - /url: tel:+33123456789
+              - button "01 23 45 67 89" [ref=e184]:
+                - img [ref=e185]
+                - text: 01 23 45 67 89
+        - generic [ref=e187]:
+          - generic [ref=e188]:
+            - generic [ref=e189]:
+              - generic [ref=e190]:
+                - heading "Nuancier RAL" [level=3] [ref=e191]
+                - paragraph [ref=e192]: Plus de 200 teintes disponibles
+              - img [ref=e194]
+            - generic [ref=e198]:
+              - generic [ref=e199] [cursor=pointer]:
+                - generic [ref=e202]: RAL 7016
+                - paragraph [ref=e203]: Gris Anthracite
+              - generic [ref=e204] [cursor=pointer]:
+                - generic [ref=e207]: RAL 9005
+                - paragraph [ref=e208]: Noir Profond
+              - generic [ref=e209] [cursor=pointer]:
+                - generic [ref=e212]: RAL 9010
+                - paragraph [ref=e213]: Blanc Pur
+              - generic [ref=e214] [cursor=pointer]:
+                - generic [ref=e217]: RAL 7035
+                - paragraph [ref=e218]: Gris Clair
+              - generic [ref=e219] [cursor=pointer]:
+                - generic [ref=e222]: RAL 3004
+                - paragraph [ref=e223]: Rouge Bordeaux
+              - generic [ref=e224] [cursor=pointer]:
+                - generic [ref=e227]: RAL 6005
+                - paragraph [ref=e228]: Vert Mousse
+            - link "Voir toutes les couleurs" [ref=e229] [cursor=pointer]:
+              - /url: /couleurs-ral
+              - button "Voir toutes les couleurs" [ref=e230]:
+                - text: Voir toutes les couleurs
+                - img [ref=e231]
+          - generic [ref=e233]:
+            - img [ref=e235]
+            - generic [ref=e237]:
+              - paragraph [ref=e238]: Garantie 10 ans
+              - paragraph [ref=e239]: Écaillage & décoloration
+      - generic [ref=e241]:
+        - generic [ref=e242]:
+          - generic [ref=e243]:
+            - img [ref=e244]
+            - generic [ref=e246]: Avis clients vérifiés
+          - heading "Ils Nous Font Confiance" [level=2] [ref=e247]
+          - paragraph [ref=e248]: Découvrez les témoignages de nos clients satisfaits en Île-de-France. Qualité, réactivité et savoir-faire reconnus.
+        - generic [ref=e250]:
+          - generic [ref=e253]:
+            - img [ref=e254]
+            - generic [ref=e257]:
+              - img [ref=e258]
+              - img [ref=e260]
+              - img [ref=e262]
+              - img [ref=e264]
+              - img [ref=e266]
+            - paragraph [ref=e268]: "\"Un garde-corps sur mesure pour notre escalier, en acier thermolaqué noir mat. Le résultat est magnifique et la pose a été rapide. Merci à toute l'équipe !\""
+            - generic [ref=e269]:
+              - generic [ref=e270]:
+                - paragraph [ref=e271]: Marie-Claire D.
+                - generic [ref=e272]:
+                  - img [ref=e273]
+                  - text: Saint-Germain-en-Laye (78)
+              - paragraph [ref=e277]: Garde-corps escalier
+          - generic [ref=e278]:
+            - button [ref=e279]
+            - button [ref=e280]
+            - button [ref=e281]
+            - button [ref=e282]
+            - button [ref=e283]
+            - button [ref=e284]
+        - generic [ref=e285]:
+          - generic [ref=e286]:
+            - generic [ref=e287]: 1500+
+            - generic [ref=e288]: Projets réalisés
+          - generic [ref=e289]:
+            - generic [ref=e290]: 98%
+            - generic [ref=e291]: Clients satisfaits
+          - generic [ref=e292]:
+            - generic [ref=e293]: 10 ans
+            - generic [ref=e294]: Garantie thermolaquage
+          - generic [ref=e295]:
+            - generic [ref=e296]: 4.9/5
+            - generic [ref=e297]: Note moyenne
+        - link "Rejoignez nos clients satisfaits" [ref=e299] [cursor=pointer]:
+          - /url: /contact
+          - button "Rejoignez nos clients satisfaits" [ref=e300]:
+            - text: Rejoignez nos clients satisfaits
+            - img [ref=e301]
+      - generic [ref=e305]:
+        - button "Previous partners" [ref=e306]:
+          - img [ref=e307]
+        - button "Next partners" [ref=e309]:
+          - img [ref=e310]
+        - generic [ref=e312]:
+          - generic [ref=e315]:
+            - generic [ref=e316]: JANSEN
+            - generic [ref=e317]: STEEL SYSTEMS
+          - generic [ref=e320]:
+            - generic [ref=e321]: BOUYGUES
+            - generic [ref=e322]: Construction
+          - generic [ref=e326]: VINCI
+          - generic [ref=e331]: EIFFAGE
+          - generic [ref=e335]: SAINT-GOBAIN
+      - generic [ref=e337]:
+        - generic [ref=e338]:
+          - generic [ref=e339]:
+            - generic [ref=e340]: Portfolio
+            - heading "Nos réalisations" [level=2] [ref=e341]
+            - paragraph [ref=e342]: Découvrez nos derniers projets et laissez-vous inspirer pour votre future création.
+          - generic [ref=e343]:
+            - button [disabled] [ref=e344]:
+              - img [ref=e345]
+            - button [ref=e347]:
+              - img [ref=e348]
+        - generic [ref=e350]:
+          - generic [ref=e351]:
+            - link "Hangar Industriel Industriel Hangar Industriel Lyon Voir le projet" [ref=e353] [cursor=pointer]:
+              - /url: /realisations/1
+              - generic [ref=e354]:
+                - img "Hangar Industriel" [ref=e356]
+                - generic [ref=e358]: Industriel
+                - generic [ref=e359]:
+                  - heading "Hangar Industriel" [level=3] [ref=e360]
+                  - paragraph [ref=e361]:
+                    - img [ref=e362]
+                    - text: Lyon
+                  - generic [ref=e366]:
+                    - text: Voir le projet
+                    - img [ref=e367]
+            - link "Fenêtres Jansen Résidentiel Fenêtres Jansen Bordeaux Voir le projet" [ref=e370] [cursor=pointer]:
+              - /url: /realisations/2
+              - generic [ref=e371]:
+                - img "Fenêtres Jansen" [ref=e373]
+                - generic [ref=e375]: Résidentiel
+                - generic [ref=e376]:
+                  - heading "Fenêtres Jansen" [level=3] [ref=e377]
+                  - paragraph [ref=e378]:
+                    - img [ref=e379]
+                    - text: Bordeaux
+                  - generic [ref=e383]:
+                    - text: Voir le projet
+                    - img [ref=e384]
+            - link "Escalier Monumental Architecture Escalier Monumental Paris Voir le projet" [ref=e387] [cursor=pointer]:
+              - /url: /realisations/3
+              - generic [ref=e388]:
+                - img "Escalier Monumental" [ref=e390]
+                - generic [ref=e392]: Architecture
+                - generic [ref=e393]:
+                  - heading "Escalier Monumental" [level=3] [ref=e394]
+                  - paragraph [ref=e395]:
+                    - img [ref=e396]
+                    - text: Paris
+                  - generic [ref=e400]:
+                    - text: Voir le projet
+                    - img [ref=e401]
+          - generic [ref=e403]:
+            - button [ref=e404]
+            - button [ref=e405]
+        - link "Voir toutes nos réalisations" [ref=e407] [cursor=pointer]:
+          - /url: /realisations
+          - text: Voir toutes nos réalisations
+          - img [ref=e408]
+    - contentinfo [ref=e410]:
+      - generic [ref=e412]:
+        - generic [ref=e413]:
+          - link "Construction" [ref=e414] [cursor=pointer]:
+            - /url: /
+            - img [ref=e416]
+            - generic [ref=e421]: Construction
+          - paragraph [ref=e422]: "Expert en métallerie sur mesure : garde-corps, escaliers, portes, fenêtres, portails et clôtures. Profilés Jansen. 1800m² d'atelier."
+          - generic [ref=e423]:
+            - link "01 23 45 67 89" [ref=e424] [cursor=pointer]:
+              - /url: tel:+33123456789
+              - img [ref=e425]
+              - generic [ref=e427]: 01 23 45 67 89
+            - link "contact@azconstruction.fr" [ref=e428] [cursor=pointer]:
+              - /url: mailto:contact@azconstruction.fr
+              - img [ref=e429]
+              - generic [ref=e432]: contact@azconstruction.fr
+            - generic [ref=e433]:
+              - img [ref=e434]
+              - generic [ref=e437]:
+                - text: 23 Chemin du Bac des Aubins
+                - text: 95820 Bruyères-sur-Oise, France
+        - generic [ref=e438]:
+          - heading "Produits" [level=4] [ref=e439]
+          - list [ref=e440]:
+            - listitem [ref=e441]:
+              - link "Garde-corps" [ref=e442] [cursor=pointer]:
+                - /url: /produits/garde-corps
+            - listitem [ref=e443]:
+              - link "Escaliers" [ref=e444] [cursor=pointer]:
+                - /url: /produits/escaliers
+            - listitem [ref=e445]:
+              - link "Portes & Fenêtres" [ref=e446] [cursor=pointer]:
+                - /url: /produits/portes
+            - listitem [ref=e447]:
+              - link "Portails & Clôtures" [ref=e448] [cursor=pointer]:
+                - /url: /produits/portails
+            - listitem [ref=e449]:
+              - link "Grilles de ventilation" [ref=e450] [cursor=pointer]:
+                - /url: /produits/grilles-ventilation
+        - generic [ref=e451]:
+          - heading "Entreprise" [level=4] [ref=e452]
+          - list [ref=e453]:
+            - listitem [ref=e454]:
+              - link "À propos" [ref=e455] [cursor=pointer]:
+                - /url: /a-propos
+            - listitem [ref=e456]:
+              - link "Réalisations" [ref=e457] [cursor=pointer]:
+                - /url: /realisations
+            - listitem [ref=e458]:
+              - link "Solutions Pro" [ref=e459] [cursor=pointer]:
+                - /url: /solutions-pro
+            - listitem [ref=e460]:
+              - link "Habitat" [ref=e461] [cursor=pointer]:
+                - /url: /habitat
+            - listitem [ref=e462]:
+              - link "Contact" [ref=e463] [cursor=pointer]:
+                - /url: /contact
+        - generic [ref=e464]:
+          - heading "Informations" [level=4] [ref=e465]
+          - list [ref=e466]:
+            - listitem [ref=e467]:
+              - link "FAQ" [ref=e468] [cursor=pointer]:
+                - /url: /faq
+            - listitem [ref=e469]:
+              - link "Mentions légales" [ref=e470] [cursor=pointer]:
+                - /url: /mentions-legales
+            - listitem [ref=e471]:
+              - link "CGV" [ref=e472] [cursor=pointer]:
+                - /url: /cgv
+            - listitem [ref=e473]:
+              - link "Politique de confidentialité" [ref=e474] [cursor=pointer]:
+                - /url: /confidentialite
+      - generic [ref=e477]:
+        - paragraph [ref=e478]: © 2025 AZ Construction. Tous droits réservés.
+        - generic [ref=e479]:
+          - link "Facebook" [ref=e480] [cursor=pointer]:
+            - /url: https://facebook.com
+            - img [ref=e481]
+          - link "Twitter" [ref=e483] [cursor=pointer]:
+            - /url: https://twitter.com
+            - img [ref=e484]
+          - link "Instagram" [ref=e486] [cursor=pointer]:
+            - /url: https://instagram.com
+            - img [ref=e487]
+          - link "LinkedIn" [ref=e490] [cursor=pointer]:
+            - /url: https://linkedin.com
+            - img [ref=e491]
+  - button "Open Next.js Dev Tools" [ref=e500] [cursor=pointer]:
+    - generic [ref=e503]:
+      - text: Compiling
+      - generic [ref=e504]:
+        - generic [ref=e505]: .
+        - generic [ref=e506]: .
+        - generic [ref=e507]: .
+  - alert [ref=e508]
+```

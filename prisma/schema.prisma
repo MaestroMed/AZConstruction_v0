@@ -1,0 +1,414 @@
+// ============================================
+// AZ Construction - Prisma Schema
+// ============================================
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+// ============================================
+// USERS & AUTH
+// ============================================
+
+enum UserType {
+  client_particulier
+  client_pro
+  admin
+}
+
+model User {
+  id            String    @id @default(cuid())
+  type          UserType  @default(client_particulier)
+  email         String    @unique
+  passwordHash  String
+  nom           String?
+  prenom        String?
+  raisonSociale String?
+  telephone     String?
+  siret         String?
+  tvaIntra      String?
+  remisePercent Float?    @default(0)
+  validated     Boolean   @default(false)
+  active        Boolean   @default(true)
+  
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  lastLogin     DateTime?
+  
+  // Relations
+  addresses     Address[]
+  orders        Order[]
+  quotes        Quote[]
+  cart          Cart?
+  messages      Message[]
+  
+  @@map("users")
+}
+
+model Address {
+  id          String   @id @default(cuid())
+  userId      String
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  label       String?
+  rue         String
+  complement  String?
+  codePostal  String
+  ville       String
+  pays        String   @default("France")
+  isDefault   Boolean  @default(false)
+  
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  
+  @@map("addresses")
+}
+
+// ============================================
+// PRODUCTS
+// ============================================
+
+model ProductFamily {
+  id          String    @id @default(cuid())
+  nom         String
+  slug        String    @unique
+  description String?
+  imageUrl    String?
+  ordre       Int       @default(0)
+  active      Boolean   @default(true)
+  
+  products    Product[]
+  
+  @@map("product_families")
+}
+
+model Product {
+  id               String         @id @default(cuid())
+  slug             String         @unique
+  nom              String
+  description      String?
+  
+  familleId        String
+  famille          ProductFamily  @relation(fields: [familleId], references: [id])
+  
+  prixBaseHT       Float
+  poidsBase        Float?
+  delaiFabrication Int            @default(14) // jours
+  actif            Boolean        @default(true)
+  
+  imageUrl         String?
+  model3dUrl       String?
+  promptIA         String?
+  
+  createdAt        DateTime       @default(now())
+  updatedAt        DateTime       @updatedAt
+  
+  // Relations
+  options          ProductOptionConfig[]
+  cartItems        CartItem[]
+  orderItems       OrderItem[]
+  quoteItems       QuoteItem[]
+  
+  @@map("products")
+}
+
+// ============================================
+// PRODUCT OPTIONS & CONFIGURATION
+// ============================================
+
+enum OptionType {
+  number
+  text
+  boolean
+  choice
+  color
+}
+
+model ProductOption {
+  id               String     @id @default(cuid())
+  nom              String
+  slug             String     @unique
+  type             OptionType
+  valeursPossibles Json?      // Array of possible values for choice/color types
+  global           Boolean    @default(false)
+  ordre            Int        @default(0)
+  
+  productConfigs   ProductOptionConfig[]
+  
+  @@map("product_options")
+}
+
+model ProductOptionConfig {
+  id                String        @id @default(cuid())
+  productId         String
+  product           Product       @relation(fields: [productId], references: [id], onDelete: Cascade)
+  optionId          String
+  option            ProductOption @relation(fields: [optionId], references: [id], onDelete: Cascade)
+  
+  valeurMin         Float?
+  valeurMax         Float?
+  valeurDefaut      String?
+  supplementHT      Float?        @default(0)
+  multiplicateurPrix Float?       @default(1)
+  obligatoire       Boolean       @default(false)
+  
+  @@unique([productId, optionId])
+  @@map("product_option_configs")
+}
+
+model RALColor {
+  code    String @id
+  nom     String
+  hex     String
+  
+  @@map("ral_colors")
+}
+
+// ============================================
+// CART
+// ============================================
+
+model Cart {
+  id        String     @id @default(cuid())
+  userId    String?    @unique
+  user      User?      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  sessionId String?    @unique // For anonymous carts
+  
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+  
+  items     CartItem[]
+  
+  @@map("carts")
+}
+
+model CartItem {
+  id             String   @id @default(cuid())
+  cartId         String
+  cart           Cart     @relation(fields: [cartId], references: [id], onDelete: Cascade)
+  productId      String
+  product        Product  @relation(fields: [productId], references: [id])
+  
+  quantity       Int      @default(1)
+  configuration  Json     // Snapshot of selected options
+  prixUnitaireHT Float
+  prixTotalHT    Float
+  
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+  
+  @@map("cart_items")
+}
+
+// ============================================
+// ORDERS
+// ============================================
+
+enum OrderStatus {
+  en_attente_paiement
+  payee
+  en_preparation
+  en_fabrication
+  expediee
+  livree
+  annulee
+}
+
+enum PaymentStatus {
+  en_attente
+  paye
+  rembourse
+  echec
+}
+
+model Order {
+  id                  String        @id @default(cuid())
+  numero              String        @unique // ORD20250001
+  userId              String
+  user                User          @relation(fields: [userId], references: [id])
+  
+  dateCommande        DateTime      @default(now())
+  statusCommande      OrderStatus   @default(en_attente_paiement)
+  statusPaiement      PaymentStatus @default(en_attente)
+  
+  totalHT             Float
+  tva                 Float
+  totalTTC            Float
+  
+  adresseLivraison    Json
+  adresseFacturation  Json
+  
+  moyenPaiement       String?
+  transactionId       String?
+  trackingLivraison   String?
+  transporteur        String?
+  
+  devisId             String?       @unique
+  devis               Quote?        @relation(fields: [devisId], references: [id])
+  
+  createdAt           DateTime      @default(now())
+  updatedAt           DateTime      @updatedAt
+  
+  items               OrderItem[]
+  messages            Message[]
+  
+  @@map("orders")
+}
+
+model OrderItem {
+  id             String   @id @default(cuid())
+  orderId        String
+  order          Order    @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  productId      String
+  product        Product  @relation(fields: [productId], references: [id])
+  
+  quantity       Int
+  configSnapshot Json     // Full configuration at time of order
+  prixUnitaireHT Float
+  prixTotalHT    Float
+  
+  @@map("order_items")
+}
+
+// ============================================
+// QUOTES (DEVIS)
+// ============================================
+
+enum QuoteStatus {
+  en_attente
+  envoye
+  accepte
+  refuse
+  expire
+}
+
+model Quote {
+  id               String      @id @default(cuid())
+  numero           String      @unique // DEV20250001
+  userId           String
+  user             User        @relation(fields: [userId], references: [id])
+  
+  dateDemande      DateTime    @default(now())
+  dateExpiration   DateTime?
+  status           QuoteStatus @default(en_attente)
+  
+  totalHT          Float
+  tva              Float
+  totalTTC         Float
+  remiseSpeciale   Float?
+  
+  commentaireClient String?
+  commentaireAdmin  String?
+  pdfPath           String?
+  
+  createdAt        DateTime    @default(now())
+  updatedAt        DateTime    @updatedAt
+  
+  items            QuoteItem[]
+  order            Order?
+  messages         Message[]
+  
+  @@map("quotes")
+}
+
+model QuoteItem {
+  id             String   @id @default(cuid())
+  quoteId        String
+  quote          Quote    @relation(fields: [quoteId], references: [id], onDelete: Cascade)
+  productId      String
+  product        Product  @relation(fields: [productId], references: [id])
+  
+  quantity       Int
+  configSnapshot Json
+  prixUnitaireHT Float
+  prixTotalHT    Float
+  
+  @@map("quote_items")
+}
+
+// ============================================
+// MESSAGES
+// ============================================
+
+enum MessageSender {
+  client
+  admin
+}
+
+model Message {
+  id          String        @id @default(cuid())
+  orderId     String?
+  order       Order?        @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  quoteId     String?
+  quote       Quote?        @relation(fields: [quoteId], references: [id], onDelete: Cascade)
+  
+  senderId    String?
+  sender      User?         @relation(fields: [senderId], references: [id])
+  senderType  MessageSender
+  
+  messageText String
+  dateEnvoi   DateTime      @default(now())
+  lu          Boolean       @default(false)
+  
+  @@map("messages")
+}
+
+// ============================================
+// CMS PAGES
+// ============================================
+
+model Page {
+  id              String   @id @default(cuid())
+  slug            String   @unique
+  title           String
+  content         String   @db.Text
+  published       Boolean  @default(false)
+  metaTitle       String?
+  metaDescription String?
+  
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+  
+  @@map("pages")
+}
+
+// ============================================
+// REALIZATIONS (PORTFOLIO)
+// ============================================
+
+model Realization {
+  id              String             @id @default(cuid())
+  titre           String
+  description     String?            @db.Text
+  categorie       String
+  dateRealisation DateTime?
+  ville           String?
+  latitude        Float?
+  longitude       Float?
+  published       Boolean            @default(true)
+  ordre           Int                @default(0)
+  
+  createdAt       DateTime           @default(now())
+  updatedAt       DateTime           @updatedAt
+  
+  images          RealizationImage[]
+  
+  @@map("realizations")
+}
+
+model RealizationImage {
+  id            String      @id @default(cuid())
+  realizationId String
+  realization   Realization @relation(fields: [realizationId], references: [id], onDelete: Cascade)
+  
+  url           String
+  legend        String?
+  ordre         Int         @default(0)
+  isCover       Boolean     @default(false)
+  
+  @@map("realization_images")
+}

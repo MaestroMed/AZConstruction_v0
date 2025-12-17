@@ -1,0 +1,286 @@
+# Page snapshot
+
+```yaml
+- generic [ref=e1]:
+  - generic [ref=e2]:
+    - banner [ref=e3]:
+      - navigation [ref=e5]:
+        - link "Construction" [ref=e6] [cursor=pointer]:
+          - /url: /
+          - img [ref=e8]
+          - generic [ref=e14]: Construction
+        - generic [ref=e15]:
+          - link "« Produits" [ref=e16] [cursor=pointer]:
+            - /url: /produits
+            - generic [ref=e17]:
+              - generic [ref=e18]: «
+              - text: Produits
+          - link "« Réalisations" [ref=e19] [cursor=pointer]:
+            - /url: /realisations
+            - generic [ref=e20]:
+              - generic [ref=e21]: «
+              - text: Réalisations
+          - link "« Solutions Pro" [ref=e22] [cursor=pointer]:
+            - /url: /solutions-pro
+            - generic [ref=e23]:
+              - generic [ref=e24]: «
+              - text: Solutions Pro
+          - link "« Habitat" [ref=e25] [cursor=pointer]:
+            - /url: /habitat
+            - generic [ref=e26]:
+              - generic [ref=e27]: «
+              - text: Habitat
+          - link "★ Thermolaquage" [ref=e28] [cursor=pointer]:
+            - /url: /services/thermolaquage
+            - generic [ref=e29]:
+              - generic [ref=e30]: ★
+              - text: Thermolaquage
+          - link "« À propos" [ref=e31] [cursor=pointer]:
+            - /url: /a-propos
+            - generic [ref=e32]:
+              - generic [ref=e33]: «
+              - text: À propos
+          - link "« Contact" [ref=e34] [cursor=pointer]:
+            - /url: /contact
+            - generic [ref=e35]:
+              - generic [ref=e36]: «
+              - text: Contact
+        - link "Espace client" [ref=e38] [cursor=pointer]:
+          - /url: /login
+          - button "Espace client" [ref=e39]:
+            - img [ref=e40]
+            - text: Espace client
+    - main [ref=e43]:
+      - generic [ref=e44]:
+        - generic [ref=e49]:
+          - generic [ref=e50]:
+            - img [ref=e51]
+            - text: À votre écoute
+          - heading "Contactez-nous" [level=1] [ref=e53]
+          - paragraph [ref=e54]: Une question, un projet ? Notre équipe est à votre disposition pour vous accompagner dans tous vos projets de métallerie.
+          - generic [ref=e55]:
+            - generic [ref=e56]:
+              - img [ref=e57]
+              - text: Réponse garantie sous 24h
+            - generic [ref=e60]:
+              - img [ref=e61]
+              - text: Devis gratuit et sans engagement
+            - generic [ref=e64]:
+              - img [ref=e65]
+              - text: Équipe à votre écoute
+            - generic [ref=e68]:
+              - img [ref=e69]
+              - text: Conseils personnalisés
+        - generic [ref=e74]:
+          - generic [ref=e75]:
+            - generic [ref=e78]:
+              - img [ref=e80]
+              - generic [ref=e82]:
+                - heading "Téléphone" [level=3] [ref=e83]
+                - link "01 23 45 67 89" [ref=e84] [cursor=pointer]:
+                  - /url: tel:+33123456789
+                - paragraph [ref=e85]: Du lundi au vendredi, 8h-18h
+            - generic [ref=e88]:
+              - img [ref=e90]
+              - generic [ref=e93]:
+                - heading "Email" [level=3] [ref=e94]
+                - link "contact@azconstruction.fr" [ref=e95] [cursor=pointer]:
+                  - /url: mailto:contact@azconstruction.fr
+                - paragraph [ref=e96]: Réponse sous 24h
+            - generic [ref=e99]:
+              - img [ref=e101]
+              - generic [ref=e104]:
+                - heading "Nos ateliers" [level=3] [ref=e105]
+                - paragraph [ref=e106]:
+                  - text: 23 Chemin du Bac des Aubins
+                  - text: 95820 Bruyères-sur-Oise
+                - link "Voir sur Google Maps" [ref=e107] [cursor=pointer]:
+                  - /url: https://maps.google.com/?q=23+Chemin+du+Bac+des+Aubins+95820+Bruyères-sur-Oise
+                  - text: Voir sur Google Maps
+                  - img [ref=e108]
+            - generic [ref=e112]:
+              - img [ref=e114]
+              - generic [ref=e117]:
+                - heading "Horaires d'ouverture" [level=3] [ref=e118]
+                - generic [ref=e119]:
+                  - paragraph [ref=e120]:
+                    - generic [ref=e121]: Lundi - Vendredi
+                    - generic [ref=e122]: 8h00 - 18h00
+                  - paragraph [ref=e123]:
+                    - generic [ref=e124]: Samedi
+                    - generic [ref=e125]: 9h00 - 12h00
+                  - paragraph [ref=e126]:
+                    - generic [ref=e127]: Dimanche
+                    - generic [ref=e128]: Fermé
+            - link "Vous êtes professionnel ? Découvrez nos offres dédiées aux pros du bâtiment." [ref=e129] [cursor=pointer]:
+              - /url: /solutions-pro
+              - generic [ref=e132]:
+                - img [ref=e134]
+                - generic [ref=e138]:
+                  - heading "Vous êtes professionnel ?" [level=3] [ref=e139]
+                  - paragraph [ref=e140]: Découvrez nos offres dédiées aux pros du bâtiment.
+                - img [ref=e141]
+            - link "Questions fréquentes Consultez notre FAQ pour des réponses rapides." [ref=e143] [cursor=pointer]:
+              - /url: /faq
+              - generic [ref=e146]:
+                - img [ref=e148]
+                - generic [ref=e150]:
+                  - heading "Questions fréquentes" [level=3] [ref=e151]
+                  - paragraph [ref=e152]: Consultez notre FAQ pour des réponses rapides.
+                - img [ref=e153]
+          - generic [ref=e157]:
+            - heading "Envoyez-nous un message" [level=2] [ref=e158]
+            - generic [ref=e159]:
+              - button "Particulier" [ref=e160]
+              - button "Professionnel" [ref=e161]
+            - generic [ref=e162]:
+              - generic [ref=e163]:
+                - generic [ref=e164]:
+                  - generic [ref=e165]: Nom complet *
+                  - textbox "Nom complet *" [active] [ref=e166]:
+                    - /placeholder: Jean Dupont
+                - generic [ref=e167]:
+                  - generic [ref=e168]: Email *
+                  - textbox "Email *" [ref=e169]:
+                    - /placeholder: jean@exemple.fr
+              - generic [ref=e170]:
+                - generic [ref=e171]:
+                  - generic [ref=e172]: Téléphone
+                  - textbox "Téléphone" [ref=e173]:
+                    - /placeholder: 06 12 34 56 78
+                - generic [ref=e174]:
+                  - generic [ref=e175]: Sujet *
+                  - combobox "Sujet *" [ref=e176]:
+                    - option "Sélectionnez un sujet" [selected]
+                    - option "⭐ Devis Thermolaquage"
+                    - option "Devis Porte"
+                    - option "Devis Garde-corps"
+                    - option "Devis Escalier"
+                    - option "Devis Fenêtre"
+                    - option "Devis Portail"
+                    - option "Devis Clôture"
+                    - option "Devis Grille de ventilation"
+                    - option "Devis Autre projet"
+                    - option "Information produit"
+                    - option "Service après-vente"
+                    - option "Partenariat"
+                    - option "Autre"
+              - generic [ref=e177]:
+                - generic [ref=e178]: Votre message *
+                - textbox "Votre message *" [ref=e179]:
+                  - /placeholder: Décrivez votre projet ou votre demande en détail...
+              - generic [ref=e180]:
+                - checkbox "J'accepte que mes données soient traitées conformément à la politique de confidentialité." [ref=e181]
+                - generic [ref=e182]:
+                  - text: J'accepte que mes données soient traitées conformément à la
+                  - link "politique de confidentialité" [ref=e183] [cursor=pointer]:
+                    - /url: /confidentialite
+                  - text: .
+              - button "Envoyer le message" [ref=e184] [cursor=pointer]:
+                - text: Envoyer le message
+                - img [ref=e185]
+        - generic [ref=e189]:
+          - generic [ref=e190]:
+            - heading "Venez nous rendre visite" [level=2] [ref=e191]
+            - paragraph [ref=e192]: Nos ateliers sont ouverts aux visiteurs sur rendez-vous. Venez découvrir notre savoir-faire et discuter de votre projet.
+          - generic [ref=e196]:
+            - img [ref=e197]
+            - paragraph [ref=e200]: 23 Chemin du Bac des Aubins
+            - paragraph [ref=e201]: 95820 Bruyères-sur-Oise
+            - link "Ouvrir dans Google Maps" [ref=e202] [cursor=pointer]:
+              - /url: https://maps.google.com/?q=23+Chemin+du+Bac+des+Aubins+95820+Bruyères-sur-Oise
+              - button "Ouvrir dans Google Maps" [ref=e203]:
+                - text: Ouvrir dans Google Maps
+                - img [ref=e204]
+    - contentinfo [ref=e206]:
+      - generic [ref=e208]:
+        - generic [ref=e209]:
+          - link "Construction" [ref=e210] [cursor=pointer]:
+            - /url: /
+            - img [ref=e212]
+            - generic [ref=e217]: Construction
+          - paragraph [ref=e218]: "Expert en métallerie sur mesure : garde-corps, escaliers, portes, fenêtres, portails et clôtures. Profilés Jansen. 1800m² d'atelier."
+          - generic [ref=e219]:
+            - link "01 23 45 67 89" [ref=e220] [cursor=pointer]:
+              - /url: tel:+33123456789
+              - img [ref=e221]
+              - generic [ref=e223]: 01 23 45 67 89
+            - link "contact@azconstruction.fr" [ref=e224] [cursor=pointer]:
+              - /url: mailto:contact@azconstruction.fr
+              - img [ref=e225]
+              - generic [ref=e228]: contact@azconstruction.fr
+            - generic [ref=e229]:
+              - img [ref=e230]
+              - generic [ref=e233]:
+                - text: 23 Chemin du Bac des Aubins
+                - text: 95820 Bruyères-sur-Oise, France
+        - generic [ref=e234]:
+          - heading "Produits" [level=4] [ref=e235]
+          - list [ref=e236]:
+            - listitem [ref=e237]:
+              - link "Garde-corps" [ref=e238] [cursor=pointer]:
+                - /url: /produits/garde-corps
+            - listitem [ref=e239]:
+              - link "Escaliers" [ref=e240] [cursor=pointer]:
+                - /url: /produits/escaliers
+            - listitem [ref=e241]:
+              - link "Portes & Fenêtres" [ref=e242] [cursor=pointer]:
+                - /url: /produits/portes
+            - listitem [ref=e243]:
+              - link "Portails & Clôtures" [ref=e244] [cursor=pointer]:
+                - /url: /produits/portails
+            - listitem [ref=e245]:
+              - link "Grilles de ventilation" [ref=e246] [cursor=pointer]:
+                - /url: /produits/grilles-ventilation
+        - generic [ref=e247]:
+          - heading "Entreprise" [level=4] [ref=e248]
+          - list [ref=e249]:
+            - listitem [ref=e250]:
+              - link "À propos" [ref=e251] [cursor=pointer]:
+                - /url: /a-propos
+            - listitem [ref=e252]:
+              - link "Réalisations" [ref=e253] [cursor=pointer]:
+                - /url: /realisations
+            - listitem [ref=e254]:
+              - link "Solutions Pro" [ref=e255] [cursor=pointer]:
+                - /url: /solutions-pro
+            - listitem [ref=e256]:
+              - link "Habitat" [ref=e257] [cursor=pointer]:
+                - /url: /habitat
+            - listitem [ref=e258]:
+              - link "Contact" [ref=e259] [cursor=pointer]:
+                - /url: /contact
+        - generic [ref=e260]:
+          - heading "Informations" [level=4] [ref=e261]
+          - list [ref=e262]:
+            - listitem [ref=e263]:
+              - link "FAQ" [ref=e264] [cursor=pointer]:
+                - /url: /faq
+            - listitem [ref=e265]:
+              - link "Mentions légales" [ref=e266] [cursor=pointer]:
+                - /url: /mentions-legales
+            - listitem [ref=e267]:
+              - link "CGV" [ref=e268] [cursor=pointer]:
+                - /url: /cgv
+            - listitem [ref=e269]:
+              - link "Politique de confidentialité" [ref=e270] [cursor=pointer]:
+                - /url: /confidentialite
+      - generic [ref=e273]:
+        - paragraph [ref=e274]: © 2025 AZ Construction. Tous droits réservés.
+        - generic [ref=e275]:
+          - link "Facebook" [ref=e276] [cursor=pointer]:
+            - /url: https://facebook.com
+            - img [ref=e277]
+          - link "Twitter" [ref=e279] [cursor=pointer]:
+            - /url: https://twitter.com
+            - img [ref=e280]
+          - link "Instagram" [ref=e282] [cursor=pointer]:
+            - /url: https://instagram.com
+            - img [ref=e283]
+          - link "LinkedIn" [ref=e286] [cursor=pointer]:
+            - /url: https://linkedin.com
+            - img [ref=e287]
+  - button "Open Next.js Dev Tools" [ref=e296] [cursor=pointer]:
+    - img [ref=e297]
+  - alert [ref=e300]
+```

@@ -1,26 +1,368 @@
 @import "tailwindcss";
 
+/* ============================================
+   AZ CONSTRUCTION - Design System
+   Palette de couleurs corporate
+   ============================================ */
+
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  /* Navy / Bleu foncé */
+  --navy-dark: #0a1628;
+  --navy-medium: #0b1d3a;
+  --navy-light: #1a3a5c;
+  
+  /* Bleu corporate */
+  --blue-corporate: #1e3a5f;
+  --blue-medium: #2a4a6f;
+  --blue-light: #3a5a7f;
+  
+  /* Cyan / Accents lumineux */
+  --cyan-glow: #00d4ff;
+  --cyan-light: #4fc3f7;
+  --cyan-pale: #b3e5fc;
+  
+  /* Neutres */
+  --white: #ffffff;
+  --gray-50: #f8fafc;
+  --gray-100: #e8eef5;
+  --gray-200: #d1dce8;
+  --gray-300: #a0b0c0;
+  --gray-400: #6b7d8f;
+  --gray-500: #4a5568;
+  --gray-600: #3d4852;
+  
+  /* Couleurs produits */
+  --anthracite: #3d4852;
+  --noir-sable: #2a2a2a;
+  --gris-souris: #8c8c8c;
+  --blanc-pur: #ffffff;
+  
+  /* Semantic */
+  --background: var(--white);
+  --foreground: var(--navy-dark);
+  --primary: var(--blue-corporate);
+  --primary-foreground: var(--white);
+  --secondary: var(--gray-100);
+  --secondary-foreground: var(--navy-dark);
+  --accent: var(--cyan-glow);
+  --muted: var(--gray-100);
+  --muted-foreground: var(--gray-400);
+  --border: var(--gray-200);
+  --ring: var(--cyan-glow);
+  
+  /* Radius */
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+  --radius-xl: 24px;
+  --radius-2xl: 40px;
+  --radius-full: 9999px;
+  
+  /* Shadows */
+  --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+  --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+  --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+  --shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
+  --shadow-glow: 0 0 40px rgba(0, 212, 255, 0.3);
 }
 
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --color-navy-dark: var(--navy-dark);
+  --color-navy-medium: var(--navy-medium);
+  --color-navy-light: var(--navy-light);
+  --color-blue-corporate: var(--blue-corporate);
+  --color-blue-medium: var(--blue-medium);
+  --color-blue-light: var(--blue-light);
+  --color-cyan-glow: var(--cyan-glow);
+  --color-cyan-light: var(--cyan-light);
+  --color-cyan-pale: var(--cyan-pale);
+  --color-gray-50: var(--gray-50);
+  --color-gray-100: var(--gray-100);
+  --color-gray-200: var(--gray-200);
+  --color-gray-300: var(--gray-300);
+  --color-gray-400: var(--gray-400);
+  --color-gray-500: var(--gray-500);
+  --color-gray-600: var(--gray-600);
+  --color-anthracite: var(--anthracite);
+  --font-sans: var(--font-inter);
+  --font-display: var(--font-display);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+/* Display font utility */
+.font-display {
+  font-family: var(--font-display), system-ui, sans-serif;
+}
+
+/* ============================================
+   Global Styles
+   ============================================ */
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-inter), Inter, system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* ============================================
+   Typography
+   ============================================ */
+
+.text-gradient {
+  background: linear-gradient(135deg, var(--white) 0%, var(--cyan-pale) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.font-serif-italic {
+  font-family: var(--font-serif), Georgia, serif;
+  font-style: italic;
+}
+
+/* ============================================
+   Geometric Light Effects
+   ============================================ */
+
+.geometric-lines {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.geometric-lines::before,
+.geometric-lines::after {
+  content: '';
+  position: absolute;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    var(--cyan-glow) 50%,
+    transparent 100%
+  );
+  opacity: 0.15;
+  filter: blur(1px);
+}
+
+.geometric-lines::before {
+  width: 200%;
+  height: 1px;
+  top: 30%;
+  left: -50%;
+  transform: rotate(-15deg);
+  animation: shimmer 8s ease-in-out infinite;
+}
+
+.geometric-lines::after {
+  width: 200%;
+  height: 1px;
+  top: 60%;
+  left: -50%;
+  transform: rotate(-25deg);
+  animation: shimmer 10s ease-in-out infinite reverse;
+}
+
+@keyframes shimmer {
+  0%, 100% {
+    opacity: 0.1;
+    transform: translateX(-10%) rotate(-15deg);
+  }
+  50% {
+    opacity: 0.25;
+    transform: translateX(10%) rotate(-15deg);
+  }
+}
+
+/* ============================================
+   Glow Effects
+   ============================================ */
+
+.glow-cyan {
+  box-shadow: 0 0 30px rgba(0, 212, 255, 0.3),
+              0 0 60px rgba(0, 212, 255, 0.1);
+}
+
+.glow-text {
+  text-shadow: 0 0 20px rgba(0, 212, 255, 0.5);
+}
+
+/* ============================================
+   Card Styles
+   ============================================ */
+
+.card-elevated {
+  background: linear-gradient(135deg, var(--white) 0%, var(--gray-50) 100%);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-lg);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.card-elevated:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-xl);
+}
+
+/* ============================================
+   Button Styles
+   ============================================ */
+
+.btn-primary {
+  background: var(--blue-corporate);
+  color: var(--white);
+  padding: 0.875rem 1.75rem;
+  border-radius: var(--radius-md);
+  font-weight: 500;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  transition: all 0.2s ease;
+  border: none;
+  cursor: pointer;
+}
+
+.btn-primary:hover {
+  background: var(--blue-medium);
+  transform: translateY(-1px);
+}
+
+.btn-outline {
+  background: transparent;
+  color: var(--white);
+  padding: 0.875rem 1.75rem;
+  border-radius: var(--radius-md);
+  font-weight: 500;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  transition: all 0.2s ease;
+  border: 1.5px solid rgba(255, 255, 255, 0.5);
+  cursor: pointer;
+}
+
+.btn-outline:hover {
+  background: rgba(255, 255, 255, 0.1);
+  border-color: var(--white);
+}
+
+/* ============================================
+   Slider Styles
+   ============================================ */
+
+.slider-track {
+  background: var(--gray-200);
+  height: 4px;
+  border-radius: 2px;
+  position: relative;
+}
+
+.slider-fill {
+  background: linear-gradient(90deg, var(--blue-corporate), var(--cyan-glow));
+  height: 100%;
+  border-radius: 2px;
+}
+
+.slider-thumb {
+  width: 16px;
+  height: 16px;
+  background: var(--white);
+  border: 2px solid var(--blue-corporate);
+  border-radius: 50%;
+  box-shadow: var(--shadow-md);
+  cursor: pointer;
+}
+
+/* ============================================
+   Color Swatch
+   ============================================ */
+
+.color-swatch {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  border: 2px solid transparent;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.color-swatch:hover {
+  transform: scale(1.1);
+}
+
+.color-swatch.active {
+  border-color: var(--cyan-glow);
+  box-shadow: 0 0 0 3px rgba(0, 212, 255, 0.3);
+}
+
+/* ============================================
+   Animations
+   ============================================ */
+
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+@keyframes pulse-glow {
+  0%, 100% {
+    box-shadow: 0 0 20px rgba(0, 212, 255, 0.2);
+  }
+  50% {
+    box-shadow: 0 0 40px rgba(0, 212, 255, 0.4);
+  }
+}
+
+.animate-float {
+  animation: float 6s ease-in-out infinite;
+}
+
+.animate-pulse-glow {
+  animation: pulse-glow 3s ease-in-out infinite;
+}
+
+/* ============================================
+   Overlay Gradients
+   ============================================ */
+
+.overlay-gradient-bottom {
+  background: linear-gradient(
+    to top,
+    rgba(11, 29, 58, 0.9) 0%,
+    rgba(11, 29, 58, 0.5) 50%,
+    transparent 100%
+  );
+}
+
+/* ============================================
+   Scrollbar
+   ============================================ */
+
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--gray-100);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--gray-300);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--gray-400);
 }

@@ -1,0 +1,75 @@
+{
+  "hero_background": {
+    "prompt_midjourney": "Industrial powder coating factory, dramatic lighting, worker in protective gear spraying metallic gate with electrostatic powder gun, blue and cyan powder particles floating in air, professional metal workshop, high-end manufacturing, dark moody atmosphere with rim lighting, shallow depth of field, 8k, photorealistic --ar 16:9 --v 6",
+    "prompt_dalle": "A professional powder coating facility interior with dramatic industrial lighting. A skilled technician wearing protective gear is applying epoxy powder coating to a large aluminum gate using an electrostatic spray gun. Cyan and blue powder particles are suspended in the air, catching the light. The background shows a modern manufacturing workshop with metal frames and coating equipment. Moody atmosphere with strong rim lighting. Photorealistic, 8K quality.",
+    "prompt_stable_diffusion": "((masterpiece, best quality, ultra detailed)), industrial powder coating workshop, worker spraying powder on metal gate, electrostatic coating process, floating cyan powder particles, dramatic rim lighting, dark moody atmosphere, professional manufacturing facility, shallow depth of field, 8k resolution, photorealistic, cinematic lighting, blue and cyan color accent",
+    "prompt_leonardo": "Industrial thermolaquage workshop scene, professional powder coating process, worker with spray gun applying powder to metallic structure, floating powder particles in cyan and blue tones, dramatic spotlight lighting from above, dark atmospheric background, high-end manufacturing quality, photorealistic rendering, 16:9 aspect ratio, cinematic mood",
+    "alt_text": "Atelier de thermolaquage professionnel avec application de peinture poudre epoxy",
+    "suggested_filename": "thermolaquage-hero.jpg"
+  },
+  "process_images": {
+    "preparation": {
+      "prompt": "Close-up of metal surface being sandblasted, industrial preparation process, steel surface texture, high detail, sparks and particles flying, professional workshop lighting, 4k quality --ar 4:3 --v 6",
+      "alt_text": "Préparation par sablage de la surface métallique"
+    },
+    "application": {
+      "prompt": "Extreme close-up of electrostatic powder coating gun spraying powder onto metal surface, powder particles adhering to the surface, blue and cyan powder, macro photography style, soft focus background, professional studio lighting --ar 4:3 --v 6",
+      "alt_text": "Application électrostatique de la poudre epoxy"
+    },
+    "curing": {
+      "prompt": "Industrial curing oven interior view, metal gates and structures being heat treated, orange glow from heating elements, dramatic industrial lighting, heat waves visible, temperature 200 degrees celsius, professional manufacturing --ar 4:3 --v 6",
+      "alt_text": "Four de cuisson haute température pour polymérisation"
+    },
+    "quality_control": {
+      "prompt": "Quality control inspector examining freshly powder coated aluminum gate, using thickness gauge, perfect glossy finish in anthracite gray color, professional inspection station, bright clean environment --ar 4:3 --v 6",
+      "alt_text": "Contrôle qualité de la finition thermolaquée"
+    }
+  },
+  "applications_gallery": {
+    "portail": {
+      "prompt": "Elegant modern aluminum gate with powder coating finish in anthracite gray RAL 7016, residential entrance, beautiful landscaping, sunset lighting, luxury home exterior, high-end design, photorealistic 4k --ar 3:2 --v 6",
+      "alt_text": "Portail aluminium thermolaqué gris anthracite"
+    },
+    "pergola": {
+      "prompt": "Modern bioclimatic pergola with powder coated aluminum structure in matte black, outdoor living space, comfortable seating, integrated LED lighting, evening ambiance, luxury terrace design, architectural photography --ar 16:9 --v 6",
+      "alt_text": "Pergola bioclimatique thermolaquée noir mat"
+    },
+    "garde_corps": {
+      "prompt": "Contemporary glass and powder coated steel railing on outdoor terrace, minimalist design, ocean view background, white powder coating finish, clean architectural lines, high-end residential design --ar 3:2 --v 6",
+      "alt_text": "Garde-corps acier thermolaqué blanc avec verre"
+    },
+    "escalier": {
+      "prompt": "Elegant interior metal staircase with powder coated steel in satin black finish, floating steps with wooden treads, modern minimalist interior design, natural light from large windows, architectural photography --ar 2:3 --v 6",
+      "alt_text": "Escalier métallique thermolaqué noir satiné"
+    }
+  },
+  "workshop_photos": {
+    "atelier_vue_generale": {
+      "prompt": "Wide shot of professional powder coating workshop, multiple coating stations, industrial equipment, organized metal parts hanging on racks ready for coating, clean modern facility, bright industrial lighting, professional manufacturing environment --ar 16:9 --v 6",
+      "alt_text": "Vue générale de notre atelier de thermolaquage"
+    },
+    "cabine_poudrage": {
+      "prompt": "Professional powder coating spray booth interior, clean white walls, ventilation system visible, powder recovery equipment, industrial precision engineering, modern coating technology --ar 4:3 --v 6",
+      "alt_text": "Cabine de poudrage professionnelle"
+    },
+    "pieces_suspendues": {
+      "prompt": "Multiple freshly powder coated metal parts hanging on conveyor system, various colors including gray, black, and white finishes, industrial production line, organized manufacturing process --ar 16:9 --v 6",
+      "alt_text": "Pièces thermolaquées sur ligne de production"
+    }
+  },
+  "color_palette": {
+    "nuancier": {
+      "prompt": "Professional RAL color chart fan deck, powder coating samples arranged in gradient, metallic and matte finishes, studio product photography, clean white background, high detail texture visible --ar 1:1 --v 6",
+      "alt_text": "Nuancier de couleurs RAL pour thermolaquage"
+    }
+  },
+  "usage_notes": {
+    "recommended_size": {
+      "hero": "1920x1080 ou 2560x1440 pour retina",
+      "cards": "800x600",
+      "gallery": "1200x800"
+    },
+    "optimization": "Compresser avec TinyPNG ou Squoosh, format WebP avec fallback JPG",
+    "naming_convention": "thermolaquage-[section]-[description].jpg"
+  }
+}
