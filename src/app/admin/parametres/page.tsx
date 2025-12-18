@@ -142,10 +142,24 @@ export default function ParametresPage() {
           [fieldKey]: url,
         };
         setSettings(newSettings);
-        localStorage.setItem("az_settings", JSON.stringify(newSettings));
+        
+        // Sauvegarder en base de données via l'API
+        const apiPayload = {
+          logoUrl: newSettings.logoUrl,
+          logoLightUrl: newSettings.logoLightUrl,
+          faviconUrl: newSettings.faviconUrl,
+          showLogoInHeader: newSettings.showLogoInHeader,
+        };
+        
+        await fetch("/api/settings", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(apiPayload),
+        });
+        
         window.dispatchEvent(new CustomEvent("az_settings_updated", { detail: newSettings }));
         const labels = { logo: "Logo principal", logoLight: "Logo version claire", favicon: "Favicon" };
-        toast.success(`${labels[type]} uploadé avec succès`);
+        toast.success(`${labels[type]} uploadé et sauvegardé`);
       }
     } catch (error) {
       console.error("Erreur upload:", error);
@@ -155,15 +169,29 @@ export default function ParametresPage() {
     }
   };
 
-  const handleRemoveImage = (type: "logo" | "logoLight" | "favicon") => {
+  const handleRemoveImage = async (type: "logo" | "logoLight" | "favicon") => {
     const fieldKey = type === "logo" ? "logoUrl" : type === "logoLight" ? "logoLightUrl" : "faviconUrl";
     const newSettings = {
       ...settings,
       [fieldKey]: "",
     };
     setSettings(newSettings);
-    localStorage.setItem("az_settings", JSON.stringify(newSettings));
-    // Déclencher un événement pour mettre à jour les autres composants
+    
+    // Sauvegarder en base de données via l'API
+    try {
+      await fetch("/api/settings", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          logoUrl: newSettings.logoUrl,
+          logoLightUrl: newSettings.logoLightUrl,
+          faviconUrl: newSettings.faviconUrl,
+        }),
+      });
+    } catch (e) {
+      console.error("Erreur suppression:", e);
+    }
+    
     window.dispatchEvent(new CustomEvent("az_settings_updated", { detail: newSettings }));
     const labels = { logo: "Logo principal", logoLight: "Logo version claire", favicon: "Favicon" };
     toast.success(`${labels[type]} supprimé`);
