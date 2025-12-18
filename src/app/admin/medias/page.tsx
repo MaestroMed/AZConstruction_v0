@@ -144,12 +144,9 @@ export default function MediasPage() {
   const handleDelete = async () => {
     try {
       for (const id of deleteIds) {
-        const file = files.find((f) => f.id === id);
-        if (file) {
-          await fetch(`/api/upload?file=${encodeURIComponent(file.fileName)}`, {
-            method: "DELETE",
-          });
-        }
+        await fetch(`/api/upload?id=${encodeURIComponent(id)}`, {
+          method: "DELETE",
+        });
       }
       toast.success(`${deleteIds.length} fichier(s) supprimé(s)`);
       setSelectedFiles([]);

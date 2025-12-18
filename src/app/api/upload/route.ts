@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { v4 as uuidv4 } from "uuid";
+import { prisma } from "@/lib/prisma";
 
 // Types de fichiers autorisés
 const ALLOWED_TYPES = {
@@ -86,7 +87,7 @@ export async function POST(request: NextRequest) {
       if (useVercelBlob) {
         try {
           const blob = await uploadToVercelBlob(buffer, uniqueName, file.type);
-          uploadedFiles.push({
+          const fileData = {
             id: uuidv4(),
             originalName: file.name,
             fileName: uniqueName,
@@ -96,7 +97,23 @@ export async function POST(request: NextRequest) {
             mimeType: file.type,
             provider: "vercel-blob",
             uploadedAt: new Date().toISOString(),
+          };
+          
+          // Sauvegarder en base de données
+          await prisma.media.create({
+            data: {
+              id: fileData.id,
+              fileName: fileData.fileName,
+              originalName: fileData.originalName,
+              url: fileData.url,
+              type: fileData.type,
+              mimeType: fileData.mimeType,
+              size: fileData.size,
+              provider: fileData.provider,
+            },
           });
+          
+          uploadedFiles.push(fileData);
           continue;
         } catch (blobError) {
           console.error("Vercel Blob upload failed:", blobError);
@@ -107,8 +124,8 @@ export async function POST(request: NextRequest) {
       if (useCloudinary && fileType === "image") {
         try {
           const result = await uploadToCloudinary(buffer, file.name, file.type, folder);
-          uploadedFiles.push({
-            id: result.publicId,
+          const fileData = {
+            id: uuidv4(),
             originalName: file.name,
             fileName: result.publicId,
             url: result.url,
@@ -118,15 +135,35 @@ export async function POST(request: NextRequest) {
             width: result.width,
             height: result.height,
             provider: "cloudinary",
+            publicId: result.publicId,
             uploadedAt: new Date().toISOString(),
+          };
+          
+          // Sauvegarder en base de données
+          await prisma.media.create({
+            data: {
+              id: fileData.id,
+              fileName: fileData.fileName,
+              originalName: fileData.originalName,
+              url: fileData.url,
+              type: fileData.type,
+              mimeType: fileData.mimeType,
+              size: fileData.size,
+              width: fileData.width,
+              height: fileData.height,
+              provider: fileData.provider,
+              publicId: fileData.publicId,
+            },
           });
+          
+          uploadedFiles.push(fileData);
           continue;
         } catch (cloudinaryError) {
           console.error("Cloudinary upload failed:", cloudinaryError);
         }
       }
 
-      // 3. Fallback: retourner l'image en base64 pour stockage côté client
+      // 3. Fallback: retourner l'image en base64 (ne pas sauvegarder en DB car trop gros)
       const base64 = `data:${file.type};base64,${buffer.toString("base64")}`;
       uploadedFiles.push({
         id: uuidv4(),
@@ -155,49 +192,70 @@ export async function POST(request: NextRequest) {
 }
 
 export async function GET() {
-  // Pour Vercel Blob, on peut lister les fichiers
-  if (useVercelBlob) {
-    try {
-      const { list } = await import("@vercel/blob");
-      const { blobs } = await list();
-      
-      const fileList = blobs.map((blob) => ({
-        id: blob.pathname,
-        fileName: blob.pathname,
-        url: blob.url,
-        type: "image",
-        size: blob.size,
-        uploadedAt: blob.uploadedAt.toISOString(),
-      }));
-      
-      return NextResponse.json({ files: fileList });
-    } catch (error) {
-      console.error("Error listing blobs:", error);
-    }
+  try {
+    // Lister les fichiers depuis la base de données
+    const medias = await prisma.media.findMany({
+      orderBy: { createdAt: "desc" },
+    });
+    
+    const fileList = medias.map((media) => ({
+      id: media.id,
+      fileName: media.fileName,
+      originalName: media.originalName,
+      url: media.url,
+      type: media.type,
+      size: media.size,
+      mimeType: media.mimeType,
+      width: media.width,
+      height: media.height,
+      provider: media.provider,
+      uploadedAt: media.createdAt.toISOString(),
+    }));
+    
+    return NextResponse.json({ files: fileList });
+  } catch (error) {
+    console.error("Error listing files:", error);
+    return NextResponse.json({ files: [] });
   }
-
-  // Retourner une liste vide si pas de storage configuré
-  return NextResponse.json({ files: [] });
 }
 
 export async function DELETE(request: NextRequest) {
   try {
     const { searchParams } = new URL(request.url);
+    const id = searchParams.get("id");
     const url = searchParams.get("url");
 
-    if (!url) {
-      return NextResponse.json(
-        { error: "URL du fichier requise" },
-        { status: 400 }
-      );
+    // Trouver le fichier par ID ou URL
+    let media = null;
+    if (id) {
+      media = await prisma.media.findUnique({ where: { id } });
+    } else if (url) {
+      media = await prisma.media.findFirst({ where: { url } });
     }
 
-    // Pour Vercel Blob
-    if (useVercelBlob && url.includes("blob.vercel-storage.com")) {
-      const { del } = await import("@vercel/blob");
-      await del(url);
-      return NextResponse.json({ success: true });
+    if (!media) {
+      return NextResponse.json({ error: "Fichier non trouvé" }, { status: 404 });
     }
+
+    // Supprimer du provider
+    if (media.provider === "vercel-blob" && useVercelBlob) {
+      try {
+        const { del } = await import("@vercel/blob");
+        await del(media.url);
+      } catch (e) {
+        console.error("Error deleting from Vercel Blob:", e);
+      }
+    } else if (media.provider === "cloudinary" && media.publicId && useCloudinary) {
+      try {
+        const { deleteImage } = await import("@/lib/cloudinary");
+        await deleteImage(media.publicId);
+      } catch (e) {
+        console.error("Error deleting from Cloudinary:", e);
+      }
+    }
+
+    // Supprimer de la base de données
+    await prisma.media.delete({ where: { id: media.id } });
 
     return NextResponse.json({ success: true });
   } catch (error) {

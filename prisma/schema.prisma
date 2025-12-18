@@ -477,3 +477,26 @@ model SiteImage {
   
   @@map("site_images")
 }
+
+// ============================================
+// MEDIA LIBRARY (All uploaded files)
+// ============================================
+
+model Media {
+  id           String   @id @default(cuid())
+  fileName     String              // Stored filename
+  originalName String              // Original filename from upload
+  url          String              // Full URL to access the file
+  type         String              // "image", "document", "model"
+  mimeType     String              // "image/jpeg", "application/pdf", etc.
+  size         Int                 // File size in bytes
+  width        Int?                // Image width (if applicable)
+  height       Int?                // Image height (if applicable)
+  provider     String              // "cloudinary", "vercel-blob", "base64"
+  publicId     String?             // Cloudinary public ID (for deletion)
+  
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+  
+  @@map("medias")
+}
