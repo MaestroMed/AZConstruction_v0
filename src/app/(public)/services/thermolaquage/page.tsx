@@ -23,6 +23,7 @@ import {
 } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 import { Card, CardContent } from "@/components/ui/Card";
+import { useSiteImages } from "@/lib/hooks/useSiteImages";
 
 // Données RAL populaires
 const popularColors = [
@@ -177,17 +178,25 @@ function FAQItem({ question, answer, isOpen, onClick }: {
 
 export default function ThermolaquagePage() {
   const [openFAQ, setOpenFAQ] = React.useState<number | null>(0);
+  const { getImage } = useSiteImages();
+  
+  // Image dynamique depuis le back-office
+  const heroImage = getImage("hero-thermolaquage");
+  
   return (
     <div className="min-h-screen">
       {/* Hero Section */}
       <section className="relative min-h-[90vh] flex items-center overflow-hidden">
         {/* Background avec overlay */}
         <div className="absolute inset-0">
-          <div 
-            className="absolute inset-0 bg-cover bg-center"
-            style={{
-              backgroundImage: "url('/images/thermolaquage-hero.jpg')",
-            }}
+          {/* Image dynamique */}
+          <Image
+            src={heroImage}
+            alt="Thermolaquage - AZ Construction"
+            fill
+            priority
+            className="object-cover object-center"
+            quality={85}
           />
           {/* Overlay gradient */}
           <div className="absolute inset-0 bg-gradient-to-r from-navy-dark/95 via-navy-dark/80 to-navy-dark/60" />

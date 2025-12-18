@@ -30,6 +30,7 @@ import { Card, CardContent } from "@/components/ui/Card";
 import { cn } from "@/lib/utils";
 import { ARButton, ARViewer, ExportActions, LoadingSpinner3D } from "@/components/configurator";
 import type { ProductFamily, ProductFamilyConfig, ExportConfig } from "@/types/configurator";
+import { useSiteImages } from "@/lib/hooks/useSiteImages";
 
 // Import dynamique du Scene3D pour éviter les erreurs SSR
 const Scene3D = dynamic(
@@ -47,7 +48,7 @@ const familyConfigs: Record<string, ProductFamilyConfig> = {
     nameSingular: "Portail",
     description: "Configurez votre portail sur mesure",
     basePrice: 1890,
-    image: "/images/portail.jpg",
+    imageKey: "product-portails",
     dimensions: {
       width: { min: 200, max: 600, default: 350, step: 10, unit: "cm" },
       height: { min: 100, max: 250, default: 180, step: 10, unit: "cm" },
@@ -83,7 +84,7 @@ const familyConfigs: Record<string, ProductFamilyConfig> = {
     nameSingular: "Garde-corps",
     description: "Configurez votre garde-corps sur mesure",
     basePrice: 290,
-    image: "/images/garde-corps.jpg",
+    imageKey: "product-garde-corps",
     dimensions: {
       width: { min: 50, max: 300, default: 100, step: 10, unit: "cm" },
       height: { min: 90, max: 130, default: 100, step: 5, unit: "cm" },
@@ -116,7 +117,7 @@ const familyConfigs: Record<string, ProductFamilyConfig> = {
     nameSingular: "Escalier",
     description: "Configurez votre escalier sur mesure",
     basePrice: 4500,
-    image: "/images/escalier.jpg",
+    imageKey: "product-escaliers",
     dimensions: {
       width: { min: 70, max: 150, default: 90, step: 5, unit: "cm" },
       height: { min: 200, max: 400, default: 280, step: 10, unit: "cm" },
@@ -150,7 +151,7 @@ const familyConfigs: Record<string, ProductFamilyConfig> = {
     nameSingular: "Clôture",
     description: "Configurez votre clôture sur mesure",
     basePrice: 120,
-    image: "/images/cloture.jpg",
+    imageKey: "product-clotures",
     dimensions: {
       width: { min: 100, max: 250, default: 200, step: 10, unit: "cm" },
       height: { min: 80, max: 200, default: 150, step: 10, unit: "cm" },
@@ -182,7 +183,7 @@ const familyConfigs: Record<string, ProductFamilyConfig> = {
     nameSingular: "Pergola",
     description: "Configurez votre pergola sur mesure",
     basePrice: 6900,
-    image: "/images/pergola.jpg",
+    imageKey: "product-pergolas",
     dimensions: {
       width: { min: 300, max: 700, default: 400, step: 50, unit: "cm" },
       height: { min: 220, max: 320, default: 280, step: 10, unit: "cm" },
@@ -216,7 +217,7 @@ const familyConfigs: Record<string, ProductFamilyConfig> = {
     nameSingular: "Marquise",
     description: "Configurez votre marquise ou auvent sur mesure",
     basePrice: 890,
-    image: "/images/marquise.jpg",
+    imageKey: "product-marquises",
     dimensions: {
       width: { min: 80, max: 300, default: 150, step: 10, unit: "cm" },
       height: { min: 60, max: 150, default: 100, step: 10, unit: "cm" },
@@ -249,7 +250,7 @@ const familyConfigs: Record<string, ProductFamilyConfig> = {
     nameSingular: "Porte",
     description: "Configurez votre porte sur mesure",
     basePrice: 1200,
-    image: "/images/porte.jpg",
+    imageKey: "product-portes",
     dimensions: {
       width: { min: 70, max: 180, default: 90, step: 5, unit: "cm" },
       height: { min: 200, max: 280, default: 215, step: 5, unit: "cm" },
@@ -286,7 +287,7 @@ const familyConfigs: Record<string, ProductFamilyConfig> = {
     nameSingular: "Fenêtre",
     description: "Configurez votre fenêtre sur mesure",
     basePrice: 890,
-    image: "/images/fenetre.jpg",
+    imageKey: "product-fenetres",
     dimensions: {
       width: { min: 40, max: 300, default: 120, step: 10, unit: "cm" },
       height: { min: 40, max: 250, default: 140, step: 10, unit: "cm" },
@@ -321,7 +322,7 @@ const familyConfigs: Record<string, ProductFamilyConfig> = {
     nameSingular: "Verrière",
     description: "Configurez votre verrière intérieure sur mesure",
     basePrice: 650,
-    image: "/images/verriere.jpg",
+    imageKey: "product-verrieres",
     dimensions: {
       width: { min: 60, max: 400, default: 150, step: 10, unit: "cm" },
       height: { min: 80, max: 300, default: 220, step: 10, unit: "cm" },
@@ -355,7 +356,7 @@ const familyConfigs: Record<string, ProductFamilyConfig> = {
     nameSingular: "Grille",
     description: "Configurez votre grille de ventilation sur mesure",
     basePrice: 180,
-    image: "/images/grille-ventilation.jpg",
+    imageKey: "product-grilles",
     dimensions: {
       width: { min: 20, max: 200, default: 60, step: 5, unit: "cm" },
       height: { min: 10, max: 100, default: 40, step: 5, unit: "cm" },
@@ -391,6 +392,9 @@ export default function ConfigurateurPage() {
   const router = useRouter();
   const family = params.family as string;
   const config = familyConfigs[family];
+  
+  // Site images hook
+  const { getImage } = useSiteImages();
 
   // Quote store
   const { setConfiguration } = useQuoteRequestStore();

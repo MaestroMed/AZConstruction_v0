@@ -64,7 +64,7 @@ export interface ProductFamilyConfig {
   nameSingular: string;
   description: string;
   basePrice: number;
-  image: string;
+  imageKey: string; // Dynamic image key for site images
   dimensions: ProductDimensions;
   materials: ProductMaterial[];
   styles: ProductStyle[];

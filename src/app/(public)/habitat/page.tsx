@@ -3,6 +3,7 @@
 import * as React from "react";
 import { motion } from "framer-motion";
 import Link from "next/link";
+import Image from "next/image";
 import {
   Home,
   Shield,
@@ -21,6 +22,7 @@ import {
 } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 import { Card, CardContent } from "@/components/ui/Card";
+import { useSiteImages } from "@/lib/hooks/useSiteImages";
 
 const services = [
   {
@@ -30,7 +32,8 @@ const services = [
       "Protégez vos terrasses, balcons et escaliers avec des garde-corps alliant sécurité maximale et design contemporain. Profilés Jansen.",
     features: ["Verre feuilleté", "Câbles inox", "Barreaux design", "Inox 316"],
     price: "À partir de 290€/ml",
-    image: "/images/garde-corps.jpg",
+    imageKey: "product-garde-corps",
+    configLink: "garde-corps",
   },
   {
     icon: Wrench,
@@ -39,7 +42,8 @@ const services = [
       "Des escaliers droits aux hélicoïdaux, nous réalisons l'escalier de vos rêves. Acier, inox ou mixte bois-métal.",
     features: ["Droits", "Quart-tournant", "Hélicoïdaux", "Extérieurs"],
     price: "À partir de 4 500€",
-    image: "/images/escalier.jpg",
+    imageKey: "product-escaliers",
+    configLink: "escaliers",
   },
   {
     icon: Home,
@@ -48,7 +52,8 @@ const services = [
       "Portes d'entrée et fenêtres en profilés acier Jansen. Design élégant, performances thermiques, durabilité exceptionnelle.",
     features: ["Portes design", "Fenêtres atelier", "Oscillo-battantes", "Coupe-feu"],
     price: "À partir de 890€",
-    image: "/images/porte.jpg",
+    imageKey: "product-portes",
+    configLink: "portes",
   },
   {
     icon: Palette,
@@ -57,7 +62,8 @@ const services = [
       "Grilles de ventilation techniques et décoratives pour bâtiments résidentiels. Solutions sur mesure esthétiques.",
     features: ["Décoratives", "Techniques", "Acoustiques", "Sur mesure"],
     price: "À partir de 180€",
-    image: "/images/grille-ventilation.jpg",
+    imageKey: "product-grilles",
+    configLink: "grilles-ventilation",
   },
 ];
 
@@ -161,6 +167,8 @@ const faqs = [
 ];
 
 export default function HabitatPage() {
+  const { getImage } = useSiteImages();
+  
   return (
     <div className="min-h-screen bg-white">
       {/* Hero */}
@@ -263,13 +271,19 @@ export default function HabitatPage() {
               >
                 <Card variant="elevated" hover className="overflow-hidden">
                   <div className={`grid md:grid-cols-2 ${index % 2 === 1 ? "md:grid-flow-col-dense" : ""}`}>
-                    {/* Image placeholder */}
-                    <div className={`relative h-64 md:h-auto bg-gradient-to-br from-blue-corporate via-navy-medium to-navy-dark ${index % 2 === 1 ? "md:col-start-2" : ""}`}>
-                      <div className="absolute inset-0 flex items-center justify-center">
-                        <service.icon className="w-20 h-20 text-white/20" />
-                      </div>
+                    {/* Image dynamique */}
+                    <div className={`relative h-64 md:h-auto min-h-[280px] ${index % 2 === 1 ? "md:col-start-2" : ""}`}>
+                      <Image
+                        src={getImage(service.imageKey)}
+                        alt={service.title}
+                        fill
+                        className="object-cover"
+                      />
+                      {/* Overlay gradient */}
+                      <div className="absolute inset-0 bg-gradient-to-t from-navy-dark/60 to-transparent" />
+                      {/* Price badge */}
                       <div className="absolute bottom-4 left-4 right-4 flex justify-between items-end">
-                        <span className="px-4 py-2 bg-cyan-glow text-navy-dark text-sm font-bold rounded-full">
+                        <span className="px-4 py-2 bg-cyan-glow text-navy-dark text-sm font-bold rounded-full shadow-lg">
                           {service.price}
                         </span>
                       </div>
@@ -299,7 +313,7 @@ export default function HabitatPage() {
                           </span>
                         ))}
                       </div>
-                      <Link href={`/configurateur/${service.title.toLowerCase().replace(/\s+/g, "-").split("&")[0]}`}>
+                      <Link href={`/configurateur/${service.configLink}`}>
                         <Button icon={<ArrowRight className="w-4 h-4" />}>
                           Configurer
                         </Button>

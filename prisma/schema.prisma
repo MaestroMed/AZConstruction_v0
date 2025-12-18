@@ -458,3 +458,22 @@ model RealizationImage {
   
   @@map("realization_images")
 }
+
+// ============================================
+// SITE IMAGES (All editable images on the site)
+// ============================================
+
+model SiteImage {
+  id          String   @id @default(cuid())
+  key         String   @unique  // Unique identifier: "hero-thermolaquage", "product-garde-corps", etc.
+  category    String             // Category: "hero", "products", "pages", "configurators"
+  label       String             // Display label: "Image Hero Thermolaquage"
+  description String?            // Helper text for admin
+  imageUrl    String?            // Uploaded image URL (Cloudinary/Vercel Blob)
+  fallbackUrl String             // Default fallback image (Unsplash/static)
+  
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  
+  @@map("site_images")
+}
