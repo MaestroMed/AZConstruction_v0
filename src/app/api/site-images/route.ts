@@ -137,29 +137,63 @@ const DEFAULT_IMAGES: {
 
 // GET: Récupérer toutes les images du site
 export async function GET(request: NextRequest) {
-  try {
-    const { searchParams } = new URL(request.url);
-    const category = searchParams.get("category");
-    const key = searchParams.get("key");
+  const { searchParams } = new URL(request.url);
+  const category = searchParams.get("category");
+  const key = searchParams.get("key");
 
+  // Fonction pour construire les images par défaut (fallback si DB échoue)
+  function buildDefaultImages(filterCategory?: string | null) {
+    const filtered = filterCategory
+      ? DEFAULT_IMAGES.filter((def) => def.category === filterCategory)
+      : DEFAULT_IMAGES;
+
+    const images = filtered.map((def) => ({
+      key: def.key,
+      category: def.category,
+      label: def.label,
+      description: def.description,
+      imageUrl: null,
+      fallbackUrl: def.fallbackUrl,
+      url: def.fallbackUrl,
+      updatedAt: null,
+    }));
+
+    const grouped = images.reduce((acc, img) => {
+      if (!acc[img.category]) {
+        acc[img.category] = [];
+      }
+      acc[img.category].push(img);
+      return acc;
+    }, {} as Record<string, typeof images>);
+
+    return { images, grouped };
+  }
+
+  try {
     // Si on demande une image spécifique par clé
     if (key) {
-      const image = await prisma.siteImage.findUnique({
-        where: { key },
-      });
-
-      // Si pas trouvée, chercher dans les defaults
       const defaultImage = DEFAULT_IMAGES.find((img) => img.key === key);
       
-      if (image) {
-        return NextResponse.json({
-          success: true,
-          image: {
-            ...image,
-            url: image.imageUrl || image.fallbackUrl,
-          },
+      try {
+        const image = await prisma.siteImage.findUnique({
+          where: { key },
         });
-      } else if (defaultImage) {
+
+        if (image) {
+          return NextResponse.json({
+            success: true,
+            image: {
+              ...image,
+              url: image.imageUrl || image.fallbackUrl,
+            },
+          });
+        }
+      } catch (dbError) {
+        console.error("DB error fetching single image:", dbError);
+      }
+
+      // Fallback vers l'image par défaut
+      if (defaultImage) {
         return NextResponse.json({
           success: true,
           image: {
@@ -178,10 +212,17 @@ export async function GET(request: NextRequest) {
     }
 
     // Récupérer toutes les images de la DB
-    const dbImages = await prisma.siteImage.findMany({
-      where: category ? { category } : undefined,
-      orderBy: { key: "asc" },
-    });
+    let dbImages: { key: string; imageUrl: string | null; updatedAt: Date }[] = [];
+    try {
+      dbImages = await prisma.siteImage.findMany({
+        where: category ? { category } : undefined,
+        orderBy: { key: "asc" },
+        select: { key: true, imageUrl: true, updatedAt: true },
+      });
+    } catch (dbError) {
+      console.error("DB error fetching images, using defaults:", dbError);
+      // Continue avec les defaults
+    }
 
     // Merger avec les defaults pour avoir la liste complète
     const allImages = DEFAULT_IMAGES.filter(
@@ -216,11 +257,17 @@ export async function GET(request: NextRequest) {
       categories: Object.keys(grouped),
     });
   } catch (error) {
-    console.error("Error fetching site images:", error);
-    return NextResponse.json(
-      { error: "Erreur lors de la récupération des images" },
-      { status: 500 }
-    );
+    console.error("Error fetching site images, returning defaults:", error);
+    
+    // En cas d'erreur, retourner les images par défaut
+    const { images, grouped } = buildDefaultImages(category);
+    return NextResponse.json({
+      success: true,
+      images,
+      grouped,
+      categories: Object.keys(grouped),
+      fallback: true,
+    });
   }
 }
 
