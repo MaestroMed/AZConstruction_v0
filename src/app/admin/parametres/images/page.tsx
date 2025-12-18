@@ -220,7 +220,7 @@ export default function ImagesSettingsPage() {
         {/* Content */}
         <div className="lg:col-span-3 space-y-6">
           {Object.entries(grouped).map(([category, categoryImages]) => {
-            const IconComponent = categoryIcons[category] ?? ImageIcon;
+            const IconComponent: React.ElementType = categoryIcons[category] ?? ImageIcon;
             const isExpanded = expandedCategories.includes(category);
 
             return (
