@@ -16,12 +16,14 @@ import {
   Globe,
   Trash2,
   Loader2,
+  ImageIcon,
 } from "lucide-react";
 import { Input, Switch } from "@/components/admin/ui/FormFields";
 import { toast } from "sonner";
 
 const settingsSections = [
   { id: "general", label: "Général", icon: Building, href: "/admin/parametres" },
+  { id: "images", label: "Images du site", icon: ImageIcon, href: "/admin/parametres/images" },
   { id: "ecommerce", label: "E-commerce", icon: CreditCard, href: "/admin/parametres/ecommerce" },
   { id: "emails", label: "Emails", icon: Mail, href: "/admin/parametres/emails" },
   { id: "seo", label: "SEO", icon: SearchIcon, href: "/admin/parametres/seo" },

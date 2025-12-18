@@ -8,6 +8,7 @@ import { toast } from "sonner";
 
 const settingsSections = [
   { id: "general", label: "Général", icon: Building, href: "/admin/parametres" },
+  { id: "images", label: "Images du site", icon: Building, href: "/admin/parametres/images" },
   { id: "ecommerce", label: "E-commerce", icon: CreditCard, href: "/admin/parametres/ecommerce" },
   { id: "emails", label: "Emails", icon: Mail, href: "/admin/parametres/emails" },
   { id: "seo", label: "SEO", icon: SearchIcon, href: "/admin/parametres/seo" },
