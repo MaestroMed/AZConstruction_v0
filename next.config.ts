@@ -10,7 +10,7 @@ const nextConfig: NextConfig = {
       },
       {
         protocol: "https",
-        hostname: "*.blob.vercel-storage.com",
+        hostname: "**.blob.vercel-storage.com",
         pathname: "/**",
       },
       {
@@ -19,6 +19,8 @@ const nextConfig: NextConfig = {
         pathname: "/**",
       },
     ],
+    // Allow data: URLs for base64 images
+    dangerouslyAllowSVG: true,
   },
 };
 

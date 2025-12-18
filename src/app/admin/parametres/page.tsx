@@ -361,6 +361,7 @@ export default function ParametresPage() {
                           width={180}
                           height={56}
                           className="object-contain max-h-full"
+                          unoptimized={settings.logoUrl.startsWith("data:")}
                         />
                       </div>
                     </div>
@@ -422,6 +423,7 @@ export default function ParametresPage() {
                             width={160}
                             height={48}
                             className="h-10 w-auto object-contain"
+                            unoptimized={settings.logoLightUrl.startsWith("data:")}
                           />
                         </div>
                       </div>
@@ -484,6 +486,7 @@ export default function ParametresPage() {
                           width={160}
                           height={48}
                           className="h-12 w-auto object-contain"
+                          unoptimized={(settings.logoLightUrl || settings.logoUrl || "").startsWith("data:")}
                         />
                       </div>
                       <div className="flex flex-col">
@@ -523,6 +526,7 @@ export default function ParametresPage() {
                         width={64}
                         height={64}
                         className="object-contain"
+                        unoptimized={settings.faviconUrl.startsWith("data:")}
                       />
                     </div>
                     <div className="flex justify-center gap-2 mt-4">
