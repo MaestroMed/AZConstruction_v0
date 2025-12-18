@@ -29,12 +29,21 @@ const settingsSections = [
   { id: "seo", label: "SEO", icon: SearchIcon, href: "/admin/parametres/seo" },
 ];
 
-const categoryIcons: Record<string, React.ElementType> = {
-  hero: Home,
-  products: LayoutGrid,
-  pages: Layers,
-  configurators: Palette,
-};
+function getCategoryIcon(category: string) {
+  const iconClass = "w-5 h-5 text-cyan-600";
+  switch (category) {
+    case "hero":
+      return <Home className={iconClass} />;
+    case "products":
+      return <LayoutGrid className={iconClass} />;
+    case "pages":
+      return <Layers className={iconClass} />;
+    case "configurators":
+      return <Palette className={iconClass} />;
+    default:
+      return <ImageIcon className={iconClass} />;
+  }
+}
 
 const categoryLabels: Record<string, string> = {
   hero: "🏠 Sections Hero",
@@ -220,7 +229,6 @@ export default function ImagesSettingsPage() {
         {/* Content */}
         <div className="lg:col-span-3 space-y-6">
           {Object.entries(grouped).map(([category, categoryImages]) => {
-            const IconComponent: React.ElementType = categoryIcons[category] ?? ImageIcon;
             const isExpanded = expandedCategories.includes(category);
 
             return (
@@ -235,7 +243,7 @@ export default function ImagesSettingsPage() {
                 >
                   <div className="flex items-center gap-3">
                     <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-cyan-500/10 to-blue-500/10 flex items-center justify-center">
-                      <IconComponent className="w-5 h-5 text-cyan-600" />
+                      {getCategoryIcon(category)}
                     </div>
                     <div className="text-left">
                       <h2 className="text-lg font-semibold text-gray-900">
