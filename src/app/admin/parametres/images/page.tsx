@@ -220,7 +220,7 @@ export default function ImagesSettingsPage() {
         {/* Content */}
         <div className="lg:col-span-3 space-y-6">
           {Object.entries(grouped).map(([category, categoryImages]) => {
-            const CategoryIcon = categoryIcons[category] || ImageIcon;
+            const IconComponent = categoryIcons[category] ?? ImageIcon;
             const isExpanded = expandedCategories.includes(category);
 
             return (
@@ -235,7 +235,7 @@ export default function ImagesSettingsPage() {
                 >
                   <div className="flex items-center gap-3">
                     <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-cyan-500/10 to-blue-500/10 flex items-center justify-center">
-                      <CategoryIcon className="w-5 h-5 text-cyan-600" />
+                      <IconComponent className="w-5 h-5 text-cyan-600" />
                     </div>
                     <div className="text-left">
                       <h2 className="text-lg font-semibold text-gray-900">
