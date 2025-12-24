@@ -30,7 +30,7 @@ const navItems = [
 ];
 
 // Pages avec fond sombre où le header peut être transparent
-const darkBackgroundPages = ["/", "/services/thermolaquage"];
+const darkBackgroundPages = ["/", "/services/thermolaquage", "/professionnels"];
 
 interface SiteSettings {
   logoUrl?: string;
@@ -137,7 +137,7 @@ export default function Header() {
   // Parallax scroll values for subtle effects
   const { scrollY } = useScroll();
   const headerBlur = useTransform(scrollY, [0, 100], [0, 20]);
-  const headerBg = useTransform(scrollY, [0, 100], [0, 0.95]);
+  const headerBgScroll = useTransform(scrollY, [0, 100], [0, 0.95]);
 
   // Détermine si la page a un fond sombre
   const isDarkBackground = darkBackgroundPages.includes(pathname);
@@ -194,6 +194,9 @@ export default function Header() {
   const hasValidCustomLogo = !!customLogo && (customLogo.startsWith("http") || customLogo.startsWith("data:") || customLogo.startsWith("/"));
   const showCustomLogo = hasValidCustomLogo && showLogoEnabled;
   const shouldHaveBackground = isScrolled || !isDarkBackground;
+  
+  // Sur les pages à fond clair, le header doit toujours avoir un fond visible
+  const headerBg = isDarkBackground ? headerBgScroll : 0.95;
 
   return (
     <motion.header
@@ -201,7 +204,9 @@ export default function Header() {
         "fixed top-0 left-0 right-0 z-50 transition-all duration-500"
       )}
       style={{
-        backdropFilter: shouldHaveBackground ? `blur(${headerBlur}px) saturate(180%)` : "none",
+        backdropFilter: shouldHaveBackground 
+          ? `blur(${isDarkBackground ? headerBlur : 20}px) saturate(180%)` 
+          : "none",
       }}
     >
       {/* Glassmorphism background layer */}
