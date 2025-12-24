@@ -1,14 +1,14 @@
 "use client";
 
 import * as React from "react";
-import { motion } from "framer-motion";
+import { motion, type HTMLMotionProps } from "framer-motion";
 import { cn } from "@/lib/utils";
 import { Loader2 } from "lucide-react";
 
 type GlowButtonVariant = "primary" | "secondary" | "outline" | "ghost";
 type GlowButtonSize = "sm" | "md" | "lg" | "xl";
 
-interface GlowButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
+interface GlowButtonProps extends Omit<HTMLMotionProps<"button">, "children"> {
   variant?: GlowButtonVariant;
   size?: GlowButtonSize;
   icon?: React.ReactNode;
