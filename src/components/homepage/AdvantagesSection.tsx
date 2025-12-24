@@ -25,7 +25,7 @@ const advantages = [
     icon: Paintbrush,
     title: "Thermolaquage Pro",
     description:
-      "200+ couleurs RAL, garantie 10 ans. Protection durable haut de gamme.",
+      "200+ couleurs RAL. Protection durable haut de gamme pour tous métaux.",
     link: "/services/thermolaquage",
     highlight: true,
   },

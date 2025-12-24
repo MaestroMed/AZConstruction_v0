@@ -46,6 +46,7 @@ interface SiteSettings {
   showLogoInFooter: boolean;
   showSocialInHeader: boolean;
   showSocialInFooter: boolean;
+  showConfigurator: boolean;
   logoUrl: string;
   logoLightUrl: string; // Version claire pour fonds sombres (header/footer)
   faviconUrl: string;
@@ -68,6 +69,7 @@ const defaultSettings: SiteSettings = {
   showLogoInFooter: true,
   showSocialInHeader: false,
   showSocialInFooter: true,
+  showConfigurator: false,
   logoUrl: "",
   logoLightUrl: "",
   faviconUrl: "",
@@ -103,6 +105,7 @@ export default function ParametresPage() {
               instagram: apiSettings.instagram || defaultSettings.instagram,
               linkedin: apiSettings.linkedin || defaultSettings.linkedin,
               showLogoInHeader: apiSettings.showLogoInHeader ?? defaultSettings.showLogoInHeader,
+              showConfigurator: apiSettings.showConfigurator ?? defaultSettings.showConfigurator,
               logoUrl: apiSettings.logoUrl || "",
               logoLightUrl: apiSettings.logoLightUrl || "",
               faviconUrl: apiSettings.faviconUrl || "",
@@ -212,6 +215,7 @@ export default function ParametresPage() {
         instagram: settings.instagram,
         linkedin: settings.linkedin,
         showLogoInHeader: settings.showLogoInHeader,
+        showConfigurator: settings.showConfigurator,
         logoUrl: settings.logoUrl,
         logoLightUrl: settings.logoLightUrl,
         faviconUrl: settings.faviconUrl,
@@ -586,6 +590,24 @@ export default function ParametresPage() {
                 checked={settings.showLogoInFooter}
                 onChange={(checked) => setSettings({ ...settings, showLogoInFooter: checked })}
               />
+            </div>
+          </div>
+
+          {/* Fonctionnalités */}
+          <div className="bg-white rounded-xl border border-gray-200 p-6">
+            <h2 className="text-lg font-semibold text-gray-900 mb-6 flex items-center gap-2">
+              <Building className="w-5 h-5" />
+              Fonctionnalités du site
+            </h2>
+            <div className="space-y-4">
+              <Switch
+                label="Afficher le configurateur de produits"
+                checked={settings.showConfigurator}
+                onChange={(checked) => setSettings({ ...settings, showConfigurator: checked })}
+              />
+              <p className="text-sm text-gray-500 ml-8">
+                Affiche le configurateur 3D dans le hero de la page d'accueil et l'accès aux pages configurateur.
+              </p>
             </div>
           </div>
 

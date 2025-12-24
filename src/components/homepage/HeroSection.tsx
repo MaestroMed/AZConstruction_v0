@@ -4,8 +4,8 @@ import * as React from "react";
 import { motion } from "framer-motion";
 import { ArrowRight, Play } from "lucide-react";
 import Link from "next/link";
-import Image from "next/image";
 import ConfiguratorPreview from "./ConfiguratorPreview";
+import HeroCarousel from "./HeroCarousel";
 
 // Image par défaut
 const DEFAULT_HERO_IMAGE = "/images/hero/atelier-facade.jpg";
@@ -39,7 +39,7 @@ interface HeroSettings {
 const defaultSettings: HeroSettings = {
   backgroundImage: DEFAULT_HERO_IMAGE,
   backgroundOverlayOpacity: 70,
-  badge: "Fabrication française depuis 2015",
+  badge: "Transformation métal, bois & verre depuis 2018",
   badgeEnabled: true,
   headline: "L'acier sur",
   headlineAccent: "mesure",
@@ -54,8 +54,8 @@ const defaultSettings: HeroSettings = {
   promoLink: "",
   promoBgColor: "#dc2626",
   statsEnabled: true,
-  stat1Value: "10",
-  stat1Label: "Années d'expertise",
+  stat1Value: "2018",
+  stat1Label: "Depuis",
   stat2Value: "1500+",
   stat2Label: "Projets réalisés",
   stat3Value: "1800m²",
@@ -64,10 +64,12 @@ const defaultSettings: HeroSettings = {
 
 export default function HeroSection() {
   const [settings, setSettings] = React.useState<HeroSettings>(defaultSettings);
+  const [showConfigurator, setShowConfigurator] = React.useState(false);
 
-  // Charger les paramètres depuis localStorage
+  // Charger les paramètres depuis localStorage et API
   React.useEffect(() => {
-    const loadSettings = () => {
+    const loadSettings = async () => {
+      // Charger les hero settings depuis localStorage
       const saved = localStorage.getItem("az_hero_settings");
       if (saved) {
         try {
@@ -75,6 +77,19 @@ export default function HeroSection() {
         } catch (e) {
           console.error("Erreur parsing hero settings:", e);
         }
+      }
+
+      // Charger le toggle configurateur depuis l'API
+      try {
+        const response = await fetch("/api/settings");
+        if (response.ok) {
+          const data = await response.json();
+          if (data.settings?.showConfigurator !== undefined) {
+            setShowConfigurator(data.settings.showConfigurator);
+          }
+        }
+      } catch (e) {
+        console.error("Erreur chargement settings:", e);
       }
     };
 
@@ -111,26 +126,8 @@ export default function HeroSection() {
         </div>
       )}
     <section className={`relative min-h-screen overflow-hidden bg-[#0a0f1a] ${settings.promoEnabled ? "mt-10" : ""}`}>
-      {/* Background Image - Photo de l'atelier */}
-      <div className="absolute inset-0">
-        <Image
-          src={heroImage || "/images/hero/atelier-facade.jpg"}
-          alt="AZ Construction - Atelier de métallerie sur mesure"
-          fill
-          priority
-          className="object-cover object-center"
-          quality={90}
-          onError={(e) => {
-            (e.target as HTMLImageElement).style.display = "none";
-          }}
-        />
-        {/* Overlay gradient sophistiqué style Apple */}
-        <div 
-          className="absolute inset-0 bg-gradient-to-r from-[#0a0f1a]/95 via-[#0a0f1a]/70 to-[#0a0f1a]/40"
-          style={{ opacity: settings.backgroundOverlayOpacity / 100 }}
-        />
-        <div className="absolute inset-0 bg-gradient-to-t from-[#0a0f1a] via-transparent to-[#0a0f1a]/30" />
-      </div>
+      {/* Background Carousel - Photos des réalisations */}
+      <HeroCarousel />
 
       {/* Subtle grain texture */}
       <div 
@@ -251,21 +248,23 @@ export default function HeroSection() {
             )}
           </motion.div>
 
-          {/* Right Column - Configurator Preview */}
-          <motion.div
-            initial={{ opacity: 0, x: 50 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.8, delay: 0.3, ease: [0.25, 0.46, 0.45, 0.94] }}
-            className="relative hidden lg:block"
-          >
-            {/* Glassmorphism wrapper */}
-            <div className="relative">
-              <div className="absolute -inset-4 bg-gradient-to-br from-cyan-500/20 via-blue-500/10 to-transparent rounded-[2rem] blur-2xl" />
-              <div className="relative backdrop-blur-xl bg-white/[0.03] border border-white/10 rounded-2xl p-5 shadow-2xl">
-                <ConfiguratorPreview />
+          {/* Right Column - Configurator Preview (conditionnel) */}
+          {showConfigurator && (
+            <motion.div
+              initial={{ opacity: 0, x: 50 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.8, delay: 0.3, ease: [0.25, 0.46, 0.45, 0.94] }}
+              className="relative hidden lg:block"
+            >
+              {/* Glassmorphism wrapper */}
+              <div className="relative">
+                <div className="absolute -inset-4 bg-gradient-to-br from-cyan-500/20 via-blue-500/10 to-transparent rounded-[2rem] blur-2xl" />
+                <div className="relative backdrop-blur-xl bg-white/[0.03] border border-white/10 rounded-2xl p-5 shadow-2xl">
+                  <ConfiguratorPreview />
+                </div>
               </div>
-            </div>
-          </motion.div>
+            </motion.div>
+          )}
         </div>
       </div>
 

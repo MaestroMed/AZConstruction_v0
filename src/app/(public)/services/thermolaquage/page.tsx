@@ -66,7 +66,7 @@ const advantages = [
   {
     icon: Factory,
     title: "Capacité Industrielle",
-    description: "Cabine de 8m, four de cuisson XXL. Grandes séries et pièces hors-normes.",
+    description: "Cabine de 7m, four de cuisson XXL. Grandes séries et pièces hors-normes.",
   },
 ];
 
@@ -104,6 +104,34 @@ const applications = [
   "Équipements agricoles",
 ];
 
+// Services spécialisés thermolaquage
+const specializedServices = [
+  {
+    title: "Rénovation Voiture",
+    description: "Capots, ailes, pare-chocs et pièces de carrosserie.",
+    href: "/services/thermolaquage/renovation-voiture",
+    icon: "🚗",
+  },
+  {
+    title: "Jantes",
+    description: "Rénovation et personnalisation de vos jantes.",
+    href: "/services/thermolaquage/jantes",
+    icon: "🔘",
+  },
+  {
+    title: "Moto Art",
+    description: "Carcasses de moto et sculptures métalliques artistiques.",
+    href: "/services/thermolaquage/moto-art",
+    icon: "🏍️",
+  },
+  {
+    title: "Pièces Métalliques",
+    description: "Portails, garde-corps, mobilier et structures.",
+    href: "/services/thermolaquage/pieces-metalliques",
+    icon: "🔧",
+  },
+];
+
 // FAQ SEO optimisée
 const faqItems = [
   {
@@ -119,7 +147,7 @@ const faqItems = [
   {
     question: "Quelle est la durée de vie du thermolaquage ?",
     answer:
-      "Le thermolaquage offre une durée de vie exceptionnelle de 25 ans et plus, bien supérieure à la peinture liquide (5-10 ans). Nous garantissons nos traitements 10 ans contre l'écaillage et la décoloration, témoignant de notre confiance dans la qualité de notre travail.",
+      "Le thermolaquage offre une durée de vie exceptionnelle de 25 ans et plus, bien supérieure à la peinture liquide (5-10 ans). Ce procédé assure une résistance optimale contre l'écaillage et la décoloration.",
   },
   {
     question: "Thermolaquage ou peinture liquide : que choisir ?",
@@ -234,8 +262,8 @@ export default function ThermolaquagePage() {
               <p className="text-xl text-white/80 mb-8 leading-relaxed">
                 Protection et finition haut de gamme pour tous vos ouvrages métalliques.
                 Plus de <strong className="text-cyan-glow">200 teintes RAL</strong>, 
-                résistance maximale aux intempéries, 
-                <strong className="text-cyan-glow"> garantie 10 ans</strong>.
+                résistance maximale aux intempéries et 
+                <strong className="text-cyan-glow">durabilité exceptionnelle</strong>.
               </p>
 
               {/* Stats */}
@@ -331,8 +359,55 @@ export default function ThermolaquagePage() {
         </div>
       </section>
 
-      {/* Process Section */}
+      {/* Services Spécialisés */}
       <section className="py-20 bg-gray-50">
+        <div className="container mx-auto px-6">
+          <motion.div
+            className="text-center max-w-3xl mx-auto mb-12"
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+          >
+            <h2 className="text-3xl md:text-4xl font-bold text-navy-dark mb-4">
+              Nos Services Spécialisés
+            </h2>
+            <p className="text-gray-600 text-lg">
+              Des solutions adaptées à chaque usage, pour particuliers et professionnels.
+            </p>
+          </motion.div>
+
+          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+            {specializedServices.map((service, index) => (
+              <motion.div
+                key={service.title}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: index * 0.1 }}
+              >
+                <Link href={service.href}>
+                  <Card variant="elevated" hover className="h-full group cursor-pointer">
+                    <CardContent className="p-6 text-center">
+                      <div className="text-4xl mb-4">{service.icon}</div>
+                      <h3 className="text-lg font-semibold text-navy-dark mb-2 group-hover:text-cyan-700 transition-colors">
+                        {service.title}
+                      </h3>
+                      <p className="text-sm text-gray-600">{service.description}</p>
+                      <div className="mt-4 text-cyan-700 text-sm font-medium flex items-center justify-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                        En savoir plus
+                        <ChevronRight className="w-4 h-4" />
+                      </div>
+                    </CardContent>
+                  </Card>
+                </Link>
+              </motion.div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Process Section */}
+      <section className="py-20 bg-white">
         <div className="container mx-auto px-6">
           <motion.div
             className="text-center max-w-3xl mx-auto mb-16"
@@ -496,8 +571,8 @@ export default function ThermolaquagePage() {
                     <BadgeCheck className="w-6 h-6 text-green-600" />
                   </div>
                   <div>
-                    <p className="font-bold text-navy-dark">Garantie 10 ans</p>
-                    <p className="text-sm text-gray-500">Sur tous nos traitements</p>
+                    <p className="font-bold text-navy-dark">Qualité Pro</p>
+                    <p className="text-sm text-gray-500">Finition haut de gamme</p>
                   </div>
                 </div>
               </div>
@@ -632,7 +707,7 @@ export default function ThermolaquagePage() {
                 </div>
                 <div className="flex items-center gap-2">
                   <BadgeCheck className="w-4 h-4" />
-                  <span>Garantie 10 ans</span>
+                  <span>Qualité professionnelle</span>
                 </div>
               </div>
             </motion.div>

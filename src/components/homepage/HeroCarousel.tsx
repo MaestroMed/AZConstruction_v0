@@ -13,11 +13,11 @@ interface Realization {
   ville?: string;
 }
 
-// Images placeholder si aucune réalisation
+// Images placeholder Unsplash si aucune réalisation
 const placeholderImages = [
-  "/images/hero/metalwork-1.jpg",
-  "/images/hero/metalwork-2.jpg",
-  "/images/hero/metalwork-3.jpg",
+  "https://images.unsplash.com/photo-1504307651254-35680f356dfd?w=1920&q=80", // Atelier métallerie
+  "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=1920&q=80", // Travail du métal
+  "https://images.unsplash.com/photo-1530124566582-a618bc2615dc?w=1920&q=80", // Soudure
 ];
 
 export default function HeroCarousel() {
@@ -25,9 +25,35 @@ export default function HeroCarousel() {
   const [currentIndex, setCurrentIndex] = React.useState(0);
   const [isLoaded, setIsLoaded] = React.useState(false);
 
-  // Charger les images depuis les réalisations
+  // Charger les images depuis les réalisations (API ou localStorage)
   React.useEffect(() => {
-    const loadImages = () => {
+    const loadImages = async () => {
+      try {
+        // Essayer d'abord l'API
+        const response = await fetch("/api/realizations");
+        if (response.ok) {
+          const data = await response.json();
+          if (data.realizations && data.realizations.length > 0) {
+            const apiImages = data.realizations
+              .filter((r: Realization) => r.imageUrl || (r.images && r.images.length > 0))
+              .flatMap((r: Realization) => 
+                r.images && r.images.length > 0 ? r.images : [r.imageUrl]
+              )
+              .filter(Boolean)
+              .slice(0, 5); // Max 5 images
+
+            if (apiImages.length > 0) {
+              setImages(apiImages);
+              setIsLoaded(true);
+              return;
+            }
+          }
+        }
+      } catch (e) {
+        console.error("Erreur chargement API realizations:", e);
+      }
+
+      // Fallback localStorage
       try {
         const saved = localStorage.getItem("az_realizations");
         if (saved) {
@@ -35,34 +61,25 @@ export default function HeroCarousel() {
           const publishedImages = realizations
             .filter((r) => r.imageUrl || (r.images && r.images.length > 0))
             .flatMap((r) => (r.images && r.images.length > 0 ? r.images : [r.imageUrl]))
-            .filter(Boolean);
+            .filter(Boolean)
+            .slice(0, 5);
 
           if (publishedImages.length > 0) {
             setImages(publishedImages);
-          } else {
-            setImages(placeholderImages);
+            setIsLoaded(true);
+            return;
           }
-        } else {
-          setImages(placeholderImages);
         }
       } catch (error) {
-        console.error("Erreur chargement images:", error);
-        setImages(placeholderImages);
+        console.error("Erreur chargement localStorage:", error);
       }
+
+      // Fallback images placeholder
+      setImages(placeholderImages);
       setIsLoaded(true);
     };
 
     loadImages();
-
-    // Écouter les changements de localStorage (si admin modifie les réalisations)
-    const handleStorageChange = (e: StorageEvent) => {
-      if (e.key === "az_realizations") {
-        loadImages();
-      }
-    };
-
-    window.addEventListener("storage", handleStorageChange);
-    return () => window.removeEventListener("storage", handleStorageChange);
   }, []);
 
   // Défilement automatique

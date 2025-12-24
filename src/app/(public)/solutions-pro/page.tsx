@@ -3,34 +3,32 @@
 import * as React from "react";
 import { motion } from "framer-motion";
 import Link from "next/link";
+import Image from "next/image";
 import {
   Building2,
-  Percent,
   Clock,
   FileText,
-  Users,
   ArrowRight,
   CheckCircle,
-  Star,
   Phone,
   Mail,
-  Shield,
   Truck,
-  Award,
-  Calculator,
-  Handshake,
   HeadphonesIcon,
+  Send,
+  User,
+  Building,
+  Briefcase,
+  MessageSquare,
+  Loader2,
+  Hammer,
+  Ruler,
+  Factory,
 } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 import { Card, CardContent } from "@/components/ui/Card";
+import { toast } from "sonner";
 
 const advantages = [
-  {
-    icon: Percent,
-    title: "Remises jusqu'à -25%",
-    description:
-      "Bénéficiez de tarifs préférentiels selon votre volume d'achat annuel.",
-  },
   {
     icon: Clock,
     title: "Délais prioritaires",
@@ -45,21 +43,15 @@ const advantages = [
   },
   {
     icon: HeadphonesIcon,
-    title: "Support dédié",
+    title: "Interlocuteur dédié",
     description:
       "Un chargé de compte vous accompagne dans tous vos projets de A à Z.",
   },
   {
-    icon: Calculator,
-    title: "Paiement différé",
-    description:
-      "Payez vos commandes à 30 jours fin de mois après validation de votre compte.",
-  },
-  {
     icon: Truck,
-    title: "Livraison gratuite*",
+    title: "Livraison sur chantier",
     description:
-      "Livraison offerte en Île-de-France pour toute commande supérieure à 5 000€ HT.",
+      "Livraison directe sur vos chantiers en Île-de-France et régions limitrophes.",
   },
 ];
 
@@ -67,100 +59,74 @@ const sectors = [
   {
     name: "Constructeurs de maisons",
     description: "Équipez vos constructions neuves avec des ouvrages de qualité.",
-    count: "150+ partenaires",
+    icon: Building,
   },
   {
     name: "Architectes & Bureaux d'études",
     description: "Collaborons sur vos projets les plus ambitieux.",
-    count: "80+ collaborations",
-  },
-  {
-    name: "Promoteurs immobiliers",
-    description: "Solutions clés en main pour vos programmes neufs.",
-    count: "25+ programmes",
+    icon: Ruler,
   },
   {
     name: "Artisans du bâtiment",
     description: "Sous-traitance métallerie pour vos chantiers.",
-    count: "200+ artisans",
-  },
-  {
-    name: "Collectivités",
-    description: "Équipements pour espaces publics et bâtiments municipaux.",
-    count: "50+ collectivités",
+    icon: Hammer,
   },
   {
     name: "Industriels",
     description: "Structures, passerelles et équipements sur mesure.",
-    count: "50+ industriels",
+    icon: Factory,
   },
 ];
 
-const testimonials = [
+// Réalisations B2B placeholder
+const realisationsB2B = [
   {
-    name: "Laurent M.",
-    company: "Maisons Lumière",
-    role: "Directeur Commercial",
-    text: "Un partenariat de confiance depuis 8 ans. La qualité est au rendez-vous, les délais sont respectés et l'équipe commerciale est très réactive.",
-    rating: 5,
+    title: "Garde-corps collectif",
+    client: "Promoteur IDF",
+    image: "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=600&q=80",
   },
   {
-    name: "Claire D.",
-    company: "Atelier D Architectes",
-    role: "Architecte DPLG",
-    text: "AZ Construction a su réaliser notre vision pour le hall d'entrée. L'escalier hélicoïdal est une vraie pièce maîtresse du projet.",
-    rating: 5,
+    title: "Escalier industriel",
+    client: "Usine automobile",
+    image: "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=600&q=80",
   },
   {
-    name: "Thomas B.",
-    company: "Bâti Pro Services",
-    role: "Gérant",
-    text: "Je recommande AZ Construction à tous mes clients. Les tarifs professionnels sont compétitifs et la qualité est irréprochable.",
-    rating: 5,
-  },
-];
-
-const pricingTiers = [
-  {
-    name: "Starter",
-    minVolume: "< 10 000€/an",
-    discount: "5%",
-    features: [
-      "Tarifs professionnels de base",
-      "Délais standards",
-      "Devis sous 48h",
-      "Support email",
-    ],
-  },
-  {
-    name: "Business",
-    minVolume: "10 000€ - 50 000€/an",
-    discount: "15%",
-    popular: true,
-    features: [
-      "Tarifs préférentiels -15%",
-      "Délais prioritaires",
-      "Devis sous 24h",
-      "Chargé de compte dédié",
-      "Paiement à 30 jours",
-    ],
-  },
-  {
-    name: "Enterprise",
-    minVolume: "> 50 000€/an",
-    discount: "25%",
-    features: [
-      "Tarifs négociés -25%",
-      "Délais express",
-      "Devis immédiat",
-      "Chargé de compte VIP",
-      "Paiement à 45 jours",
-      "Livraison gratuite IDF",
-    ],
+    title: "Portails résidence",
+    client: "Collectivité locale",
+    image: "https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=600&q=80",
   },
 ];
 
 export default function SolutionsProPage() {
+  const [formData, setFormData] = React.useState({
+    entreprise: "",
+    nom: "",
+    email: "",
+    telephone: "",
+    secteur: "",
+    message: "",
+  });
+  const [isSubmitting, setIsSubmitting] = React.useState(false);
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsSubmitting(true);
+
+    // Simulation d'envoi
+    await new Promise((resolve) => setTimeout(resolve, 1500));
+
+    toast.success("Demande envoyée ! Nous vous recontactons sous 24h.");
+    setFormData({
+      entreprise: "",
+      nom: "",
+      email: "",
+      telephone: "",
+      secteur: "",
+      message: "",
+    });
+    setIsSubmitting(false);
+  };
+
   return (
     <div className="min-h-screen bg-white">
       {/* Hero */}
@@ -199,25 +165,25 @@ export default function SolutionsProPage() {
                 <span className="text-cyan-glow font-medium">Espace Professionnel</span>
               </div>
               <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-6">
-                Solutions Pro{" "}
+                Votre partenaire{" "}
                 <span className="font-serif italic text-cyan-pale">
-                  sur mesure
+                  métallerie
                 </span>
               </h1>
               <p className="text-xl text-white/70 mb-8 leading-relaxed">
-                Partenaire privilégié des professionnels du bâtiment depuis 10 ans.
-                Bénéficiez de conditions exclusives et d'un accompagnement personnalisé.
+                Depuis 2018, AZ Construction accompagne les professionnels du bâtiment.
+                Transformation métal, bois et verre sur mesure.
               </p>
               <div className="flex flex-col sm:flex-row gap-4">
-                <Link href="/register?type=pro">
+                <a href="#contact-pro">
                   <Button
                     size="lg"
                     className="bg-cyan-glow text-navy-dark hover:bg-cyan-light"
                     icon={<ArrowRight className="w-5 h-5" />}
                   >
-                    Créer mon compte Pro
+                    Demander un devis Pro
                   </Button>
-                </Link>
+                </a>
                 <a href="tel:+33123456789">
                   <Button
                     variant="outline"
@@ -232,16 +198,15 @@ export default function SolutionsProPage() {
             </motion.div>
 
             <motion.div
-              className="grid grid-cols-2 gap-4"
+              className="grid grid-cols-3 gap-4"
               initial={{ opacity: 0, x: 30 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ delay: 0.3 }}
             >
               {[
-                { number: "500+", label: "Partenaires actifs" },
-                { number: "-25%", label: "Remise max" },
+                { number: "200", label: "Partenaires actifs" },
                 { number: "24h", label: "Réponse devis" },
-                { number: "30j", label: "Paiement différé" },
+                { number: "2018", label: "Depuis" },
               ].map((stat, index) => (
                 <div
                   key={index}
@@ -258,7 +223,7 @@ export default function SolutionsProPage() {
         </div>
       </section>
 
-      {/* Advantages */}
+      {/* Avantages */}
       <section className="py-20 bg-gray-50">
         <div className="container mx-auto px-6">
           <motion.div
@@ -268,15 +233,14 @@ export default function SolutionsProPage() {
             viewport={{ once: true }}
           >
             <h2 className="text-3xl md:text-4xl font-bold text-navy-dark mb-4">
-              Les avantages du compte Pro
+              Pourquoi travailler avec AZ Construction ?
             </h2>
             <p className="text-gray-600 max-w-2xl mx-auto">
-              Rejoignez notre réseau de partenaires professionnels et bénéficiez
-              de nombreux avantages exclusifs.
+              Des avantages concrets pour simplifier vos projets et optimiser vos chantiers.
             </p>
           </motion.div>
 
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
             {advantages.map((advantage, index) => (
               <motion.div
                 key={index}
@@ -286,11 +250,11 @@ export default function SolutionsProPage() {
                 transition={{ delay: index * 0.1 }}
               >
                 <Card variant="elevated" className="h-full text-center">
-                  <CardContent className="p-8">
-                    <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-blue-corporate/10 to-cyan-glow/10 flex items-center justify-center mx-auto mb-6">
-                      <advantage.icon className="w-8 h-8 text-blue-corporate" />
+                  <CardContent className="p-6">
+                    <div className="w-14 h-14 rounded-xl bg-gradient-to-br from-blue-corporate/10 to-cyan-glow/10 flex items-center justify-center mx-auto mb-4">
+                      <advantage.icon className="w-7 h-7 text-blue-corporate" />
                     </div>
-                    <h3 className="text-lg font-semibold text-navy-dark mb-3">
+                    <h3 className="text-lg font-semibold text-navy-dark mb-2">
                       {advantage.title}
                     </h3>
                     <p className="text-sm text-gray-500 leading-relaxed">
@@ -304,7 +268,7 @@ export default function SolutionsProPage() {
         </div>
       </section>
 
-      {/* Pricing Tiers */}
+      {/* Secteurs */}
       <section className="py-20 bg-white">
         <div className="container mx-auto px-6">
           <motion.div
@@ -314,94 +278,15 @@ export default function SolutionsProPage() {
             viewport={{ once: true }}
           >
             <h2 className="text-3xl md:text-4xl font-bold text-navy-dark mb-4">
-              Nos formules partenaires
-            </h2>
-            <p className="text-gray-600 max-w-2xl mx-auto">
-              Des conditions adaptées à votre volume d'achat annuel.
-            </p>
-          </motion.div>
-
-          <div className="grid md:grid-cols-3 gap-8 max-w-5xl mx-auto">
-            {pricingTiers.map((tier, index) => (
-              <motion.div
-                key={index}
-                initial={{ opacity: 0, y: 30 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: index * 0.1 }}
-                className={tier.popular ? "md:-mt-4 md:mb-4" : ""}
-              >
-                <Card
-                  variant="elevated"
-                  className={`h-full relative ${
-                    tier.popular ? "border-2 border-cyan-glow shadow-xl" : ""
-                  }`}
-                >
-                  {tier.popular && (
-                    <div className="absolute -top-4 left-1/2 -translate-x-1/2 px-4 py-1 bg-cyan-glow text-navy-dark text-sm font-semibold rounded-full">
-                      Le plus populaire
-                    </div>
-                  )}
-                  <CardContent className="p-8">
-                    <div className="text-center mb-6">
-                      <h3 className="text-xl font-bold text-navy-dark mb-2">
-                        {tier.name}
-                      </h3>
-                      <p className="text-sm text-gray-500">{tier.minVolume}</p>
-                      <div className="mt-4">
-                        <span className="text-4xl font-bold text-blue-corporate">
-                          {tier.discount}
-                        </span>
-                        <span className="text-gray-500 ml-1">de remise</span>
-                      </div>
-                    </div>
-                    <ul className="space-y-3 mb-8">
-                      {tier.features.map((feature, idx) => (
-                        <li key={idx} className="flex items-center gap-3 text-sm text-gray-600">
-                          <CheckCircle className="w-5 h-5 text-cyan-glow flex-shrink-0" />
-                          {feature}
-                        </li>
-                      ))}
-                    </ul>
-                    <Link href="/register?type=pro">
-                      <Button
-                        className={`w-full ${
-                          tier.popular
-                            ? "bg-cyan-glow text-navy-dark hover:bg-cyan-pale"
-                            : ""
-                        }`}
-                        variant={tier.popular ? "default" : "outline"}
-                      >
-                        S'inscrire
-                      </Button>
-                    </Link>
-                  </CardContent>
-                </Card>
-              </motion.div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Sectors */}
-      <section className="py-20 bg-gray-50">
-        <div className="container mx-auto px-6">
-          <motion.div
-            className="text-center mb-16"
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-          >
-            <h2 className="text-3xl md:text-4xl font-bold text-navy-dark mb-4">
-              Nous travaillons avec tous les acteurs du bâtiment
+              Nous travaillons avec tous les métiers du bâtiment
             </h2>
             <p className="text-gray-600 max-w-2xl mx-auto">
               Que vous soyez constructeur, architecte ou artisan, nous adaptons
-              nos services à votre métier et à vos contraintes.
+              nos services à vos contraintes.
             </p>
           </motion.div>
 
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
             {sectors.map((sector, index) => (
               <motion.div
                 key={index}
@@ -411,15 +296,13 @@ export default function SolutionsProPage() {
                 transition={{ delay: index * 0.1 }}
               >
                 <Card variant="elevated" hover className="h-full">
-                  <CardContent className="p-6">
-                    <div className="flex items-start justify-between mb-4">
-                      <h3 className="text-lg font-semibold text-navy-dark">
-                        {sector.name}
-                      </h3>
-                      <span className="text-xs text-cyan-glow bg-cyan-glow/10 px-2 py-1 rounded-full font-medium">
-                        {sector.count}
-                      </span>
+                  <CardContent className="p-6 text-center">
+                    <div className="w-12 h-12 rounded-xl bg-cyan-glow/10 flex items-center justify-center mx-auto mb-4">
+                      <sector.icon className="w-6 h-6 text-cyan-700" />
                     </div>
+                    <h3 className="text-lg font-semibold text-navy-dark mb-2">
+                      {sector.name}
+                    </h3>
                     <p className="text-sm text-gray-500">{sector.description}</p>
                   </CardContent>
                 </Card>
@@ -429,8 +312,8 @@ export default function SolutionsProPage() {
         </div>
       </section>
 
-      {/* Testimonials */}
-      <section className="py-20 bg-white">
+      {/* Réalisations B2B */}
+      <section className="py-20 bg-gray-50">
         <div className="container mx-auto px-6">
           <motion.div
             className="text-center mb-16"
@@ -439,114 +322,278 @@ export default function SolutionsProPage() {
             viewport={{ once: true }}
           >
             <h2 className="text-3xl md:text-4xl font-bold text-navy-dark mb-4">
-              Ils nous font confiance
+              Réalisations professionnelles
             </h2>
             <p className="text-gray-600 max-w-2xl mx-auto">
-              Des partenaires satisfaits qui recommandent nos services.
+              Quelques exemples de projets réalisés pour nos partenaires.
             </p>
           </motion.div>
 
           <div className="grid md:grid-cols-3 gap-8">
-            {testimonials.map((testimonial, index) => (
+            {realisationsB2B.map((realisation, index) => (
               <motion.div
                 key={index}
                 initial={{ opacity: 0, y: 30 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: index * 0.1 }}
+                className="group"
               >
-                <Card variant="elevated" className="h-full">
-                  <CardContent className="p-8">
-                    <div className="flex gap-1 mb-4">
-                      {Array.from({ length: testimonial.rating }).map((_, i) => (
-                        <Star key={i} className="w-5 h-5 fill-yellow-400 text-yellow-400" />
-                      ))}
-                    </div>
-                    <p className="text-gray-600 mb-6 leading-relaxed italic">
-                      "{testimonial.text}"
-                    </p>
-                    <div className="border-t border-gray-100 pt-4">
-                      <p className="font-semibold text-navy-dark">{testimonial.name}</p>
-                      <p className="text-sm text-cyan-glow">{testimonial.company}</p>
-                      <p className="text-xs text-gray-400">{testimonial.role}</p>
-                    </div>
-                  </CardContent>
-                </Card>
+                <div className="relative aspect-[4/3] rounded-2xl overflow-hidden bg-gray-200 mb-4">
+                  <Image
+                    src={realisation.image}
+                    alt={realisation.title}
+                    fill
+                    className="object-cover group-hover:scale-105 transition-transform duration-500"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+                </div>
+                <h3 className="font-semibold text-navy-dark">{realisation.title}</h3>
+                <p className="text-sm text-gray-500">{realisation.client}</p>
               </motion.div>
             ))}
+          </div>
+
+          <div className="text-center mt-10">
+            <Link href="/realisations">
+              <Button variant="outline" icon={<ArrowRight className="w-4 h-4" />}>
+                Voir toutes nos réalisations
+              </Button>
+            </Link>
           </div>
         </div>
       </section>
 
-      {/* Contact Pro */}
-      <section className="py-20 bg-gradient-to-r from-navy-dark to-blue-corporate">
+      {/* Formulaire Contact Pro */}
+      <section id="contact-pro" className="py-20 bg-gradient-to-br from-navy-dark via-navy-medium to-blue-corporate">
         <div className="container mx-auto px-6">
-          <motion.div
-            className="max-w-4xl mx-auto"
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-          >
-            <div className="bg-white/10 backdrop-blur-sm rounded-3xl p-10 border border-white/10">
-              <div className="grid md:grid-cols-2 gap-10 items-center">
-                <div>
-                  <h2 className="text-3xl font-bold text-white mb-4">
-                    Besoin d'un conseil personnalisé ?
-                  </h2>
-                  <p className="text-white/70 mb-6">
-                    Notre équipe commerciale est à votre disposition pour étudier
-                    vos besoins et vous proposer les meilleures conditions.
-                  </p>
-                  <div className="space-y-4">
-                    <a
-                      href="tel:+33123456789"
-                      className="flex items-center gap-4 text-white hover:text-cyan-glow transition-colors"
-                    >
-                      <div className="w-12 h-12 rounded-xl bg-white/10 flex items-center justify-center">
-                        <Phone className="w-5 h-5" />
-                      </div>
-                      <div>
-                        <p className="text-sm text-white/60">Commercial</p>
-                        <p className="font-semibold">01 23 45 67 89</p>
-                      </div>
-                    </a>
-                    <a
-                      href="mailto:pro@zaconstruction.fr"
-                      className="flex items-center gap-4 text-white hover:text-cyan-glow transition-colors"
-                    >
-                      <div className="w-12 h-12 rounded-xl bg-white/10 flex items-center justify-center">
-                        <Mail className="w-5 h-5" />
-                      </div>
-                      <div>
-                        <p className="text-sm text-white/60">Email</p>
-                        <p className="font-semibold">pro@zaconstruction.fr</p>
-                      </div>
-                    </a>
+          <div className="max-w-5xl mx-auto">
+            <motion.div
+              className="text-center mb-12"
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+            >
+              <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">
+                Demande de devis professionnel
+              </h2>
+              <p className="text-white/70 max-w-2xl mx-auto">
+                Remplissez le formulaire ci-dessous et notre équipe commerciale
+                vous recontacte sous 24h.
+              </p>
+            </motion.div>
+
+            <motion.div
+              className="bg-white rounded-3xl p-8 md:p-10 shadow-2xl"
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+            >
+              <form onSubmit={handleSubmit} className="space-y-6">
+                <div className="grid md:grid-cols-2 gap-6">
+                  {/* Entreprise */}
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Entreprise *
+                    </label>
+                    <div className="relative">
+                      <Building className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
+                      <input
+                        type="text"
+                        required
+                        value={formData.entreprise}
+                        onChange={(e) =>
+                          setFormData({ ...formData, entreprise: e.target.value })
+                        }
+                        className="w-full pl-12 pr-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-cyan-500 focus:border-transparent transition-all"
+                        placeholder="Nom de votre entreprise"
+                      />
+                    </div>
+                  </div>
+
+                  {/* Nom */}
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Nom & Prénom *
+                    </label>
+                    <div className="relative">
+                      <User className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
+                      <input
+                        type="text"
+                        required
+                        value={formData.nom}
+                        onChange={(e) =>
+                          setFormData({ ...formData, nom: e.target.value })
+                        }
+                        className="w-full pl-12 pr-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-cyan-500 focus:border-transparent transition-all"
+                        placeholder="Votre nom complet"
+                      />
+                    </div>
+                  </div>
+
+                  {/* Email */}
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Email professionnel *
+                    </label>
+                    <div className="relative">
+                      <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
+                      <input
+                        type="email"
+                        required
+                        value={formData.email}
+                        onChange={(e) =>
+                          setFormData({ ...formData, email: e.target.value })
+                        }
+                        className="w-full pl-12 pr-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-cyan-500 focus:border-transparent transition-all"
+                        placeholder="pro@entreprise.fr"
+                      />
+                    </div>
+                  </div>
+
+                  {/* Téléphone */}
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Téléphone *
+                    </label>
+                    <div className="relative">
+                      <Phone className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
+                      <input
+                        type="tel"
+                        required
+                        value={formData.telephone}
+                        onChange={(e) =>
+                          setFormData({ ...formData, telephone: e.target.value })
+                        }
+                        className="w-full pl-12 pr-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-cyan-500 focus:border-transparent transition-all"
+                        placeholder="06 12 34 56 78"
+                      />
+                    </div>
                   </div>
                 </div>
-                <div className="flex flex-col gap-4">
-                  <Link href="/register?type=pro">
-                    <Button
-                      size="lg"
-                      className="w-full bg-cyan-glow text-navy-dark hover:bg-cyan-pale"
-                      icon={<ArrowRight className="w-5 h-5" />}
+
+                {/* Secteur */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Secteur d'activité *
+                  </label>
+                  <div className="relative">
+                    <Briefcase className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
+                    <select
+                      required
+                      value={formData.secteur}
+                      onChange={(e) =>
+                        setFormData({ ...formData, secteur: e.target.value })
+                      }
+                      className="w-full pl-12 pr-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-cyan-500 focus:border-transparent transition-all appearance-none bg-white"
                     >
-                      Créer mon compte Pro
-                    </Button>
-                  </Link>
-                  <Link href="/contact">
-                    <Button
-                      variant="outline"
-                      size="lg"
-                      className="w-full border-white/30 text-white hover:bg-white/10"
-                    >
-                      Demander un rendez-vous
-                    </Button>
-                  </Link>
+                      <option value="">Sélectionnez votre secteur</option>
+                      <option value="constructeur">Constructeur de maisons</option>
+                      <option value="architecte">Architecte / Bureau d'études</option>
+                      <option value="promoteur">Promoteur immobilier</option>
+                      <option value="artisan">Artisan du bâtiment</option>
+                      <option value="collectivite">Collectivité</option>
+                      <option value="industriel">Industriel</option>
+                      <option value="autre">Autre</option>
+                    </select>
+                  </div>
                 </div>
-              </div>
+
+                {/* Message */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Décrivez votre projet
+                  </label>
+                  <div className="relative">
+                    <MessageSquare className="absolute left-4 top-4 w-5 h-5 text-gray-400" />
+                    <textarea
+                      rows={4}
+                      value={formData.message}
+                      onChange={(e) =>
+                        setFormData({ ...formData, message: e.target.value })
+                      }
+                      className="w-full pl-12 pr-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-cyan-500 focus:border-transparent transition-all resize-none"
+                      placeholder="Type de produits, quantités estimées, délais souhaités..."
+                    />
+                  </div>
+                </div>
+
+                {/* Submit */}
+                <div className="flex flex-col sm:flex-row gap-4 items-center justify-between pt-4">
+                  <p className="text-sm text-gray-500">
+                    * Champs obligatoires. Réponse garantie sous 24h ouvrées.
+                  </p>
+                  <Button
+                    type="submit"
+                    size="lg"
+                    disabled={isSubmitting}
+                    className="bg-cyan-glow text-navy-dark hover:bg-cyan-pale w-full sm:w-auto"
+                    icon={
+                      isSubmitting ? (
+                        <Loader2 className="w-5 h-5 animate-spin" />
+                      ) : (
+                        <Send className="w-5 h-5" />
+                      )
+                    }
+                  >
+                    {isSubmitting ? "Envoi en cours..." : "Envoyer ma demande"}
+                  </Button>
+                </div>
+              </form>
+            </motion.div>
+
+            {/* Contact rapide */}
+            <div className="mt-10 grid md:grid-cols-2 gap-6">
+              <a
+                href="tel:+33123456789"
+                className="flex items-center gap-4 bg-white/10 backdrop-blur-sm rounded-2xl p-6 border border-white/10 hover:bg-white/20 transition-colors"
+              >
+                <div className="w-12 h-12 rounded-xl bg-cyan-glow/20 flex items-center justify-center">
+                  <Phone className="w-5 h-5 text-cyan-glow" />
+                </div>
+                <div>
+                  <p className="text-sm text-white/60">Ligne directe commerciale</p>
+                  <p className="font-semibold text-white">01 23 45 67 89</p>
+                </div>
+              </a>
+              <a
+                href="mailto:pro@zaconstruction.fr"
+                className="flex items-center gap-4 bg-white/10 backdrop-blur-sm rounded-2xl p-6 border border-white/10 hover:bg-white/20 transition-colors"
+              >
+                <div className="w-12 h-12 rounded-xl bg-cyan-glow/20 flex items-center justify-center">
+                  <Mail className="w-5 h-5 text-cyan-glow" />
+                </div>
+                <div>
+                  <p className="text-sm text-white/60">Email professionnel</p>
+                  <p className="font-semibold text-white">pro@zaconstruction.fr</p>
+                </div>
+              </a>
             </div>
-          </motion.div>
+          </div>
+        </div>
+      </section>
+
+      {/* CTA Inscription */}
+      <section className="py-16 bg-gray-50">
+        <div className="container mx-auto px-6">
+          <div className="max-w-3xl mx-auto text-center">
+            <h2 className="text-2xl md:text-3xl font-bold text-navy-dark mb-4">
+              Vous souhaitez créer un compte Pro ?
+            </h2>
+            <p className="text-gray-600 mb-8">
+              Accédez à votre espace dédié pour suivre vos commandes, 
+              télécharger vos factures et gérer vos projets.
+            </p>
+            <Link href="/inscription-pro">
+              <Button
+                size="lg"
+                className="bg-navy-dark text-white hover:bg-navy-medium"
+                icon={<ArrowRight className="w-5 h-5" />}
+              >
+                Créer mon compte Pro
+              </Button>
+            </Link>
+          </div>
         </div>
       </section>
     </div>
