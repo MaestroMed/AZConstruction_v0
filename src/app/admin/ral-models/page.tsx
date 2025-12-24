@@ -45,7 +45,7 @@ interface RALModel {
 }
 
 // Icons pour les modèles
-const modelIcons: Record<string, React.ElementType> = {
+const modelIcons: Record<string, typeof Palette> = {
   coccinelle: Car,
   jante: Disc,
   moto: Bike,
