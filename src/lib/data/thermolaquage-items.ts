@@ -82,6 +82,37 @@ export const clientDemands: ClientDemandItem[] = [
   },
 ];
 
+// 20 Couleurs RAL les plus populaires pour le sélecteur interactif
+export interface RALColor {
+  code: string;      // "7016", "9005", etc.
+  name: string;      // "RAL 7016"
+  label: string;     // "Gris Anthracite"
+  hex: string;       // "#383E42"
+}
+
+export const ralColors20: RALColor[] = [
+  { code: "7016", name: "RAL 7016", label: "Gris Anthracite", hex: "#383E42" },
+  { code: "9005", name: "RAL 9005", label: "Noir Profond", hex: "#0A0A0A" },
+  { code: "9010", name: "RAL 9010", label: "Blanc Pur", hex: "#F7F7F7" },
+  { code: "7035", name: "RAL 7035", label: "Gris Clair", hex: "#D7D7D7" },
+  { code: "3004", name: "RAL 3004", label: "Rouge Bordeaux", hex: "#6B1C23" },
+  { code: "5003", name: "RAL 5003", label: "Bleu Saphir", hex: "#1E3A5F" },
+  { code: "6005", name: "RAL 6005", label: "Vert Mousse", hex: "#0E4243" },
+  { code: "1015", name: "RAL 1015", label: "Ivoire Clair", hex: "#E6D2B5" },
+  { code: "2004", name: "RAL 2004", label: "Orange Pur", hex: "#E75B12" },
+  { code: "8017", name: "RAL 8017", label: "Brun Chocolat", hex: "#442F29" },
+  { code: "1021", name: "RAL 1021", label: "Jaune Colza", hex: "#EEC900" },
+  { code: "4005", name: "RAL 4005", label: "Lilas Bleu", hex: "#6C4675" },
+  { code: "9016", name: "RAL 9016", label: "Blanc Trafic", hex: "#F1F0EA" },
+  { code: "7021", name: "RAL 7021", label: "Gris Noir", hex: "#2F3234" },
+  { code: "7022", name: "RAL 7022", label: "Gris Ombre", hex: "#4B4D46" },
+  { code: "3020", name: "RAL 3020", label: "Rouge Feu", hex: "#CC0000" },
+  { code: "5015", name: "RAL 5015", label: "Bleu Ciel", hex: "#007CB0" },
+  { code: "6009", name: "RAL 6009", label: "Vert Sapin", hex: "#1F3D2F" },
+  { code: "8014", name: "RAL 8014", label: "Brun Sépia", hex: "#4A3526" },
+  { code: "7039", name: "RAL 7039", label: "Gris Quartz", hex: "#6B695F" },
+];
+
 // Modèles RAL interactifs
 export interface RALModel {
   id: string;
@@ -121,4 +152,12 @@ export const ralModels: RALModel[] = [
     description: "Portail métallique élégant",
   },
 ];
+
+// Fonction helper pour obtenir l'URL d'une image modèle/couleur
+export function getModelColorImageUrl(modelId: string, ralCode: string): string {
+  // Cette fonction sera appelée pour récupérer l'image depuis l'API
+  // Pour l'instant, retourne un placeholder basé sur l'image par défaut du modèle
+  const model = ralModels.find((m) => m.id === modelId);
+  return model?.defaultImage || "";
+}
 

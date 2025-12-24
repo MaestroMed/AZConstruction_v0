@@ -42,23 +42,11 @@ import {
   PhoneLink,
 } from "@/components/ui";
 import { useSiteImages } from "@/lib/hooks/useSiteImages";
-import { clientDemands, ralModels } from "@/lib/data/thermolaquage-items";
+import { clientDemands, ralModels, ralColors20, type RALColor } from "@/lib/data/thermolaquage-items";
+import { AnimatePresence } from "framer-motion";
 
-// Données RAL populaires
-const popularColors = [
-  { name: "RAL 7016", label: "Gris Anthracite", hex: "#383E42" },
-  { name: "RAL 9005", label: "Noir Profond", hex: "#0A0A0A" },
-  { name: "RAL 9010", label: "Blanc Pur", hex: "#F7F7F7" },
-  { name: "RAL 7035", label: "Gris Clair", hex: "#D7D7D7" },
-  { name: "RAL 3004", label: "Rouge Bordeaux", hex: "#6B1C23" },
-  { name: "RAL 5003", label: "Bleu Saphir", hex: "#1E3A5F" },
-  { name: "RAL 6005", label: "Vert Mousse", hex: "#0E4243" },
-  { name: "RAL 1015", label: "Ivoire Clair", hex: "#E6D2B5" },
-  { name: "RAL 2004", label: "Orange Pur", hex: "#E75B12" },
-  { name: "RAL 8017", label: "Brun Chocolat", hex: "#442F29" },
-  { name: "RAL 1021", label: "Jaune Colza", hex: "#EEC900" },
-  { name: "RAL 4005", label: "Lilas Bleu", hex: "#6C4675" },
-];
+// Utiliser les 20 couleurs RAL depuis le fichier de données
+const popularColors = ralColors20;
 
 const advantages = [
   {
@@ -259,12 +247,63 @@ function HeroStat({ value, suffix, label, delay }: { value: number; suffix: stri
   );
 }
 
+// Interface pour les images modèle/couleur depuis l'API
+interface ModelColorImages {
+  [modelId: string]: {
+    [ralCode: string]: string;
+  };
+}
+
 export default function ThermolaquagePage() {
   const [openFAQ, setOpenFAQ] = React.useState<number | null>(0);
-  const [selectedColor, setSelectedColor] = React.useState(popularColors[0]);
+  const [selectedColor, setSelectedColor] = React.useState<RALColor>(popularColors[0]);
   const [selectedModel, setSelectedModel] = React.useState(ralModels[0]);
+  const [modelImages, setModelImages] = React.useState<ModelColorImages>({});
+  const [isImageLoading, setIsImageLoading] = React.useState(false);
   const { getImage } = useSiteImages();
   const heroImage = getImage("hero-thermolaquage");
+
+  // Charger les images des modèles depuis l'API
+  React.useEffect(() => {
+    const loadModelImages = async () => {
+      try {
+        const response = await fetch("/api/ral-models");
+        if (response.ok) {
+          const data = await response.json();
+          if (data.models) {
+            // Construire le mapping images
+            const imagesMap: ModelColorImages = {};
+            data.models.forEach((model: { id: string; images: Array<{ ralCode: string; imageUrl: string }> }) => {
+              imagesMap[model.id] = {};
+              model.images.forEach((img: { ralCode: string; imageUrl: string }) => {
+                imagesMap[model.id][img.ralCode] = img.imageUrl;
+              });
+            });
+            setModelImages(imagesMap);
+          }
+        }
+      } catch (error) {
+        console.error("Erreur chargement images modèles:", error);
+      }
+    };
+    loadModelImages();
+  }, []);
+
+  // Obtenir l'image pour le modèle et la couleur sélectionnés
+  const getCurrentModelImage = (): string => {
+    const modelImageMap = modelImages[selectedModel.id];
+    if (modelImageMap && modelImageMap[selectedColor.code]) {
+      return modelImageMap[selectedColor.code];
+    }
+    // Fallback vers l'image par défaut du modèle
+    return selectedModel.defaultImage;
+  };
+
+  // Détecter si une image personnalisée existe
+  const hasCustomImage = (): boolean => {
+    const modelImageMap = modelImages[selectedModel.id];
+    return !!(modelImageMap && modelImageMap[selectedColor.code]);
+  };
 
   // Parallax effect for hero
   const { scrollY } = useScroll();
@@ -745,35 +784,63 @@ export default function ThermolaquagePage() {
           >
             <GlassCard variant="glow" padding="lg">
               <div className="grid md:grid-cols-2 gap-8 items-center">
-                {/* Model Image with Color Overlay */}
-                <div className="relative aspect-[4/3] rounded-2xl overflow-hidden">
-                  <Image
-                    src={selectedModel.defaultImage}
-                    alt={`${selectedModel.label} en ${selectedColor.label}`}
-                    fill
-                    className="object-cover"
-                  />
-                  {/* Color overlay effect */}
-                  <motion.div
-                    className="absolute inset-0 mix-blend-multiply opacity-50"
-                    style={{ backgroundColor: selectedColor.hex }}
-                    animate={{ backgroundColor: selectedColor.hex }}
-                    transition={{ duration: 0.4 }}
-                  />
+                {/* Model Image with Fade Transition */}
+                <div className="relative aspect-[4/3] rounded-2xl overflow-hidden bg-navy-medium">
+                  <AnimatePresence mode="wait">
+                    <motion.div
+                      key={`${selectedModel.id}-${selectedColor.code}`}
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      exit={{ opacity: 0 }}
+                      transition={{ duration: 0.4, ease: "easeInOut" }}
+                      className="absolute inset-0"
+                    >
+                      <Image
+                        src={getCurrentModelImage()}
+                        alt={`${selectedModel.label} en ${selectedColor.label}`}
+                        fill
+                        className="object-cover"
+                        onLoadStart={() => setIsImageLoading(true)}
+                        onLoad={() => setIsImageLoading(false)}
+                      />
+                    </motion.div>
+                  </AnimatePresence>
+                  
+                  {/* Loading indicator */}
+                  {isImageLoading && (
+                    <div className="absolute inset-0 flex items-center justify-center bg-navy-dark/50 backdrop-blur-sm">
+                      <div className="w-8 h-8 border-2 border-cyan-glow border-t-transparent rounded-full animate-spin" />
+                    </div>
+                  )}
+                  
                   {/* Gradient for depth */}
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent" />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent pointer-events-none" />
+                  
+                  {/* Indicator if using fallback image */}
+                  {!hasCustomImage() && (
+                    <div className="absolute top-4 right-4 glass-card px-3 py-1.5 text-xs text-white/70">
+                      Aperçu indicatif
+                    </div>
+                  )}
                   
                   {/* Selected color badge */}
-                  <div className="absolute bottom-4 left-4 glass-card px-4 py-2 flex items-center gap-3">
-                    <div
+                  <motion.div 
+                    className="absolute bottom-4 left-4 glass-card px-4 py-2 flex items-center gap-3"
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.2 }}
+                  >
+                    <motion.div
                       className="w-8 h-8 rounded-lg shadow-lg ring-2 ring-white/20"
                       style={{ backgroundColor: selectedColor.hex }}
+                      animate={{ backgroundColor: selectedColor.hex }}
+                      transition={{ duration: 0.3 }}
                     />
                     <div>
                       <p className="text-white font-bold text-sm">{selectedColor.name}</p>
                       <p className="text-white/60 text-xs">{selectedColor.label}</p>
                     </div>
-                  </div>
+                  </motion.div>
                 </div>
 
                 {/* Color Selector */}
@@ -786,25 +853,33 @@ export default function ThermolaquagePage() {
                     Sélectionnez une couleur RAL parmi les plus populaires ou demandez notre nuancier complet.
                   </p>
 
-                  {/* Color Grid Compact */}
-                  <div className="grid grid-cols-6 gap-2 mb-6">
-                    {popularColors.map((color, index) => (
-                      <motion.button
-                        key={color.name}
-                        initial={{ opacity: 0, scale: 0.8 }}
-                        whileInView={{ opacity: 1, scale: 1 }}
-                        viewport={{ once: true }}
-                        transition={{ delay: index * 0.02 }}
-                        onClick={() => setSelectedColor(color)}
-                        className={`aspect-square rounded-lg shadow-md transition-all duration-200 hover:scale-110 ${
-                          selectedColor.name === color.name
-                            ? "ring-2 ring-cyan-glow ring-offset-2 ring-offset-navy-dark scale-110"
-                            : "ring-1 ring-white/10"
-                        }`}
-                        style={{ backgroundColor: color.hex }}
-                        title={`${color.name} - ${color.label}`}
-                      />
-                    ))}
+                  {/* Color Grid - 20 couleurs RAL */}
+                  <div className="grid grid-cols-5 sm:grid-cols-10 gap-2 mb-6">
+                    {popularColors.map((color, index) => {
+                      const hasImage = modelImages[selectedModel.id]?.[color.code];
+                      return (
+                        <motion.button
+                          key={color.code}
+                          initial={{ opacity: 0, scale: 0.8 }}
+                          whileInView={{ opacity: 1, scale: 1 }}
+                          viewport={{ once: true }}
+                          transition={{ delay: index * 0.02 }}
+                          onClick={() => setSelectedColor(color)}
+                          className={`aspect-square rounded-lg shadow-md transition-all duration-200 hover:scale-110 relative ${
+                            selectedColor.code === color.code
+                              ? "ring-2 ring-cyan-glow ring-offset-2 ring-offset-navy-dark scale-110"
+                              : "ring-1 ring-white/10"
+                          }`}
+                          style={{ backgroundColor: color.hex }}
+                          title={`${color.name} - ${color.label}`}
+                        >
+                          {/* Indicateur image disponible */}
+                          {hasImage && (
+                            <div className="absolute -top-1 -right-1 w-2.5 h-2.5 bg-green-400 rounded-full ring-1 ring-navy-dark" />
+                          )}
+                        </motion.button>
+                      );
+                    })}
                   </div>
 
                   <p className="text-white/40 text-sm mb-4">
