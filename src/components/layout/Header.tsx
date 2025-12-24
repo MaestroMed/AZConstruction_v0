@@ -4,8 +4,8 @@ import * as React from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
-import { motion, AnimatePresence } from "framer-motion";
-import { Menu, X, User, ChevronDown, Fence, DoorClosed, Square, Grid2X2, ArrowRight, Layers, Move3D } from "lucide-react";
+import { motion, AnimatePresence, useScroll, useTransform } from "framer-motion";
+import { Menu, X, User, ChevronDown, Fence, DoorClosed, Square, Grid2X2, ArrowRight, Layers, Move3D, Sparkles } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/Button";
 
@@ -30,7 +30,7 @@ const navItems = [
 ];
 
 // Pages avec fond sombre où le header peut être transparent
-const darkBackgroundPages = ["/"];
+const darkBackgroundPages = ["/", "/services/thermolaquage"];
 
 interface SiteSettings {
   logoUrl?: string;
@@ -38,8 +38,8 @@ interface SiteSettings {
   showLogoInHeader?: boolean;
 }
 
-// Composant Dropdown Produits
-function ProductsDropdown({ item }: { item: { label: string; href: string } }) {
+// Composant Dropdown Produits avec glassmorphism
+function ProductsDropdown({ item, isScrolled }: { item: { label: string; href: string }; isScrolled: boolean }) {
   const [isOpen, setIsOpen] = React.useState(false);
   const timeoutRef = React.useRef<NodeJS.Timeout | null>(null);
 
@@ -60,7 +60,10 @@ function ProductsDropdown({ item }: { item: { label: string; href: string } }) {
     >
       <Link
         href={item.href}
-        className="relative px-4 py-2 text-white/80 hover:text-white transition-colors flex items-center gap-1 group"
+        className={cn(
+          "relative px-4 py-2 transition-all duration-300 flex items-center gap-1 group",
+          isScrolled ? "text-white/90 hover:text-white" : "text-white/80 hover:text-white"
+        )}
       >
         <span className="text-cyan-glow/70 text-sm">«</span>
         {item.label}
@@ -68,7 +71,7 @@ function ProductsDropdown({ item }: { item: { label: string; href: string } }) {
           "w-4 h-4 transition-transform duration-200",
           isOpen && "rotate-180"
         )} />
-        <span className="absolute bottom-0 left-4 right-4 h-0.5 bg-cyan-glow scale-x-0 group-hover:scale-x-100 transition-transform origin-left" />
+        <span className="absolute bottom-0 left-4 right-4 h-0.5 bg-gradient-to-r from-cyan-glow to-cyan-light scale-x-0 group-hover:scale-x-100 transition-transform origin-left" />
       </Link>
 
       <AnimatePresence>
@@ -77,21 +80,22 @@ function ProductsDropdown({ item }: { item: { label: string; href: string } }) {
             initial={{ opacity: 0, y: 10, scale: 0.95 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 10, scale: 0.95 }}
-            transition={{ duration: 0.15 }}
-            className="absolute top-full left-0 mt-2 w-80 bg-navy-dark/95 backdrop-blur-xl border border-white/10 rounded-2xl shadow-2xl overflow-hidden z-50"
+            transition={{ duration: 0.2, ease: [0.4, 0, 0.2, 1] }}
+            className="absolute top-full left-0 mt-3 w-80 glass-card overflow-hidden z-50"
           >
             <div className="p-2">
-              <div className="px-3 py-2 text-xs font-medium text-white/40 uppercase tracking-wider">
+              <div className="px-3 py-2 text-xs font-medium text-white/40 uppercase tracking-wider flex items-center gap-2">
+                <Sparkles className="w-3 h-3 text-cyan-glow" />
                 Configurez votre projet
               </div>
               {productCategories.map((category) => (
                 <Link
                   key={category.href}
                   href={category.href}
-                  className="flex items-center gap-4 px-3 py-3 rounded-xl hover:bg-white/5 transition-colors group"
+                  className="flex items-center gap-4 px-3 py-3 rounded-xl hover:bg-white/5 transition-all group"
                   onClick={() => setIsOpen(false)}
                 >
-                  <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-cyan-glow/20 to-blue-500/20 flex items-center justify-center group-hover:from-cyan-glow/30 group-hover:to-blue-500/30 transition-colors">
+                  <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-cyan-glow/20 to-blue-500/20 flex items-center justify-center group-hover:from-cyan-glow/30 group-hover:to-blue-500/30 transition-all ring-1 ring-white/10 group-hover:ring-cyan-glow/30">
                     <category.icon className="w-5 h-5 text-cyan-glow" />
                   </div>
                   <div className="flex-1">
@@ -129,6 +133,11 @@ export default function Header() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = React.useState(false);
   const [settings, setSettings] = React.useState<SiteSettings>({});
 
+  // Parallax scroll values for subtle effects
+  const { scrollY } = useScroll();
+  const headerBlur = useTransform(scrollY, [0, 100], [0, 20]);
+  const headerBg = useTransform(scrollY, [0, 100], [0, 0.95]);
+
   // Détermine si la page a un fond sombre
   const isDarkBackground = darkBackgroundPages.includes(pathname);
 
@@ -136,7 +145,6 @@ export default function Header() {
   React.useEffect(() => {
     const loadSettings = async () => {
       try {
-        // D'abord essayer l'API (base de données)
         const response = await fetch("/api/settings");
         if (response.ok) {
           const data = await response.json();
@@ -149,7 +157,6 @@ export default function Header() {
         console.error("[Header] Erreur chargement settings API:", e);
       }
       
-      // Fallback: localStorage (pour compatibilité)
       try {
         const saved = localStorage.getItem("az_settings");
         if (saved) {
@@ -162,7 +169,6 @@ export default function Header() {
     
     loadSettings();
     
-    // Écouter l'événement personnalisé (pour mise à jour dans le même onglet après save admin)
     const handleSettingsUpdate = (e: CustomEvent) => {
       setSettings(e.detail);
     };
@@ -182,51 +188,89 @@ export default function Header() {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
   
-  // Vérifier si on doit afficher le logo uploadé
-  // Priorité : logoLightUrl (version claire) > logoUrl (version standard)
   const customLogo = settings.logoLightUrl || settings.logoUrl;
-  // Par défaut showLogoInHeader = true si undefined
   const showLogoEnabled = settings.showLogoInHeader !== false;
-  // On utilise le logo custom SEULEMENT s'il est uploadé et commence par http ou data: (base64)
   const hasValidCustomLogo = !!customLogo && (customLogo.startsWith("http") || customLogo.startsWith("data:") || customLogo.startsWith("/"));
   const showCustomLogo = hasValidCustomLogo && showLogoEnabled;
-
-  // Le header doit avoir un fond si on est scrollé OU si la page a un fond clair
   const shouldHaveBackground = isScrolled || !isDarkBackground;
 
   return (
-    <header
+    <motion.header
       className={cn(
-        "fixed top-0 left-0 right-0 z-50 transition-all duration-300",
-        shouldHaveBackground
-          ? "bg-navy-dark/95 backdrop-blur-md shadow-lg py-3"
-          : "bg-transparent py-5"
+        "fixed top-0 left-0 right-0 z-50 transition-all duration-500"
       )}
+      style={{
+        backdropFilter: shouldHaveBackground ? `blur(${headerBlur}px) saturate(180%)` : "none",
+      }}
     >
-      <div className="container mx-auto px-6">
+      {/* Glassmorphism background layer */}
+      <motion.div
+        className={cn(
+          "absolute inset-0 transition-all duration-500",
+          shouldHaveBackground
+            ? "bg-navy-dark/80 border-b border-white/5 shadow-lg shadow-navy-dark/20"
+            : "bg-transparent"
+        )}
+        style={{
+          opacity: shouldHaveBackground ? headerBg : 0,
+        }}
+      />
+
+      {/* Subtle gradient line at bottom when scrolled */}
+      <motion.div
+        className="absolute bottom-0 left-0 right-0 h-px"
+        initial={{ opacity: 0, scaleX: 0 }}
+        animate={{ 
+          opacity: isScrolled ? 1 : 0, 
+          scaleX: isScrolled ? 1 : 0 
+        }}
+        transition={{ duration: 0.3 }}
+      >
+        <div className="h-full bg-gradient-to-r from-transparent via-cyan-glow/30 to-transparent" />
+      </motion.div>
+
+      <div className={cn(
+        "container mx-auto px-6 relative transition-all duration-300",
+        isScrolled ? "py-3" : "py-5"
+      )}>
         <nav className="flex items-center justify-between">
           {/* Logo */}
-          <Link href="/" className="flex items-center gap-3 group">
+          <Link href="/" className="flex items-center gap-3 group relative">
             {showCustomLogo && customLogo ? (
-              /* Logo personnalisé uploadé depuis le back-office + texte "Construction" */
               <div className="relative flex items-center gap-4">
-                {/* Logo agrandi */}
-                <div className="relative p-2.5 rounded-xl bg-white/10 backdrop-blur-sm border border-white/20 group-hover:bg-white/15 group-hover:border-cyan-glow/30 transition-all duration-300 shadow-lg">
+                {/* Logo container with glassmorphism */}
+                <motion.div 
+                  className={cn(
+                    "relative p-2.5 rounded-xl transition-all duration-300",
+                    "bg-white/5 backdrop-blur-sm border border-white/10",
+                    "group-hover:bg-white/10 group-hover:border-cyan-glow/30",
+                    "shadow-lg"
+                  )}
+                  whileHover={{ scale: 1.02 }}
+                  transition={{ duration: 0.2 }}
+                >
                   <Image
                     src={customLogo}
                     alt="AZ"
                     width={200}
                     height={64}
-                    className="h-14 w-auto object-contain"
+                    className={cn(
+                      "object-contain transition-all duration-300",
+                      isScrolled ? "h-10 w-auto" : "h-14 w-auto"
+                    )}
                     priority
                     unoptimized={customLogo.startsWith("data:")}
                   />
-                  {/* Effet glow subtil au hover */}
+                  {/* Glow effect */}
                   <div className="absolute inset-0 rounded-xl bg-gradient-to-r from-cyan-glow/0 via-cyan-glow/5 to-cyan-glow/0 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-                </div>
-                {/* Texte "CONSTRUCTION" en majuscules fat */}
+                </motion.div>
+                
+                {/* Text */}
                 <div className="flex flex-col">
-                  <span className="text-2xl font-bold tracking-widest text-white uppercase">
+                  <span className={cn(
+                    "font-bold tracking-widest text-white uppercase transition-all duration-300",
+                    isScrolled ? "text-xl" : "text-2xl"
+                  )}>
                     CONSTRUCTION
                   </span>
                   <span className="text-[10px] uppercase tracking-[0.3em] text-cyan-glow/80 font-medium">
@@ -235,17 +279,20 @@ export default function Header() {
                 </div>
               </div>
             ) : (
-              /* Logo par défaut (SVG + texte) */
               <>
-                <div className="relative w-12 h-12">
-                  {/* Logo AZ avec grue stylisée */}
+                <motion.div 
+                  className={cn(
+                    "relative transition-all duration-300",
+                    isScrolled ? "w-10 h-10" : "w-12 h-12"
+                  )}
+                  whileHover={{ scale: 1.05 }}
+                >
                   <svg
                     viewBox="0 0 60 60"
                     fill="none"
                     xmlns="http://www.w3.org/2000/svg"
                     className="w-full h-full"
                   >
-                    {/* Grue */}
                     <path
                       d="M20 8L20 20M20 8L35 8M20 8L15 3M35 8L35 14"
                       stroke="url(#logoGradient)"
@@ -253,14 +300,12 @@ export default function Header() {
                       strokeLinecap="round"
                       strokeLinejoin="round"
                     />
-                    {/* Cable */}
                     <path
                       d="M35 14L35 22M35 22L38 22"
                       stroke="url(#logoGradient)"
                       strokeWidth="1.5"
                       strokeLinecap="round"
                     />
-                    {/* A */}
                     <path
                       d="M8 50L20 25L32 50M12 42H28"
                       stroke="url(#logoGradient)"
@@ -268,7 +313,6 @@ export default function Header() {
                       strokeLinecap="round"
                       strokeLinejoin="round"
                     />
-                    {/* Z */}
                     <path
                       d="M36 28L52 28L36 50L52 50"
                       stroke="url(#logoGradient)"
@@ -285,15 +329,18 @@ export default function Header() {
                         y2="50"
                         gradientUnits="userSpaceOnUse"
                       >
-                        <stop stopColor="#4fc3f7" />
-                        <stop offset="0.5" stopColor="#1e3a5f" />
-                        <stop offset="1" stopColor="#0b1d3a" />
+                        <stop stopColor="#00d4ff" />
+                        <stop offset="0.5" stopColor="#4fc3f7" />
+                        <stop offset="1" stopColor="#1e3a5f" />
                       </linearGradient>
                     </defs>
                   </svg>
-                </div>
+                </motion.div>
                 <div className="flex flex-col">
-                  <span className="text-xl font-bold text-white tracking-tight">
+                  <span className={cn(
+                    "font-bold text-white tracking-tight transition-all duration-300",
+                    isScrolled ? "text-lg" : "text-xl"
+                  )}>
                     Construction
                   </span>
                 </div>
@@ -305,99 +352,162 @@ export default function Header() {
           <div className="hidden lg:flex items-center gap-1">
             {navItems.map((item) => (
               "hasDropdown" in item && item.hasDropdown ? (
-                <ProductsDropdown key={item.href} item={item} />
+                <ProductsDropdown key={item.href} item={item} isScrolled={isScrolled} />
               ) : (
                 <Link
                   key={item.href}
                   href={item.href}
                   className={cn(
-                    "relative px-4 py-2 transition-colors group",
+                    "relative px-4 py-2 transition-all duration-300 group",
                     "highlight" in item && item.highlight
-                      ? "text-cyan-glow hover:text-cyan-pale"
+                      ? "text-cyan-glow hover:text-cyan-pale font-medium"
                       : "text-white/80 hover:text-white"
                   )}
                 >
                   <span className="flex items-center gap-1">
                     {"highlight" in item && item.highlight ? (
-                      <span className="text-cyan-glow text-sm">★</span>
+                      <motion.span 
+                        className="text-cyan-glow text-sm"
+                        animate={{ rotate: [0, 15, -15, 0] }}
+                        transition={{ duration: 2, repeat: Infinity, repeatDelay: 3 }}
+                      >
+                        ★
+                      </motion.span>
                     ) : (
                       <span className="text-cyan-glow/70 text-sm">«</span>
                     )}
                     {item.label}
                   </span>
-                  <span className="absolute bottom-0 left-4 right-4 h-0.5 bg-cyan-glow scale-x-0 group-hover:scale-x-100 transition-transform origin-left" />
+                  <span className="absolute bottom-0 left-4 right-4 h-0.5 bg-gradient-to-r from-cyan-glow to-cyan-light scale-x-0 group-hover:scale-x-100 transition-transform origin-left" />
                 </Link>
               )
             ))}
           </div>
 
-          {/* CTA Button */}
+          {/* CTA Button with glassmorphism */}
           <div className="hidden lg:flex items-center gap-4">
             <Link href="/login">
-              <Button
-                variant="outline"
-                size="sm"
-                className="border-white/30 text-white hover:bg-white/10"
-                icon={<User className="w-4 h-4" />}
-                iconPosition="left"
+              <motion.div
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
               >
-                Espace client
-              </Button>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className={cn(
+                    "border-white/20 text-white transition-all duration-300",
+                    "hover:bg-white/10 hover:border-cyan-glow/30",
+                    "backdrop-blur-sm"
+                  )}
+                  icon={<User className="w-4 h-4" />}
+                  iconPosition="left"
+                >
+                  Espace client
+                </Button>
+              </motion.div>
             </Link>
           </div>
 
           {/* Mobile Menu Button */}
-          <button
+          <motion.button
             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-            className="lg:hidden p-2 text-white"
-            aria-label="Toggle menu"
-          >
-            {isMobileMenuOpen ? (
-              <X className="w-6 h-6" />
-            ) : (
-              <Menu className="w-6 h-6" />
+            className={cn(
+              "lg:hidden p-2.5 rounded-xl text-white transition-all",
+              "bg-white/5 hover:bg-white/10 border border-white/10",
+              isMobileMenuOpen && "bg-white/10"
             )}
-          </button>
+            aria-label="Toggle menu"
+            whileTap={{ scale: 0.95 }}
+          >
+            <AnimatePresence mode="wait">
+              {isMobileMenuOpen ? (
+                <motion.div
+                  key="close"
+                  initial={{ rotate: -90, opacity: 0 }}
+                  animate={{ rotate: 0, opacity: 1 }}
+                  exit={{ rotate: 90, opacity: 0 }}
+                  transition={{ duration: 0.2 }}
+                >
+                  <X className="w-6 h-6" />
+                </motion.div>
+              ) : (
+                <motion.div
+                  key="menu"
+                  initial={{ rotate: 90, opacity: 0 }}
+                  animate={{ rotate: 0, opacity: 1 }}
+                  exit={{ rotate: -90, opacity: 0 }}
+                  transition={{ duration: 0.2 }}
+                >
+                  <Menu className="w-6 h-6" />
+                </motion.div>
+              )}
+            </AnimatePresence>
+          </motion.button>
         </nav>
 
-        {/* Mobile Menu */}
-        {isMobileMenuOpen && (
-          <motion.div
-            initial={{ opacity: 0, y: -20 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -20 }}
-            className="lg:hidden absolute top-full left-0 right-0 bg-navy-dark/98 backdrop-blur-lg border-t border-white/10"
-          >
-            <div className="container mx-auto px-6 py-6 flex flex-col gap-2">
-              {navItems.map((item) => (
-                <Link
-                  key={item.href}
-                  href={item.href}
-                  onClick={() => setIsMobileMenuOpen(false)}
-                  className="px-4 py-3 text-white/80 hover:text-white hover:bg-white/5 rounded-lg transition-colors"
-                >
-                  <span className="text-cyan-glow/70 mr-2">«</span>
-                  {item.label}
-                </Link>
-              ))}
-              <div className="pt-4 mt-2 border-t border-white/10">
-                <Link href="/login" onClick={() => setIsMobileMenuOpen(false)}>
-                  <Button
-                    variant="outline"
-                    className="w-full border-white/30 text-white"
-                    icon={<User className="w-4 h-4" />}
-                    iconPosition="left"
-                  >
-                    Espace client
-                  </Button>
-                </Link>
-              </div>
-            </div>
-          </motion.div>
-        )}
+        {/* Mobile Menu with glassmorphism */}
+        <AnimatePresence>
+          {isMobileMenuOpen && (
+            <motion.div
+              initial={{ opacity: 0, height: 0 }}
+              animate={{ opacity: 1, height: "auto" }}
+              exit={{ opacity: 0, height: 0 }}
+              transition={{ duration: 0.3, ease: [0.4, 0, 0.2, 1] }}
+              className="lg:hidden overflow-hidden"
+            >
+              <motion.div
+                initial={{ y: -20 }}
+                animate={{ y: 0 }}
+                exit={{ y: -20 }}
+                className="glass-card mt-4 p-4"
+              >
+                <div className="flex flex-col gap-1">
+                  {navItems.map((item, index) => (
+                    <motion.div
+                      key={item.href}
+                      initial={{ opacity: 0, x: -20 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      transition={{ delay: index * 0.05 }}
+                    >
+                      <Link
+                        href={item.href}
+                        onClick={() => setIsMobileMenuOpen(false)}
+                        className={cn(
+                          "px-4 py-3 rounded-xl transition-all flex items-center gap-2",
+                          "hover:bg-white/5",
+                          "highlight" in item && item.highlight
+                            ? "text-cyan-glow"
+                            : "text-white/80 hover:text-white"
+                        )}
+                      >
+                        {"highlight" in item && item.highlight ? (
+                          <span className="text-cyan-glow">★</span>
+                        ) : (
+                          <span className="text-cyan-glow/70">«</span>
+                        )}
+                        {item.label}
+                      </Link>
+                    </motion.div>
+                  ))}
+                </div>
+                
+                <div className="pt-4 mt-4 border-t border-white/10">
+                  <Link href="/login" onClick={() => setIsMobileMenuOpen(false)}>
+                    <Button
+                      variant="outline"
+                      className="w-full border-white/20 text-white hover:bg-white/10"
+                      icon={<User className="w-4 h-4" />}
+                      iconPosition="left"
+                    >
+                      Espace client
+                    </Button>
+                  </Link>
+                </div>
+              </motion.div>
+            </motion.div>
+          )}
+        </AnimatePresence>
       </div>
-    </header>
+    </motion.header>
   );
 }
-
-

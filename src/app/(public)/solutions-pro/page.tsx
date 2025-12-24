@@ -26,6 +26,7 @@ import {
 } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 import { Card, CardContent } from "@/components/ui/Card";
+import { GlowButton, GlassCard, MeshGradient, ParticleBackground, GradientOrb, AnimatedCounter } from "@/components/ui";
 import { toast } from "sonner";
 
 const advantages = [
@@ -149,71 +150,73 @@ export default function SolutionsProPage() {
   };
 
   return (
-    <div className="min-h-screen bg-white">
-      {/* Hero */}
-      <section className="relative bg-gradient-to-br from-navy-dark via-navy-medium to-blue-corporate pt-32 pb-24 overflow-hidden">
-        <div className="absolute inset-0 pointer-events-none opacity-20">
-          <svg className="w-full h-full">
-            <pattern
-              id="grid"
-              width="40"
-              height="40"
-              patternUnits="userSpaceOnUse"
-            >
-              <path
-                d="M 40 0 L 0 0 0 40"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="0.5"
-                className="text-cyan-glow"
-              />
-            </pattern>
-            <rect width="100%" height="100%" fill="url(#grid)" />
-          </svg>
-        </div>
+    <div className="min-h-screen bg-white overflow-x-hidden">
+      {/* Hero - Glassmorphism */}
+      <section className="relative min-h-[80vh] flex items-center overflow-hidden">
+        <MeshGradient variant="animated" className="absolute inset-0" />
+        
+        <GradientOrb
+          color="cyan"
+          size="xl"
+          position={{ top: "5%", right: "-10%" }}
+          blur="xl"
+          opacity={0.15}
+        />
+        <GradientOrb
+          color="blue"
+          size="lg"
+          position={{ bottom: "10%", left: "-5%" }}
+          blur="lg"
+          opacity={0.1}
+        />
+        
+        <ParticleBackground count={12} />
 
-        <div className="container mx-auto px-6 relative z-10">
+        <div className="container mx-auto px-6 relative z-10 py-32">
           <div className="grid lg:grid-cols-2 gap-12 items-center">
             <motion.div
               initial={{ opacity: 0, y: 30 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6 }}
             >
-              <div className="flex items-center gap-3 mb-6">
-                <div className="w-12 h-12 rounded-xl bg-cyan-glow/20 flex items-center justify-center">
-                  <Building2 className="w-6 h-6 text-cyan-glow" />
-                </div>
-                <span className="text-cyan-glow font-medium">Espace Professionnel</span>
-              </div>
-              <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-6">
+              <motion.div 
+                className="inline-flex items-center gap-3 glass-card-glow px-5 py-2.5 mb-8"
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.1 }}
+              >
+                <Building2 className="w-5 h-5 text-cyan-glow" />
+                <span className="text-cyan-glow font-medium tracking-wide">ESPACE PROFESSIONNEL</span>
+              </motion.div>
+              
+              <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-6 leading-[1.1]">
                 Votre partenaire{" "}
-                <span className="font-serif italic text-cyan-pale">
+                <span className="text-gradient-premium">
                   métallerie
                 </span>
               </h1>
-              <p className="text-xl text-white/70 mb-8 leading-relaxed">
-                Depuis 2018, AZ Construction accompagne les professionnels du bâtiment.
+              
+              <p className="text-xl text-white/70 mb-10 leading-relaxed">
+                Depuis <span className="text-cyan-glow font-semibold">2018</span>, AZ Construction accompagne les professionnels du bâtiment.
                 Transformation métal, bois et verre sur mesure.
               </p>
+              
               <div className="flex flex-col sm:flex-row gap-4">
                 <a href="#contact-pro">
-                  <Button
-                    size="lg"
-                    className="bg-cyan-glow text-navy-dark hover:bg-cyan-light"
-                    icon={<ArrowRight className="w-5 h-5" />}
-                  >
+                  <GlowButton size="lg" icon={<ArrowRight className="w-5 h-5" />}>
                     Demander un devis Pro
-                  </Button>
+                  </GlowButton>
                 </a>
-                <a href="tel:+33123456789">
-                  <Button
+                <a href="tel:+33494000000">
+                  <GlowButton
                     variant="outline"
                     size="lg"
-                    className="border-white/50 text-white hover:bg-white/10"
                     icon={<Phone className="w-5 h-5" />}
+                    iconPosition="left"
+                    glow={false}
                   >
-                    01 23 45 67 89
-                  </Button>
+                    04 94 XX XX XX
+                  </GlowButton>
                 </a>
               </div>
             </motion.div>
@@ -225,27 +228,30 @@ export default function SolutionsProPage() {
               transition={{ delay: 0.3 }}
             >
               {[
-                { number: "200", label: "Partenaires actifs" },
-                { number: "24h", label: "Réponse devis" },
-                { number: "2018", label: "Depuis" },
+                { value: 200, suffix: "", label: "Partenaires actifs" },
+                { value: 24, suffix: "h", label: "Réponse devis" },
+                { value: 2018, suffix: "", label: "Depuis" },
               ].map((stat, index) => (
-                <div
+                <motion.div
                   key={index}
-                  className="bg-white/10 backdrop-blur-sm rounded-2xl p-6 text-center border border-white/10"
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.4 + index * 0.1 }}
+                  className="glass-card p-6 text-center"
                 >
-                  <div className="text-3xl font-bold text-cyan-glow mb-1">
-                    {stat.number}
+                  <div className="text-3xl font-bold text-white mb-1">
+                    <AnimatedCounter value={stat.value} suffix={stat.suffix} duration={2} />
                   </div>
                   <div className="text-white/60 text-sm">{stat.label}</div>
-                </div>
+                </motion.div>
               ))}
             </motion.div>
           </div>
         </div>
       </section>
 
-      {/* Avantages */}
-      <section className="py-20 bg-gray-50">
+      {/* Avantages - Glassmorphism */}
+      <section className="py-24 bg-gradient-to-b from-gray-50 to-white">
         <div className="container mx-auto px-6">
           <motion.div
             className="text-center mb-16"
@@ -253,8 +259,14 @@ export default function SolutionsProPage() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
           >
+            <span className="inline-block text-cyan-700 font-semibold text-sm tracking-wider uppercase mb-4">
+              Vos avantages
+            </span>
             <h2 className="text-3xl md:text-4xl font-bold text-navy-dark mb-4">
-              Pourquoi travailler avec AZ Construction ?
+              Pourquoi travailler avec{" "}
+              <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-600 to-blue-600">
+                AZ Construction
+              </span>
             </h2>
             <p className="text-gray-600 max-w-2xl mx-auto">
               Des avantages concrets pour simplifier vos projets et optimiser vos chantiers.
@@ -270,19 +282,17 @@ export default function SolutionsProPage() {
                 viewport={{ once: true }}
                 transition={{ delay: index * 0.1 }}
               >
-                <Card variant="elevated" className="h-full text-center">
-                  <CardContent className="p-6">
-                    <div className="w-14 h-14 rounded-xl bg-gradient-to-br from-blue-corporate/10 to-cyan-glow/10 flex items-center justify-center mx-auto mb-4">
-                      <advantage.icon className="w-7 h-7 text-blue-corporate" />
-                    </div>
-                    <h3 className="text-lg font-semibold text-navy-dark mb-2">
-                      {advantage.title}
-                    </h3>
-                    <p className="text-sm text-gray-500 leading-relaxed">
-                      {advantage.description}
-                    </p>
-                  </CardContent>
-                </Card>
+                <div className="glass-card-light p-8 h-full text-center group hover:shadow-xl transition-all hover:scale-[1.02]">
+                  <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-cyan-100 to-blue-100 flex items-center justify-center mx-auto mb-6 group-hover:from-cyan-200 group-hover:to-blue-200 transition-colors">
+                    <advantage.icon className="w-8 h-8 text-blue-corporate" />
+                  </div>
+                  <h3 className="text-lg font-semibold text-navy-dark mb-2">
+                    {advantage.title}
+                  </h3>
+                  <p className="text-sm text-gray-500 leading-relaxed">
+                    {advantage.description}
+                  </p>
+                </div>
               </motion.div>
             ))}
           </div>

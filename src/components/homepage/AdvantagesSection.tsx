@@ -3,8 +3,7 @@
 import * as React from "react";
 import { motion } from "framer-motion";
 import Link from "next/link";
-import { Factory, Clock, Paintbrush, ArrowRight } from "lucide-react";
-import { Card, CardContent } from "@/components/ui/Card";
+import { Factory, Clock, Paintbrush, ArrowRight, Sparkles } from "lucide-react";
 
 const advantages = [
   {
@@ -67,25 +66,33 @@ export default function AdvantagesSection() {
           {advantages.map((advantage, index) => (
             <motion.div key={index} variants={cardVariants}>
               <Link href={advantage.link}>
-                <Card
-                  variant="elevated"
-                  hover
-                  className={`h-full group cursor-pointer transition-all ${
-                    advantage.highlight
-                      ? "bg-gradient-to-br from-cyan-glow/5 via-white to-blue-corporate/5 border-cyan-glow/30 hover:border-cyan-glow/50"
-                      : "bg-gradient-to-br from-white via-white to-gray-50"
-                  }`}
+                <div
+                  className={`
+                    relative h-full group cursor-pointer transition-all duration-300
+                    rounded-2xl p-6
+                    ${advantage.highlight
+                      ? "glass-card-light ring-1 ring-cyan-glow/20 hover:ring-cyan-glow/40"
+                      : "glass-card-light hover:shadow-xl"
+                    }
+                  `}
                 >
-                  <CardContent className="flex items-start gap-5 p-6">
+                  {/* Highlight glow effect */}
+                  {advantage.highlight && (
+                    <div className="absolute inset-0 rounded-2xl bg-gradient-to-br from-cyan-glow/5 to-blue-500/5 pointer-events-none" />
+                  )}
+
+                  <div className="relative flex items-start gap-5">
                     {/* Icon */}
                     <div className="flex-shrink-0">
-                      <div className={`w-16 h-16 rounded-xl flex items-center justify-center ${
-                        advantage.highlight
-                          ? "bg-gradient-to-br from-cyan-glow/20 to-blue-corporate/20"
-                          : "bg-gradient-to-br from-blue-corporate/10 to-cyan-glow/10"
-                      }`}>
+                      <div className={`
+                        w-16 h-16 rounded-xl flex items-center justify-center transition-all duration-300
+                        ${advantage.highlight
+                          ? "bg-gradient-to-br from-cyan-glow/20 to-blue-corporate/20 group-hover:from-cyan-glow/30 group-hover:to-blue-corporate/30 ring-1 ring-cyan-glow/20"
+                          : "bg-gradient-to-br from-blue-corporate/10 to-cyan-glow/10 group-hover:from-blue-corporate/20 group-hover:to-cyan-glow/20"
+                        }
+                      `}>
                         <advantage.icon className={`w-8 h-8 ${
-                          advantage.highlight ? "text-cyan-700" : "text-blue-corporate"
+                          advantage.highlight ? "text-cyan-600" : "text-blue-corporate"
                         }`} />
                       </div>
                     </div>
@@ -93,7 +100,7 @@ export default function AdvantagesSection() {
                     {/* Content */}
                     <div className="space-y-2 flex-1">
                       <div className="flex items-center justify-between">
-                        <h3 className="text-lg font-semibold text-navy-dark">
+                        <h3 className="text-lg font-semibold text-navy-dark group-hover:text-blue-corporate transition-colors">
                           {advantage.title}
                         </h3>
                         <ArrowRight className="w-4 h-4 text-gray-300 group-hover:text-cyan-glow group-hover:translate-x-1 transition-all" />
@@ -102,13 +109,14 @@ export default function AdvantagesSection() {
                         {advantage.description}
                       </p>
                       {advantage.highlight && (
-                        <span className="inline-block text-xs bg-cyan-glow/20 text-cyan-700 px-2 py-1 rounded-full font-medium">
+                        <span className="inline-flex items-center gap-1.5 text-xs bg-gradient-to-r from-cyan-glow/20 to-blue-500/20 text-cyan-700 px-3 py-1.5 rounded-full font-medium ring-1 ring-cyan-glow/20">
+                          <Sparkles className="w-3 h-3" />
                           Service Premium
                         </span>
                       )}
                     </div>
-                  </CardContent>
-                </Card>
+                  </div>
+                </div>
               </Link>
             </motion.div>
           ))}
@@ -117,4 +125,3 @@ export default function AdvantagesSection() {
     </section>
   );
 }
-
