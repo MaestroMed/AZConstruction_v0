@@ -24,11 +24,11 @@ async function fetchPhone(): Promise<string> {
     .then((res) => res.json())
     .then((data) => {
       cachedPhone = data.settings?.phone || "+33 1 23 45 67 89";
-      return cachedPhone;
+      return cachedPhone as string;
     })
     .catch(() => {
       cachedPhone = "+33 1 23 45 67 89";
-      return cachedPhone;
+      return cachedPhone as string;
     });
   
   return fetchPromise;
