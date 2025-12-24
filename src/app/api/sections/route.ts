@@ -6,7 +6,7 @@ import { z } from "zod";
 const sectionSchema = z.object({
   pageSlug: z.string().min(1),
   sectionKey: z.string().min(1),
-  content: z.record(z.any()),
+  content: z.record(z.string(), z.any()),
   ordre: z.number().optional().default(0),
   active: z.boolean().optional().default(true),
 });
