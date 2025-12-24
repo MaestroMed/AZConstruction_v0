@@ -74,7 +74,7 @@ export default function ThermolaquageSection() {
 
             <p className="text-lg text-white/70 mb-8 leading-relaxed">
               Finition haut de gamme pour tous vos ouvrages métalliques. 
-              Notre atelier équipé d'une cabine de 8m et d'un four XXL 
+              Notre atelier équipé d'une cabine de 7m et d'un four XXL 
               garantit une qualité industrielle pour vos portails, garde-corps, 
               escaliers et structures.
             </p>
@@ -219,6 +219,7 @@ export default function ThermolaquageSection() {
     </section>
   );
 }
+
 
 
 

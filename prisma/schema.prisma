@@ -358,6 +358,29 @@ model Message {
 }
 
 // ============================================
+// CONTACT FORM (Messages from website visitors)
+// ============================================
+
+model ContactMessage {
+  id          String   @id @default(cuid())
+  nom         String
+  email       String
+  telephone   String?
+  sujet       String
+  message     String
+  type        String   @default("particulier") // particulier, professionnel
+  entreprise  String?
+  
+  status      String   @default("nouveau") // nouveau, lu, traite, archive
+  notes       String?  // Notes internes de l'admin
+  
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  
+  @@map("contact_messages")
+}
+
+// ============================================
 // SITE SETTINGS (Global Configuration)
 // ============================================
 

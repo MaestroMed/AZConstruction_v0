@@ -112,19 +112,40 @@ export default function SolutionsProPage() {
     e.preventDefault();
     setIsSubmitting(true);
 
-    // Simulation d'envoi
-    await new Promise((resolve) => setTimeout(resolve, 1500));
+    try {
+      const response = await fetch("/api/contact", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          nom: formData.nom,
+          email: formData.email,
+          telephone: formData.telephone,
+          sujet: `Demande Pro - ${formData.secteur}`,
+          message: formData.message || `Demande de contact professionnel.\nSecteur: ${formData.secteur}`,
+          type: "professionnel",
+          entreprise: formData.entreprise,
+        }),
+      });
 
-    toast.success("Demande envoyée ! Nous vous recontactons sous 24h.");
-    setFormData({
-      entreprise: "",
-      nom: "",
-      email: "",
-      telephone: "",
-      secteur: "",
-      message: "",
-    });
-    setIsSubmitting(false);
+      if (!response.ok) {
+        const data = await response.json();
+        throw new Error(data.error || "Erreur lors de l'envoi");
+      }
+
+      toast.success("Demande envoyée ! Nous vous recontactons sous 24h.");
+      setFormData({
+        entreprise: "",
+        nom: "",
+        email: "",
+        telephone: "",
+        secteur: "",
+        message: "",
+      });
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : "Erreur lors de l'envoi");
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
