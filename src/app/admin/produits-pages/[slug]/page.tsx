@@ -17,8 +17,7 @@ import {
   ExternalLink,
 } from "lucide-react";
 import { Button } from "@/components/ui/Button";
-import { Input } from "@/components/ui/Input";
-import { Textarea } from "@/components/ui/Textarea";
+import { Input, Textarea } from "@/components/admin/ui/FormFields";
 import { Card, CardContent } from "@/components/ui/Card";
 import { toast } from "sonner";
 import { getProductFamilyBySlug, type ProductFamily } from "@/lib/data/product-families";
