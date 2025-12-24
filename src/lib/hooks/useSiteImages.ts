@@ -21,7 +21,7 @@ interface SiteImagesState {
 
 // Cache global pour éviter les requêtes multiples
 let cachedImages: Record<string, string> | null = null;
-let cachePromise: Promise<Record<string, string>> | null = null;
+let cachePromise: Promise<FetchResult> | null = null;
 
 // Images fallback locales (utilisées si l'API échoue)
 const FALLBACK_IMAGES: Record<string, string> = {
