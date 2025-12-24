@@ -45,7 +45,7 @@ const defaultSettings: HeroSettings = {
   headlineAccent: "mesure",
   headlineEnd: "vite et bien.",
   subheadline: "Expert en métallerie sur mesure : garde-corps, escaliers, portes, fenêtres, portails et clôtures. Profilés Jansen.",
-  ctaPrimaryText: "Configurer mon projet",
+  ctaPrimaryText: "Découvrir nos produits",
   ctaPrimaryLink: "/produits",
   ctaSecondaryText: "Voir nos réalisations",
   ctaSecondaryLink: "/realisations",

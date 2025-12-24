@@ -93,8 +93,8 @@ const guarantees = [
 const processSteps = [
   {
     step: "01",
-    title: "Configurez",
-    description: "Personnalisez votre projet en ligne avec notre configurateur 3D interactif.",
+    title: "Consultation",
+    description: "Découvrez nos produits et discutons de votre projet sur mesure.",
     icon: Sparkles,
   },
   {
@@ -179,7 +179,7 @@ export default function ParticuliersPage() {
                   size="lg"
                   icon={<ArrowRight className="w-5 h-5" />}
                 >
-                  Configurer mon projet
+                  Découvrir nos produits
                 </Button>
               </Link>
               <Link href="/realisations">
@@ -281,9 +281,9 @@ export default function ParticuliersPage() {
                           </span>
                         ))}
                       </div>
-                      <Link href={`/configurateur/${service.configLink}`}>
+                      <Link href={`/produits/${service.configLink}`}>
                         <Button icon={<ArrowRight className="w-4 h-4" />}>
-                          Configurer
+                          Découvrir
                         </Button>
                       </Link>
                     </CardContent>

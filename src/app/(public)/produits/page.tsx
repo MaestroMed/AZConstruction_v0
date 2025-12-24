@@ -230,14 +230,14 @@ const guarantees = [
 const processSteps = [
   {
     step: 1,
-    title: "Configurez en ligne",
-    description: "Utilisez notre configurateur 3D pour personnaliser dimensions, couleurs et options.",
+    title: "Consultez nos produits",
+    description: "Découvrez notre gamme complète et trouvez le produit adapté à votre projet.",
     icon: Settings,
   },
   {
     step: 2,
-    title: "Recevez votre devis",
-    description: "Obtenez une estimation précise et un devis détaillé sous 48h ouvrées.",
+    title: "Demandez un devis",
+    description: "Contactez-nous pour un devis gratuit et personnalisé sous 48h.",
     icon: Clock,
   },
   {
@@ -321,8 +321,8 @@ export default function ProduitsPage() {
               <span className="font-serif italic text-cyan-pale">sur mesure</span>
             </h1>
             <p className="text-xl text-white/80 mb-8 leading-relaxed">
-              Découvrez notre gamme complète d'ouvrages métalliques. Configurez votre projet
-              en quelques clics et obtenez un devis instantané.
+              Découvrez notre gamme complète d'ouvrages métalliques sur mesure. 
+              Fabrication française, qualité premium, devis gratuit sous 48h.
             </p>
             <div className="flex flex-wrap justify-center gap-4">
               {productFamilies.map((family) => (
@@ -422,12 +422,12 @@ export default function ProduitsPage() {
                     </div>
 
                     {/* CTA */}
-                    <Link href={`/configurateur/${family.id}`}>
+                    <Link href={`/produits/${family.id}`}>
                       <Button
                         className="w-full group-hover:bg-cyan-glow group-hover:text-navy-dark transition-colors"
-                        icon={<Settings className="w-4 h-4" />}
+                        icon={<ArrowRight className="w-4 h-4" />}
                       >
-                        Configurer mon {family.name.toLowerCase().slice(0, -1)}
+                        Découvrir les {family.name.toLowerCase()}
                       </Button>
                     </Link>
                   </CardContent>
@@ -451,7 +451,7 @@ export default function ProduitsPage() {
               Comment ça marche ?
             </h2>
             <p className="text-gray-600 max-w-2xl mx-auto">
-              De la configuration à l'installation, nous vous accompagnons à chaque étape.
+              De la conception à l'installation, nous vous accompagnons à chaque étape.
             </p>
           </motion.div>
 

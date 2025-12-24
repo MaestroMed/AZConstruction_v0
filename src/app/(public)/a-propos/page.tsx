@@ -80,7 +80,7 @@ const timeline = [
     year: "2024",
     title: "Innovation",
     description:
-      "Lancement du configurateur en ligne et de notre service de visualisation 3D.",
+      "Lancement de notre plateforme digitale et de notre atelier de 1800m².",
   },
 ];
 

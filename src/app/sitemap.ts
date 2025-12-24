@@ -4,6 +4,20 @@ export default function sitemap(): MetadataRoute.Sitemap {
   const baseUrl = 'https://zaconstruction.fr'
   const lastModified = new Date()
 
+  // Product family slugs
+  const productFamilies = [
+    'garde-corps',
+    'escaliers',
+    'portails',
+    'clotures',
+    'portes',
+    'fenetres',
+    'verrieres',
+    'pergolas',
+    'marquises',
+    'grilles-ventilation',
+  ]
+
   return [
     // Pages principales
     {
@@ -31,6 +45,24 @@ export default function sitemap(): MetadataRoute.Sitemap {
       changeFrequency: 'monthly',
       priority: 0.9,
     },
+    {
+      url: `${baseUrl}/services/thermolaquage/jantes`,
+      lastModified,
+      changeFrequency: 'monthly',
+      priority: 0.85,
+    },
+    {
+      url: `${baseUrl}/services/thermolaquage/moto-art`,
+      lastModified,
+      changeFrequency: 'monthly',
+      priority: 0.85,
+    },
+    {
+      url: `${baseUrl}/services/thermolaquage/renovation-voiture`,
+      lastModified,
+      changeFrequency: 'monthly',
+      priority: 0.85,
+    },
     // Nuancier RAL - fort potentiel SEO
     {
       url: `${baseUrl}/couleurs-ral`,
@@ -38,45 +70,29 @@ export default function sitemap(): MetadataRoute.Sitemap {
       changeFrequency: 'monthly',
       priority: 0.85,
     },
-    // Produits et configurateur
+    // Produits - page catalogue
     {
       url: `${baseUrl}/produits`,
       lastModified,
       changeFrequency: 'weekly',
       priority: 0.9,
     },
+    // Pages produits individuelles
+    ...productFamilies.map((family) => ({
+      url: `${baseUrl}/produits/${family}`,
+      lastModified,
+      changeFrequency: 'monthly' as const,
+      priority: 0.8,
+    })),
+    // Pages cibles
     {
-      url: `${baseUrl}/configurateur/portes`,
+      url: `${baseUrl}/particuliers`,
       lastModified,
       changeFrequency: 'monthly',
       priority: 0.8,
     },
     {
-      url: `${baseUrl}/configurateur/fenetres`,
-      lastModified,
-      changeFrequency: 'monthly',
-      priority: 0.8,
-    },
-    {
-      url: `${baseUrl}/configurateur/garde-corps`,
-      lastModified,
-      changeFrequency: 'monthly',
-      priority: 0.8,
-    },
-    {
-      url: `${baseUrl}/configurateur/escaliers`,
-      lastModified,
-      changeFrequency: 'monthly',
-      priority: 0.8,
-    },
-    {
-      url: `${baseUrl}/configurateur/portails`,
-      lastModified,
-      changeFrequency: 'monthly',
-      priority: 0.8,
-    },
-    {
-      url: `${baseUrl}/configurateur/clotures`,
+      url: `${baseUrl}/professionnels`,
       lastModified,
       changeFrequency: 'monthly',
       priority: 0.8,
@@ -87,18 +103,6 @@ export default function sitemap(): MetadataRoute.Sitemap {
       lastModified,
       changeFrequency: 'weekly',
       priority: 0.8,
-    },
-    {
-      url: `${baseUrl}/solutions-pro`,
-      lastModified,
-      changeFrequency: 'monthly',
-      priority: 0.7,
-    },
-    {
-      url: `${baseUrl}/habitat`,
-      lastModified,
-      changeFrequency: 'monthly',
-      priority: 0.7,
     },
     {
       url: `${baseUrl}/a-propos`,
@@ -139,9 +143,4 @@ export default function sitemap(): MetadataRoute.Sitemap {
     },
   ]
 }
-
-
-
-
-
 

@@ -14,7 +14,7 @@ const faqCategories = [
       {
         question: "Comment obtenir un devis ?",
         answer:
-          "Vous pouvez obtenir un devis gratuitement de plusieurs manières : via notre configurateur en ligne pour une estimation instantanée, en remplissant notre formulaire de contact, par téléphone au 01 23 45 67 89, ou en prenant rendez-vous dans nos locaux pour les projets complexes. Nous nous engageons à vous répondre sous 48h ouvrées.",
+          "Vous pouvez obtenir un devis gratuitement de plusieurs manières : en remplissant notre formulaire de contact, par téléphone au 01 23 45 67 89, ou en prenant rendez-vous dans nos locaux pour les projets complexes. Nous nous engageons à vous répondre sous 48h ouvrées.",
       },
       {
         question: "Quelle est la durée de validité d'un devis ?",

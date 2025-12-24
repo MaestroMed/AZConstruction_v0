@@ -9,14 +9,16 @@ import { Menu, X, User, ChevronDown, Fence, DoorClosed, Square, Grid2X2, ArrowRi
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/Button";
 
-// Catégories de produits avec liens vers les configurateurs
+// Catégories de produits avec liens vers les pages produits
 const productCategories = [
-  { label: "Garde-corps", href: "/configurateur/garde-corps", icon: Fence, description: "Sécurisez vos espaces avec style" },
-  { label: "Escaliers", href: "/configurateur/escaliers", icon: Move3D, description: "Design et fonctionnalité" },
-  { label: "Portes", href: "/configurateur/portes", icon: DoorClosed, description: "Entrées sur mesure" },
-  { label: "Fenêtres", href: "/configurateur/fenetres", icon: Square, description: "Lumière et isolation" },
-  { label: "Portails", href: "/configurateur/portails", icon: Grid2X2, description: "Sécurité et esthétique" },
-  { label: "Clôtures", href: "/configurateur/clotures", icon: Layers, description: "Délimitez votre espace" },
+  { label: "Garde-corps", href: "/produits/garde-corps", icon: Fence, description: "Sécurisez vos espaces avec style" },
+  { label: "Escaliers", href: "/produits/escaliers", icon: Move3D, description: "Design et fonctionnalité" },
+  { label: "Portes", href: "/produits/portes", icon: DoorClosed, description: "Entrées sur mesure" },
+  { label: "Fenêtres", href: "/produits/fenetres", icon: Square, description: "Lumière et isolation" },
+  { label: "Portails", href: "/produits/portails", icon: Grid2X2, description: "Sécurité et esthétique" },
+  { label: "Clôtures", href: "/produits/clotures", icon: Layers, description: "Délimitez votre espace" },
+  { label: "Verrières", href: "/produits/verrieres", icon: Grid2X2, description: "Lumière intérieure style atelier" },
+  { label: "Pergolas", href: "/produits/pergolas", icon: Layers, description: "Vivre dehors par tous temps" },
 ];
 
 const navItems = [
@@ -87,7 +89,7 @@ function ProductsDropdown({ item, isScrolled }: { item: { label: string; href: s
             <div className="p-2">
               <div className="px-3 py-2 text-xs font-medium text-white/40 uppercase tracking-wider flex items-center gap-2">
                 <Sparkles className="w-3 h-3 text-cyan-glow" />
-                Configurez votre projet
+                Nos produits sur mesure
               </div>
               {productCategories.map((category) => (
                 <Link

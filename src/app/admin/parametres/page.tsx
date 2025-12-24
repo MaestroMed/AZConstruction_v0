@@ -606,12 +606,13 @@ export default function ParametresPage() {
             <div className="space-y-6">
               <div>
                 <Switch
-                  label="Afficher le configurateur de produits"
+                  label="Configurateur 3D (désactivé)"
                   checked={settings.showConfigurator}
                   onChange={(checked) => setSettings({ ...settings, showConfigurator: checked })}
+                  disabled
                 />
                 <p className="text-sm text-gray-500 ml-8 mt-1">
-                  Affiche le configurateur 3D dans le hero de la page d&apos;accueil et l&apos;accès aux pages configurateur.
+                  Le configurateur 3D est temporairement désactivé. Les pages produits sont maintenant des landing pages.
                 </p>
               </div>
               <div>

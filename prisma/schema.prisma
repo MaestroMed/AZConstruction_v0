@@ -73,17 +73,47 @@ model Address {
 // ============================================
 
 model ProductFamily {
-  id          String    @id @default(cuid())
-  nom         String
-  slug        String    @unique
-  description String?
-  imageUrl    String?
-  ordre       Int       @default(0)
-  active      Boolean   @default(true)
+  id               String    @id @default(cuid())
+  nom              String
+  slug             String    @unique
+  description      String?
+  imageUrl         String?
+  ordre            Int       @default(0)
+  active           Boolean   @default(true)
   
-  products    Product[]
+  // Landing page content
+  tagline          String?                   // Short tagline for hero
+  longDescription  String?   @db.Text        // Extended description
+  startingPrice    String?                   // e.g., "290"
+  unit             String?   @default("pièce") // e.g., "ml", "pièce"
+  features         String[]                  // Feature tags array
+  benefits         Json?                     // Array of {icon, title, description}
+  variants         Json?                     // Array of product variants
+  specifications   Json?                     // Technical specs
+  seoTitle         String?
+  seoDescription   String?   @db.Text
+  
+  // Relations
+  products         Product[]
+  heroImages       ProductFamilyImage[]
   
   @@map("product_families")
+}
+
+// Hero images for product family landing pages
+model ProductFamilyImage {
+  id               String         @id @default(cuid())
+  familyId         String
+  family           ProductFamily  @relation(fields: [familyId], references: [id], onDelete: Cascade)
+  
+  imageUrl         String
+  alt              String?
+  ordre            Int            @default(0)
+  
+  createdAt        DateTime       @default(now())
+  updatedAt        DateTime       @updatedAt
+  
+  @@map("product_family_images")
 }
 
 model Product {
