@@ -422,6 +422,7 @@ model SiteSettings {
   
   // Features toggles
   showConfigurator Boolean @default(false)
+  showEspaceClient Boolean @default(false)
   
   createdAt       DateTime @default(now())
   updatedAt       DateTime @updatedAt
@@ -525,4 +526,56 @@ model Media {
   updatedAt    DateTime @updatedAt
   
   @@map("medias")
+}
+
+// ============================================
+// CMS SECTIONS (Editable page sections)
+// ============================================
+
+model SiteSection {
+  id          String   @id @default(cuid())
+  pageSlug    String   // "thermolaquage", "homepage", etc.
+  sectionKey  String   // "hero", "advantages", "process", etc.
+  content     Json     // Structured content (titles, texts, items...)
+  ordre       Int      @default(0)
+  active      Boolean  @default(true)
+  
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  
+  @@unique([pageSlug, sectionKey])
+  @@map("site_sections")
+}
+
+// ============================================
+// RAL MODELS (Interactive color selector)
+// ============================================
+
+model RALModel {
+  id          String   @id @default(cuid())
+  name        String   // "coccinelle", "jante", "moto", "portail"
+  label       String   // "Coccinelle", "Jante", "Moto", "Portail"
+  ordre       Int      @default(0)
+  active      Boolean  @default(true)
+  
+  images      RALModelImage[]
+  
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  
+  @@map("ral_models")
+}
+
+model RALModelImage {
+  id          String   @id @default(cuid())
+  modelId     String
+  model       RALModel @relation(fields: [modelId], references: [id], onDelete: Cascade)
+  ralCode     String   // "7016", "9005", etc.
+  imageUrl    String
+  
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  
+  @@unique([modelId, ralCode])
+  @@map("ral_model_images")
 }

@@ -47,6 +47,7 @@ interface SiteSettings {
   showSocialInHeader: boolean;
   showSocialInFooter: boolean;
   showConfigurator: boolean;
+  showEspaceClient: boolean;
   logoUrl: string;
   logoLightUrl: string; // Version claire pour fonds sombres (header/footer)
   faviconUrl: string;
@@ -70,6 +71,7 @@ const defaultSettings: SiteSettings = {
   showSocialInHeader: false,
   showSocialInFooter: true,
   showConfigurator: false,
+  showEspaceClient: false,
   logoUrl: "",
   logoLightUrl: "",
   faviconUrl: "",
@@ -106,6 +108,7 @@ export default function ParametresPage() {
               linkedin: apiSettings.linkedin || defaultSettings.linkedin,
               showLogoInHeader: apiSettings.showLogoInHeader ?? defaultSettings.showLogoInHeader,
               showConfigurator: apiSettings.showConfigurator ?? defaultSettings.showConfigurator,
+              showEspaceClient: apiSettings.showEspaceClient ?? defaultSettings.showEspaceClient,
               logoUrl: apiSettings.logoUrl || "",
               logoLightUrl: apiSettings.logoLightUrl || "",
               faviconUrl: apiSettings.faviconUrl || "",
@@ -216,6 +219,7 @@ export default function ParametresPage() {
         linkedin: settings.linkedin,
         showLogoInHeader: settings.showLogoInHeader,
         showConfigurator: settings.showConfigurator,
+        showEspaceClient: settings.showEspaceClient,
         logoUrl: settings.logoUrl,
         logoLightUrl: settings.logoLightUrl,
         faviconUrl: settings.faviconUrl,
@@ -599,15 +603,27 @@ export default function ParametresPage() {
               <Building className="w-5 h-5" />
               Fonctionnalités du site
             </h2>
-            <div className="space-y-4">
-              <Switch
-                label="Afficher le configurateur de produits"
-                checked={settings.showConfigurator}
-                onChange={(checked) => setSettings({ ...settings, showConfigurator: checked })}
-              />
-              <p className="text-sm text-gray-500 ml-8">
-                Affiche le configurateur 3D dans le hero de la page d'accueil et l'accès aux pages configurateur.
-              </p>
+            <div className="space-y-6">
+              <div>
+                <Switch
+                  label="Afficher le configurateur de produits"
+                  checked={settings.showConfigurator}
+                  onChange={(checked) => setSettings({ ...settings, showConfigurator: checked })}
+                />
+                <p className="text-sm text-gray-500 ml-8 mt-1">
+                  Affiche le configurateur 3D dans le hero de la page d&apos;accueil et l&apos;accès aux pages configurateur.
+                </p>
+              </div>
+              <div>
+                <Switch
+                  label="Activer l'Espace Client"
+                  checked={settings.showEspaceClient}
+                  onChange={(checked) => setSettings({ ...settings, showEspaceClient: checked })}
+                />
+                <p className="text-sm text-gray-500 ml-8 mt-1">
+                  Affiche le bouton &quot;Espace client&quot; dans le header pour permettre la connexion/inscription.
+                </p>
+              </div>
             </div>
           </div>
 

@@ -39,8 +39,10 @@ import {
   Timeline,
   TimelineStep,
   AnimatedCounter,
+  PhoneLink,
 } from "@/components/ui";
 import { useSiteImages } from "@/lib/hooks/useSiteImages";
+import { clientDemands, ralModels } from "@/lib/data/thermolaquage-items";
 
 // Données RAL populaires
 const popularColors = [
@@ -260,6 +262,7 @@ function HeroStat({ value, suffix, label, delay }: { value: number; suffix: stri
 export default function ThermolaquagePage() {
   const [openFAQ, setOpenFAQ] = React.useState<number | null>(0);
   const [selectedColor, setSelectedColor] = React.useState(popularColors[0]);
+  const [selectedModel, setSelectedModel] = React.useState(ralModels[0]);
   const { getImage } = useSiteImages();
   const heroImage = getImage("hero-thermolaquage");
 
@@ -377,17 +380,7 @@ export default function ThermolaquagePage() {
                   Demander un devis gratuit
                 </GlowButton>
               </Link>
-              <a href="tel:+33494000000">
-                <GlowButton
-                  variant="outline"
-                  size="lg"
-                  icon={<Phone className="w-5 h-5" />}
-                  iconPosition="left"
-                  glow={false}
-                >
-                  04 94 XX XX XX
-                </GlowButton>
-              </a>
+              <PhoneLink variant="button" className="justify-center" />
             </motion.div>
           </div>
         </div>
@@ -521,12 +514,80 @@ export default function ThermolaquagePage() {
       </section>
 
       {/* ============================================
-          PROCESSUS - Timeline Interactive
+          MOSAÏQUE - Ce que demandent nos clients
           ============================================ */}
       <section className="py-24 bg-white relative">
         <div className="container mx-auto px-6">
           <motion.div
-            className="text-center max-w-3xl mx-auto mb-20"
+            className="text-center max-w-3xl mx-auto mb-16"
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+          >
+            <span className="inline-block text-cyan-700 font-semibold text-sm tracking-wider uppercase mb-4">
+              Nos réalisations
+            </span>
+            <h2 className="text-4xl md:text-5xl font-bold text-navy-dark mb-6">
+              Ce que demandent{" "}
+              <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-600 to-blue-600">
+                nos clients
+              </span>
+            </h2>
+            <p className="text-gray-600 text-lg">
+              Du vélo vintage au portail contemporain, découvrez les projets
+              que nous réalisons pour nos clients.
+            </p>
+          </motion.div>
+
+          {/* Masonry Grid */}
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 auto-rows-[200px]">
+            {clientDemands.map((item, index) => (
+              <motion.div
+                key={item.id}
+                initial={{ opacity: 0, scale: 0.9 }}
+                whileInView={{ opacity: 1, scale: 1 }}
+                viewport={{ once: true }}
+                transition={{ delay: index * 0.05 }}
+                className={`relative group overflow-hidden rounded-2xl cursor-pointer ${
+                  item.size === "large" ? "col-span-2 row-span-2" :
+                  item.size === "wide" ? "col-span-2" :
+                  item.size === "tall" ? "row-span-2" : ""
+                }`}
+              >
+                <Image
+                  src={item.imageUrl}
+                  alt={item.title}
+                  fill
+                  className="object-cover transition-transform duration-500 group-hover:scale-110"
+                />
+                {/* Overlay */}
+                <div className="absolute inset-0 bg-gradient-to-t from-navy-dark/90 via-navy-dark/30 to-transparent opacity-60 group-hover:opacity-90 transition-opacity" />
+                
+                {/* Content */}
+                <div className="absolute inset-0 p-6 flex flex-col justify-end">
+                  <h3 className="text-white font-bold text-lg md:text-xl mb-1 transform translate-y-4 group-hover:translate-y-0 transition-transform">
+                    {item.title}
+                  </h3>
+                  <p className="text-white/70 text-sm opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                    {item.description}
+                  </p>
+                </div>
+
+                {/* Hover border glow */}
+                <div className="absolute inset-0 rounded-2xl ring-2 ring-transparent group-hover:ring-cyan-glow/50 transition-all" />
+              </motion.div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ============================================
+          PROCESSUS - Timeline avec Image
+          ============================================ */}
+      <section className="py-24 bg-gray-50 relative">
+        <div className="container mx-auto px-6">
+          <motion.div
+            className="text-center max-w-3xl mx-auto mb-16"
             initial={{ opacity: 0, y: 30 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
@@ -546,24 +607,82 @@ export default function ThermolaquagePage() {
             </p>
           </motion.div>
 
-          <Timeline>
-            {processSteps.map((step, index) => (
-              <TimelineStep
-                key={step.step}
-                step={step.step}
-                title={step.title}
-                description={step.description}
-                icon={step.icon}
-                position={index % 2 === 0 ? "left" : "right"}
-                index={index}
-              />
-            ))}
-          </Timeline>
+          {/* Grid 50/50 : Steps + Image */}
+          <div className="grid lg:grid-cols-2 gap-12 items-center">
+            {/* Left: Process Steps */}
+            <div className="space-y-6">
+              {processSteps.map((step, index) => (
+                <motion.div
+                  key={step.step}
+                  initial={{ opacity: 0, x: -30 }}
+                  whileInView={{ opacity: 1, x: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: index * 0.1 }}
+                  className="glass-card-light p-6 flex gap-5"
+                >
+                  <div className="flex-shrink-0 w-14 h-14 rounded-2xl bg-gradient-to-br from-cyan-500 to-blue-600 flex items-center justify-center text-white shadow-lg">
+                    {step.icon}
+                  </div>
+                  <div>
+                    <div className="flex items-center gap-2 mb-1">
+                      <span className="text-xs font-bold text-cyan-600 bg-cyan-100 px-2 py-0.5 rounded-full">
+                        ÉTAPE {step.step}
+                      </span>
+                    </div>
+                    <h3 className="text-lg font-bold text-navy-dark mb-2">
+                      {step.title}
+                    </h3>
+                    <p className="text-gray-600 text-sm leading-relaxed">
+                      {step.description}
+                    </p>
+                  </div>
+                </motion.div>
+              ))}
+            </div>
+
+            {/* Right: Process Image */}
+            <motion.div
+              initial={{ opacity: 0, x: 30 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true }}
+              className="relative hidden lg:block"
+            >
+              <div className="aspect-[4/5] rounded-3xl overflow-hidden shadow-2xl">
+                <Image
+                  src={getImage("thermolaquage-process")}
+                  alt="Processus de thermolaquage professionnel"
+                  fill
+                  className="object-cover"
+                />
+                {/* Gradient overlay */}
+                <div className="absolute inset-0 bg-gradient-to-t from-navy-dark/60 via-transparent to-transparent" />
+              </div>
+              
+              {/* Floating badge */}
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: 0.4 }}
+                className="absolute -bottom-6 -left-6 glass-card-light p-5 shadow-xl"
+              >
+                <div className="flex items-center gap-4">
+                  <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-cyan-500 to-blue-600 flex items-center justify-center text-white">
+                    <BadgeCheck className="w-6 h-6" />
+                  </div>
+                  <div>
+                    <p className="font-bold text-navy-dark">Qualité Pro</p>
+                    <p className="text-sm text-gray-500">Cabine 7m</p>
+                  </div>
+                </div>
+              </motion.div>
+            </motion.div>
+          </div>
         </div>
       </section>
 
       {/* ============================================
-          PALETTE COULEURS RAL - Interactive
+          SÉLECTEUR RAL INTERACTIF AVEC MODÈLES
           ============================================ */}
       <section className="py-24 bg-navy-dark relative overflow-hidden">
         <MeshGradient variant="aurora" className="absolute inset-0" />
@@ -578,7 +697,7 @@ export default function ThermolaquagePage() {
 
         <div className="container mx-auto px-6 relative z-10">
           <motion.div
-            className="text-center max-w-3xl mx-auto mb-16"
+            className="text-center max-w-3xl mx-auto mb-12"
             initial={{ opacity: 0, y: 30 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
@@ -587,78 +706,128 @@ export default function ThermolaquagePage() {
               Personnalisation
             </span>
             <h2 className="text-4xl md:text-5xl font-bold text-white mb-6">
-              200+ Couleurs RAL
+              Visualisez votre projet
             </h2>
             <p className="text-white/70 text-lg">
-              Du classique au plus audacieux, trouvez la teinte parfaite.
-              Finitions mat, satiné, brillant ou texturé.
+              Choisissez un modèle et une couleur RAL pour visualiser le résultat.
+              Plus de 200 teintes disponibles.
             </p>
           </motion.div>
 
-          {/* Color Preview */}
+          {/* Model Selector */}
           <motion.div
-            className="max-w-4xl mx-auto mb-12"
+            className="flex flex-wrap justify-center gap-4 mb-10"
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+          >
+            {ralModels.map((model) => (
+              <button
+                key={model.id}
+                onClick={() => setSelectedModel(model)}
+                className={`px-6 py-3 rounded-full font-medium transition-all ${
+                  selectedModel.id === model.id
+                    ? "bg-cyan-glow text-navy-dark shadow-lg shadow-cyan-glow/30"
+                    : "bg-white/10 text-white/70 hover:bg-white/20 hover:text-white"
+                }`}
+              >
+                {model.label}
+              </button>
+            ))}
+          </motion.div>
+
+          {/* Model Preview with Color */}
+          <motion.div
+            className="max-w-5xl mx-auto mb-12"
             initial={{ opacity: 0, scale: 0.95 }}
             whileInView={{ opacity: 1, scale: 1 }}
             viewport={{ once: true }}
           >
-            <GlassCard variant="glow" padding="xl" className="text-center">
-              <div className="flex flex-col md:flex-row items-center gap-8">
-                {/* Color swatch large */}
-                <motion.div
-                  className="w-32 h-32 md:w-40 md:h-40 rounded-2xl shadow-2xl ring-4 ring-white/10"
-                  style={{ backgroundColor: selectedColor.hex }}
-                  animate={{ backgroundColor: selectedColor.hex }}
-                  transition={{ duration: 0.3 }}
-                />
-                
-                <div className="text-left">
-                  <p className="text-cyan-glow text-sm font-medium mb-1">
-                    {selectedColor.name}
-                  </p>
-                  <h3 className="text-3xl font-bold text-white mb-2">
-                    {selectedColor.label}
+            <GlassCard variant="glow" padding="lg">
+              <div className="grid md:grid-cols-2 gap-8 items-center">
+                {/* Model Image with Color Overlay */}
+                <div className="relative aspect-[4/3] rounded-2xl overflow-hidden">
+                  <Image
+                    src={selectedModel.defaultImage}
+                    alt={`${selectedModel.label} en ${selectedColor.label}`}
+                    fill
+                    className="object-cover"
+                  />
+                  {/* Color overlay effect */}
+                  <motion.div
+                    className="absolute inset-0 mix-blend-multiply opacity-50"
+                    style={{ backgroundColor: selectedColor.hex }}
+                    animate={{ backgroundColor: selectedColor.hex }}
+                    transition={{ duration: 0.4 }}
+                  />
+                  {/* Gradient for depth */}
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent" />
+                  
+                  {/* Selected color badge */}
+                  <div className="absolute bottom-4 left-4 glass-card px-4 py-2 flex items-center gap-3">
+                    <div
+                      className="w-8 h-8 rounded-lg shadow-lg ring-2 ring-white/20"
+                      style={{ backgroundColor: selectedColor.hex }}
+                    />
+                    <div>
+                      <p className="text-white font-bold text-sm">{selectedColor.name}</p>
+                      <p className="text-white/60 text-xs">{selectedColor.label}</p>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Color Selector */}
+                <div>
+                  <h3 className="text-2xl font-bold text-white mb-4">
+                    {selectedModel.label} en{" "}
+                    <span className="text-cyan-glow">{selectedColor.label}</span>
                   </h3>
-                  <p className="text-white/60">
-                    Code hex: {selectedColor.hex}
+                  <p className="text-white/60 mb-6">
+                    Sélectionnez une couleur RAL parmi les plus populaires ou demandez notre nuancier complet.
                   </p>
+
+                  {/* Color Grid Compact */}
+                  <div className="grid grid-cols-6 gap-2 mb-6">
+                    {popularColors.map((color, index) => (
+                      <motion.button
+                        key={color.name}
+                        initial={{ opacity: 0, scale: 0.8 }}
+                        whileInView={{ opacity: 1, scale: 1 }}
+                        viewport={{ once: true }}
+                        transition={{ delay: index * 0.02 }}
+                        onClick={() => setSelectedColor(color)}
+                        className={`aspect-square rounded-lg shadow-md transition-all duration-200 hover:scale-110 ${
+                          selectedColor.name === color.name
+                            ? "ring-2 ring-cyan-glow ring-offset-2 ring-offset-navy-dark scale-110"
+                            : "ring-1 ring-white/10"
+                        }`}
+                        style={{ backgroundColor: color.hex }}
+                        title={`${color.name} - ${color.label}`}
+                      />
+                    ))}
+                  </div>
+
+                  <p className="text-white/40 text-sm mb-4">
+                    💡 Envoyez-nous vos photos pour un rendu personnalisé
+                  </p>
+
+                  <Link href="/contact">
+                    <GlowButton icon={<ArrowRight className="w-4 h-4" />}>
+                      Demander un devis couleur
+                    </GlowButton>
+                  </Link>
                 </div>
               </div>
             </GlassCard>
           </motion.div>
 
-          {/* Color Grid */}
-          <div className="grid grid-cols-4 md:grid-cols-6 lg:grid-cols-12 gap-3 mb-12">
-            {popularColors.map((color, index) => (
-              <motion.button
-                key={color.name}
-                initial={{ opacity: 0, scale: 0.8 }}
-                whileInView={{ opacity: 1, scale: 1 }}
-                viewport={{ once: true }}
-                transition={{ delay: index * 0.03 }}
-                onClick={() => setSelectedColor(color)}
-                className={`aspect-square rounded-xl shadow-lg transition-all duration-300 hover:scale-110 relative group ${
-                  selectedColor.name === color.name
-                    ? "ring-3 ring-cyan-glow scale-110"
-                    : "ring-1 ring-white/10"
-                }`}
-                style={{ backgroundColor: color.hex }}
-              >
-                {/* Tooltip */}
-                <span className="absolute -bottom-8 left-1/2 -translate-x-1/2 whitespace-nowrap text-xs text-white/80 opacity-0 group-hover:opacity-100 transition-opacity">
-                  {color.name}
-                </span>
-              </motion.button>
-            ))}
-          </div>
-
           <div className="text-center">
             <p className="text-white/50 mb-6">
-              + 200 autres teintes disponibles sur demande
+              + 200 autres teintes RAL disponibles sur demande
             </p>
-            <Link href="/contact">
+            <Link href="/couleurs-ral">
               <GlowButton variant="outline" glow={false}>
-                Demander le nuancier complet
+                Voir le nuancier complet
               </GlowButton>
             </Link>
           </div>
@@ -840,17 +1009,7 @@ export default function ThermolaquagePage() {
                       Demander un devis gratuit
                     </GlowButton>
                   </Link>
-                  <a href="tel:+33494000000">
-                    <GlowButton
-                      variant="outline"
-                      size="lg"
-                      icon={<Phone className="w-5 h-5" />}
-                      iconPosition="left"
-                      glow={false}
-                    >
-                      04 94 XX XX XX
-                    </GlowButton>
-                  </a>
+                  <PhoneLink variant="button" className="justify-center" />
                 </div>
 
                 <div className="flex flex-wrap justify-center gap-8 text-white/50 text-sm">

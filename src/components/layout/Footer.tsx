@@ -5,7 +5,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { motion } from "framer-motion";
 import { Facebook, Twitter, Instagram, Linkedin, Phone, Mail, MapPin, ArrowRight, Sparkles } from "lucide-react";
-import { GlowButton } from "@/components/ui";
+import { GlowButton, PhoneLink } from "@/components/ui";
 
 interface SiteSettings {
   logoUrl?: string;
@@ -30,7 +30,7 @@ const footerLinks = {
   entreprise: [
     { label: "À propos", href: "/a-propos" },
     { label: "Réalisations", href: "/realisations" },
-    { label: "Solutions Pro", href: "/solutions-pro" },
+    { label: "Professionnels", href: "/professionnels" },
     { label: "Contact", href: "/contact" },
   ],
   legal: [
@@ -130,17 +130,7 @@ export default function Footer() {
                   Demander un devis
                 </GlowButton>
               </Link>
-              <a href="tel:+33494000000">
-                <GlowButton
-                  variant="outline"
-                  size="lg"
-                  icon={<Phone className="w-5 h-5" />}
-                  iconPosition="left"
-                  glow={false}
-                >
-                  04 94 XX XX XX
-                </GlowButton>
-              </a>
+              <PhoneLink variant="button" className="justify-center" />
             </div>
           </motion.div>
         </div>
@@ -227,15 +217,12 @@ export default function Footer() {
 
             {/* Contact Info with glassmorphism cards */}
             <div className="space-y-3">
-              <a
-                href="tel:+33494000000"
-                className="flex items-center gap-3 text-white/60 hover:text-cyan-glow transition-colors group"
-              >
+              <div className="flex items-center gap-3 text-white/60 hover:text-cyan-glow transition-colors group">
                 <div className="w-8 h-8 rounded-lg bg-white/5 border border-white/10 flex items-center justify-center group-hover:bg-cyan-glow/10 group-hover:border-cyan-glow/30 transition-all">
                   <Phone className="w-4 h-4" />
                 </div>
-                <span>04 94 XX XX XX</span>
-              </a>
+                <PhoneLink className="text-inherit" showIcon={false} />
+              </div>
               <a
                 href="mailto:contact@az-construction.fr"
                 className="flex items-center gap-3 text-white/60 hover:text-cyan-glow transition-colors group"

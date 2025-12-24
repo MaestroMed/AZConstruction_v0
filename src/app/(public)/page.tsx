@@ -6,6 +6,7 @@ import {
   ThermolaquageSection,
   TestimonialsSection,
 } from "@/components/homepage";
+import CTASection from "@/components/homepage/CTASection";
 
 export default function HomePage() {
   return (
@@ -16,6 +17,7 @@ export default function HomePage() {
       <TestimonialsSection />
       <PartnersCarousel />
       <RealizationsSection />
+      <CTASection />
     </>
   );
 }

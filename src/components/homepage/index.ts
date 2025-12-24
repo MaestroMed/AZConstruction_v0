@@ -5,6 +5,7 @@ export { default as PartnersCarousel } from "./PartnersCarousel";
 export { default as RealizationsSection } from "./RealizationsSection";
 export { default as ThermolaquageSection } from "./ThermolaquageSection";
 export { default as TestimonialsSection } from "./TestimonialsSection";
+export { default as CTASection } from "./CTASection";
 
 
 

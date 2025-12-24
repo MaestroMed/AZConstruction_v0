@@ -22,9 +22,9 @@ const productCategories = [
 const navItems = [
   { label: "Produits", href: "/produits", hasDropdown: true },
   { label: "Réalisations", href: "/realisations" },
-  { label: "Solutions Pro", href: "/solutions-pro" },
-  { label: "Habitat", href: "/habitat" },
-  { label: "Thermolaquage", href: "/services/thermolaquage", highlight: true },
+  { label: "Particuliers", href: "/particuliers" },
+  { label: "Professionnels", href: "/professionnels" },
+  { label: "Thermolaquage", href: "/services/thermolaquage" },
   { label: "À propos", href: "/a-propos" },
   { label: "Contact", href: "/contact" },
 ];
@@ -36,6 +36,8 @@ interface SiteSettings {
   logoUrl?: string;
   logoLightUrl?: string;
   showLogoInHeader?: boolean;
+  showEspaceClient?: boolean;
+  phone?: string;
 }
 
 // Composant Dropdown Produits avec glassmorphism
@@ -61,17 +63,16 @@ function ProductsDropdown({ item, isScrolled }: { item: { label: string; href: s
       <Link
         href={item.href}
         className={cn(
-          "relative px-4 py-2 transition-all duration-300 flex items-center gap-1 group",
+          "relative px-4 py-2 transition-all duration-300 flex items-center gap-1 group text-sm font-medium",
           isScrolled ? "text-white/90 hover:text-white" : "text-white/80 hover:text-white"
         )}
       >
-        <span className="text-cyan-glow/70 text-sm">«</span>
         {item.label}
         <ChevronDown className={cn(
-          "w-4 h-4 transition-transform duration-200",
+          "w-3.5 h-3.5 opacity-60 transition-transform duration-200",
           isOpen && "rotate-180"
         )} />
-        <span className="absolute bottom-0 left-4 right-4 h-0.5 bg-gradient-to-r from-cyan-glow to-cyan-light scale-x-0 group-hover:scale-x-100 transition-transform origin-left" />
+        <span className="absolute bottom-0 left-4 right-4 h-px bg-white/40 scale-x-0 group-hover:scale-x-100 transition-transform origin-left" />
       </Link>
 
       <AnimatePresence>
@@ -358,55 +359,42 @@ export default function Header() {
                   key={item.href}
                   href={item.href}
                   className={cn(
-                    "relative px-4 py-2 transition-all duration-300 group",
-                    "highlight" in item && item.highlight
-                      ? "text-cyan-glow hover:text-cyan-pale font-medium"
-                      : "text-white/80 hover:text-white"
+                    "relative px-4 py-2 transition-all duration-300 group text-sm font-medium",
+                    "text-white/80 hover:text-white"
                   )}
                 >
-                  <span className="flex items-center gap-1">
-                    {"highlight" in item && item.highlight ? (
-                      <motion.span 
-                        className="text-cyan-glow text-sm"
-                        animate={{ rotate: [0, 15, -15, 0] }}
-                        transition={{ duration: 2, repeat: Infinity, repeatDelay: 3 }}
-                      >
-                        ★
-                      </motion.span>
-                    ) : (
-                      <span className="text-cyan-glow/70 text-sm">«</span>
-                    )}
-                    {item.label}
-                  </span>
-                  <span className="absolute bottom-0 left-4 right-4 h-0.5 bg-gradient-to-r from-cyan-glow to-cyan-light scale-x-0 group-hover:scale-x-100 transition-transform origin-left" />
+                  {item.label}
+                  <span className="absolute bottom-0 left-4 right-4 h-px bg-white/40 scale-x-0 group-hover:scale-x-100 transition-transform origin-left" />
                 </Link>
               )
             ))}
           </div>
 
-          {/* CTA Button with glassmorphism */}
-          <div className="hidden lg:flex items-center gap-4">
-            <Link href="/login">
-              <motion.div
-                whileHover={{ scale: 1.02 }}
-                whileTap={{ scale: 0.98 }}
-              >
-                <Button
-                  variant="outline"
-                  size="sm"
-                  className={cn(
-                    "border-white/20 text-white transition-all duration-300",
-                    "hover:bg-white/10 hover:border-cyan-glow/30",
-                    "backdrop-blur-sm"
-                  )}
-                  icon={<User className="w-4 h-4" />}
-                  iconPosition="left"
+          {/* CTA Button with glassmorphism - conditionally shown */}
+          {settings.showEspaceClient && (
+            <div className="hidden lg:flex items-center gap-4">
+              <Link href="/login">
+                <motion.div
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
                 >
-                  Espace client
-                </Button>
-              </motion.div>
-            </Link>
-          </div>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    className={cn(
+                      "border-white/20 text-white transition-all duration-300",
+                      "hover:bg-white/10 hover:border-white/40",
+                      "backdrop-blur-sm"
+                    )}
+                    icon={<User className="w-4 h-4" />}
+                    iconPosition="left"
+                  >
+                    Espace client
+                  </Button>
+                </motion.div>
+              </Link>
+            </div>
+          )}
 
           {/* Mobile Menu Button */}
           <motion.button
@@ -472,37 +460,28 @@ export default function Header() {
                       <Link
                         href={item.href}
                         onClick={() => setIsMobileMenuOpen(false)}
-                        className={cn(
-                          "px-4 py-3 rounded-xl transition-all flex items-center gap-2",
-                          "hover:bg-white/5",
-                          "highlight" in item && item.highlight
-                            ? "text-cyan-glow"
-                            : "text-white/80 hover:text-white"
-                        )}
+                        className="px-4 py-3 rounded-xl transition-all text-white/80 hover:text-white hover:bg-white/5 block"
                       >
-                        {"highlight" in item && item.highlight ? (
-                          <span className="text-cyan-glow">★</span>
-                        ) : (
-                          <span className="text-cyan-glow/70">«</span>
-                        )}
                         {item.label}
                       </Link>
                     </motion.div>
                   ))}
                 </div>
                 
-                <div className="pt-4 mt-4 border-t border-white/10">
-                  <Link href="/login" onClick={() => setIsMobileMenuOpen(false)}>
-                    <Button
-                      variant="outline"
-                      className="w-full border-white/20 text-white hover:bg-white/10"
-                      icon={<User className="w-4 h-4" />}
-                      iconPosition="left"
-                    >
-                      Espace client
-                    </Button>
-                  </Link>
-                </div>
+                {settings.showEspaceClient && (
+                  <div className="pt-4 mt-4 border-t border-white/10">
+                    <Link href="/login" onClick={() => setIsMobileMenuOpen(false)}>
+                      <Button
+                        variant="outline"
+                        className="w-full border-white/20 text-white hover:bg-white/10"
+                        icon={<User className="w-4 h-4" />}
+                        iconPosition="left"
+                      >
+                        Espace client
+                      </Button>
+                    </Link>
+                  </div>
+                )}
               </motion.div>
             </motion.div>
           )}

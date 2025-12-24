@@ -20,6 +20,7 @@ export async function GET() {
           address: "Zone Industrielle, 83000 Toulon",
           showLogoInHeader: true,
           showConfigurator: false,
+          showEspaceClient: false,
         },
       });
     }
@@ -37,6 +38,7 @@ export async function GET() {
         email: "contact@az-construction.fr",
         showLogoInHeader: true,
         showConfigurator: false,
+        showEspaceClient: false,
         logoUrl: null,
         logoLightUrl: null,
       },

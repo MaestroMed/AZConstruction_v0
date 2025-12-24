@@ -1,178 +1,506 @@
 "use client";
 
 import * as React from "react";
-import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
-import { ArrowLeft, Save, Eye, EyeOff, Settings, Trash2 } from "lucide-react";
-import { useEditor, EditorContent } from "@tiptap/react";
-import StarterKit from "@tiptap/starter-kit";
-import Image from "@tiptap/extension-image";
-import TipTapLink from "@tiptap/extension-link";
-import Placeholder from "@tiptap/extension-placeholder";
-import { Input, Textarea, Switch } from "@/components/admin/ui/FormFields";
-import { SlideOver } from "@/components/admin/ui/Modal";
+import Link from "next/link";
+import {
+  ArrowLeft,
+  Save,
+  Loader2,
+  ChevronDown,
+  ChevronUp,
+  Trash2,
+  Plus,
+  GripVertical,
+  Image as ImageIcon,
+  Type,
+  List,
+  Hash,
+  ToggleLeft,
+} from "lucide-react";
 import { toast } from "sonner";
 
-// Mock page data
-const mockPage = {
-  id: "1",
-  slug: "a-propos",
-  title: "À propos",
-  content: `
-    <h2>Notre histoire</h2>
-    <p>Fondée en 2010, AZ Construction est née de la passion d'un artisan pour le travail du métal. Aujourd'hui, nous sommes une équipe de 15 professionnels dédiés à la réalisation de vos projets sur mesure.</p>
-    <h2>Nos valeurs</h2>
-    <p>Qualité, précision et satisfaction client sont au cœur de notre métier. Chaque création est unique et réalisée avec le plus grand soin.</p>
-    <h3>Savoir-faire artisanal</h3>
-    <p>Nos artisans maîtrisent les techniques traditionnelles tout en intégrant les technologies modernes pour vous offrir des réalisations d'exception.</p>
-    <h3>Made in France</h3>
-    <p>Tous nos produits sont fabriqués dans nos ateliers en France, garantissant qualité et réactivité.</p>
-  `,
-  published: true,
-  metaTitle: "À propos - AZ Construction",
-  metaDescription: "Découvrez l'histoire et les valeurs d'AZ Construction, votre partenaire métallerie sur mesure.",
-  createdAt: new Date("2024-01-10"),
-  updatedAt: new Date("2024-12-01"),
+// Configuration des sections éditables par page
+const pageConfigs: Record<string, PageConfig> = {
+  thermolaquage: {
+    title: "Thermolaquage",
+    sections: [
+      {
+        key: "hero",
+        label: "Section Hero",
+        fields: [
+          { name: "title", label: "Titre principal", type: "text" },
+          { name: "subtitle", label: "Sous-titre", type: "textarea" },
+          { name: "badge", label: "Badge", type: "text" },
+        ],
+      },
+      {
+        key: "advantages",
+        label: "Avantages (Bento Grid)",
+        fields: [
+          { name: "sectionTitle", label: "Titre de section", type: "text" },
+          { name: "sectionSubtitle", label: "Sous-titre", type: "text" },
+        ],
+        listField: {
+          name: "items",
+          label: "Avantages",
+          itemFields: [
+            { name: "title", label: "Titre", type: "text" },
+            { name: "description", label: "Description", type: "textarea" },
+            { name: "icon", label: "Icône (nom)", type: "text" },
+            { name: "size", label: "Taille", type: "select", options: ["default", "large", "wide", "tall"] },
+          ],
+        },
+      },
+      {
+        key: "client-demands",
+        label: "Ce que demandent nos clients",
+        fields: [
+          { name: "sectionTitle", label: "Titre de section", type: "text" },
+          { name: "sectionSubtitle", label: "Sous-titre", type: "text" },
+        ],
+        listField: {
+          name: "items",
+          label: "Items mosaïque",
+          itemFields: [
+            { name: "title", label: "Titre", type: "text" },
+            { name: "description", label: "Description", type: "textarea" },
+            { name: "imageUrl", label: "URL Image", type: "text" },
+            { name: "size", label: "Taille", type: "select", options: ["default", "large", "wide", "tall"] },
+          ],
+        },
+      },
+      {
+        key: "process",
+        label: "Processus",
+        fields: [
+          { name: "sectionTitle", label: "Titre de section", type: "text" },
+          { name: "processImageUrl", label: "Image du processus (URL)", type: "text" },
+        ],
+        listField: {
+          name: "steps",
+          label: "Étapes",
+          itemFields: [
+            { name: "title", label: "Titre", type: "text" },
+            { name: "description", label: "Description", type: "textarea" },
+          ],
+        },
+      },
+      {
+        key: "faq",
+        label: "FAQ",
+        fields: [
+          { name: "sectionTitle", label: "Titre de section", type: "text" },
+        ],
+        listField: {
+          name: "items",
+          label: "Questions",
+          itemFields: [
+            { name: "question", label: "Question", type: "text" },
+            { name: "answer", label: "Réponse", type: "textarea" },
+          ],
+        },
+      },
+    ],
+  },
+  homepage: {
+    title: "Page d'accueil",
+    sections: [
+      {
+        key: "hero",
+        label: "Section Hero",
+        fields: [
+          { name: "title", label: "Titre principal", type: "text" },
+          { name: "subtitle", label: "Sous-titre", type: "textarea" },
+          { name: "ctaText", label: "Texte du bouton", type: "text" },
+          { name: "ctaLink", label: "Lien du bouton", type: "text" },
+        ],
+      },
+      {
+        key: "stats",
+        label: "Statistiques",
+        listField: {
+          name: "items",
+          label: "Stats",
+          itemFields: [
+            { name: "value", label: "Valeur", type: "number" },
+            { name: "suffix", label: "Suffixe", type: "text" },
+            { name: "label", label: "Label", type: "text" },
+          ],
+        },
+      },
+    ],
+  },
+  particuliers: {
+    title: "Particuliers",
+    sections: [
+      {
+        key: "hero",
+        label: "Section Hero",
+        fields: [
+          { name: "title", label: "Titre principal", type: "text" },
+          { name: "subtitle", label: "Sous-titre", type: "textarea" },
+        ],
+      },
+    ],
+  },
+  professionnels: {
+    title: "Professionnels",
+    sections: [
+      {
+        key: "hero",
+        label: "Section Hero",
+        fields: [
+          { name: "title", label: "Titre principal", type: "text" },
+          { name: "subtitle", label: "Sous-titre", type: "textarea" },
+        ],
+      },
+      {
+        key: "stats",
+        label: "Statistiques",
+        listField: {
+          name: "items",
+          label: "Stats",
+          itemFields: [
+            { name: "value", label: "Valeur", type: "number" },
+            { name: "suffix", label: "Suffixe", type: "text" },
+            { name: "label", label: "Label", type: "text" },
+          ],
+        },
+      },
+    ],
+  },
 };
 
-// Toolbar component for TipTap
-function EditorToolbar({ editor }: { editor: ReturnType<typeof useEditor> | null }) {
-  if (!editor) return null;
-
-  const buttons = [
-    {
-      label: "Gras",
-      action: () => editor.chain().focus().toggleBold().run(),
-      active: editor.isActive("bold"),
-      icon: "B",
-      className: "font-bold",
-    },
-    {
-      label: "Italique",
-      action: () => editor.chain().focus().toggleItalic().run(),
-      active: editor.isActive("italic"),
-      icon: "I",
-      className: "italic",
-    },
-    { type: "divider" },
-    {
-      label: "Titre 2",
-      action: () => editor.chain().focus().toggleHeading({ level: 2 }).run(),
-      active: editor.isActive("heading", { level: 2 }),
-      icon: "H2",
-    },
-    {
-      label: "Titre 3",
-      action: () => editor.chain().focus().toggleHeading({ level: 3 }).run(),
-      active: editor.isActive("heading", { level: 3 }),
-      icon: "H3",
-    },
-    { type: "divider" },
-    {
-      label: "Liste à puces",
-      action: () => editor.chain().focus().toggleBulletList().run(),
-      active: editor.isActive("bulletList"),
-      icon: "•",
-    },
-    {
-      label: "Liste numérotée",
-      action: () => editor.chain().focus().toggleOrderedList().run(),
-      active: editor.isActive("orderedList"),
-      icon: "1.",
-    },
-    { type: "divider" },
-    {
-      label: "Citation",
-      action: () => editor.chain().focus().toggleBlockquote().run(),
-      active: editor.isActive("blockquote"),
-      icon: "❝",
-    },
-    {
-      label: "Lien",
-      action: () => {
-        const url = window.prompt("URL du lien:");
-        if (url) {
-          editor.chain().focus().setLink({ href: url }).run();
-        }
-      },
-      active: editor.isActive("link"),
-      icon: "🔗",
-    },
-  ];
-
-  return (
-    <div className="flex flex-wrap items-center gap-1 p-2 border-b border-gray-200 bg-gray-50">
-      {buttons.map((btn, index) =>
-        btn.type === "divider" ? (
-          <div key={index} className="w-px h-6 bg-gray-300 mx-1" />
-        ) : (
-          <button
-            key={index}
-            type="button"
-            onClick={btn.action}
-            title={btn.label}
-            className={`px-2 py-1 rounded text-sm transition-colors ${
-              btn.active
-                ? "bg-cyan-500 text-white"
-                : "text-gray-600 hover:bg-gray-200"
-            } ${btn.className || ""}`}
-          >
-            {btn.icon}
-          </button>
-        )
-      )}
-    </div>
-  );
+interface FieldConfig {
+  name: string;
+  label: string;
+  type: "text" | "textarea" | "number" | "select" | "boolean" | "image";
+  options?: string[];
 }
 
-export default function PageEditorPage() {
+interface ListFieldConfig {
+  name: string;
+  label: string;
+  itemFields: FieldConfig[];
+}
+
+interface SectionConfig {
+  key: string;
+  label: string;
+  fields?: FieldConfig[];
+  listField?: ListFieldConfig;
+}
+
+interface PageConfig {
+  title: string;
+  sections: SectionConfig[];
+}
+
+interface SectionData {
+  id?: string;
+  pageSlug: string;
+  sectionKey: string;
+  content: Record<string, unknown>;
+  ordre: number;
+  active: boolean;
+}
+
+export default function EditPageSections() {
   const params = useParams();
   const router = useRouter();
-  const [page, setPage] = React.useState(mockPage);
-  const [saving, setSaving] = React.useState(false);
-  const [settingsOpen, setSettingsOpen] = React.useState(false);
+  const slug = params.slug as string;
+  const pageConfig = pageConfigs[slug];
 
-  const editor = useEditor({
-    extensions: [
-      StarterKit,
-      Image,
-      TipTapLink.configure({
-        openOnClick: false,
-      }),
-      Placeholder.configure({
-        placeholder: "Commencez à écrire votre contenu...",
-      }),
-    ],
-    content: page.content,
-    immediatelyRender: false,
-    editorProps: {
-      attributes: {
-        class:
-          "prose prose-sm sm:prose max-w-none p-4 min-h-[400px] focus:outline-none",
+  const [sectionsData, setSectionsData] = React.useState<Record<string, SectionData>>({});
+  const [expandedSections, setExpandedSections] = React.useState<Set<string>>(new Set(["hero"]));
+  const [loading, setLoading] = React.useState(true);
+  const [saving, setSaving] = React.useState(false);
+
+  // Charger les données existantes
+  React.useEffect(() => {
+    if (!slug) return;
+
+    const loadSections = async () => {
+      try {
+        const response = await fetch(`/api/sections?page=${slug}`);
+        if (response.ok) {
+          const data = await response.json();
+          const sectionsMap: Record<string, SectionData> = {};
+          
+          data.sections?.forEach((section: SectionData) => {
+            sectionsMap[section.sectionKey] = section;
+          });
+
+          setSectionsData(sectionsMap);
+        }
+      } catch (error) {
+        console.error("Erreur chargement sections:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    loadSections();
+  }, [slug]);
+
+  if (!pageConfig) {
+    return (
+      <div className="text-center py-20">
+        <h1 className="text-2xl font-bold text-gray-900 mb-4">Page non trouvée</h1>
+        <Link href="/admin/pages" className="text-cyan-600 hover:underline">
+          ← Retour aux pages
+        </Link>
+      </div>
+    );
+  }
+
+  const toggleSection = (key: string) => {
+    setExpandedSections((prev) => {
+      const next = new Set(prev);
+      if (next.has(key)) {
+        next.delete(key);
+      } else {
+        next.add(key);
+      }
+      return next;
+    });
+  };
+
+  const getSectionContent = (sectionKey: string): Record<string, unknown> => {
+    return sectionsData[sectionKey]?.content || {};
+  };
+
+  const updateSectionContent = (sectionKey: string, fieldName: string, value: unknown) => {
+    setSectionsData((prev) => ({
+      ...prev,
+      [sectionKey]: {
+        ...prev[sectionKey],
+        pageSlug: slug,
+        sectionKey,
+        content: {
+          ...(prev[sectionKey]?.content || {}),
+          [fieldName]: value,
+        },
+        ordre: prev[sectionKey]?.ordre || 0,
+        active: prev[sectionKey]?.active ?? true,
       },
-    },
-    onUpdate: ({ editor }) => {
-      setPage({ ...page, content: editor.getHTML() });
-    },
-  });
+    }));
+  };
 
   const handleSave = async () => {
     setSaving(true);
+
     try {
-      // TODO: API call
-      await new Promise((resolve) => setTimeout(resolve, 1000));
-      toast.success("Page enregistrée");
-    } catch {
+      const promises = Object.entries(sectionsData).map(([, sectionData]) =>
+        fetch("/api/sections", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(sectionData),
+        })
+      );
+
+      await Promise.all(promises);
+      toast.success("Modifications enregistrées !");
+    } catch (error) {
+      console.error("Erreur sauvegarde:", error);
       toast.error("Erreur lors de la sauvegarde");
     } finally {
       setSaving(false);
     }
   };
 
-  const handleTogglePublish = () => {
-    setPage({ ...page, published: !page.published });
-    toast.success(page.published ? "Page dépubliée" : "Page publiée");
+  const renderField = (sectionKey: string, field: FieldConfig, value: unknown) => {
+    const fieldId = `${sectionKey}-${field.name}`;
+
+    switch (field.type) {
+      case "textarea":
+        return (
+          <textarea
+            id={fieldId}
+            rows={3}
+            value={(value as string) || ""}
+            onChange={(e) => updateSectionContent(sectionKey, field.name, e.target.value)}
+            className="w-full px-4 py-2.5 border border-gray-200 rounded-lg focus:ring-2 focus:ring-cyan-500 focus:border-transparent resize-none"
+            placeholder={`Entrez ${field.label.toLowerCase()}`}
+          />
+        );
+
+      case "number":
+        return (
+          <input
+            id={fieldId}
+            type="number"
+            value={(value as number) || ""}
+            onChange={(e) => updateSectionContent(sectionKey, field.name, parseInt(e.target.value) || 0)}
+            className="w-full px-4 py-2.5 border border-gray-200 rounded-lg focus:ring-2 focus:ring-cyan-500 focus:border-transparent"
+          />
+        );
+
+      case "select":
+        return (
+          <select
+            id={fieldId}
+            value={(value as string) || field.options?.[0] || ""}
+            onChange={(e) => updateSectionContent(sectionKey, field.name, e.target.value)}
+            className="w-full px-4 py-2.5 border border-gray-200 rounded-lg focus:ring-2 focus:ring-cyan-500 focus:border-transparent bg-white"
+          >
+            {field.options?.map((option) => (
+              <option key={option} value={option}>
+                {option}
+              </option>
+            ))}
+          </select>
+        );
+
+      case "boolean":
+        return (
+          <label className="relative inline-flex items-center cursor-pointer">
+            <input
+              type="checkbox"
+              checked={(value as boolean) || false}
+              onChange={(e) => updateSectionContent(sectionKey, field.name, e.target.checked)}
+              className="sr-only peer"
+            />
+            <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-cyan-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-cyan-600"></div>
+          </label>
+        );
+
+      default:
+        return (
+          <input
+            id={fieldId}
+            type="text"
+            value={(value as string) || ""}
+            onChange={(e) => updateSectionContent(sectionKey, field.name, e.target.value)}
+            className="w-full px-4 py-2.5 border border-gray-200 rounded-lg focus:ring-2 focus:ring-cyan-500 focus:border-transparent"
+            placeholder={`Entrez ${field.label.toLowerCase()}`}
+          />
+        );
+    }
   };
+
+  const renderListField = (sectionKey: string, listConfig: ListFieldConfig) => {
+    const content = getSectionContent(sectionKey);
+    const items = (content[listConfig.name] as Record<string, unknown>[]) || [];
+
+    const addItem = () => {
+      const newItem: Record<string, unknown> = {};
+      listConfig.itemFields.forEach((field) => {
+        newItem[field.name] = field.type === "number" ? 0 : "";
+      });
+
+      updateSectionContent(sectionKey, listConfig.name, [...items, newItem]);
+    };
+
+    const removeItem = (index: number) => {
+      updateSectionContent(
+        sectionKey,
+        listConfig.name,
+        items.filter((_, i) => i !== index)
+      );
+    };
+
+    const updateItem = (index: number, fieldName: string, value: unknown) => {
+      const updated = [...items];
+      updated[index] = { ...updated[index], [fieldName]: value };
+      updateSectionContent(sectionKey, listConfig.name, updated);
+    };
+
+    return (
+      <div className="space-y-4">
+        <div className="flex items-center justify-between">
+          <h4 className="font-medium text-gray-700">{listConfig.label}</h4>
+          <button
+            onClick={addItem}
+            className="flex items-center gap-1 px-3 py-1.5 text-sm bg-cyan-50 text-cyan-700 rounded-lg hover:bg-cyan-100 transition-colors"
+          >
+            <Plus className="w-4 h-4" />
+            Ajouter
+          </button>
+        </div>
+
+        {items.length === 0 ? (
+          <p className="text-sm text-gray-500 italic">Aucun élément. Cliquez sur &quot;Ajouter&quot; pour commencer.</p>
+        ) : (
+          <div className="space-y-3">
+            {items.map((item, index) => (
+              <div
+                key={index}
+                className="bg-gray-50 rounded-lg p-4 border border-gray-100"
+              >
+                <div className="flex items-center justify-between mb-3">
+                  <div className="flex items-center gap-2">
+                    <GripVertical className="w-4 h-4 text-gray-400" />
+                    <span className="text-sm font-medium text-gray-600">
+                      #{index + 1}
+                    </span>
+                  </div>
+                  <button
+                    onClick={() => removeItem(index)}
+                    className="p-1 text-red-500 hover:bg-red-50 rounded transition-colors"
+                  >
+                    <Trash2 className="w-4 h-4" />
+                  </button>
+                </div>
+
+                <div className="grid md:grid-cols-2 gap-4">
+                  {listConfig.itemFields.map((field) => (
+                    <div key={field.name}>
+                      <label className="block text-sm font-medium text-gray-600 mb-1">
+                        {field.label}
+                      </label>
+                      {field.type === "textarea" ? (
+                        <textarea
+                          rows={2}
+                          value={(item[field.name] as string) || ""}
+                          onChange={(e) => updateItem(index, field.name, e.target.value)}
+                          className="w-full px-3 py-2 text-sm border border-gray-200 rounded-lg focus:ring-2 focus:ring-cyan-500 focus:border-transparent resize-none"
+                        />
+                      ) : field.type === "select" ? (
+                        <select
+                          value={(item[field.name] as string) || field.options?.[0] || ""}
+                          onChange={(e) => updateItem(index, field.name, e.target.value)}
+                          className="w-full px-3 py-2 text-sm border border-gray-200 rounded-lg focus:ring-2 focus:ring-cyan-500 focus:border-transparent bg-white"
+                        >
+                          {field.options?.map((option) => (
+                            <option key={option} value={option}>
+                              {option}
+                            </option>
+                          ))}
+                        </select>
+                      ) : (
+                        <input
+                          type={field.type === "number" ? "number" : "text"}
+                          value={(item[field.name] as string | number) || ""}
+                          onChange={(e) =>
+                            updateItem(
+                              index,
+                              field.name,
+                              field.type === "number" ? parseInt(e.target.value) || 0 : e.target.value
+                            )
+                          }
+                          className="w-full px-3 py-2 text-sm border border-gray-200 rounded-lg focus:ring-2 focus:ring-cyan-500 focus:border-transparent"
+                        />
+                      )}
+                    </div>
+                  ))}
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
+    );
+  };
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center py-20">
+        <Loader2 className="w-8 h-8 animate-spin text-cyan-600" />
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-6">
@@ -181,135 +509,100 @@ export default function PageEditorPage() {
         <div className="flex items-center gap-4">
           <Link
             href="/admin/pages"
-            className="p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-lg transition-colors"
+            className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
           >
-            <ArrowLeft className="w-5 h-5" />
+            <ArrowLeft className="w-5 h-5 text-gray-600" />
           </Link>
           <div>
-            <h1 className="text-2xl font-bold text-gray-900">{page.title}</h1>
-            <p className="text-gray-500 mt-1">/{page.slug}</p>
+            <h1 className="text-2xl font-bold text-gray-900">
+              Éditer : {pageConfig.title}
+            </h1>
+            <p className="text-gray-500 mt-1">
+              {pageConfig.sections.length} sections éditables
+            </p>
           </div>
         </div>
-        <div className="flex items-center gap-3">
-          <button
-            onClick={() => setSettingsOpen(true)}
-            className="inline-flex items-center gap-2 px-4 py-2 bg-white border border-gray-200 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50 transition-colors"
-          >
-            <Settings className="w-4 h-4" />
-            SEO
-          </button>
-          <button
-            onClick={handleTogglePublish}
-            className={`inline-flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
-              page.published
-                ? "bg-white border border-gray-200 text-gray-700 hover:bg-gray-50"
-                : "bg-emerald-500 text-white hover:bg-emerald-600"
-            }`}
-          >
-            {page.published ? (
-              <>
-                <EyeOff className="w-4 h-4" />
-                Dépublier
-              </>
-            ) : (
-              <>
-                <Eye className="w-4 h-4" />
-                Publier
-              </>
-            )}
-          </button>
-          <button
-            onClick={handleSave}
-            disabled={saving}
-            className="inline-flex items-center gap-2 px-4 py-2 bg-cyan-500 text-white rounded-lg text-sm font-medium hover:bg-cyan-600 transition-colors disabled:opacity-50"
-          >
+
+        <button
+          onClick={handleSave}
+          disabled={saving}
+          className="flex items-center gap-2 px-6 py-2.5 bg-cyan-600 text-white rounded-lg hover:bg-cyan-700 disabled:opacity-50 transition-colors"
+        >
+          {saving ? (
+            <Loader2 className="w-4 h-4 animate-spin" />
+          ) : (
             <Save className="w-4 h-4" />
-            {saving ? "Enregistrement..." : "Enregistrer"}
-          </button>
-        </div>
+          )}
+          Enregistrer
+        </button>
       </div>
 
-      {/* Editor */}
-      <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
-        {/* Title input */}
-        <div className="p-4 border-b border-gray-200">
-          <input
-            type="text"
-            value={page.title}
-            onChange={(e) => setPage({ ...page, title: e.target.value })}
-            className="w-full text-2xl font-bold text-gray-900 border-0 p-0 focus:outline-none focus:ring-0"
-            placeholder="Titre de la page"
-          />
-        </div>
+      {/* Sections */}
+      <div className="space-y-4">
+        {pageConfig.sections.map((section) => {
+          const isExpanded = expandedSections.has(section.key);
+          const content = getSectionContent(section.key);
 
-        {/* TipTap Toolbar */}
-        <EditorToolbar editor={editor} />
-
-        {/* TipTap Editor */}
-        <EditorContent editor={editor} className="min-h-[500px]" />
-      </div>
-
-      {/* SEO Settings Slide-over */}
-      <SlideOver
-        isOpen={settingsOpen}
-        onClose={() => setSettingsOpen(false)}
-        title="Paramètres SEO"
-        description="Optimisez le référencement de cette page"
-        footer={
-          <>
-            <button
-              onClick={() => setSettingsOpen(false)}
-              className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50"
+          return (
+            <div
+              key={section.key}
+              className="bg-white rounded-xl border border-gray-200 overflow-hidden"
             >
-              Annuler
-            </button>
-            <button
-              onClick={() => {
-                setSettingsOpen(false);
-                toast.success("Paramètres SEO enregistrés");
-              }}
-              className="px-4 py-2 text-sm font-medium text-white bg-cyan-500 rounded-lg hover:bg-cyan-600"
-            >
-              Enregistrer
-            </button>
-          </>
-        }
-      >
-        <div className="space-y-6">
-          <Input
-            label="Meta Title"
-            value={page.metaTitle || ""}
-            onChange={(e) => setPage({ ...page, metaTitle: e.target.value })}
-            placeholder="Titre pour les moteurs de recherche"
-            hint="Idéalement entre 50 et 60 caractères"
-          />
-          <Textarea
-            label="Meta Description"
-            value={page.metaDescription || ""}
-            onChange={(e) => setPage({ ...page, metaDescription: e.target.value })}
-            placeholder="Description pour les moteurs de recherche"
-            hint="Idéalement entre 150 et 160 caractères"
-            rows={3}
-          />
+              {/* Section Header */}
+              <button
+                onClick={() => toggleSection(section.key)}
+                className="w-full flex items-center justify-between p-6 hover:bg-gray-50 transition-colors"
+              >
+                <div className="flex items-center gap-4">
+                  <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-cyan-100 to-blue-100 flex items-center justify-center">
+                    <Type className="w-5 h-5 text-cyan-700" />
+                  </div>
+                  <div className="text-left">
+                    <h3 className="font-semibold text-gray-900">{section.label}</h3>
+                    <p className="text-sm text-gray-500">
+                      Clé: {section.key}
+                    </p>
+                  </div>
+                </div>
+                {isExpanded ? (
+                  <ChevronUp className="w-5 h-5 text-gray-400" />
+                ) : (
+                  <ChevronDown className="w-5 h-5 text-gray-400" />
+                )}
+              </button>
 
-          {/* Preview */}
-          <div>
-            <p className="text-sm font-medium text-gray-700 mb-2">Aperçu Google</p>
-            <div className="p-4 bg-gray-50 rounded-lg border border-gray-200">
-              <p className="text-blue-600 text-lg truncate">
-                {page.metaTitle || page.title}
-              </p>
-              <p className="text-emerald-700 text-sm">
-                azconstruction.fr/pages/{page.slug}
-              </p>
-              <p className="text-gray-600 text-sm line-clamp-2">
-                {page.metaDescription || "Aucune description définie"}
-              </p>
+              {/* Section Content */}
+              {isExpanded && (
+                <div className="border-t border-gray-100 p-6 space-y-6">
+                  {/* Regular fields */}
+                  {section.fields && section.fields.length > 0 && (
+                    <div className="grid md:grid-cols-2 gap-6">
+                      {section.fields.map((field) => (
+                        <div key={field.name} className={field.type === "textarea" ? "md:col-span-2" : ""}>
+                          <label
+                            htmlFor={`${section.key}-${field.name}`}
+                            className="block text-sm font-medium text-gray-700 mb-2"
+                          >
+                            {field.label}
+                          </label>
+                          {renderField(section.key, field, content[field.name])}
+                        </div>
+                      ))}
+                    </div>
+                  )}
+
+                  {/* List field */}
+                  {section.listField && (
+                    <div className="border-t border-gray-100 pt-6">
+                      {renderListField(section.key, section.listField)}
+                    </div>
+                  )}
+                </div>
+              )}
             </div>
-          </div>
-        </div>
-      </SlideOver>
+          );
+        })}
+      </div>
     </div>
   );
 }
-

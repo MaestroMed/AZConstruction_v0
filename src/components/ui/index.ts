@@ -25,6 +25,7 @@ export { AnimatedCounter, StatCard } from "./AnimatedCounter";
 export { MeshGradient, ParticleBackground, GradientOrb } from "./MeshGradient";
 export { BentoGrid, BentoItem, BentoCard } from "./BentoGrid";
 export { Timeline, TimelineStep } from "./Timeline";
+export { PhoneLink, usePhone } from "./PhoneLink";
 
 
 
