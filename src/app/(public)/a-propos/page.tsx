@@ -3,6 +3,7 @@
 import * as React from "react";
 import { motion } from "framer-motion";
 import Link from "next/link";
+import Image from "next/image";
 import {
   Award,
   Users,
@@ -16,6 +17,7 @@ import {
   CheckCircle2,
 } from "lucide-react";
 import { Button } from "@/components/ui/Button";
+import { useSiteImages } from "@/lib/hooks/useSiteImages";
 
 const stats = [
   { number: "10", label: "Années d'expérience" },
@@ -89,21 +91,25 @@ const team = [
     name: "Jean-Pierre Azoulay",
     role: "Fondateur & Directeur",
     description: "35 ans d'expérience dans la métallerie",
+    imageKey: "team-member-1",
   },
   {
     name: "Marie Dubois",
     role: "Responsable Bureau d'études",
     description: "Ingénieure spécialisée en structures métalliques",
+    imageKey: "team-member-2",
   },
   {
     name: "Thomas Martin",
     role: "Chef d'atelier",
     description: "Maître ferronnier d'art",
+    imageKey: "team-member-3",
   },
   {
     name: "Sophie Lambert",
     role: "Responsable Commerciale",
     description: "Experte en accompagnement client",
+    imageKey: "team-member-4",
   },
 ];
 
@@ -116,10 +122,23 @@ const certifications = [
 ];
 
 export default function AProposPage() {
+  const { getImage } = useSiteImages();
+  
   return (
     <div className="min-h-screen bg-white">
-      {/* Hero Section */}
-      <section className="relative pt-32 pb-20 bg-gradient-to-br from-navy-dark via-navy-medium to-blue-corporate overflow-hidden">
+      {/* Hero Section with dynamic background */}
+      <section className="relative pt-32 pb-20 overflow-hidden">
+        {/* Background image */}
+        <div className="absolute inset-0">
+          <Image
+            src={getImage("hero-a-propos")}
+            alt="À propos d'AZ Construction"
+            fill
+            className="object-cover"
+            priority
+          />
+          <div className="absolute inset-0 bg-gradient-to-br from-navy-dark/95 via-navy-medium/90 to-blue-corporate/85" />
+        </div>
         <div className="absolute inset-0 opacity-10">
           <div className="absolute inset-0" style={{
             backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.4'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`,
@@ -285,9 +304,13 @@ export default function AProposPage() {
                 transition={{ delay: index * 0.1 }}
               >
                 <div className="h-48 bg-gradient-to-br from-blue-corporate to-navy-dark relative overflow-hidden">
-                  <div className="absolute inset-0 flex items-center justify-center">
-                    <Users className="w-20 h-20 text-white/20" />
-                  </div>
+                  <Image
+                    src={getImage(member.imageKey)}
+                    alt={member.name}
+                    fill
+                    className="object-cover group-hover:scale-105 transition-transform duration-500"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-navy-dark/40 to-transparent" />
                 </div>
                 <div className="p-6">
                   <h3 className="text-lg font-semibold text-navy-dark mb-1">

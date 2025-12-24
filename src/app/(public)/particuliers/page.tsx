@@ -96,24 +96,28 @@ const processSteps = [
     title: "Consultation",
     description: "Découvrez nos produits et discutons de votre projet sur mesure.",
     icon: Sparkles,
+    imageKey: "process-consultation",
   },
   {
     step: "02",
     title: "Devis gratuit",
     description: "Recevez votre devis détaillé sous 48h avec plan technique.",
     icon: Clock,
+    imageKey: "process-devis",
   },
   {
     step: "03",
     title: "Fabrication",
     description: "Votre ouvrage est fabriqué dans notre atelier de Bruyères-sur-Oise.",
     icon: Wrench,
+    imageKey: "process-fabrication",
   },
   {
     step: "04",
     title: "Installation",
     description: "Nos équipes installent votre réalisation avec le plus grand soin.",
     icon: Truck,
+    imageKey: "process-installation",
   },
 ];
 
@@ -140,8 +144,19 @@ export default function ParticuliersPage() {
   
   return (
     <div className="min-h-screen bg-white">
-      {/* Hero */}
-      <section className="relative pt-32 pb-20 bg-gradient-to-br from-gray-50 via-white to-gray-50 overflow-hidden">
+      {/* Hero with dynamic background */}
+      <section className="relative pt-32 pb-20 overflow-hidden">
+        {/* Background image */}
+        <div className="absolute inset-0">
+          <Image
+            src={getImage("hero-particuliers")}
+            alt="Métallerie pour particuliers"
+            fill
+            className="object-cover"
+            priority
+          />
+          <div className="absolute inset-0 bg-gradient-to-br from-white/95 via-white/85 to-gray-50/90" />
+        </div>
         <div className="absolute inset-0 opacity-30">
           <div className="absolute inset-0" style={{
             backgroundImage: `url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M11 18c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm48 25c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm-43-7c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm63 31c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3z' fill='%231e3a5f' fill-opacity='0.05' fill-rule='evenodd'/%3E%3C/svg%3E")`,
@@ -295,7 +310,7 @@ export default function ParticuliersPage() {
         </div>
       </section>
 
-      {/* Process */}
+      {/* Process with images */}
       <section className="py-20 bg-gray-50">
         <div className="container mx-auto px-6">
           <motion.div
@@ -323,13 +338,23 @@ export default function ParticuliersPage() {
                 transition={{ delay: index * 0.1 }}
               >
                 {index < processSteps.length - 1 && (
-                  <div className="hidden md:block absolute top-8 left-[60%] w-[80%] h-0.5 bg-gradient-to-r from-cyan-glow/50 to-transparent" />
+                  <div className="hidden md:block absolute top-24 left-[60%] w-[80%] h-0.5 bg-gradient-to-r from-cyan-glow/50 to-transparent" />
                 )}
                 <div className="text-center relative">
-                  <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-blue-corporate to-navy-dark flex items-center justify-center mx-auto mb-4 relative z-10">
-                    <item.icon className="w-7 h-7 text-white" />
+                  {/* Process Image */}
+                  <div className="relative w-32 h-32 mx-auto mb-4 rounded-2xl overflow-hidden shadow-lg ring-4 ring-white">
+                    <Image
+                      src={getImage(item.imageKey)}
+                      alt={item.title}
+                      fill
+                      className="object-cover"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-navy-dark/60 to-transparent" />
+                    <div className="absolute bottom-2 right-2 w-10 h-10 rounded-xl bg-gradient-to-br from-blue-corporate to-navy-dark flex items-center justify-center">
+                      <item.icon className="w-5 h-5 text-white" />
+                    </div>
                   </div>
-                  <span className="absolute -top-2 left-1/2 ml-6 text-5xl font-bold text-gray-100">
+                  <span className="absolute -top-2 left-1/2 ml-12 text-5xl font-bold text-gray-200/50">
                     {item.step}
                   </span>
                   <h3 className="text-lg font-semibold text-navy-dark mb-2 relative z-10">

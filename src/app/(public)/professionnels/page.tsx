@@ -27,6 +27,7 @@ import { Button } from "@/components/ui/Button";
 import { Card, CardContent } from "@/components/ui/Card";
 import { GlowButton, MeshGradient, ParticleBackground, GradientOrb, AnimatedCounter } from "@/components/ui";
 import { PhoneLink, usePhone } from "@/components/ui/PhoneLink";
+import { useSiteImages } from "@/lib/hooks/useSiteImages";
 import { toast } from "sonner";
 
 const advantages = [
@@ -79,27 +80,28 @@ const sectors = [
   },
 ];
 
-// Réalisations B2B placeholder
+// Réalisations B2B - liées aux images dynamiques
 const realisationsB2B = [
   {
     title: "Garde-corps collectif",
     client: "Promoteur IDF",
-    image: "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=600&q=80",
+    imageKey: "realisation-b2b-1",
   },
   {
     title: "Escalier industriel",
     client: "Usine automobile",
-    image: "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=600&q=80",
+    imageKey: "realisation-b2b-2",
   },
   {
     title: "Portails résidence",
     client: "Collectivité locale",
-    image: "https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=600&q=80",
+    imageKey: "realisation-b2b-3",
   },
 ];
 
 export default function ProfessionnelsPage() {
   const phone = usePhone();
+  const { getImage } = useSiteImages();
   const [formData, setFormData] = React.useState({
     entreprise: "",
     nom: "",
@@ -363,7 +365,7 @@ export default function ProfessionnelsPage() {
               >
                 <div className="relative aspect-[4/3] rounded-2xl overflow-hidden bg-gray-200 mb-4">
                   <Image
-                    src={realisation.image}
+                    src={getImage(realisation.imageKey)}
                     alt={realisation.title}
                     fill
                     className="object-cover group-hover:scale-105 transition-transform duration-500"
@@ -618,4 +620,5 @@ export default function ProfessionnelsPage() {
     </div>
   );
 }
+
 

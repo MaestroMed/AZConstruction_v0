@@ -91,26 +91,108 @@ export default function ThermolaquageSection() {
 
   return (
     <section className="py-24 relative overflow-hidden">
-      {/* Background */}
+      {/* Base Background */}
       <MeshGradient variant="aurora" className="absolute inset-0" />
+      
+      {/* DYNAMIC RAL COLOR BACKGROUND - INTENSE Full section effect */}
+      <motion.div
+        className="absolute inset-0 pointer-events-none"
+        animate={{
+          background: `radial-gradient(ellipse 150% 120% at 75% 50%, ${selectedColor.hex}70 0%, ${selectedColor.hex}45 30%, ${selectedColor.hex}20 60%, transparent 85%)`,
+        }}
+        transition={{ duration: 0.8, ease: "easeOut" }}
+      />
+      
+      {/* SWEEPING REVEAL RAY - Big dramatic effect on color change */}
+      <motion.div
+        key={`ray-${colorIndex}`}
+        className="absolute inset-0 pointer-events-none"
+        style={{ 
+          background: `linear-gradient(105deg, transparent 0%, transparent 35%, ${selectedColor.hex}90 48%, ${selectedColor.hex} 50%, ${selectedColor.hex}90 52%, transparent 65%, transparent 100%)`,
+        }}
+        initial={{ x: "-150%", opacity: 1 }}
+        animate={{ x: "150%", opacity: 0.3 }}
+        transition={{ duration: 1.2, ease: [0.22, 1, 0.36, 1] }}
+      />
+      
+      {/* Secondary wave */}
+      <motion.div
+        key={`wave-${colorIndex}`}
+        className="absolute inset-0 pointer-events-none"
+        style={{ 
+          background: `linear-gradient(95deg, transparent 40%, ${selectedColor.hex}50 49%, ${selectedColor.hex}70 50%, ${selectedColor.hex}50 51%, transparent 60%)`,
+        }}
+        initial={{ x: "-120%", opacity: 0.8 }}
+        animate={{ x: "120%", opacity: 0 }}
+        transition={{ duration: 1.4, ease: "easeOut", delay: 0.15 }}
+      />
+      
+      {/* Intense pulsing color wash */}
+      <motion.div
+        className="absolute inset-0 pointer-events-none"
+        animate={{
+          background: [
+            `radial-gradient(circle 800px at 85% 40%, ${selectedColor.hex}50 0%, transparent 70%)`,
+            `radial-gradient(circle 900px at 75% 55%, ${selectedColor.hex}65 0%, transparent 75%)`,
+            `radial-gradient(circle 800px at 85% 40%, ${selectedColor.hex}50 0%, transparent 70%)`,
+          ],
+        }}
+        transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
+      />
       
       {/* Particles */}
       <ParticleBackground count={10} />
       
-      {/* Gradient orbs */}
-      <GradientOrb
-        color="cyan"
-        size="xl"
-        position={{ top: "10%", right: "-10%" }}
-        blur="xl"
-        opacity={0.15}
+      {/* MEGA Gradient orbs - Intense RAL colors */}
+      <motion.div
+        className="absolute w-[800px] h-[800px] rounded-full pointer-events-none"
+        style={{ top: "-10%", right: "-20%", filter: "blur(80px)" }}
+        animate={{
+          backgroundColor: `${selectedColor.hex}`,
+          opacity: [0.5, 0.7, 0.5],
+          scale: [1, 1.1, 1],
+        }}
+        transition={{ 
+          backgroundColor: { duration: 0.6 },
+          opacity: { duration: 2.5, repeat: Infinity, ease: "easeInOut" },
+          scale: { duration: 3, repeat: Infinity, ease: "easeInOut" }
+        }}
       />
-      <GradientOrb
-        color="blue"
-        size="lg"
-        position={{ bottom: "10%", left: "-5%" }}
-        blur="lg"
-        opacity={0.1}
+      <motion.div
+        className="absolute w-[500px] h-[500px] rounded-full pointer-events-none"
+        style={{ bottom: "-5%", left: "-10%", filter: "blur(60px)" }}
+        animate={{
+          backgroundColor: `${selectedColor.hex}`,
+          opacity: [0.3, 0.5, 0.3],
+          scale: [1, 1.15, 1],
+        }}
+        transition={{ 
+          backgroundColor: { duration: 0.6 },
+          opacity: { duration: 3, repeat: Infinity, ease: "easeInOut", delay: 0.5 },
+          scale: { duration: 4, repeat: Infinity, ease: "easeInOut", delay: 0.3 }
+        }}
+      />
+      
+      {/* Vertical light beam - prominent */}
+      <motion.div
+        className="absolute top-0 h-full pointer-events-none"
+        style={{ right: "30%", width: "300px", filter: "blur(50px)" }}
+        animate={{
+          background: `linear-gradient(180deg, ${selectedColor.hex}00 0%, ${selectedColor.hex}60 25%, ${selectedColor.hex}80 50%, ${selectedColor.hex}60 75%, ${selectedColor.hex}00 100%)`,
+          opacity: isAutoMode ? [0.4, 0.7, 0.4] : 0.5,
+        }}
+        transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
+      />
+      
+      {/* Horizontal accent beam */}
+      <motion.div
+        className="absolute left-0 w-full pointer-events-none"
+        style={{ top: "40%", height: "200px", filter: "blur(40px)" }}
+        animate={{
+          background: `linear-gradient(90deg, transparent 0%, ${selectedColor.hex}40 30%, ${selectedColor.hex}60 50%, ${selectedColor.hex}40 70%, transparent 100%)`,
+          opacity: [0.3, 0.5, 0.3],
+        }}
+        transition={{ duration: 3, repeat: Infinity, ease: "easeInOut", delay: 0.5 }}
       />
 
       <div className="container mx-auto px-6 relative z-10">
@@ -213,8 +295,25 @@ export default function ThermolaquageSection() {
             transition={{ duration: 0.6, delay: 0.2 }}
             className="relative"
           >
-            {/* Main card - Glassmorphism */}
-            <GlassCard variant="spotlight" padding="xl" className="relative">
+            {/* Main card - Glassmorphism with subtle color tint */}
+            <GlassCard 
+              variant="spotlight" 
+              padding="xl" 
+              className="relative overflow-hidden backdrop-blur-xl"
+              style={{
+                background: `linear-gradient(135deg, rgba(20,25,40,0.85) 0%, rgba(20,25,40,0.7) 100%)`,
+                borderColor: `${selectedColor.hex}40`,
+                transition: 'border-color 0.6s ease-in-out'
+              }}
+            >
+              {/* Subtle inner glow from selected color */}
+              <motion.div
+                className="absolute inset-0 pointer-events-none rounded-2xl"
+                animate={{
+                  boxShadow: `inset 0 0 60px ${selectedColor.hex}20, inset 0 0 120px ${selectedColor.hex}10`,
+                }}
+                transition={{ duration: 0.8, ease: "easeInOut" }}
+              />
               {/* Header with Auto Mode Toggle */}
               <div className="flex items-center justify-between mb-8">
                 <div>
@@ -253,51 +352,40 @@ export default function ThermolaquageSection() {
                 </div>
               </div>
 
-              {/* Selected Color Preview with Animation */}
+              {/* Selected Color Preview - Harmonized smooth animation */}
               <AnimatePresence mode="wait">
                 <motion.div
                   key={selectedColor.name}
-                  initial={{ opacity: 0, scale: 0.98 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  exit={{ opacity: 0, scale: 0.98 }}
-                  transition={{ duration: 0.4, ease: "easeInOut" }}
-                  className="mb-8 p-6 rounded-2xl ring-1 ring-white/10 flex items-center gap-6"
-                  style={{ backgroundColor: `${selectedColor.hex}20` }}
+                  initial={{ opacity: 0, x: 20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  exit={{ opacity: 0, x: -20 }}
+                  transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
+                  className="relative mb-8 p-5 rounded-2xl flex items-center gap-5 overflow-hidden ring-1 ring-white/10"
+                  style={{ 
+                    background: `linear-gradient(135deg, ${selectedColor.hex}40 0%, ${selectedColor.hex}15 100%)`,
+                  }}
                 >
+                  {/* Color swatch - clean design */}
                   <motion.div
-                    className="w-20 h-20 rounded-xl shadow-2xl ring-4 ring-white/10 relative overflow-hidden"
-                    style={{ backgroundColor: selectedColor.hex }}
+                    className="relative w-20 h-20 rounded-xl shadow-xl ring-2 ring-white/20 overflow-hidden flex-shrink-0"
                     animate={{ 
                       backgroundColor: selectedColor.hex,
-                      boxShadow: isAutoMode 
-                        ? [
-                            `0 0 20px ${selectedColor.hex}40`,
-                            `0 0 40px ${selectedColor.hex}60`,
-                            `0 0 20px ${selectedColor.hex}40`
-                          ]
-                        : `0 0 20px ${selectedColor.hex}40`
+                      boxShadow: `0 4px 24px ${selectedColor.hex}50`,
                     }}
-                    transition={{ 
-                      backgroundColor: { duration: 0.5 },
-                      boxShadow: { duration: 1.5, repeat: isAutoMode ? Infinity : 0, repeatType: "reverse" }
-                    }}
+                    transition={{ duration: 0.4 }}
                   >
-                    {/* Subtle pulse effect when in auto mode */}
-                    {isAutoMode && (
-                      <motion.div
-                        className="absolute inset-0 bg-white/20"
-                        animate={{ opacity: [0, 0.3, 0] }}
-                        transition={{ duration: 1.5, repeat: Infinity }}
-                      />
-                    )}
+                    {/* Shine overlay */}
+                    <div className="absolute inset-0 bg-gradient-to-br from-white/25 via-transparent to-black/10" />
                   </motion.div>
-                  <div>
-                    <p className="text-cyan-glow text-sm font-medium mb-1">
+                  
+                  <div className="relative z-10 flex-1">
+                    <p className="text-cyan-glow text-xs font-semibold tracking-wider mb-0.5">
                       {selectedColor.name}
                     </p>
-                    <p className="text-white font-bold text-lg">
+                    <p className="text-white font-bold text-xl leading-tight">
                       {selectedColor.label}
                     </p>
+                    <p className="text-white/40 text-xs mt-1 font-mono">{selectedColor.hex}</p>
                   </div>
                 </motion.div>
               </AnimatePresence>

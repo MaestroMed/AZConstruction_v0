@@ -25,6 +25,34 @@ const DEFAULT_IMAGES: {
     fallbackUrl: "https://images.unsplash.com/photo-1565793298595-6a879b1d9492?w=1920&q=80",
   },
   {
+    key: "hero-particuliers",
+    category: "hero",
+    label: "Hero Particuliers",
+    description: "Image de fond de la page Particuliers",
+    fallbackUrl: "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=1920&q=80",
+  },
+  {
+    key: "hero-professionnels",
+    category: "hero",
+    label: "Hero Professionnels",
+    description: "Image de fond de la page Professionnels",
+    fallbackUrl: "https://images.unsplash.com/photo-1504307651254-35680f356dfd?w=1920&q=80",
+  },
+  {
+    key: "hero-a-propos",
+    category: "hero",
+    label: "Hero À propos",
+    description: "Image de fond de la page À propos",
+    fallbackUrl: "https://images.unsplash.com/photo-1600880292203-757bb62b4baf?w=1920&q=80",
+  },
+  {
+    key: "hero-contact",
+    category: "hero",
+    label: "Hero Contact",
+    description: "Image de fond de la page Contact",
+    fallbackUrl: "https://images.unsplash.com/photo-1423666639041-f56000c27a9a?w=1920&q=80",
+  },
+  {
     key: "hero-carousel-1",
     category: "hero",
     label: "Carousel Hero 1",
@@ -132,6 +160,126 @@ const DEFAULT_IMAGES: {
     label: "Photo Équipe",
     description: "Photo de l'équipe (page À propos)",
     fallbackUrl: "https://images.unsplash.com/photo-1600880292203-757bb62b4baf?w=1200&q=80",
+  },
+
+  // === PARCOURS CLIENT (Process Steps) ===
+  {
+    key: "process-consultation",
+    category: "process",
+    label: "Étape 1 - Consultation",
+    description: "Image illustrant l'étape de consultation/découverte",
+    fallbackUrl: "https://images.unsplash.com/photo-1560439514-4e9645039924?w=800&q=80",
+  },
+  {
+    key: "process-devis",
+    category: "process",
+    label: "Étape 2 - Devis",
+    description: "Image illustrant l'étape de devis gratuit",
+    fallbackUrl: "https://images.unsplash.com/photo-1554224155-6726b3ff858f?w=800&q=80",
+  },
+  {
+    key: "process-fabrication",
+    category: "process",
+    label: "Étape 3 - Fabrication",
+    description: "Image illustrant l'étape de fabrication en atelier",
+    fallbackUrl: "https://images.unsplash.com/photo-1504917595217-d4dc5ebe6122?w=800&q=80",
+  },
+  {
+    key: "process-installation",
+    category: "process",
+    label: "Étape 4 - Installation",
+    description: "Image illustrant l'étape d'installation/pose",
+    fallbackUrl: "https://images.unsplash.com/photo-1581094794329-c8112a89af12?w=800&q=80",
+  },
+
+  // === ÉQUIPE (Team Members) ===
+  {
+    key: "team-member-1",
+    category: "team",
+    label: "Photo Équipe 1",
+    description: "Photo du 1er membre de l'équipe (Fondateur/Directeur)",
+    fallbackUrl: "https://images.unsplash.com/photo-1560250097-0b93528c311a?w=400&q=80",
+  },
+  {
+    key: "team-member-2",
+    category: "team",
+    label: "Photo Équipe 2",
+    description: "Photo du 2ème membre de l'équipe",
+    fallbackUrl: "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=400&q=80",
+  },
+  {
+    key: "team-member-3",
+    category: "team",
+    label: "Photo Équipe 3",
+    description: "Photo du 3ème membre de l'équipe",
+    fallbackUrl: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=400&q=80",
+  },
+  {
+    key: "team-member-4",
+    category: "team",
+    label: "Photo Équipe 4",
+    description: "Photo du 4ème membre de l'équipe",
+    fallbackUrl: "https://images.unsplash.com/photo-1580489944761-15a19d654956?w=400&q=80",
+  },
+
+  // === RÉALISATIONS B2B ===
+  {
+    key: "realisation-b2b-1",
+    category: "realisations",
+    label: "Réalisation Pro 1",
+    description: "1ère réalisation B2B mise en avant (page Professionnels)",
+    fallbackUrl: "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=600&q=80",
+  },
+  {
+    key: "realisation-b2b-2",
+    category: "realisations",
+    label: "Réalisation Pro 2",
+    description: "2ème réalisation B2B mise en avant",
+    fallbackUrl: "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=600&q=80",
+  },
+  {
+    key: "realisation-b2b-3",
+    category: "realisations",
+    label: "Réalisation Pro 3",
+    description: "3ème réalisation B2B mise en avant",
+    fallbackUrl: "https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=600&q=80",
+  },
+
+  // === PARTENAIRES (Logos) ===
+  {
+    key: "partner-jansen",
+    category: "partners",
+    label: "Logo Jansen",
+    description: "Logo du partenaire Jansen Steel Systems",
+    fallbackUrl: "https://via.placeholder.com/200x80/C41E3A/FFFFFF?text=JANSEN",
+  },
+  {
+    key: "partner-bouygues",
+    category: "partners",
+    label: "Logo Bouygues",
+    description: "Logo du partenaire Bouygues Construction",
+    fallbackUrl: "https://via.placeholder.com/200x80/00539C/FFFFFF?text=BOUYGUES",
+  },
+  {
+    key: "partner-vinci",
+    category: "partners",
+    label: "Logo Vinci",
+    description: "Logo du partenaire Vinci",
+    fallbackUrl: "https://via.placeholder.com/200x80/003366/FFFFFF?text=VINCI",
+  },
+  {
+    key: "partner-eiffage",
+    category: "partners",
+    label: "Logo Eiffage",
+    description: "Logo du partenaire Eiffage",
+    fallbackUrl: "https://via.placeholder.com/200x80/E30613/FFFFFF?text=EIFFAGE",
+  },
+  {
+    key: "partner-saint-gobain",
+    category: "partners",
+    label: "Logo Saint-Gobain",
+    description: "Logo du partenaire Saint-Gobain",
+    fallbackUrl: "https://via.placeholder.com/200x80/004990/FFFFFF?text=SAINT-GOBAIN",
   },
 ];
 

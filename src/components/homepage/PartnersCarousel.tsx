@@ -3,17 +3,20 @@
 import * as React from "react";
 import { motion } from "framer-motion";
 import { ChevronLeft, ChevronRight } from "lucide-react";
+import Image from "next/image";
+import { useSiteImages } from "@/lib/hooks/useSiteImages";
 
 // Partner logos - Jansen en priorité comme fournisseur principal de profilés acier
 const partners = [
-  { id: "jansen", name: "JANSEN", color: "#C41E3A", highlight: true },
-  { id: "bouygues", name: "Bouygues Construction", color: "#00539C" },
-  { id: "vinci", name: "VINCI", color: "#003366" },
-  { id: "eiffage", name: "EIFFAGE", color: "#E30613" },
-  { id: "saint-gobain", name: "SAINT-GOBAIN", color: "#004990" },
+  { id: "jansen", name: "JANSEN", color: "#C41E3A", highlight: true, imageKey: "partner-jansen" },
+  { id: "bouygues", name: "Bouygues Construction", color: "#00539C", imageKey: "partner-bouygues" },
+  { id: "vinci", name: "VINCI", color: "#003366", imageKey: "partner-vinci" },
+  { id: "eiffage", name: "EIFFAGE", color: "#E30613", imageKey: "partner-eiffage" },
+  { id: "saint-gobain", name: "SAINT-GOBAIN", color: "#004990", imageKey: "partner-saint-gobain" },
 ];
 
 export default function PartnersCarousel() {
+  const { getImage, isPlaceholder } = useSiteImages();
   const [currentIndex, setCurrentIndex] = React.useState(0);
   const visibleCount = 5;
 
@@ -53,47 +56,64 @@ export default function PartnersCarousel() {
 
           {/* Partners logos */}
           <div className="flex items-center justify-center gap-12 overflow-hidden">
-            {partners.slice(0, visibleCount).map((partner, index) => (
-              <motion.div
-                key={partner.id}
-                className="flex-shrink-0 flex items-center justify-center h-16 w-40"
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ delay: index * 0.1 }}
-              >
-                {/* Text-based logo placeholder */}
-                <div
-                  className="font-bold text-lg tracking-tight"
-                  style={{ color: partner.color }}
+            {partners.slice(0, visibleCount).map((partner, index) => {
+              const imageUrl = getImage(partner.imageKey);
+              const hasCustomImage = !isPlaceholder(partner.imageKey);
+              
+              return (
+                <motion.div
+                  key={partner.id}
+                  className="flex-shrink-0 flex items-center justify-center h-16 w-40"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  transition={{ delay: index * 0.1 }}
                 >
-                  {partner.name === "JANSEN" ? (
-                    <div className="flex flex-col items-center bg-gradient-to-r from-red-700 to-red-600 px-4 py-2 rounded-lg">
-                      <span className="text-2xl font-black text-white tracking-widest">JANSEN</span>
-                      <span className="text-[10px] text-white/80 tracking-wider">STEEL SYSTEMS</span>
+                  {hasCustomImage ? (
+                    /* Image logo from back-office */
+                    <div className="relative h-12 w-36">
+                      <Image
+                        src={imageUrl}
+                        alt={partner.name}
+                        fill
+                        className="object-contain"
+                      />
                     </div>
-                  ) : partner.name === "Bouygues Construction" ? (
-                    <div className="flex flex-col items-center">
-                      <span className="text-xl font-black">BOUYGUES</span>
-                      <span className="text-xs tracking-wider">Construction</span>
-                    </div>
-                  ) : partner.name === "VINCI" ? (
-                    <div className="flex items-center gap-1">
-                      <span className="text-2xl font-black">VINCI</span>
-                      <div className="flex flex-col">
-                        <div className="w-2 h-2 bg-current" />
-                        <div className="w-2 h-2 bg-current mt-0.5" />
-                      </div>
-                    </div>
-                  ) : partner.name === "EIFFAGE" ? (
-                    <span className="text-2xl font-black italic">EIFFAGE</span>
                   ) : (
-                    <div className="flex flex-col items-center">
-                      <span className="text-lg font-black">SAINT-GOBAIN</span>
+                    /* Text-based fallback logo */
+                    <div
+                      className="font-bold text-lg tracking-tight"
+                      style={{ color: partner.color }}
+                    >
+                      {partner.name === "JANSEN" ? (
+                        <div className="flex flex-col items-center bg-gradient-to-r from-red-700 to-red-600 px-4 py-2 rounded-lg">
+                          <span className="text-2xl font-black text-white tracking-widest">JANSEN</span>
+                          <span className="text-[10px] text-white/80 tracking-wider">STEEL SYSTEMS</span>
+                        </div>
+                      ) : partner.name === "Bouygues Construction" ? (
+                        <div className="flex flex-col items-center">
+                          <span className="text-xl font-black">BOUYGUES</span>
+                          <span className="text-xs tracking-wider">Construction</span>
+                        </div>
+                      ) : partner.name === "VINCI" ? (
+                        <div className="flex items-center gap-1">
+                          <span className="text-2xl font-black">VINCI</span>
+                          <div className="flex flex-col">
+                            <div className="w-2 h-2 bg-current" />
+                            <div className="w-2 h-2 bg-current mt-0.5" />
+                          </div>
+                        </div>
+                      ) : partner.name === "EIFFAGE" ? (
+                        <span className="text-2xl font-black italic">EIFFAGE</span>
+                      ) : (
+                        <div className="flex flex-col items-center">
+                          <span className="text-lg font-black">SAINT-GOBAIN</span>
+                        </div>
+                      )}
                     </div>
                   )}
-                </div>
-              </motion.div>
-            ))}
+                </motion.div>
+              );
+            })}
           </div>
         </motion.div>
       </div>

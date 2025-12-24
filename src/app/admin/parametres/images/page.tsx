@@ -18,6 +18,9 @@ import {
   LayoutGrid,
   Home,
   Layers,
+  Users,
+  Handshake,
+  Route,
 } from "lucide-react";
 import { toast } from "sonner";
 
@@ -40,6 +43,14 @@ function getCategoryIcon(category: string) {
       return <Layers className={iconClass} />;
     case "configurators":
       return <Palette className={iconClass} />;
+    case "process":
+      return <Route className={iconClass} />;
+    case "team":
+      return <Users className={iconClass} />;
+    case "partners":
+      return <Handshake className={iconClass} />;
+    case "realisations":
+      return <ImageIcon className={iconClass} />;
     default:
       return <ImageIcon className={iconClass} />;
   }
@@ -50,6 +61,10 @@ const categoryLabels: Record<string, string> = {
   products: "📦 Images Produits / Familles",
   pages: "📄 Pages du site",
   configurators: "⚙️ Configurateurs",
+  process: "📍 Parcours Client",
+  team: "👥 Équipe",
+  partners: "🤝 Partenaires",
+  realisations: "🏗️ Réalisations B2B",
 };
 
 interface SiteImage {
