@@ -33,15 +33,15 @@ import { toast } from "sonner";
 const advantages = [
   {
     icon: Clock,
-    title: "Délais prioritaires",
+    title: "Délai 24/48h",
     description:
       "Vos commandes sont traitées en priorité avec des délais de fabrication optimisés.",
   },
   {
     icon: FileText,
-    title: "Devis sous 24h",
+    title: "Devis rapide",
     description:
-      "Obtenez des devis détaillés adaptés à vos projets en un jour ouvré.",
+      "Obtenez des devis détaillés adaptés à vos projets rapidement.",
   },
   {
     icon: HeadphonesIcon,
@@ -59,8 +59,8 @@ const advantages = [
 
 const sectors = [
   {
-    name: "Constructeurs de maisons",
-    description: "Équipez vos constructions neuves avec des ouvrages de qualité.",
+    name: "Entreprises générales",
+    description: "Constructions neuves ou rénovations, nous accompagnons vos projets.",
     icon: Building,
   },
   {
@@ -539,6 +539,24 @@ export default function ProfessionnelsPage() {
                       className="w-full pl-12 pr-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-cyan-500 focus:border-transparent transition-all resize-none"
                       placeholder="Type de produits, quantités estimées, délais souhaités..."
                     />
+                  </div>
+                </div>
+
+                {/* Pièces jointes */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Pièces jointes (plans, photos, dossier)
+                  </label>
+                  <div className="relative">
+                    <input
+                      type="file"
+                      multiple
+                      accept=".pdf,.doc,.docx,.xls,.xlsx,.jpg,.jpeg,.png,.dwg"
+                      className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-cyan-500 focus:border-transparent transition-all file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-medium file:bg-cyan-glow/10 file:text-cyan-700 hover:file:bg-cyan-glow/20"
+                    />
+                    <p className="text-xs text-gray-400 mt-1">
+                      Formats acceptés : PDF, DOC, XLS, JPG, PNG, DWG (max 10 Mo par fichier)
+                    </p>
                   </div>
                 </div>
 

@@ -275,19 +275,16 @@ export default function ProductFamilyPage() {
                 ))}
               </div>
 
-              {/* Price */}
+              {/* Info badges */}
               <div className="glass-card p-4 inline-flex items-center gap-4 mb-8">
                 <div>
-                  <p className="text-white/60 text-sm">À partir de</p>
-                  <p className="text-3xl font-bold text-white">
-                    {product.startingPrice}€
-                    <span className="text-lg text-white/60 font-normal">/{product.unit}</span>
-                  </p>
+                  <p className="text-white/60 text-sm">Assurance</p>
+                  <p className="text-lg font-semibold text-cyan-glow">Décennale</p>
                 </div>
                 <div className="w-px h-12 bg-white/20" />
                 <div>
-                  <p className="text-white/60 text-sm">Garantie</p>
-                  <p className="text-lg font-semibold text-cyan-glow">10 ans</p>
+                  <p className="text-white/60 text-sm">Livraison & pose</p>
+                  <p className="text-lg font-semibold text-cyan-glow">Disponible</p>
                 </div>
               </div>
 
@@ -428,10 +425,9 @@ export default function ProductFamilyPage() {
                         {variant.name}
                       </h3>
                       <div className="text-right">
-                        <span className="text-xs text-gray-400">À partir de</span>
-                        <p className="text-2xl font-bold text-navy-dark">
-                          {variant.startingPrice}€
-                        </p>
+                        <span className="inline-flex items-center px-3 py-1 bg-green-100 text-green-700 rounded-full text-xs font-medium">
+                          Sur devis
+                        </span>
                       </div>
                     </div>
                     <p className="text-gray-500 mb-6">{variant.description}</p>

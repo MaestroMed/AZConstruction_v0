@@ -50,17 +50,11 @@ const popularColors = ralColors20;
 
 const advantages = [
   {
-    icon: Shield,
-    title: "Protection 25+ ans",
-    description: "Résistance exceptionnelle à la corrosion, aux UV et aux intempéries. La finition la plus durable du marché.",
-    size: "large" as const,
-    highlight: true,
-  },
-  {
     icon: Palette,
     title: "200+ Teintes RAL",
-    description: "Mat, satiné, brillant, texturé ou métallisé. Toutes les finitions disponibles.",
-    size: "default" as const,
+    description: "Mat, satiné, brillant, texturé ou métallisé. Toutes les finitions disponibles. Teintes spéciales : effet rouille, effet bois, variantes texturées.",
+    size: "large" as const,
+    highlight: true,
   },
   {
     icon: ThermometerSun,
@@ -69,21 +63,27 @@ const advantages = [
     size: "default" as const,
   },
   {
-    icon: Leaf,
-    title: "100% Écologique",
-    description: "Zéro COV, zéro solvant. Procédé respectueux de l'environnement.",
-    size: "wide" as const,
-  },
-  {
     icon: Zap,
     title: "Express 48h",
     description: "Service urgent disponible pour vos projets pressants.",
     size: "default" as const,
   },
   {
+    icon: Leaf,
+    title: "Procédé sans solvant",
+    description: "Zéro COV, zéro solvant. Procédé respectueux de l'environnement.",
+    size: "default" as const,
+  },
+  {
     icon: Factory,
-    title: "Cabine 7m",
-    description: "Four XXL pour grandes séries et pièces hors-normes.",
+    title: "Cabine jusqu'à 7m",
+    description: "Cabine accueillant des pièces jusqu'à 7 mètres. Four XXL pour grandes séries.",
+    size: "wide" as const,
+  },
+  {
+    icon: Shield,
+    title: "Garantie sur demande",
+    description: "Possibilité de garantie selon vos besoins. Devis personnalisé.",
     size: "default" as const,
   },
 ];
@@ -92,19 +92,19 @@ const processSteps = [
   {
     step: 1,
     title: "Préparation",
-    description: "Dégraissage, sablage ou grenaillage pour une surface parfaitement propre. C'est la clé d'une adhérence optimale et d'une finition durable.",
+    description: "Dégraissage, sablage ou grenaillage pour une surface parfaitement propre. C'est la clé d'une adhérence optimale.",
     icon: <Layers className="w-5 h-5" />,
   },
   {
     step: 2,
     title: "Application",
-    description: "Projection électrostatique de la poudre epoxy-polyester. Épaisseur contrôlée entre 60 et 120 microns pour une protection maximale.",
+    description: "Projection d'un primaire 80 microns avec gélification, puis poudre polyester 60 microns pour la finition.",
     icon: <Sparkles className="w-5 h-5" />,
   },
   {
     step: 3,
     title: "Cuisson",
-    description: "Polymérisation au four à 180-200°C pendant 15-20 minutes. La poudre fusionne en un film protecteur ultra-résistant.",
+    description: "Polymérisation au four à 180-200°C pendant 15-20 minutes. La poudre fusionne en un film protecteur.",
     icon: <Flame className="w-5 h-5" />,
   },
   {
@@ -120,10 +120,10 @@ const applications = [
   "Garde-corps & rampes",
   "Escaliers métalliques",
   "Grilles de ventilation",
-  "Mobilier urbain",
-  "Structures industrielles",
-  "Pièces automobiles",
-  "Équipements agricoles",
+  "Radiateurs",
+  "Persiennes métalliques",
+  "Jantes automobiles",
+  "Structures bâtiment",
 ];
 
 // Services spécialisés thermolaquage
@@ -168,27 +168,27 @@ const faqItems = [
   {
     question: "Combien coûte le thermolaquage au m² ?",
     answer:
-      "Le prix du thermolaquage varie selon la complexité des pièces, la quantité et la couleur choisie. Comptez en moyenne 15 à 40€/m² pour des pièces standards. Pour un devis précis adapté à votre projet, contactez-nous gratuitement. Nous vous répondons sous 24h.",
+      "Le prix du thermolaquage varie selon la complexité des pièces, la quantité et la couleur choisie. Comptez en moyenne 20 à 60€/m² selon les pièces. Pour un devis précis adapté à votre projet, contactez-nous gratuitement. Nous vous répondons sous 24h.",
   },
   {
-    question: "Quelle est la durée de vie du thermolaquage ?",
+    question: "Quelle est la résistance du thermolaquage ?",
     answer:
-      "Le thermolaquage offre une durée de vie exceptionnelle de 25 ans et plus, bien supérieure à la peinture liquide (5-10 ans). Ce procédé assure une résistance optimale contre l'écaillage et la décoloration.",
+      "Le thermolaquage offre une excellente résistance aux intempéries, aux UV et aux chocs, bien supérieure à la peinture liquide traditionnelle. Une garantie est possible sur demande selon vos besoins.",
   },
   {
     question: "Thermolaquage ou peinture liquide : que choisir ?",
     answer:
-      "Le thermolaquage surpasse la peinture liquide sur tous les critères : résistance aux UV, à la corrosion et aux chocs (5x supérieure), durabilité (25+ ans vs 5-10 ans), aspect uniforme sans coulures, et procédé 100% écologique sans solvants. C'est le choix professionnel pour une finition durable.",
+      "Le thermolaquage surpasse la peinture liquide sur tous les critères : résistance aux UV, à la corrosion et aux chocs, aspect uniforme sans coulures, et procédé sans solvant. C'est le choix professionnel pour une finition de qualité.",
   },
   {
     question: "Quels métaux peuvent être thermolaqués ?",
     answer:
-      "Le thermolaquage convient à tous les métaux ferreux et non-ferreux : acier, fer, fonte, aluminium, zinc, inox. Chaque métal nécessite une préparation adaptée (dégraissage, sablage, grenaillage) pour garantir une adhérence optimale de la poudre.",
+      "Le thermolaquage convient à tous les métaux ferreux : acier, fer, fonte. Chaque métal nécessite une préparation adaptée (dégraissage, sablage, grenaillage) pour garantir une adhérence optimale de la poudre.",
   },
   {
     question: "Quel est le délai de traitement ?",
     answer:
-      "Le délai standard est de 5 à 7 jours ouvrés selon la quantité et la complexité des pièces. Pour les urgences, nous proposons un service express en 48-72h. Enlèvement et livraison disponibles sur toute la région.",
+      "Le délai standard est de 5 à 7 jours ouvrés selon la quantité et la complexité des pièces. Pour les urgences, nous proposons un service express en 48-72h. Enlèvement et livraison disponibles dans toute l'Île-de-France.",
   },
 ];
 
@@ -402,7 +402,7 @@ export default function ThermolaquagePage() {
               transition={{ duration: 0.6, delay: 0.3 }}
               className="grid grid-cols-3 gap-4 md:gap-6 max-w-xl mx-auto mb-12"
             >
-              <HeroStat value={25} suffix="+" label="Années durabilité" delay={0.4} />
+              <HeroStat value={7} suffix="m" label="Cabine max" delay={0.4} />
               <HeroStat value={200} suffix="+" label="Couleurs RAL" delay={0.5} />
               <HeroStat value={48} suffix="h" label="Délai express" delay={0.6} />
             </motion.div>
@@ -924,14 +924,14 @@ export default function ThermolaquagePage() {
                 Domaines d'application
               </span>
               <h2 className="text-4xl md:text-5xl font-bold text-navy-dark mb-6">
-                Tous métaux,{" "}
+                Métaux ferreux,{" "}
                 <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-600 to-blue-600">
                   toutes pièces
                 </span>
               </h2>
               <p className="text-gray-600 text-lg mb-10">
-                Le thermolaquage convient à tous les métaux ferreux et non-ferreux :
-                acier, aluminium, inox, fonte, zinc...
+                Le thermolaquage convient à tous les métaux ferreux :
+                acier, fer, fonte. Enlèvement et livraison dans toute l&apos;Île-de-France.
               </p>
 
               <div className="grid grid-cols-2 gap-4">
@@ -1037,75 +1037,6 @@ export default function ThermolaquagePage() {
         </div>
       </section>
 
-      {/* ============================================
-          CTA FINAL - Aurora Effect
-          ============================================ */}
-      <section className="py-24 relative overflow-hidden">
-        <MeshGradient variant="aurora" className="absolute inset-0" />
-        
-        {/* Particles */}
-        <ParticleBackground count={12} />
-        
-        {/* Gradient orbs */}
-        <GradientOrb
-          color="cyan"
-          size="xl"
-          position={{ top: "-20%", right: "-10%" }}
-          blur="xl"
-          opacity={0.2}
-        />
-        <GradientOrb
-          color="blue"
-          size="lg"
-          position={{ bottom: "-10%", left: "20%" }}
-          blur="lg"
-          opacity={0.15}
-        />
-
-        <div className="container mx-auto px-6 relative z-10">
-          <div className="max-w-4xl mx-auto">
-            <GlassCard variant="glow" padding="xl" className="text-center">
-              <motion.div
-                initial={{ opacity: 0, y: 30 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-              >
-                <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-white mb-6">
-                  Prêt à protéger vos ouvrages ?
-                </h2>
-                <p className="text-xl text-white/70 mb-10 max-w-2xl mx-auto">
-                  Demandez votre devis gratuit dès maintenant.
-                  Réponse sous 24h, enlèvement et livraison sur toute la région.
-                </p>
-
-                <div className="flex flex-col sm:flex-row gap-4 justify-center mb-10">
-                  <Link href="/contact">
-                    <GlowButton size="lg" icon={<ArrowRight className="w-5 h-5" />}>
-                      Demander un devis gratuit
-                    </GlowButton>
-                  </Link>
-                  <PhoneLink variant="button" className="justify-center" />
-                </div>
-
-                <div className="flex flex-wrap justify-center gap-8 text-white/50 text-sm">
-                  <div className="flex items-center gap-2">
-                    <Clock className="w-4 h-4" />
-                    <span>Devis sous 24h</span>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <Zap className="w-4 h-4" />
-                    <span>Traitement express 48h</span>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <BadgeCheck className="w-4 h-4" />
-                    <span>Qualité professionnelle</span>
-                  </div>
-                </div>
-              </motion.div>
-            </GlassCard>
-          </div>
-        </div>
-      </section>
     </div>
   );
 }

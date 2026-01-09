@@ -374,17 +374,14 @@ export default function ProduitsPage() {
               <motion.div key={family.id} id={family.id} variants={cardVariants}>
                 <Card variant="elevated" hover className="h-full group">
                   <CardContent className="p-8">
-                    {/* Icon & Price */}
+                    {/* Icon */}
                     <div className="flex justify-between items-start mb-6">
                       <div className="w-20 h-20 rounded-2xl bg-gradient-to-br from-blue-corporate/10 to-cyan-glow/10 flex items-center justify-center text-blue-corporate group-hover:scale-110 transition-transform">
                         {family.icon}
                       </div>
-                      <div className="text-right">
-                        <span className="text-xs text-gray-400">À partir de</span>
-                        <div className="text-2xl font-bold text-navy-dark">
-                          {family.startingPrice}€
-                        </div>
-                      </div>
+                      <span className="inline-flex items-center px-3 py-1 bg-green-100 text-green-700 rounded-full text-xs font-medium">
+                        Décennale
+                      </span>
                     </div>
 
                     {/* Content */}

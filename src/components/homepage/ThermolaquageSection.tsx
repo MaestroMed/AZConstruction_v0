@@ -33,9 +33,9 @@ const featuredColors = [
 ];
 
 const benefits = [
-  { icon: Shield, text: "Protection 25+ ans" },
   { icon: Palette, text: "200+ couleurs RAL" },
   { icon: Zap, text: "Express 48h dispo" },
+  { icon: Shield, text: "Garantie sur demande" },
 ];
 
 export default function ThermolaquageSection() {
@@ -226,7 +226,7 @@ export default function ThermolaquageSection() {
 
             <p className="text-lg text-white/70 mb-8 leading-relaxed">
               Finition haut de gamme pour tous vos ouvrages métalliques. 
-              Notre atelier équipé d&apos;une cabine de <span className="text-cyan-glow font-semibold">7m</span> et d&apos;un four XXL 
+              Notre atelier équipé d&apos;une cabine accueillant des pièces <span className="text-cyan-glow font-semibold">jusqu&apos;à 7m</span> et d&apos;un four XXL 
               garantit une qualité industrielle pour vos portails, garde-corps, 
               escaliers et structures.
             </p>
@@ -252,9 +252,9 @@ export default function ThermolaquageSection() {
             <div className="grid grid-cols-2 gap-3 mb-10">
               {[
                 "Résistance UV maximale",
-                "Zéro COV - Écologique",
+                "Procédé sans solvant",
                 "Finition uniforme",
-                "Anti-corrosion 25+ ans",
+                "Teintes spéciales disponibles",
               ].map((feature, index) => (
                 <motion.div 
                   key={index} 
@@ -460,8 +460,8 @@ export default function ThermolaquageSection() {
                 <Shield className="w-6 h-6 text-white" />
               </div>
               <div>
-                <p className="font-bold text-navy-dark text-sm">Protection 25+ ans</p>
-                <p className="text-xs text-gray-500">Écaillage & décoloration</p>
+                <p className="font-bold text-navy-dark text-sm">Livraison Île-de-France</p>
+                <p className="text-xs text-gray-500">Enlèvement disponible</p>
               </div>
             </motion.div>
           </motion.div>

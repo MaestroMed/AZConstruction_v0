@@ -114,11 +114,10 @@ const team = [
 ];
 
 const certifications = [
-  "Qualibat",
-  "RGE",
   "Artisan d'Art",
   "Made in France",
   "Garantie décennale",
+  "Partenaire Jansen",
 ];
 
 export default function AProposPage() {
