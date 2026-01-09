@@ -1,13 +1,14 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
+import { sendContactConfirmation, sendContactNotificationToAdmin } from "@/lib/email";
 
-// POST: Créer un nouveau message de contact
+// POST: Soumettre un formulaire de contact
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-    const { nom, email, telephone, sujet, message, type, entreprise } = body;
+    const { nom, email, telephone, sujet, message, type = "particulier", entreprise } = body;
 
-    // Validation basique
+    // Validation
     if (!nom || !email || !sujet || !message) {
       return NextResponse.json(
         { error: "Les champs nom, email, sujet et message sont requis" },
@@ -19,96 +20,78 @@ export async function POST(request: NextRequest) {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(email)) {
       return NextResponse.json(
-        { error: "Adresse email invalide" },
+        { error: "Format d'email invalide" },
         { status: 400 }
       );
     }
 
-    // Créer le message en base de données
+    // Sauvegarder le message en base de données
     const contactMessage = await prisma.contactMessage.create({
       data: {
         nom,
         email,
-        telephone: telephone || null,
+        telephone,
         sujet,
         message,
-        type: type || "particulier",
-        entreprise: entreprise || null,
+        type,
+        entreprise,
         status: "nouveau",
       },
     });
 
-    // TODO: Envoyer un email de notification à l'admin
-    // Utiliser Resend si configuré
-    try {
-      const { sendEmail } = await import("@/lib/email/resend");
-      
-      // Email à l'admin
-      await sendEmail({
-        to: process.env.ADMIN_EMAIL || "contact@az-construction.fr",
-        subject: `[AZ Construction] Nouveau message: ${sujet}`,
-        html: `
-          <h2>Nouveau message de contact</h2>
-          <p><strong>De:</strong> ${nom} (${email})</p>
-          ${telephone ? `<p><strong>Téléphone:</strong> ${telephone}</p>` : ""}
-          ${entreprise ? `<p><strong>Entreprise:</strong> ${entreprise}</p>` : ""}
-          <p><strong>Type:</strong> ${type === "professionnel" ? "Professionnel" : "Particulier"}</p>
-          <p><strong>Sujet:</strong> ${sujet}</p>
-          <hr>
-          <p>${message.replace(/\n/g, "<br>")}</p>
-        `,
-      });
+    // Envoyer l'email de confirmation au client
+    const confirmationResult = await sendContactConfirmation(email, nom);
+    if (!confirmationResult.success) {
+      console.warn("Échec envoi confirmation:", confirmationResult.error);
+    }
 
-      // Email de confirmation au visiteur
-      await sendEmail({
-        to: email,
-        subject: "Nous avons bien reçu votre message - AZ Construction",
-        html: `
-          <h2>Merci pour votre message !</h2>
-          <p>Bonjour ${nom},</p>
-          <p>Nous avons bien reçu votre demande concernant "<strong>${sujet}</strong>".</p>
-          <p>Notre équipe vous répondra dans les meilleurs délais, généralement sous 24h ouvrées.</p>
-          <br>
-          <p>Cordialement,</p>
-          <p><strong>L'équipe AZ Construction</strong></p>
-          <p>Tél: 01 23 45 67 89</p>
-        `,
-      });
-    } catch (emailError) {
-      console.error("Erreur envoi email:", emailError);
-      // On continue même si l'email échoue
+    // Envoyer la notification à l'admin
+    const notificationResult = await sendContactNotificationToAdmin({
+      name: nom,
+      email,
+      phone: telephone,
+      subject: sujet,
+      message,
+      type,
+    });
+    if (!notificationResult.success) {
+      console.warn("Échec envoi notification admin:", notificationResult.error);
     }
 
     return NextResponse.json({
       success: true,
-      message: "Votre message a bien été envoyé. Nous vous répondrons sous 24h.",
+      message: "Votre message a bien été envoyé. Nous vous répondrons dans les plus brefs délais.",
       id: contactMessage.id,
     });
   } catch (error) {
-    console.error("Erreur création message contact:", error);
+    console.error("Error submitting contact form:", error);
     return NextResponse.json(
-      { error: "Une erreur est survenue. Veuillez réessayer." },
+      { error: "Erreur lors de l'envoi du message" },
       { status: 500 }
     );
   }
 }
 
-// GET: Récupérer les messages (admin only)
+// GET: Récupérer les messages de contact (admin)
 export async function GET(request: NextRequest) {
   try {
     const { searchParams } = new URL(request.url);
     const status = searchParams.get("status");
-    const limit = parseInt(searchParams.get("limit") || "50");
+    const limit = searchParams.get("limit");
 
     const messages = await prisma.contactMessage.findMany({
       where: status ? { status } : undefined,
       orderBy: { createdAt: "desc" },
-      take: limit,
+      take: limit ? parseInt(limit) : undefined,
     });
 
-    return NextResponse.json({ success: true, messages });
+    return NextResponse.json({
+      success: true,
+      messages,
+      count: messages.length,
+    });
   } catch (error) {
-    console.error("Erreur récupération messages:", error);
+    console.error("Error fetching contact messages:", error);
     return NextResponse.json(
       { error: "Erreur lors de la récupération des messages" },
       { status: 500 }
@@ -116,8 +99,8 @@ export async function GET(request: NextRequest) {
   }
 }
 
-// PATCH: Mettre à jour un message (admin only)
-export async function PATCH(request: NextRequest) {
+// PUT: Mettre à jour le statut d'un message
+export async function PUT(request: NextRequest) {
   try {
     const body = await request.json();
     const { id, status, notes } = body;
@@ -126,7 +109,7 @@ export async function PATCH(request: NextRequest) {
       return NextResponse.json({ error: "ID requis" }, { status: 400 });
     }
 
-    const updated = await prisma.contactMessage.update({
+    const message = await prisma.contactMessage.update({
       where: { id },
       data: {
         ...(status && { status }),
@@ -134,14 +117,12 @@ export async function PATCH(request: NextRequest) {
       },
     });
 
-    return NextResponse.json({ success: true, message: updated });
+    return NextResponse.json({ success: true, message });
   } catch (error) {
-    console.error("Erreur mise à jour message:", error);
+    console.error("Error updating contact message:", error);
     return NextResponse.json(
       { error: "Erreur lors de la mise à jour" },
       { status: 500 }
     );
   }
 }
-
-

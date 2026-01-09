@@ -3,7 +3,7 @@
 import * as React from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { Plus, Eye, Edit, Trash2, GripVertical, MapPin, Calendar, EyeOff, Upload, X, Loader2 } from "lucide-react";
+import { Plus, Eye, Edit, Trash2, GripVertical, MapPin, Calendar, EyeOff, Upload, X, Loader2, Building2, Sparkles } from "lucide-react";
 import { Modal, ConfirmDialog } from "@/components/admin/ui/Modal";
 import { Input, Textarea, Select } from "@/components/admin/ui/FormFields";
 import { format } from "date-fns";
@@ -32,9 +32,9 @@ interface Realization {
   titre: string;
   description?: string;
   categorie: string;
-  dateRealisation?: Date;
+  dateRealisation?: Date | string;
   ville?: string;
-  imageUrl: string;
+  imageUrl: string | null;
   images: string[];
   published: boolean;
   ordre: number;
@@ -42,14 +42,59 @@ interface Realization {
 
 const categories = [
   { value: "all", label: "Toutes les catégories" },
-  { value: "Portes", label: "Portes" },
   { value: "Garde-corps", label: "Garde-corps" },
   { value: "Escaliers", label: "Escaliers" },
-  { value: "Fenêtres", label: "Fenêtres" },
-  { value: "Grilles", label: "Grilles de ventilation" },
   { value: "Portails", label: "Portails" },
   { value: "Clôtures", label: "Clôtures" },
+  { value: "Portes", label: "Portes" },
+  { value: "Fenêtres", label: "Fenêtres" },
+  { value: "Grilles", label: "Grilles de ventilation" },
+  { value: "Bâtiment", label: "Bâtiment" },
 ];
+
+// Bouton pour injecter les 17 chantiers clients
+function SeedButton({ onSeedComplete }: { onSeedComplete: () => void }) {
+  const [loading, setLoading] = React.useState(false);
+  const [seeded, setSeeded] = React.useState(false);
+
+  const handleSeed = async () => {
+    if (loading) return;
+    setLoading(true);
+    try {
+      const response = await fetch("/api/realizations/seed", { method: "POST" });
+      const data = await response.json();
+      if (data.success) {
+        toast.success(`${data.added} chantier(s) ajouté(s) !`);
+        setSeeded(true);
+        onSeedComplete();
+      } else {
+        toast.error("Erreur lors de l'ajout");
+      }
+    } catch {
+      toast.error("Erreur lors de l'ajout des chantiers");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  if (seeded) return null;
+
+  return (
+    <button
+      onClick={handleSeed}
+      disabled={loading}
+      className="inline-flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-purple-500 to-pink-500 text-white rounded-lg text-sm font-medium hover:from-purple-600 hover:to-pink-600 transition-all disabled:opacity-50"
+      title="Ajouter les 17 chantiers clients"
+    >
+      {loading ? (
+        <Loader2 className="w-4 h-4 animate-spin" />
+      ) : (
+        <Sparkles className="w-4 h-4" />
+      )}
+      Injecter chantiers
+    </button>
+  );
+}
 
 function SortableRealization({
   realization,
@@ -100,7 +145,7 @@ function SortableRealization({
           />
         ) : (
           <div className="w-full h-full flex items-center justify-center text-gray-400">
-            <span className="text-4xl">📷</span>
+            <Building2 className="w-12 h-12" />
           </div>
         )}
         
@@ -113,7 +158,7 @@ function SortableRealization({
             <Edit className="w-4 h-4" />
           </button>
           <Link
-            href={`/realisations/${realization.id}`}
+            href={`/realisations`}
             target="_blank"
             className="p-2 bg-white rounded-lg text-gray-700 hover:bg-cyan-500 hover:text-white transition-colors"
           >
@@ -178,7 +223,7 @@ function SortableRealization({
           {realization.dateRealisation && (
             <span className="flex items-center gap-1">
               <Calendar className="w-3 h-3" />
-              {format(realization.dateRealisation, "MMM yyyy", { locale: fr })}
+              {format(new Date(realization.dateRealisation), "MMM yyyy", { locale: fr })}
             </span>
           )}
         </div>
@@ -202,46 +247,57 @@ export default function RealizationsPage() {
     })
   );
 
-  // Charger les réalisations depuis le localStorage (simulation de persistance)
-  React.useEffect(() => {
-    const saved = localStorage.getItem("az_realizations");
-    if (saved) {
-      try {
-        const parsed = JSON.parse(saved);
-        setRealizations(parsed.map((r: Realization) => ({
-          ...r,
-          dateRealisation: r.dateRealisation ? new Date(r.dateRealisation) : undefined,
-        })));
-      } catch (e) {
-        console.error("Erreur parsing réalisations:", e);
+  // Charger les réalisations depuis l'API
+  const fetchRealizations = React.useCallback(async () => {
+    try {
+      const response = await fetch("/api/realizations?admin=true");
+      if (response.ok) {
+        const data = await response.json();
+        if (data.success) {
+          setRealizations(data.realizations);
+        }
       }
+    } catch (error) {
+      console.error("Erreur chargement réalisations:", error);
+      toast.error("Erreur lors du chargement des réalisations");
+    } finally {
+      setLoading(false);
     }
-    setLoading(false);
   }, []);
 
-  // Sauvegarder les réalisations
-  const saveRealizations = (items: Realization[]) => {
-    setRealizations(items);
-    localStorage.setItem("az_realizations", JSON.stringify(items));
-  };
+  React.useEffect(() => {
+    fetchRealizations();
+  }, [fetchRealizations]);
 
   const filteredRealizations = selectedCategory === "all"
     ? realizations
     : realizations.filter((r) => r.categorie === selectedCategory);
 
-  const handleDragEnd = (event: DragEndEvent) => {
+  const handleDragEnd = async (event: DragEndEvent) => {
     const { active, over } = event;
 
     if (over && active.id !== over.id) {
-      const newItems = [...realizations];
-      const oldIndex = newItems.findIndex((item) => item.id === active.id);
-      const newIndex = newItems.findIndex((item) => item.id === over.id);
-      const reordered = arrayMove(newItems, oldIndex, newIndex).map((item, index) => ({
+      const oldIndex = realizations.findIndex((item) => item.id === active.id);
+      const newIndex = realizations.findIndex((item) => item.id === over.id);
+      const reordered = arrayMove(realizations, oldIndex, newIndex).map((item, index) => ({
         ...item,
         ordre: index + 1,
       }));
-      saveRealizations(reordered);
-      toast.success("Ordre mis à jour");
+      
+      setRealizations(reordered);
+
+      // Mettre à jour l'ordre via l'API
+      try {
+        const updateItem = reordered[newIndex];
+        await fetch("/api/realizations", {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ id: updateItem.id, ordre: updateItem.ordre }),
+        });
+        toast.success("Ordre mis à jour");
+      } catch {
+        toast.error("Erreur lors de la mise à jour de l'ordre");
+      }
     }
   };
 
@@ -250,52 +306,85 @@ export default function RealizationsPage() {
     setIsModalOpen(true);
   };
 
-  const handleDelete = () => {
+  const handleDelete = async () => {
     if (deleteId) {
-      saveRealizations(realizations.filter((item) => item.id !== deleteId));
-      toast.success("Réalisation supprimée");
+      try {
+        const response = await fetch(`/api/realizations?id=${deleteId}`, {
+          method: "DELETE",
+        });
+        if (response.ok) {
+          setRealizations(realizations.filter((item) => item.id !== deleteId));
+          toast.success("Réalisation supprimée");
+        } else {
+          toast.error("Erreur lors de la suppression");
+        }
+      } catch {
+        toast.error("Erreur lors de la suppression");
+      }
       setDeleteId(null);
     }
   };
 
-  const handleTogglePublish = (id: string) => {
-    const newItems = realizations.map((item) =>
-      item.id === id ? { ...item, published: !item.published } : item
-    );
-    saveRealizations(newItems);
+  const handleTogglePublish = async (id: string) => {
     const item = realizations.find((r) => r.id === id);
-    toast.success(item?.published ? "Réalisation dépubliée" : "Réalisation publiée");
+    if (!item) return;
+
+    try {
+      const response = await fetch("/api/realizations", {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ id, published: !item.published }),
+      });
+      
+      if (response.ok) {
+        setRealizations(realizations.map((r) =>
+          r.id === id ? { ...r, published: !r.published } : r
+        ));
+        toast.success(item.published ? "Réalisation dépubliée" : "Réalisation publiée");
+      }
+    } catch {
+      toast.error("Erreur lors de la mise à jour");
+    }
   };
 
-  const handleSave = (data: Partial<Realization> & { images: string[] }) => {
-    if (editingRealization) {
-      const newItems = realizations.map((item) =>
-        item.id === editingRealization.id
-          ? { 
-              ...item, 
-              ...data, 
-              imageUrl: data.images[0] || item.imageUrl 
-            }
-          : item
-      );
-      saveRealizations(newItems);
-      toast.success("Réalisation mise à jour");
-    } else {
-      const newRealization: Realization = {
-        id: `real_${Date.now()}`,
-        titre: data.titre || "",
-        description: data.description,
-        categorie: data.categorie || "Garde-corps",
-        dateRealisation: data.dateRealisation,
-        ville: data.ville,
-        imageUrl: data.images[0] || "",
-        images: data.images,
-        published: false,
-        ordre: realizations.length + 1,
-      };
-      saveRealizations([...realizations, newRealization]);
-      toast.success("Réalisation créée");
+  const handleSave = async (data: Partial<Realization> & { images: string[] }) => {
+    try {
+      if (editingRealization) {
+        // Mise à jour
+        const response = await fetch("/api/realizations", {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            id: editingRealization.id,
+            ...data,
+          }),
+        });
+        
+        if (response.ok) {
+          await fetchRealizations();
+          toast.success("Réalisation mise à jour");
+        } else {
+          toast.error("Erreur lors de la mise à jour");
+        }
+      } else {
+        // Création
+        const response = await fetch("/api/realizations", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(data),
+        });
+        
+        if (response.ok) {
+          await fetchRealizations();
+          toast.success("Réalisation créée");
+        } else {
+          toast.error("Erreur lors de la création");
+        }
+      }
+    } catch {
+      toast.error("Erreur lors de l'enregistrement");
     }
+    
     setIsModalOpen(false);
     setEditingRealization(null);
   };
@@ -318,16 +407,19 @@ export default function RealizationsPage() {
             Gérez votre portfolio de projets ({realizations.length} réalisations)
           </p>
         </div>
-        <button
-          onClick={() => {
-            setEditingRealization(null);
-            setIsModalOpen(true);
-          }}
-          className="inline-flex items-center gap-2 px-4 py-2 bg-cyan-500 text-white rounded-lg text-sm font-medium hover:bg-cyan-600 transition-colors"
-        >
-          <Plus className="w-4 h-4" />
-          Nouvelle réalisation
-        </button>
+        <div className="flex items-center gap-3">
+          <SeedButton onSeedComplete={fetchRealizations} />
+          <button
+            onClick={() => {
+              setEditingRealization(null);
+              setIsModalOpen(true);
+            }}
+            className="inline-flex items-center gap-2 px-4 py-2 bg-cyan-500 text-white rounded-lg text-sm font-medium hover:bg-cyan-600 transition-colors"
+          >
+            <Plus className="w-4 h-4" />
+            Nouvelle réalisation
+          </button>
+        </div>
       </div>
 
       {/* Filters */}
@@ -534,7 +626,7 @@ function RealizationModal({
           label="Description"
           value={formData.description}
           onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-          placeholder="Description du projet..."
+          placeholder="Description du projet, maître d'ouvrage..."
           rows={3}
         />
         <div className="grid md:grid-cols-2 gap-4">
@@ -549,7 +641,7 @@ function RealizationModal({
             label="Ville"
             value={formData.ville}
             onChange={(e) => setFormData({ ...formData, ville: e.target.value })}
-            placeholder="Ex: Marseille"
+            placeholder="Ex: Paris (75)"
           />
         </div>
 

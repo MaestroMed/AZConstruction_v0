@@ -14,17 +14,10 @@ export default function robots(): MetadataRoute.Robots {
           '/compte/',
           '/login',
           '/register',
+          '/configurateur/',
         ],
       },
     ],
     sitemap: `${baseUrl}/sitemap.xml`,
-    host: baseUrl,
   }
 }
-
-
-
-
-
-
-

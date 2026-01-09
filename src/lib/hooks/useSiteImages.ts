@@ -64,11 +64,16 @@ const FALLBACK_IMAGES: Record<string, string> = {
   "team-member-3": "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=400&q=80",
   "team-member-4": "https://images.unsplash.com/photo-1580489944761-15a19d654956?w=400&q=80",
   
-  // Partners
+  // Partners - Fournisseur
   "partner-jansen": "https://via.placeholder.com/200x80/C41E3A/FFFFFF?text=JANSEN",
+  // Partners - Maîtres d'ouvrage
+  "partner-demathieu-bard": "https://via.placeholder.com/200x80/1E3A8A/FFFFFF?text=DEMATHIEU+BARD",
+  "partner-spie-batignolles": "https://via.placeholder.com/200x80/DC2626/FFFFFF?text=SPIE+BATIGNOLLES",
+  "partner-rabot-dutilleul": "https://via.placeholder.com/200x80/059669/FFFFFF?text=RABOT+DUTILLEUL",
   "partner-bouygues": "https://via.placeholder.com/200x80/00539C/FFFFFF?text=BOUYGUES",
   "partner-vinci": "https://via.placeholder.com/200x80/003366/FFFFFF?text=VINCI",
   "partner-eiffage": "https://via.placeholder.com/200x80/E30613/FFFFFF?text=EIFFAGE",
+  "partner-urbaine-travaux": "https://via.placeholder.com/200x80/7C3AED/FFFFFF?text=URBAINE+TRAVAUX",
   "partner-saint-gobain": "https://via.placeholder.com/200x80/004990/FFFFFF?text=SAINT-GOBAIN",
   
   // Réalisations B2B
