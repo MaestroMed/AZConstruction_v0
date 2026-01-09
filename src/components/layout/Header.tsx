@@ -246,14 +246,9 @@ export default function Header() {
           <Link href="/" className="flex items-center gap-3 group relative">
             {showCustomLogo && customLogo ? (
               <div className="relative flex items-center gap-4">
-                {/* Logo container with glassmorphism */}
+                {/* Logo container - clean, no border */}
                 <motion.div 
-                  className={cn(
-                    "relative p-2.5 rounded-xl transition-all duration-300",
-                    "bg-white/5 backdrop-blur-sm border border-white/10",
-                    "group-hover:bg-white/10 group-hover:border-cyan-glow/30",
-                    "shadow-lg"
-                  )}
+                  className="relative transition-all duration-300"
                   whileHover={{ scale: 1.02 }}
                   transition={{ duration: 0.2 }}
                 >
@@ -269,8 +264,6 @@ export default function Header() {
                     priority
                     unoptimized={customLogo.startsWith("data:")}
                   />
-                  {/* Glow effect */}
-                  <div className="absolute inset-0 rounded-xl bg-gradient-to-r from-cyan-glow/0 via-cyan-glow/5 to-cyan-glow/0 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
                 </motion.div>
                 
                 {/* Text */}
