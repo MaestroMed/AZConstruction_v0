@@ -1,72 +1,74 @@
 import { NextRequest, NextResponse } from "next/server";
-import { createHash } from "crypto";
 
-// Mot de passe admin stocké côté serveur uniquement
+// Mot de passe admin - utilise la variable d'environnement ou le défaut
 const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || "AZConstruct2024!";
-
-// Secret pour signer les sessions
-const SESSION_SECRET = process.env.NEXTAUTH_SECRET || "az-construction-admin-secret-2024";
 
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
     const { password } = body;
 
-    console.log("[Admin Login] Tentative de connexion");
+    // Log pour debug (sera visible dans les logs Vercel)
+    console.log("[Admin Login] Attempting login...");
+    console.log("[Admin Login] Password provided:", password ? "yes" : "no");
+    console.log("[Admin Login] Expected password length:", ADMIN_PASSWORD.length);
 
-    // Vérification du mot de passe
     if (!password) {
-      console.log("[Admin Login] Mot de passe manquant");
       return NextResponse.json(
         { success: false, error: "Mot de passe requis" },
         { status: 400 }
       );
     }
 
-    // Simuler un délai pour prévenir le brute force
-    await new Promise((resolve) => setTimeout(resolve, 300));
+    // Délai anti brute-force
+    await new Promise((resolve) => setTimeout(resolve, 200));
 
-    // Vérifier le mot de passe
-    if (password !== ADMIN_PASSWORD) {
-      console.log("[Admin Login] Mot de passe incorrect");
+    // Comparaison simple et directe
+    const isValid = password === ADMIN_PASSWORD;
+    console.log("[Admin Login] Password match:", isValid);
+
+    if (!isValid) {
       return NextResponse.json(
         { success: false, error: "Mot de passe incorrect" },
         { status: 401 }
       );
     }
 
-    console.log("[Admin Login] Mot de passe correct, création de session");
+    // Succès - créer un token simple
+    const token = Buffer.from(`admin:${Date.now()}`).toString("base64");
+    
+    console.log("[Admin Login] Success! Token created.");
 
-    // Créer un hash de session signé (valide 24h)
-    const timestamp = Date.now();
-    const expiry = timestamp + 24 * 60 * 60 * 1000;
-    const dataToSign = `admin:${expiry}:${SESSION_SECRET}`;
-    const sessionHash = createHash("sha256").update(dataToSign).digest("hex");
-
-    console.log("[Admin Login] Session créée avec succès");
-
-    // Créer la réponse avec cookie
     const response = NextResponse.json({
       success: true,
-      sessionHash,
-      expiry,
+      sessionHash: token,
+      expiry: Date.now() + 24 * 60 * 60 * 1000,
     });
 
-    // Ajouter un cookie HTTP-only pour la vérification
-    response.cookies.set("az_admin_verified", sessionHash, {
+    // Cookie de session
+    response.cookies.set("az_admin_verified", "true", {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
       sameSite: "lax",
-      maxAge: 24 * 60 * 60, // 24 heures
+      maxAge: 24 * 60 * 60,
       path: "/",
     });
 
     return response;
   } catch (error) {
-    console.error("[Admin Login] Erreur:", error);
+    console.error("[Admin Login] Error:", error);
     return NextResponse.json(
       { success: false, error: "Erreur serveur" },
       { status: 500 }
     );
   }
+}
+
+// GET pour tester que l'API fonctionne
+export async function GET() {
+  return NextResponse.json({ 
+    status: "ok", 
+    message: "Admin login API is working",
+    passwordConfigured: !!process.env.ADMIN_PASSWORD,
+  });
 }
