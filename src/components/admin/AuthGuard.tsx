@@ -23,26 +23,34 @@ export function AuthGuard({ children }: AuthGuardProps) {
   React.useEffect(() => {
     const checkSession = async () => {
       try {
-        // D'abord vérifier la session locale
         const session = localStorage.getItem(SESSION_KEY);
         if (session) {
-          const { expiry, hash } = JSON.parse(session);
-          if (expiry > Date.now() && hash) {
-            // Vérifier côté serveur que la session est toujours valide
+          const parsed = JSON.parse(session);
+          const { expiry, hash } = parsed;
+          
+          // Vérifier l'expiration locale d'abord
+          if (expiry && expiry > Date.now() && hash) {
+            // Vérifier côté serveur
             const response = await fetch("/api/admin/verify-session", {
               method: "POST",
               headers: { "Content-Type": "application/json" },
-              body: JSON.stringify({ hash }),
+              body: JSON.stringify({ hash, expiry }),
             });
             
             if (response.ok) {
-              setIsAuthenticated(true);
-              return;
+              const data = await response.json();
+              if (data.valid) {
+                setIsAuthenticated(true);
+                return;
+              }
             }
           }
+          // Session invalide, la supprimer
+          localStorage.removeItem(SESSION_KEY);
         }
       } catch (e) {
         console.error("Session check error:", e);
+        localStorage.removeItem(SESSION_KEY);
       }
       setIsAuthenticated(false);
     };
@@ -56,7 +64,6 @@ export function AuthGuard({ children }: AuthGuardProps) {
     setError("");
 
     try {
-      // Vérifier le mot de passe côté serveur
       const response = await fetch("/api/admin/login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -64,12 +71,13 @@ export function AuthGuard({ children }: AuthGuardProps) {
       });
 
       const data = await response.json();
+      console.log("Login response:", data);
 
       if (response.ok && data.success) {
-        // Stocker la session avec un hash (pas le mot de passe)
+        // Stocker la session
         const session = {
           hash: data.sessionHash,
-          expiry: Date.now() + SESSION_DURATION,
+          expiry: data.expiry || Date.now() + SESSION_DURATION,
         };
         localStorage.setItem(SESSION_KEY, JSON.stringify(session));
         setIsAuthenticated(true);
@@ -87,6 +95,8 @@ export function AuthGuard({ children }: AuthGuardProps) {
 
   const handleLogout = () => {
     localStorage.removeItem(SESSION_KEY);
+    // Supprimer le cookie aussi
+    document.cookie = "az_admin_verified=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
     setIsAuthenticated(false);
     router.push("/");
   };
@@ -148,7 +158,7 @@ export function AuthGuard({ children }: AuthGuardProps) {
               </div>
 
               {error && (
-                <div className="p-3 bg-red-500/10 border border-red-500/20 rounded-lg animate-shake">
+                <div className="p-3 bg-red-500/10 border border-red-500/20 rounded-lg">
                   <p className="text-sm text-red-400 text-center">{error}</p>
                 </div>
               )}

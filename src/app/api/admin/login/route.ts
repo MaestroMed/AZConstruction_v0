@@ -1,63 +1,72 @@
 import { NextRequest, NextResponse } from "next/server";
-import { createHash, randomBytes } from "crypto";
+import { createHash } from "crypto";
 
 // Mot de passe admin stocké côté serveur uniquement
 const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || "AZConstruct2024!";
 
-// Store simple pour les sessions (en production, utiliser Redis ou DB)
-const activeSessions = new Map<string, { expiry: number }>();
-
-// Nettoyer les sessions expirées toutes les heures
-setInterval(() => {
-  const now = Date.now();
-  for (const [hash, session] of activeSessions.entries()) {
-    if (session.expiry < now) {
-      activeSessions.delete(hash);
-    }
-  }
-}, 60 * 60 * 1000);
+// Secret pour signer les sessions
+const SESSION_SECRET = process.env.NEXTAUTH_SECRET || "az-construction-admin-secret-2024";
 
 export async function POST(request: NextRequest) {
   try {
-    const { password } = await request.json();
+    const body = await request.json();
+    const { password } = body;
 
-    // Rate limiting basique via IP
-    const ip = request.headers.get("x-forwarded-for") || "unknown";
-    const rateLimitKey = `admin_login_${ip}`;
-    
+    console.log("[Admin Login] Tentative de connexion");
+
+    // Vérification du mot de passe
+    if (!password) {
+      console.log("[Admin Login] Mot de passe manquant");
+      return NextResponse.json(
+        { success: false, error: "Mot de passe requis" },
+        { status: 400 }
+      );
+    }
+
     // Simuler un délai pour prévenir le brute force
-    await new Promise((resolve) => setTimeout(resolve, 500));
+    await new Promise((resolve) => setTimeout(resolve, 300));
 
     // Vérifier le mot de passe
     if (password !== ADMIN_PASSWORD) {
+      console.log("[Admin Login] Mot de passe incorrect");
       return NextResponse.json(
         { success: false, error: "Mot de passe incorrect" },
         { status: 401 }
       );
     }
 
-    // Créer un hash de session unique
-    const sessionId = randomBytes(32).toString("hex");
-    const sessionHash = createHash("sha256")
-      .update(sessionId + Date.now().toString())
-      .digest("hex");
+    console.log("[Admin Login] Mot de passe correct, création de session");
 
-    // Stocker la session (24h)
-    const expiry = Date.now() + 24 * 60 * 60 * 1000;
-    activeSessions.set(sessionHash, { expiry });
+    // Créer un hash de session signé (valide 24h)
+    const timestamp = Date.now();
+    const expiry = timestamp + 24 * 60 * 60 * 1000;
+    const dataToSign = `admin:${expiry}:${SESSION_SECRET}`;
+    const sessionHash = createHash("sha256").update(dataToSign).digest("hex");
 
-    return NextResponse.json({
+    console.log("[Admin Login] Session créée avec succès");
+
+    // Créer la réponse avec cookie
+    const response = NextResponse.json({
       success: true,
       sessionHash,
+      expiry,
     });
+
+    // Ajouter un cookie HTTP-only pour la vérification
+    response.cookies.set("az_admin_verified", sessionHash, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "lax",
+      maxAge: 24 * 60 * 60, // 24 heures
+      path: "/",
+    });
+
+    return response;
   } catch (error) {
-    console.error("Admin login error:", error);
+    console.error("[Admin Login] Erreur:", error);
     return NextResponse.json(
       { success: false, error: "Erreur serveur" },
       { status: 500 }
     );
   }
 }
-
-// Export pour la vérification de session
-export { activeSessions };

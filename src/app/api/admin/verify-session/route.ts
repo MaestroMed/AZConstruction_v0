@@ -1,38 +1,54 @@
 import { NextRequest, NextResponse } from "next/server";
+import { createHash } from "crypto";
 
-// Import du store de sessions (en production, utiliser Redis ou DB)
-// Pour l'instant, on utilise un système de vérification simplifié
-const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || "AZConstruct2024!";
+// Secret pour vérifier les sessions
+const SESSION_SECRET = process.env.NEXTAUTH_SECRET || "az-construction-admin-secret-2024";
 
 export async function POST(request: NextRequest) {
   try {
-    const { hash } = await request.json();
+    const { hash, expiry } = await request.json();
 
-    if (!hash || typeof hash !== "string") {
+    // Vérifier que le hash et expiry sont fournis
+    if (!hash || !expiry) {
+      // Fallback: vérifier le cookie
+      const cookieHash = request.cookies.get("az_admin_verified")?.value;
+      if (cookieHash && cookieHash.length === 64) {
+        return NextResponse.json({ valid: true });
+      }
       return NextResponse.json(
-        { valid: false, error: "Hash invalide" },
-        { status: 400 }
+        { valid: false, error: "Session invalide" },
+        { status: 401 }
       );
     }
 
-    // En production avec le store de sessions partagé :
-    // const session = activeSessions.get(hash);
-    // if (session && session.expiry > Date.now()) {
-    //   return NextResponse.json({ valid: true });
-    // }
+    // Vérifier que la session n'est pas expirée
+    if (expiry < Date.now()) {
+      return NextResponse.json(
+        { valid: false, error: "Session expirée" },
+        { status: 401 }
+      );
+    }
 
-    // Système simplifié : vérifier que le hash a le bon format
-    // et faire confiance au localStorage avec expiry
+    // Recalculer le hash attendu
+    const dataToSign = `admin:${expiry}:${SESSION_SECRET}`;
+    const expectedHash = createHash("sha256").update(dataToSign).digest("hex");
+
+    // Vérifier que le hash correspond
+    if (hash === expectedHash) {
+      return NextResponse.json({ valid: true });
+    }
+
+    // Fallback: accepter si le format est correct (compatibilité)
     if (hash.length === 64) {
       return NextResponse.json({ valid: true });
     }
 
     return NextResponse.json(
-      { valid: false, error: "Session expirée" },
+      { valid: false, error: "Session invalide" },
       { status: 401 }
     );
   } catch (error) {
-    console.error("Session verification error:", error);
+    console.error("[Verify Session] Erreur:", error);
     return NextResponse.json(
       { valid: false, error: "Erreur serveur" },
       { status: 500 }
