@@ -1,17 +1,27 @@
 import { NextRequest, NextResponse } from "next/server";
 
-// Mot de passe admin - utilise la variable d'environnement ou le défaut
+// Mot de passe admin
 const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || "AZConstruct2024!";
 
 export async function POST(request: NextRequest) {
+  console.log("[Admin Login] Request received");
+  
   try {
-    const body = await request.json();
-    const { password } = body;
+    // Lire le body
+    let body;
+    try {
+      body = await request.json();
+      console.log("[Admin Login] Body parsed successfully");
+    } catch (parseError) {
+      console.error("[Admin Login] JSON parse error:", parseError);
+      return NextResponse.json(
+        { success: false, error: "Format de requête invalide" },
+        { status: 400 }
+      );
+    }
 
-    // Log pour debug (sera visible dans les logs Vercel)
-    console.log("[Admin Login] Attempting login...");
+    const { password } = body || {};
     console.log("[Admin Login] Password provided:", password ? "yes" : "no");
-    console.log("[Admin Login] Expected password length:", ADMIN_PASSWORD.length);
 
     if (!password) {
       return NextResponse.json(
@@ -23,9 +33,11 @@ export async function POST(request: NextRequest) {
     // Délai anti brute-force
     await new Promise((resolve) => setTimeout(resolve, 200));
 
-    // Comparaison simple et directe
+    // Comparaison
     const isValid = password === ADMIN_PASSWORD;
-    console.log("[Admin Login] Password match:", isValid);
+    console.log("[Admin Login] Password valid:", isValid);
+    console.log("[Admin Login] Expected length:", ADMIN_PASSWORD.length);
+    console.log("[Admin Login] Received length:", password.length);
 
     if (!isValid) {
       return NextResponse.json(
@@ -34,10 +46,9 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Succès - créer un token simple
+    // Succès
     const token = Buffer.from(`admin:${Date.now()}`).toString("base64");
-    
-    console.log("[Admin Login] Success! Token created.");
+    console.log("[Admin Login] Success! Token created");
 
     const response = NextResponse.json({
       success: true,
@@ -56,19 +67,20 @@ export async function POST(request: NextRequest) {
 
     return response;
   } catch (error) {
-    console.error("[Admin Login] Error:", error);
+    console.error("[Admin Login] Unexpected error:", error);
     return NextResponse.json(
-      { success: false, error: "Erreur serveur" },
+      { success: false, error: "Erreur serveur", details: String(error) },
       { status: 500 }
     );
   }
 }
 
-// GET pour tester que l'API fonctionne
+// GET pour tester
 export async function GET() {
   return NextResponse.json({ 
     status: "ok", 
-    message: "Admin login API is working",
-    passwordConfigured: !!process.env.ADMIN_PASSWORD,
+    message: "Admin login API v2",
+    hasPassword: !!process.env.ADMIN_PASSWORD,
+    passwordLength: ADMIN_PASSWORD.length,
   });
 }
