@@ -3,7 +3,7 @@ import { Metadata } from "next";
 export const metadata: Metadata = {
   title: "Contact | Devis Gratuit Métallerie & Thermolaquage - AZ Construction",
   description:
-    "Contactez AZ Construction pour un devis gratuit. Métallerie sur mesure, thermolaquage professionnel. Réponse sous 24h. ☎️ 01 23 45 67 89 - Bruyères-sur-Oise (95)",
+    "Contactez AZ Construction pour un devis gratuit. Métallerie sur mesure, thermolaquage professionnel. Réponse sous 24h. ☎️ 09 71 35 74 96 - Bruyères-sur-Oise (95)",
   keywords: [
     "contact AZ Construction",
     "devis métallerie",
@@ -13,13 +13,13 @@ export const metadata: Metadata = {
     "contact thermolaquage",
   ],
   alternates: {
-    canonical: "https://zaconstruction.fr/contact",
+    canonical: "https://azconstruction.fr/contact",
   },
   openGraph: {
     title: "Contactez-nous | AZ Construction",
     description:
       "Devis gratuit sous 24h. Métallerie sur mesure et thermolaquage professionnel.",
-    url: "https://zaconstruction.fr/contact",
+    url: "https://azconstruction.fr/contact",
     siteName: "AZ Construction",
     locale: "fr_FR",
     type: "website",
@@ -30,13 +30,13 @@ export const metadata: Metadata = {
 const contactSchema = {
   "@context": "https://schema.org",
   "@type": "LocalBusiness",
-  "@id": "https://zaconstruction.fr/#organization",
+  "@id": "https://azconstruction.fr/#organization",
   name: "AZ Construction",
   description:
     "Expert en métallerie sur mesure et thermolaquage professionnel en Île-de-France",
-  url: "https://zaconstruction.fr",
+  url: "https://azconstruction.fr",
   telephone: "+33123456789",
-  email: "contact@zaconstruction.fr",
+  email: "contact@azconstruction.fr",
   address: {
     "@type": "PostalAddress",
     streetAddress: "23 Chemin du Bac des Aubins",

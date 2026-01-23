@@ -18,6 +18,7 @@ import {
 import { Button } from "@/components/ui/Button";
 import { Card, CardContent } from "@/components/ui/Card";
 import { useSiteImages } from "@/lib/hooks/useSiteImages";
+import { trackContactFormSubmitted } from "@/lib/analytics";
 
 const quickLinks = [
   {
@@ -83,6 +84,12 @@ export default function ContactPage() {
       if (!response.ok) {
         throw new Error(data.error || "Erreur lors de l'envoi");
       }
+
+      // Track conversion
+      trackContactFormSubmitted({
+        formType: formData.type as "particulier" | "professionnel",
+        subject: formData.sujet,
+      });
 
       setSubmitted(true);
     } catch (err) {
@@ -177,7 +184,7 @@ export default function ContactPage() {
                         href="tel:+33123456789"
                         className="text-gray-600 hover:text-cyan-glow transition-colors block text-lg font-medium"
                       >
-                        01 23 45 67 89
+                        09 71 35 74 96
                       </a>
                       <p className="text-sm text-gray-400 mt-1">
                         Du lundi au vendredi, 8h-18h
@@ -196,10 +203,10 @@ export default function ContactPage() {
                     <div>
                       <h3 className="font-semibold text-navy-dark mb-1">Email</h3>
                       <a
-                        href="mailto:contact@zaconstruction.fr"
+                        href="mailto:contact@azconstruction.fr"
                         className="text-gray-600 hover:text-cyan-glow transition-colors"
                       >
-                        contact@zaconstruction.fr
+                        contact@azconstruction.fr
                       </a>
                       <p className="text-sm text-gray-400 mt-1">
                         Réponse sous 24h

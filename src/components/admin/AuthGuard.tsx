@@ -2,9 +2,8 @@
 
 import * as React from "react";
 import { useRouter } from "next/navigation";
-import { Loader2, Lock, Eye, EyeOff } from "lucide-react";
+import { Loader2, Lock, Eye, EyeOff, Shield } from "lucide-react";
 
-const ADMIN_PASSWORD = process.env.NEXT_PUBLIC_ADMIN_PASSWORD || "AZConstruct2024!";
 const SESSION_KEY = "az_admin_session";
 const SESSION_DURATION = 24 * 60 * 60 * 1000; // 24 heures
 
@@ -22,14 +21,24 @@ export function AuthGuard({ children }: AuthGuardProps) {
 
   // Vérifier la session au chargement
   React.useEffect(() => {
-    const checkSession = () => {
+    const checkSession = async () => {
       try {
+        // D'abord vérifier la session locale
         const session = localStorage.getItem(SESSION_KEY);
         if (session) {
-          const { expiry, token } = JSON.parse(session);
-          if (expiry > Date.now() && token === "admin_authenticated") {
-            setIsAuthenticated(true);
-            return;
+          const { expiry, hash } = JSON.parse(session);
+          if (expiry > Date.now() && hash) {
+            // Vérifier côté serveur que la session est toujours valide
+            const response = await fetch("/api/admin/verify-session", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ hash }),
+            });
+            
+            if (response.ok) {
+              setIsAuthenticated(true);
+              return;
+            }
           }
         }
       } catch (e) {
@@ -46,20 +55,33 @@ export function AuthGuard({ children }: AuthGuardProps) {
     setLoading(true);
     setError("");
 
-    // Simuler un délai pour éviter le brute force
-    await new Promise((resolve) => setTimeout(resolve, 500));
+    try {
+      // Vérifier le mot de passe côté serveur
+      const response = await fetch("/api/admin/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ password }),
+      });
 
-    if (password === ADMIN_PASSWORD) {
-      const session = {
-        token: "admin_authenticated",
-        expiry: Date.now() + SESSION_DURATION,
-      };
-      localStorage.setItem(SESSION_KEY, JSON.stringify(session));
-      setIsAuthenticated(true);
-    } else {
-      setError("Mot de passe incorrect");
-      setPassword("");
+      const data = await response.json();
+
+      if (response.ok && data.success) {
+        // Stocker la session avec un hash (pas le mot de passe)
+        const session = {
+          hash: data.sessionHash,
+          expiry: Date.now() + SESSION_DURATION,
+        };
+        localStorage.setItem(SESSION_KEY, JSON.stringify(session));
+        setIsAuthenticated(true);
+      } else {
+        setError(data.error || "Mot de passe incorrect");
+        setPassword("");
+      }
+    } catch (err) {
+      console.error("Login error:", err);
+      setError("Erreur de connexion. Veuillez réessayer.");
     }
+    
     setLoading(false);
   };
 
@@ -73,7 +95,10 @@ export function AuthGuard({ children }: AuthGuardProps) {
   if (isAuthenticated === null) {
     return (
       <div className="min-h-screen bg-gray-100 flex items-center justify-center">
-        <Loader2 className="w-8 h-8 animate-spin text-cyan-500" />
+        <div className="text-center">
+          <Loader2 className="w-10 h-10 animate-spin text-cyan-500 mx-auto mb-4" />
+          <p className="text-gray-500">Vérification de la session...</p>
+        </div>
       </div>
     );
   }
@@ -85,34 +110,37 @@ export function AuthGuard({ children }: AuthGuardProps) {
         <div className="w-full max-w-md">
           {/* Logo */}
           <div className="text-center mb-8">
-            <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-br from-cyan-400 to-cyan-600 rounded-2xl mb-4">
-              <Lock className="w-8 h-8 text-white" />
+            <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-br from-cyan-400 to-cyan-600 rounded-2xl mb-4 shadow-lg shadow-cyan-500/20">
+              <Shield className="w-8 h-8 text-white" />
             </div>
             <h1 className="text-2xl font-bold text-white">Administration</h1>
             <p className="text-gray-400 mt-2">AZ Construction</p>
           </div>
 
           {/* Formulaire */}
-          <form onSubmit={handleLogin} className="bg-white/5 backdrop-blur-xl rounded-2xl p-8 border border-white/10">
+          <form onSubmit={handleLogin} className="bg-white/5 backdrop-blur-xl rounded-2xl p-8 border border-white/10 shadow-xl">
             <div className="space-y-6">
               <div>
                 <label htmlFor="password" className="block text-sm font-medium text-gray-300 mb-2">
                   Mot de passe administrateur
                 </label>
                 <div className="relative">
+                  <div className="absolute left-3 top-1/2 -translate-y-1/2">
+                    <Lock className="w-5 h-5 text-gray-500" />
+                  </div>
                   <input
                     id="password"
                     type={showPassword ? "text" : "password"}
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     placeholder="••••••••••"
-                    className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:border-transparent"
+                    className="w-full pl-11 pr-12 py-3 bg-white/5 border border-white/10 rounded-xl text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:border-transparent transition-all"
                     autoFocus
                   />
                   <button
                     type="button"
                     onClick={() => setShowPassword(!showPassword)}
-                    className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-white"
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-white transition-colors"
                   >
                     {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
                   </button>
@@ -120,7 +148,7 @@ export function AuthGuard({ children }: AuthGuardProps) {
               </div>
 
               {error && (
-                <div className="p-3 bg-red-500/10 border border-red-500/20 rounded-lg">
+                <div className="p-3 bg-red-500/10 border border-red-500/20 rounded-lg animate-shake">
                   <p className="text-sm text-red-400 text-center">{error}</p>
                 </div>
               )}
@@ -128,15 +156,18 @@ export function AuthGuard({ children }: AuthGuardProps) {
               <button
                 type="submit"
                 disabled={loading || !password}
-                className="w-full py-3 bg-gradient-to-r from-cyan-500 to-cyan-600 text-white font-semibold rounded-xl hover:from-cyan-600 hover:to-cyan-700 transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                className="w-full py-3.5 bg-gradient-to-r from-cyan-500 to-cyan-600 text-white font-semibold rounded-xl hover:from-cyan-600 hover:to-cyan-700 transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 shadow-lg shadow-cyan-500/20"
               >
                 {loading ? (
                   <>
                     <Loader2 className="w-5 h-5 animate-spin" />
-                    Connexion...
+                    Vérification...
                   </>
                 ) : (
-                  "Se connecter"
+                  <>
+                    <Lock className="w-5 h-5" />
+                    Se connecter
+                  </>
                 )}
               </button>
             </div>
@@ -153,12 +184,9 @@ export function AuthGuard({ children }: AuthGuardProps) {
 
   // Utilisateur authentifié - afficher le contenu admin
   return (
-    <>
-      {/* Bouton de déconnexion dans le header admin */}
-      <AdminLogoutContext.Provider value={{ handleLogout }}>
-        {children}
-      </AdminLogoutContext.Provider>
-    </>
+    <AdminLogoutContext.Provider value={{ handleLogout }}>
+      {children}
+    </AdminLogoutContext.Provider>
   );
 }
 
@@ -176,5 +204,3 @@ export function useAdminLogout() {
   }
   return context;
 }
-
-

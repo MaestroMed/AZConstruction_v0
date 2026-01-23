@@ -195,33 +195,21 @@ export default function Header() {
   const showLogoEnabled = settings.showLogoInHeader !== false;
   const hasValidCustomLogo = !!customLogo && (customLogo.startsWith("http") || customLogo.startsWith("data:") || customLogo.startsWith("/"));
   const showCustomLogo = hasValidCustomLogo && showLogoEnabled;
-  const shouldHaveBackground = isScrolled || !isDarkBackground;
-  
-  // Sur les pages à fond clair, le header doit toujours avoir un fond visible
-  const headerBg = isDarkBackground ? headerBgScroll : 0.95;
 
   return (
     <motion.header
       className={cn(
         "fixed top-0 left-0 right-0 z-50 transition-all duration-500"
       )}
-      style={{
-        backdropFilter: shouldHaveBackground 
-          ? `blur(${isDarkBackground ? headerBlur : 20}px) saturate(180%)` 
-          : "none",
-      }}
     >
-      {/* Glassmorphism background layer */}
-      <motion.div
+      {/* Solid background - always visible for readability */}
+      <div
         className={cn(
-          "absolute inset-0 transition-all duration-500",
-          shouldHaveBackground
-            ? "bg-navy-dark/80 border-b border-white/5 shadow-lg shadow-navy-dark/20"
-            : "bg-transparent"
+          "absolute inset-0 transition-all duration-300",
+          isScrolled || !isDarkBackground
+            ? "bg-navy-dark shadow-lg shadow-navy-dark/30"
+            : "bg-navy-dark/90 backdrop-blur-md"
         )}
-        style={{
-          opacity: shouldHaveBackground ? headerBg : 0,
-        }}
       />
 
       {/* Subtle gradient line at bottom when scrolled */}

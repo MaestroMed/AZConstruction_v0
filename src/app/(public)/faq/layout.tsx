@@ -3,7 +3,7 @@ import { Metadata } from "next";
 export const metadata: Metadata = {
   title: "Questions Fréquentes | FAQ Métallerie & Thermolaquage - AZ Construction",
   description:
-    "Retrouvez les réponses à vos questions sur la métallerie, le thermolaquage, les délais, prix et garanties. Devis gratuit ☎️ 01 23 45 67 89",
+    "Retrouvez les réponses à vos questions sur la métallerie, le thermolaquage, les délais, prix et garanties. Devis gratuit ☎️ 09 71 35 74 96",
   keywords: [
     "FAQ métallerie",
     "questions thermolaquage",
@@ -14,13 +14,13 @@ export const metadata: Metadata = {
     "devis métallerie",
   ],
   alternates: {
-    canonical: "https://zaconstruction.fr/faq",
+    canonical: "https://azconstruction.fr/faq",
   },
   openGraph: {
     title: "Questions Fréquentes | AZ Construction",
     description:
       "Toutes les réponses à vos questions sur nos services de métallerie et thermolaquage.",
-    url: "https://zaconstruction.fr/faq",
+    url: "https://azconstruction.fr/faq",
     siteName: "AZ Construction",
     locale: "fr_FR",
     type: "website",
@@ -37,7 +37,7 @@ const faqSchema = {
       name: "Comment obtenir un devis ?",
       acceptedAnswer: {
         "@type": "Answer",
-        text: "Vous pouvez obtenir un devis gratuitement via notre configurateur en ligne, formulaire de contact, par téléphone au 01 23 45 67 89, ou en prenant rendez-vous. Réponse sous 48h ouvrées.",
+        text: "Vous pouvez obtenir un devis gratuitement via notre configurateur en ligne, formulaire de contact, par téléphone au 09 71 35 74 96, ou en prenant rendez-vous. Réponse sous 48h ouvrées.",
       },
     },
     {

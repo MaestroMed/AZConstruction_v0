@@ -503,7 +503,7 @@ export default function DevisDetailPage() {
                       className="flex items-center gap-3 text-gray-600 hover:text-cyan-600 transition-colors"
                     >
                       <Phone className="w-4 h-4" />
-                      01 23 45 67 89
+                      09 71 35 74 96
                     </a>
                     <a
                       href="mailto:contact@azconstruction.fr"

@@ -19,8 +19,8 @@ interface EmailResult {
 }
 
 // Configuration email par défaut
-const DEFAULT_FROM = "AZ Construction <noreply@zaconstruction.fr>";
-const DEFAULT_REPLY_TO = "az@zaconstruction.fr";
+const DEFAULT_FROM = "AZ Construction <noreply@azconstruction.fr>";
+const DEFAULT_REPLY_TO = "contact@azconstruction.fr";
 
 /**
  * Envoie un email via Resend
@@ -121,7 +121,7 @@ export const emailTemplates = {
             </p>
             
             <div style="margin-top: 30px; text-align: center;">
-              <a href="https://zaconstruction.fr/realisations" style="display: inline-block; background: linear-gradient(135deg, #0ea5e9 0%, #22d3ee 100%); color: #ffffff; text-decoration: none; padding: 14px 28px; border-radius: 8px; font-weight: 600;">
+              <a href="https://azconstruction.fr/realisations" style="display: inline-block; background: linear-gradient(135deg, #0ea5e9 0%, #22d3ee 100%); color: #ffffff; text-decoration: none; padding: 14px 28px; border-radius: 8px; font-weight: 600;">
                 Voir nos réalisations
               </a>
             </div>
@@ -205,7 +205,7 @@ export const emailTemplates = {
           </div>
           
           <div style="margin-top: 30px; text-align: center;">
-            <a href="https://zaconstruction.fr/admin" style="display: inline-block; background-color: #1e3a5f; color: #ffffff; text-decoration: none; padding: 12px 24px; border-radius: 6px; font-weight: 500;">
+            <a href="https://azconstruction.fr/admin" style="display: inline-block; background-color: #1e3a5f; color: #ffffff; text-decoration: none; padding: 12px 24px; border-radius: 6px; font-weight: 500;">
               Accéder au back-office
             </a>
           </div>
@@ -281,7 +281,7 @@ export async function sendContactNotificationToAdmin(data: {
   type: string;
 }): Promise<EmailResult> {
   const template = emailTemplates.newContactNotification(data);
-  const adminEmail = process.env.ADMIN_EMAIL || "az@zaconstruction.fr";
+  const adminEmail = process.env.ADMIN_EMAIL || "contact@azconstruction.fr";
   
   return sendEmail({
     to: adminEmail,

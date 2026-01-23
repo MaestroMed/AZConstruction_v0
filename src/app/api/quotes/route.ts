@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { quoteRequestSchema } from "@/lib/validations/quote";
 import { generateQuotePDF } from "@/lib/pdf/generateQuotePDF";
+import { sendEmail, emailTemplates } from "@/lib/email/resend";
 
 // Générer un numéro de devis unique
 function generateQuoteNumber(): string {
@@ -156,9 +157,46 @@ export async function POST(request: NextRequest) {
       },
     });
 
-    // TODO: Générer le PDF et le sauvegarder
-    // TODO: Envoyer l'email de confirmation au client
-    // TODO: Envoyer la notification à l'admin
+    // Envoyer les emails (en arrière-plan pour ne pas bloquer la réponse)
+    const clientName = `${contactInfo.prenom || ""} ${contactInfo.nom || ""}`.trim() || "Client";
+    const totalFormatted = totalTTC.toLocaleString("fr-FR", { minimumFractionDigits: 2 });
+
+    // Email de confirmation au client
+    try {
+      const confirmationEmail = emailTemplates.devisConfirmation({
+        nom: clientName,
+        numero: quoteNumber,
+        total: totalFormatted,
+      });
+      
+      await sendEmail({
+        to: contactInfo.email,
+        subject: confirmationEmail.subject,
+        html: confirmationEmail.html,
+      });
+    } catch (emailError) {
+      console.error("Erreur envoi email client:", emailError);
+      // On ne bloque pas si l'email échoue
+    }
+
+    // Notification à l'admin
+    try {
+      const adminEmail = process.env.ADMIN_EMAIL || "contact@azconstruction.fr";
+      const adminNotif = emailTemplates.adminNotification({
+        type: "demande de devis",
+        numero: quoteNumber,
+        client: `${clientName} (${contactInfo.email})`,
+      });
+
+      await sendEmail({
+        to: adminEmail,
+        subject: adminNotif.subject,
+        html: adminNotif.html,
+        replyTo: contactInfo.email,
+      });
+    } catch (emailError) {
+      console.error("Erreur envoi email admin:", emailError);
+    }
 
     return NextResponse.json(
       {

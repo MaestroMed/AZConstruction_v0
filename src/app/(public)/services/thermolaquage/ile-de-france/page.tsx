@@ -18,7 +18,7 @@ import { Card, CardContent } from "@/components/ui/Card";
 export const metadata: Metadata = {
   title: "Thermolaquage Île-de-France | Paris, 75, 77, 78, 91, 92, 93, 94, 95 - AZ Construction",
   description:
-    "Service de thermolaquage professionnel en Île-de-France. Enlèvement et livraison Paris et tous départements (75, 77, 78, 91, 92, 93, 94, 95). Devis gratuit ☎️ 01 23 45 67 89",
+    "Service de thermolaquage professionnel en Île-de-France. Enlèvement et livraison Paris et tous départements (75, 77, 78, 91, 92, 93, 94, 95). Devis gratuit ☎️ 09 71 35 74 96",
   keywords: [
     "thermolaquage ile de france",
     "thermolaquage paris",
@@ -34,13 +34,13 @@ export const metadata: Metadata = {
     "laquage poudre paris",
   ],
   alternates: {
-    canonical: "https://zaconstruction.fr/services/thermolaquage/ile-de-france",
+    canonical: "https://azconstruction.fr/services/thermolaquage/ile-de-france",
   },
   openGraph: {
     title: "Thermolaquage Île-de-France | AZ Construction",
     description:
       "Service de thermolaquage professionnel en Île-de-France. Enlèvement et livraison gratuits.",
-    url: "https://zaconstruction.fr/services/thermolaquage/ile-de-france",
+    url: "https://azconstruction.fr/services/thermolaquage/ile-de-france",
     siteName: "AZ Construction",
     locale: "fr_FR",
     type: "website",
@@ -147,7 +147,7 @@ export default function ThermolaquageIleDeFrancePage() {
                   icon={<Phone className="w-5 h-5" />}
                   iconPosition="left"
                 >
-                  01 23 45 67 89
+                  09 71 35 74 96
                 </Button>
               </a>
             </div>
@@ -270,7 +270,7 @@ export default function ThermolaquageIleDeFrancePage() {
                   icon={<Phone className="w-5 h-5" />}
                   iconPosition="left"
                 >
-                  01 23 45 67 89
+                  09 71 35 74 96
                 </Button>
               </a>
             </div>

@@ -64,7 +64,7 @@ export const metadata: Metadata = {
       ? process.env.NEXTAUTH_URL 
       : process.env.NEXTAUTH_URL 
         ? `https://${process.env.NEXTAUTH_URL}` 
-        : "https://zaconstruction.fr"
+        : "https://azconstruction.fr"
   ),
   alternates: {
     canonical: "/",

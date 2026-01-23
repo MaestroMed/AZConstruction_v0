@@ -332,7 +332,7 @@ function AdminLayoutContent({
                   Administrateur
                 </p>
                 <p className="text-xs text-gray-500 truncate">
-                  admin@zaconstruction.fr
+                  contact@azconstruction.fr
                 </p>
               </div>
             )}

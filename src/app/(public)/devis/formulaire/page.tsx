@@ -16,6 +16,7 @@ import {
 } from "@/components/quote";
 import { useQuoteRequestStore } from "@/stores/quoteRequestStore";
 import type { ContactInfo, ProjectInfo } from "@/types/quote";
+import { trackQuoteSubmitted, trackQuoteStarted, trackQuoteAbandoned } from "@/lib/analytics";
 
 export default function DevisFormulairePage() {
   const router = useRouter();
@@ -130,6 +131,13 @@ export default function DevisFormulairePage() {
       if (!response.ok) {
         throw new Error(data.error || "Une erreur est survenue");
       }
+
+      // Track conversion
+      trackQuoteSubmitted({
+        productFamily: configuration.family,
+        estimatedValue: configuration.price,
+        clientType: contactInfo.type as "particulier" | "professionnel",
+      });
 
       setSubmittedQuoteNumber(data.quoteNumber);
       router.push("/devis/confirmation");

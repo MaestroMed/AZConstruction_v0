@@ -3,6 +3,7 @@
 import * as React from "react";
 import { Phone } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { trackPhoneClick } from "@/lib/analytics";
 
 interface PhoneLinkProps {
   className?: string;
@@ -23,11 +24,11 @@ async function fetchPhone(): Promise<string> {
   fetchPromise = fetch("/api/settings")
     .then((res) => res.json())
     .then((data) => {
-      cachedPhone = data.settings?.phone || "+33 1 23 45 67 89";
+      cachedPhone = data.settings?.phone || "09 71 35 74 96";
       return cachedPhone as string;
     })
     .catch(() => {
-      cachedPhone = "+33 1 23 45 67 89";
+      cachedPhone = "09 71 35 74 96";
       return cachedPhone as string;
     });
   
@@ -40,7 +41,7 @@ export function PhoneLink({
   showIcon = true,
   variant = "default",
 }: PhoneLinkProps) {
-  const [phone, setPhone] = React.useState<string>(cachedPhone || "+33 1 23 45 67 89");
+  const [phone, setPhone] = React.useState<string>(cachedPhone || "09 71 35 74 96");
 
   React.useEffect(() => {
     fetchPhone().then(setPhone);
@@ -62,10 +63,15 @@ export function PhoneLink({
   // Format tel: link (remove spaces and special chars)
   const telLink = `tel:${phone.replace(/[\s.-]/g, "")}`;
 
+  const handleClick = () => {
+    trackPhoneClick(variant);
+  };
+
   if (variant === "button") {
     return (
       <a
         href={telLink}
+        onClick={handleClick}
         className={cn(
           "inline-flex items-center gap-2 px-4 py-2 rounded-full",
           "bg-white/10 hover:bg-white/20 border border-white/20",
@@ -83,6 +89,7 @@ export function PhoneLink({
     return (
       <a
         href={telLink}
+        onClick={handleClick}
         className={cn(
           "inline-flex items-center gap-1.5 text-inherit hover:opacity-80 transition-opacity",
           className
@@ -97,6 +104,7 @@ export function PhoneLink({
   return (
     <a
       href={telLink}
+      onClick={handleClick}
       className={cn(
         "inline-flex items-center gap-2 text-white hover:text-cyan-glow transition-colors",
         className
@@ -110,7 +118,7 @@ export function PhoneLink({
 
 // Hook pour utiliser le téléphone ailleurs
 export function usePhone() {
-  const [phone, setPhone] = React.useState<string>(cachedPhone || "+33 1 23 45 67 89");
+  const [phone, setPhone] = React.useState<string>(cachedPhone || "09 71 35 74 96");
 
   React.useEffect(() => {
     fetchPhone().then(setPhone);

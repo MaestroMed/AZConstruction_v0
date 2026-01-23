@@ -1,7 +1,7 @@
 import { MetadataRoute } from 'next'
 
 export default function sitemap(): MetadataRoute.Sitemap {
-  const baseUrl = 'https://zaconstruction.fr'
+  const baseUrl = 'https://azconstruction.fr'
   const lastModified = new Date()
 
   // Product family slugs
@@ -41,6 +41,48 @@ export default function sitemap(): MetadataRoute.Sitemap {
     },
     {
       url: `${baseUrl}/services/thermolaquage/val-doise-95`,
+      lastModified,
+      changeFrequency: 'monthly',
+      priority: 0.9,
+    },
+    {
+      url: `${baseUrl}/services/thermolaquage/paris-75`,
+      lastModified,
+      changeFrequency: 'monthly',
+      priority: 0.9,
+    },
+    {
+      url: `${baseUrl}/services/thermolaquage/hauts-de-seine-92`,
+      lastModified,
+      changeFrequency: 'monthly',
+      priority: 0.9,
+    },
+    {
+      url: `${baseUrl}/services/thermolaquage/seine-saint-denis-93`,
+      lastModified,
+      changeFrequency: 'monthly',
+      priority: 0.9,
+    },
+    {
+      url: `${baseUrl}/services/thermolaquage/val-de-marne-94`,
+      lastModified,
+      changeFrequency: 'monthly',
+      priority: 0.9,
+    },
+    {
+      url: `${baseUrl}/services/thermolaquage/yvelines-78`,
+      lastModified,
+      changeFrequency: 'monthly',
+      priority: 0.9,
+    },
+    {
+      url: `${baseUrl}/services/thermolaquage/essonne-91`,
+      lastModified,
+      changeFrequency: 'monthly',
+      priority: 0.9,
+    },
+    {
+      url: `${baseUrl}/services/thermolaquage/seine-et-marne-77`,
       lastModified,
       changeFrequency: 'monthly',
       priority: 0.9,

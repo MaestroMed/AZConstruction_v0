@@ -224,22 +224,22 @@ export default function Footer() {
                 <PhoneLink className="text-inherit" showIcon={false} />
               </div>
               <a
-                href="mailto:contact@az-construction.fr"
+                href="mailto:contact@azconstruction.fr"
                 className="flex items-center gap-3 text-white/60 hover:text-cyan-glow transition-colors group"
               >
                 <div className="w-8 h-8 rounded-lg bg-white/5 border border-white/10 flex items-center justify-center group-hover:bg-cyan-glow/10 group-hover:border-cyan-glow/30 transition-all">
                   <Mail className="w-4 h-4" />
                 </div>
-                <span>contact@az-construction.fr</span>
+                <span>contact@azconstruction.fr</span>
               </a>
               <div className="flex items-start gap-3 text-white/60">
                 <div className="w-8 h-8 rounded-lg bg-white/5 border border-white/10 flex items-center justify-center flex-shrink-0">
                   <MapPin className="w-4 h-4" />
                 </div>
                 <span className="text-sm">
-                  Zone Industrielle
+                  23 Chemin du Bac des Aubins
                   <br />
-                  83000 Toulon, France
+                  95820 Bruyères-sur-Oise
                 </span>
               </div>
             </div>

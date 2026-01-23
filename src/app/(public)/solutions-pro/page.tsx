@@ -584,11 +584,11 @@ export default function SolutionsProPage() {
                 </div>
                 <div>
                   <p className="text-sm text-white/60">Ligne directe commerciale</p>
-                  <p className="font-semibold text-white">01 23 45 67 89</p>
+                  <p className="font-semibold text-white">09 71 35 74 96</p>
                 </div>
               </a>
               <a
-                href="mailto:pro@zaconstruction.fr"
+                href="mailto:contact@azconstruction.fr"
                 className="flex items-center gap-4 bg-white/10 backdrop-blur-sm rounded-2xl p-6 border border-white/10 hover:bg-white/20 transition-colors"
               >
                 <div className="w-12 h-12 rounded-xl bg-cyan-glow/20 flex items-center justify-center">
@@ -596,7 +596,7 @@ export default function SolutionsProPage() {
                 </div>
                 <div>
                   <p className="text-sm text-white/60">Email professionnel</p>
-                  <p className="font-semibold text-white">pro@zaconstruction.fr</p>
+                  <p className="font-semibold text-white">contact@azconstruction.fr</p>
                 </div>
               </a>
             </div>

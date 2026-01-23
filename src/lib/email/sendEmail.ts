@@ -65,7 +65,7 @@ export async function sendEmail(options: EmailOptions): Promise<SendEmailResult>
     });
 
     const info = await transporter.sendMail({
-      from: `"AZ Construction" <${process.env.SMTP_FROM || 'noreply@zaconstruction.fr'}>`,
+      from: `"AZ Construction" <${process.env.SMTP_FROM || 'noreply@azconstruction.fr'}>`,
       to: Array.isArray(to) ? to.join(', ') : to,
       subject,
       text: text || '',
@@ -84,7 +84,7 @@ export async function sendEmail(options: EmailOptions): Promise<SendEmailResult>
     const resend = new Resend(process.env.RESEND_API_KEY);
 
     const { data, error } = await resend.emails.send({
-      from: 'AZ Construction <noreply@zaconstruction.fr>',
+      from: 'AZ Construction <noreply@azconstruction.fr>',
       to: Array.isArray(to) ? to : [to],
       subject,
       html,
@@ -180,7 +180,7 @@ export async function sendQuoteNotificationEmail(
     dateDemanDe: string;
   }
 ): Promise<SendEmailResult> {
-  const adminEmail = process.env.ADMIN_EMAIL || "admin@zaconstruction.fr";
+  const adminEmail = process.env.ADMIN_EMAIL || "contact@azconstruction.fr";
 
   // Import dynamique du template
   const { QuoteNotificationEmail } = await import(

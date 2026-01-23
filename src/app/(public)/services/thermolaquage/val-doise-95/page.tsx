@@ -19,7 +19,7 @@ import { Card, CardContent } from "@/components/ui/Card";
 export const metadata: Metadata = {
   title: "Thermolaquage Val-d'Oise (95) | Cergy, Argenteuil, Sarcelles - AZ Construction",
   description:
-    "Thermolaquage professionnel dans le Val-d'Oise (95). Atelier à Bruyères-sur-Oise, intervention rapide Cergy, Argenteuil, Sarcelles, Pontoise. Devis gratuit ☎️ 01 23 45 67 89",
+    "Thermolaquage professionnel dans le Val-d'Oise (95). Atelier à Bruyères-sur-Oise, intervention rapide Cergy, Argenteuil, Sarcelles, Pontoise. Devis gratuit ☎️ 09 71 35 74 96",
   keywords: [
     "thermolaquage val d'oise",
     "thermolaquage 95",
@@ -32,13 +32,13 @@ export const metadata: Metadata = {
     "laquage poudre 95",
   ],
   alternates: {
-    canonical: "https://zaconstruction.fr/services/thermolaquage/val-doise-95",
+    canonical: "https://azconstruction.fr/services/thermolaquage/val-doise-95",
   },
   openGraph: {
     title: "Thermolaquage Val-d'Oise (95) | AZ Construction",
     description:
       "Thermolaquage professionnel dans le Val-d'Oise. Atelier à Bruyères-sur-Oise.",
-    url: "https://zaconstruction.fr/services/thermolaquage/val-doise-95",
+    url: "https://azconstruction.fr/services/thermolaquage/val-doise-95",
     siteName: "AZ Construction",
     locale: "fr_FR",
     type: "website",
@@ -171,7 +171,7 @@ export default function ThermolaquageValDOisePage() {
                   icon={<Phone className="w-5 h-5" />}
                   iconPosition="left"
                 >
-                  01 23 45 67 89
+                  09 71 35 74 96
                 </Button>
               </a>
             </div>
@@ -333,7 +333,7 @@ export default function ThermolaquageValDOisePage() {
                       <div>
                         <p className="font-medium text-navy-dark">Téléphone</p>
                         <a href="tel:+33123456789" className="hover:text-cyan-glow transition-colors">
-                          01 23 45 67 89
+                          09 71 35 74 96
                         </a>
                       </div>
                     </div>
@@ -403,7 +403,7 @@ export default function ThermolaquageValDOisePage() {
                   icon={<Phone className="w-5 h-5" />}
                   iconPosition="left"
                 >
-                  01 23 45 67 89
+                  09 71 35 74 96
                 </Button>
               </a>
             </div>

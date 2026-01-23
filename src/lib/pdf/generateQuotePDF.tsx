@@ -169,8 +169,8 @@ const QuoteDocument: React.FC<{ data: QuoteData }> = ({ data }) => (
           <Text style={styles.logoSubtitle}>Métallerie sur mesure</Text>
           <Text style={{ marginTop: 10 }}>23 Chemin du Bac des Aubins</Text>
           <Text>95820 Bruyères-sur-Oise</Text>
-          <Text>Tél: +33 1 23 45 67 89</Text>
-          <Text>contact@zaconstruction.fr</Text>
+          <Text>Tél: 09 71 35 74 96</Text>
+          <Text>contact@azconstruction.fr</Text>
         </View>
         <View style={styles.devisInfo}>
           <Text style={styles.devisNumber}>DEVIS N°{data.numero}</Text>
@@ -295,7 +295,7 @@ export async function downloadQuotePDF(data: DownloadQuoteData): Promise<void> {
   doc.setTextColor(100);
   doc.text("Métallerie sur mesure", 20, 32);
   doc.text("23 Chemin du Bac des Aubins, 95820 Bruyères-sur-Oise", 20, 38);
-  doc.text("contact@zaconstruction.fr | +33 1 23 45 67 89", 20, 44);
+  doc.text("contact@azconstruction.fr | 09 71 35 74 96", 20, 44);
   
   // Ligne séparatrice
   doc.setDrawColor(0, 212, 255);

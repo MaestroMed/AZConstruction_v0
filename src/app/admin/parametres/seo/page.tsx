@@ -94,7 +94,7 @@ export default function SEOPage() {
             <h2 className="text-lg font-semibold text-gray-900 mb-4">Aperçu Google</h2>
             <div className="p-4 bg-gray-50 rounded-lg border border-gray-200">
               <p className="text-blue-600 text-lg">{settings.defaultTitle}</p>
-              <p className="text-emerald-700 text-sm">https://zaconstruction.fr</p>
+              <p className="text-emerald-700 text-sm">https://azconstruction.fr</p>
               <p className="text-gray-600 text-sm line-clamp-2 mt-1">{settings.defaultDescription}</p>
             </div>
           </div>

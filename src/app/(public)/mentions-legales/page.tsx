@@ -53,13 +53,13 @@ export default function MentionsLegalesPage() {
                 <p>
                   <strong className="text-navy-dark">Téléphone :</strong>{" "}
                   <a href="tel:+33123456789" className="text-blue-corporate hover:underline">
-                    01 23 45 67 89
+                    09 71 35 74 96
                   </a>
                 </p>
                 <p>
                   <strong className="text-navy-dark">Email :</strong>{" "}
-                  <a href="mailto:contact@zaconstruction.fr" className="text-blue-corporate hover:underline">
-                    contact@zaconstruction.fr
+                  <a href="mailto:contact@azconstruction.fr" className="text-blue-corporate hover:underline">
+                    contact@azconstruction.fr
                   </a>
                 </p>
               </div>

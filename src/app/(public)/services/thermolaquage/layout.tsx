@@ -4,7 +4,7 @@ import ClickToCallBanner from "@/components/ui/ClickToCallBanner";
 export const metadata: Metadata = {
   title: "Thermolaquage Poudre Epoxy | 200+ Couleurs RAL | Garantie 10 ans - AZ Construction",
   description:
-    "Thermolaquage professionnel en Île-de-France. Peinture poudre epoxy haute résistance, 200+ teintes RAL, finition haut de gamme. Devis gratuit sous 24h. ☎️ 01 23 45 67 89",
+    "Thermolaquage professionnel en Île-de-France. Peinture poudre epoxy haute résistance, 200+ teintes RAL, finition haut de gamme. Devis gratuit sous 24h. ☎️ 09 71 35 74 96",
   keywords: [
     "thermolaquage",
     "peinture poudre",
@@ -21,13 +21,13 @@ export const metadata: Metadata = {
     "traitement anticorrosion",
   ],
   alternates: {
-    canonical: "https://zaconstruction.fr/services/thermolaquage",
+    canonical: "https://azconstruction.fr/services/thermolaquage",
   },
   openGraph: {
     title: "Thermolaquage Professionnel | AZ Construction",
     description:
       "Service de thermolaquage poudre epoxy. 200+ couleurs RAL, garantie 10 ans, devis gratuit sous 24h.",
-    url: "https://zaconstruction.fr/services/thermolaquage",
+    url: "https://azconstruction.fr/services/thermolaquage",
     siteName: "AZ Construction",
     locale: "fr_FR",
     type: "website",
@@ -67,13 +67,13 @@ const jsonLd = {
     // LocalBusiness
     {
       "@type": "LocalBusiness",
-      "@id": "https://zaconstruction.fr/#organization",
+      "@id": "https://azconstruction.fr/#organization",
       name: "AZ Construction",
       description:
         "Expert en métallerie sur mesure et thermolaquage professionnel en Île-de-France",
-      url: "https://zaconstruction.fr",
+      url: "https://azconstruction.fr",
       telephone: "+33123456789",
-      email: "contact@zaconstruction.fr",
+      email: "contact@azconstruction.fr",
       address: {
         "@type": "PostalAddress",
         streetAddress: "23 Chemin du Bac des Aubins",
@@ -115,12 +115,12 @@ const jsonLd = {
     // Service Thermolaquage
     {
       "@type": "Service",
-      "@id": "https://zaconstruction.fr/services/thermolaquage/#service",
+      "@id": "https://azconstruction.fr/services/thermolaquage/#service",
       name: "Thermolaquage Poudre Epoxy",
       description:
         "Service professionnel de thermolaquage poudre epoxy. Protection maximale anticorrosion, 200+ couleurs RAL disponibles, garantie 10 ans.",
       provider: {
-        "@id": "https://zaconstruction.fr/#organization",
+        "@id": "https://azconstruction.fr/#organization",
       },
       serviceType: "Thermolaquage",
       areaServed: [
@@ -171,7 +171,7 @@ const jsonLd = {
     // FAQPage
     {
       "@type": "FAQPage",
-      "@id": "https://zaconstruction.fr/services/thermolaquage/#faq",
+      "@id": "https://azconstruction.fr/services/thermolaquage/#faq",
       mainEntity: [
         {
           "@type": "Question",
@@ -223,19 +223,19 @@ const jsonLd = {
           "@type": "ListItem",
           position: 1,
           name: "Accueil",
-          item: "https://zaconstruction.fr",
+          item: "https://azconstruction.fr",
         },
         {
           "@type": "ListItem",
           position: 2,
           name: "Services",
-          item: "https://zaconstruction.fr/services",
+          item: "https://azconstruction.fr/services",
         },
         {
           "@type": "ListItem",
           position: 3,
           name: "Thermolaquage",
-          item: "https://zaconstruction.fr/services/thermolaquage",
+          item: "https://azconstruction.fr/services/thermolaquage",
         },
       ],
     },
@@ -256,7 +256,7 @@ export default function ThermolaquageLayout({
       {children}
       <ClickToCallBanner 
         phoneNumber="+33123456789"
-        displayNumber="01 23 45 67 89"
+        displayNumber="09 71 35 74 96"
         message="Thermolaquage - Devis gratuit sous 24h"
       />
     </>

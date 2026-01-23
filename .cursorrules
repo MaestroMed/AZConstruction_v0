@@ -1,0 +1,107 @@
+# ============================================
+# AZ CONSTRUCTION - Cursor Rules
+# ============================================
+# Ces règles guident l'assistant IA pour maintenir
+# la cohérence du code et des conventions du projet.
+
+## Contexte Projet
+- Site e-commerce B2B/B2C pour métallerie sur mesure
+- Client : AZ Construction, Bruyères-sur-Oise (95)
+- Domaine : azconstruction.fr
+- Contact : 09 71 35 74 96 / contact@azconstruction.fr
+
+## Stack Technique
+- Framework: Next.js 16 (App Router)
+- Langage: TypeScript (strict mode)
+- Styling: Tailwind CSS 4 + Design System custom
+- Database: Prisma ORM + PostgreSQL (Supabase)
+- Auth: NextAuth.js v4
+- Email: Resend
+- Images: Cloudinary + Local fallback
+- State: Zustand
+- 3D: React Three Fiber (désactivé pour l'instant)
+- Tests: Playwright E2E
+
+## Structure Fichiers
+```
+src/
+├── app/              # Pages Next.js (App Router)
+│   ├── (public)/     # Pages publiques (layout avec Header/Footer)
+│   ├── admin/        # Back-office (AuthGuard)
+│   └── api/          # Routes API
+├── components/       # Composants React
+│   ├── ui/           # Primitives réutilisables
+│   ├── layout/       # Header, Footer
+│   ├── homepage/     # Sections accueil
+│   ├── configurator/ # 3D (désactivé)
+│   └── admin/        # Composants back-office
+├── lib/              # Utilitaires
+│   ├── auth/         # Config NextAuth
+│   ├── email/        # Templates & envoi
+│   ├── hooks/        # Custom hooks
+│   └── validations/  # Schémas Zod
+├── stores/           # Zustand stores
+└── types/            # Types TypeScript
+```
+
+## Conventions de Code
+
+### Naming
+- Composants: PascalCase (ex: `HeroSection.tsx`)
+- Hooks: camelCase avec prefix `use` (ex: `useCompanyInfo.ts`)
+- Utilitaires: camelCase (ex: `formatPrice.ts`)
+- Types: PascalCase (ex: `ProductFamily`)
+- Variables d'environnement: SCREAMING_SNAKE_CASE
+
+### Imports
+- Utiliser l'alias `@/` pour les imports relatifs
+- Ordre: React → Next → Externes → Internes → Types → Styles
+
+### Composants
+- "use client" uniquement si nécessaire (hooks, events, browser APIs)
+- Préférer Server Components par défaut
+- Props typées avec interface ou type
+- Export default pour les pages, named export pour les composants
+
+### Styling
+- Utiliser les classes Tailwind + Design System (`globals.css`)
+- Préférer `cn()` pour les classes conditionnelles
+- Couleurs via CSS variables: `--navy-dark`, `--cyan-glow`, etc.
+- Animations avec Framer Motion
+
+### API Routes
+- Validation avec Zod
+- Gestion d'erreurs avec try/catch + messages explicites
+- Rate limiting sur routes sensibles
+- Protection admin via middleware
+
+## Sécurité
+- Ne JAMAIS exposer de secrets côté client (pas de NEXT_PUBLIC_ pour les secrets)
+- Validation côté serveur systématique
+- Échapper les entrées utilisateur
+- Utiliser les headers de sécurité (déjà configurés dans vercel.json)
+
+## Responsive
+- Mobile-first approach
+- Breakpoints: sm (640px), md (768px), lg (1024px), xl (1280px)
+- Tester sur: iPhone SE, iPad, Desktop 1920px
+
+## Langue
+- Code en anglais
+- Commentaires en français
+- Interface utilisateur en français
+- Messages d'erreur en français
+
+## À Éviter
+- any TypeScript (utiliser unknown + type guards)
+- console.log en production (utiliser console.error pour les erreurs)
+- Inline styles (sauf cas exceptionnels)
+- Dépendances non vérifiées
+- Commits directs sur main sans test
+
+## Checklist Avant Commit
+1. `npm run lint` - Pas d'erreurs ESLint
+2. `npm run build` - Build réussi
+3. `npm test` - Tests passants (si modif front)
+4. Vérifier les types TypeScript
+5. Tester responsive (mobile/desktop)

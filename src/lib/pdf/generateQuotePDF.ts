@@ -204,7 +204,7 @@ export async function generateQuotePDF({
   doc.setTextColor(255, 255, 255);
   doc.setFontSize(9);
   doc.text('AZ Construction - Métallerie & Serrurerie', pageWidth / 2, pageHeight - 17, { align: 'center' });
-  doc.text('Tél: 06 00 00 00 00 | Email: contact@az-construction.fr | www.az-construction.fr', pageWidth / 2, pageHeight - 10, { align: 'center' });
+  doc.text('Tél: 09 71 35 74 96 | Email: contact@azconstruction.fr | www.azconstruction.fr', pageWidth / 2, pageHeight - 10, { align: 'center' });
 
   // Retourner le PDF comme Blob
   return doc.output('blob');

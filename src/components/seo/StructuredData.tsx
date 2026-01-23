@@ -8,9 +8,9 @@ const companyData = {
   name: "AZ Construction",
   legalName: "AZ Construction SARL",
   description: "Expert en métallerie sur mesure : garde-corps, escaliers, portes, fenêtres, portails, clôtures et grilles de ventilation. Spécialiste thermolaquage. Profilés Jansen.",
-  url: "https://zaconstruction.fr",
-  telephone: "+33 1 XX XX XX XX",
-  email: "az@zaconstruction.fr",
+  url: "https://azconstruction.fr",
+  telephone: "+33 9 71 35 74 96",
+  email: "contact@azconstruction.fr",
   address: {
     streetAddress: "23 Chemin du Bac des Aubins",
     addressLocality: "Bruyères-sur-Oise",
@@ -27,8 +27,8 @@ const companyData = {
     "Sa 09:00-12:00",
   ],
   priceRange: "€€",
-  image: "https://zaconstruction.fr/og-image.jpg",
-  logo: "https://zaconstruction.fr/logo.png",
+  image: "https://azconstruction.fr/og-image.jpg",
+  logo: "https://azconstruction.fr/logo.png",
   sameAs: [
     "https://www.facebook.com/azconstruction",
     "https://www.instagram.com/azconstruction",

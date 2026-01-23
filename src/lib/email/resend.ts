@@ -21,7 +21,7 @@ interface EmailOptions {
 }
 
 export async function sendEmail({ to, subject, html, replyTo }: EmailOptions) {
-  const from = process.env.EMAIL_FROM || "AZ Construction <noreply@zaconstruction.fr>";
+  const from = process.env.EMAIL_FROM || "AZ Construction <noreply@azconstruction.fr>";
 
   try {
     const resend = getResend();
@@ -85,7 +85,7 @@ export const emailTemplates = {
           </div>
           <div class="footer">
             <p>AZ Construction - 23 Chemin du Bac des Aubins, 95820 Bruyères-sur-Oise</p>
-            <p>Tél: +33 1 23 45 67 89 | contact@zaconstruction.fr</p>
+            <p>Tél: 09 71 35 74 96 | contact@azconstruction.fr</p>
           </div>
         </div>
       </body>

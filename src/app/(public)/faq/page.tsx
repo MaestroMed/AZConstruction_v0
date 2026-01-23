@@ -14,7 +14,7 @@ const faqCategories = [
       {
         question: "Comment obtenir un devis ?",
         answer:
-          "Vous pouvez obtenir un devis gratuitement de plusieurs manières : en remplissant notre formulaire de contact, par téléphone au 01 23 45 67 89, ou en prenant rendez-vous dans nos locaux pour les projets complexes. Nous nous engageons à vous répondre sous 48h ouvrées.",
+          "Vous pouvez obtenir un devis gratuitement de plusieurs manières : en remplissant notre formulaire de contact, par téléphone au 09 71 35 74 96, ou en prenant rendez-vous dans nos locaux pour les projets complexes. Nous nous engageons à vous répondre sous 48h ouvrées.",
       },
       {
         question: "Quelle est la durée de validité d'un devis ?",
@@ -129,7 +129,7 @@ const faqCategories = [
       {
         question: "Que faire en cas de problème après la pose ?",
         answer:
-          "Contactez notre service après-vente au 01 23 45 67 89 ou par email à sav@zaconstruction.fr. Nous nous engageons à prendre en charge votre demande sous 48h et à intervenir rapidement si nécessaire.",
+          "Contactez notre service après-vente au 09 71 35 74 96 ou par email à contact@azconstruction.fr. Nous nous engageons à prendre en charge votre demande sous 48h et à intervenir rapidement si nécessaire.",
       },
       {
         question: "Proposez-vous des pièces détachées ?",
@@ -313,7 +313,7 @@ export default function FAQPage() {
                 <a href="tel:+33123456789">
                   <Button variant="outline" size="lg" className="border-blue-corporate text-blue-corporate">
                     <Phone className="w-5 h-5 mr-2" />
-                    01 23 45 67 89
+                    09 71 35 74 96
                   </Button>
                 </a>
               </div>

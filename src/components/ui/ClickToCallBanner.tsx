@@ -12,7 +12,7 @@ interface ClickToCallBannerProps {
 
 export default function ClickToCallBanner({
   phoneNumber = "+33123456789",
-  displayNumber = "01 23 45 67 89",
+  displayNumber = "09 71 35 74 96",
   message = "Devis gratuit - Réponse sous 24h",
 }: ClickToCallBannerProps) {
   const [isVisible, setIsVisible] = React.useState(true);

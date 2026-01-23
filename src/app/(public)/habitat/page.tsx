@@ -527,7 +527,7 @@ export default function HabitatPage() {
                   className="border-white/30 text-white hover:bg-white/10"
                   icon={<Phone className="w-5 h-5" />}
                 >
-                  01 23 45 67 89
+                  09 71 35 74 96
                 </Button>
               </a>
             </div>

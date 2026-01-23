@@ -15,7 +15,7 @@ import { Card, CardContent } from "@/components/ui/Card";
 export const metadata: Metadata = {
   title: "Nuancier RAL Thermolaquage | 200+ Couleurs Disponibles - AZ Construction",
   description:
-    "Découvrez notre nuancier RAL complet pour thermolaquage : RAL 7016 Gris Anthracite, RAL 9005 Noir, RAL 9010 Blanc et 200+ teintes. Devis gratuit ☎️ 01 23 45 67 89",
+    "Découvrez notre nuancier RAL complet pour thermolaquage : RAL 7016 Gris Anthracite, RAL 9005 Noir, RAL 9010 Blanc et 200+ teintes. Devis gratuit ☎️ 09 71 35 74 96",
   keywords: [
     "RAL 7016",
     "RAL 9005",
@@ -31,13 +31,13 @@ export const metadata: Metadata = {
     "blanc RAL",
   ],
   alternates: {
-    canonical: "https://zaconstruction.fr/couleurs-ral",
+    canonical: "https://azconstruction.fr/couleurs-ral",
   },
   openGraph: {
     title: "Nuancier RAL Thermolaquage | AZ Construction",
     description:
       "200+ couleurs RAL disponibles pour thermolaquage. Trouvez la teinte parfaite pour votre projet.",
-    url: "https://zaconstruction.fr/couleurs-ral",
+    url: "https://azconstruction.fr/couleurs-ral",
     siteName: "AZ Construction",
     locale: "fr_FR",
     type: "website",
@@ -322,7 +322,7 @@ export default function CouleursRALPage() {
                   icon={<Phone className="w-5 h-5" />}
                   iconPosition="left"
                 >
-                  01 23 45 67 89
+                  09 71 35 74 96
                 </Button>
               </a>
             </div>
