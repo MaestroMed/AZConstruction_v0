@@ -10,67 +10,49 @@ interface Realization {
   id: string;
   title: string;
   location: string;
-  imageUrl: string;
+  imageUrl: string | null;
   category: string;
 }
 
-// Données par défaut si localStorage vide
-const defaultRealizations: Realization[] = [
-  {
-    id: "1",
-    title: "Hangar Industriel",
-    location: "Lyon",
-    imageUrl: "/uploads/1734349915098-villa-marseille.jpg",
-    category: "Industriel",
-  },
-  {
-    id: "2",
-    title: "Fenêtres Jansen",
-    location: "Bordeaux",
-    imageUrl: "/uploads/1734349915099-residence-lyon.jpg",
-    category: "Résidentiel",
-  },
-  {
-    id: "3",
-    title: "Escalier Monumental",
-    location: "Paris",
-    imageUrl: "/uploads/1734349915100-loft-paris.jpg",
-    category: "Architecture",
-  },
-  {
-    id: "4",
-    title: "Porte d'entrée Design",
-    location: "Marseille",
-    imageUrl: "/uploads/1734349915101-maison-bordeaux.jpg",
-    category: "Résidentiel",
-  },
-  {
-    id: "5",
-    title: "Structure Métallique",
-    location: "Nice",
-    imageUrl: "/uploads/1734349915102-restaurant-nice.jpg",
-    category: "Commercial",
-  },
-];
-
 export default function RealizationsSection() {
-  const [realizations, setRealizations] = React.useState<Realization[]>(defaultRealizations);
+  const [realizations, setRealizations] = React.useState<Realization[]>([]);
   const [currentIndex, setCurrentIndex] = React.useState(0);
   const [direction, setDirection] = React.useState(0);
+  const [loading, setLoading] = React.useState(true);
 
-  // Charger depuis localStorage
   React.useEffect(() => {
-    try {
-      const saved = localStorage.getItem("az_realizations");
-      if (saved) {
-        const parsed = JSON.parse(saved);
-        if (Array.isArray(parsed) && parsed.length > 0) {
-          setRealizations(parsed.filter((r: Realization) => r.imageUrl));
+    const fetchRealizations = async () => {
+      try {
+        const response = await fetch("/api/realizations");
+        if (response.ok) {
+          const data = await response.json();
+          if (data.success && Array.isArray(data.realizations)) {
+            // Priorité aux réalisations avec image, maintien de l'ordre original ensuite
+            const sorted = [...data.realizations].sort((a, b) => {
+              if (a.imageUrl && !b.imageUrl) return -1;
+              if (!a.imageUrl && b.imageUrl) return 1;
+              return 0;
+            });
+            // Adapter les champs API (titre/ville/categorie) vers les champs du composant
+            setRealizations(
+              sorted.map((r) => ({
+                id: r.id,
+                title: r.titre,
+                location: r.ville ?? "",
+                imageUrl: r.imageUrl ?? null,
+                category: r.categorie,
+              }))
+            );
+          }
         }
+      } catch (e) {
+        console.error("Erreur chargement réalisations:", e);
+      } finally {
+        setLoading(false);
       }
-    } catch (e) {
-      console.error("Erreur chargement réalisations:", e);
-    }
+    };
+
+    fetchRealizations();
   }, []);
 
   const slidesPerView = 3;
@@ -87,6 +69,22 @@ export default function RealizationsSection() {
   };
 
   const visibleRealizations = realizations.slice(currentIndex, currentIndex + slidesPerView);
+
+  if (loading) {
+    return (
+      <section className="py-24 bg-gradient-to-b from-gray-50 to-white overflow-hidden">
+        <div className="container mx-auto px-6 lg:px-12">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {[1, 2, 3].map((i) => (
+              <div key={i} className="h-[400px] rounded-2xl bg-gray-100 animate-pulse" />
+            ))}
+          </div>
+        </div>
+      </section>
+    );
+  }
+
+  if (realizations.length === 0) return null;
 
   return (
     <section className="py-24 bg-gradient-to-b from-gray-50 to-white overflow-hidden">

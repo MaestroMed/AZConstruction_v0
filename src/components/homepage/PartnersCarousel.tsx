@@ -116,75 +116,77 @@ export default function PartnersCarousel() {
                 return (
                   <motion.div
                     key={`${partner.id}-${partner.displayIndex}`}
-                    className="flex-shrink-0 flex items-center justify-center h-16 w-24 md:w-32 lg:w-40"
+                    className="flex-shrink-0 flex items-center justify-center w-24 md:w-32 lg:w-40"
                     initial={{ opacity: 0, x: 50 }}
                     animate={{ opacity: 1, x: 0 }}
                     exit={{ opacity: 0, x: -50 }}
                     transition={{ duration: 0.3 }}
                   >
-                    {hasCustomImage ? (
-                      /* Image logo from back-office */
-                      <div className="relative h-10 md:h-12 w-full">
-                        <Image
-                          src={imageUrl}
-                          alt={partner.name}
-                          fill
-                          className="object-contain"
-                        />
-                      </div>
-                    ) : (
-                      /* Text-based fallback logo */
-                      <div
-                        className="font-bold text-center"
-                        style={{ color: partner.color }}
-                      >
-                        {partner.name === "JANSEN" ? (
-                          <div className="flex flex-col items-center bg-gradient-to-r from-red-700 to-red-600 px-3 py-1.5 rounded-lg">
-                            <span className="text-lg md:text-xl font-black text-white tracking-widest">JANSEN</span>
-                            <span className="text-[8px] md:text-[10px] text-white/80 tracking-wider">STEEL SYSTEMS</span>
-                          </div>
-                        ) : partner.name === "Bouygues Construction" ? (
-                          <div className="flex flex-col items-center">
-                            <span className="text-base md:text-xl font-black">BOUYGUES</span>
-                            <span className="text-[10px] md:text-xs tracking-wider">Construction</span>
-                          </div>
-                        ) : partner.name === "VINCI" ? (
-                          <div className="flex items-center gap-1">
-                            <span className="text-xl md:text-2xl font-black">VINCI</span>
-                            <div className="flex flex-col">
-                              <div className="w-1.5 h-1.5 md:w-2 md:h-2 bg-current" />
-                              <div className="w-1.5 h-1.5 md:w-2 md:h-2 bg-current mt-0.5" />
+                    <div className="flex items-center justify-center h-12 w-full">
+                      {hasCustomImage ? (
+                        /* Image logo from back-office */
+                        <div className="relative h-full w-full">
+                          <Image
+                            src={imageUrl}
+                            alt={partner.name}
+                            fill
+                            className="object-contain"
+                          />
+                        </div>
+                      ) : (
+                        /* Text-based fallback logo */
+                        <div
+                          className="font-bold text-center flex items-center justify-center h-full w-full"
+                          style={{ color: partner.color }}
+                        >
+                          {partner.name === "JANSEN" ? (
+                            <div className="flex flex-col items-center justify-center bg-gradient-to-r from-red-700 to-red-600 px-3 py-1.5 rounded-lg">
+                              <span className="text-base md:text-lg font-black text-white tracking-widest leading-tight">JANSEN</span>
+                              <span className="text-[7px] md:text-[9px] text-white/80 tracking-wider leading-tight">STEEL SYSTEMS</span>
                             </div>
-                          </div>
-                        ) : partner.name === "EIFFAGE" ? (
-                          <span className="text-xl md:text-2xl font-black italic">EIFFAGE</span>
-                        ) : partner.name === "SAINT-GOBAIN" ? (
-                          <span className="text-sm md:text-lg font-black">SAINT-GOBAIN</span>
-                        ) : partner.name === "Demathieu Bard" ? (
-                          <div className="flex flex-col items-center">
-                            <span className="text-sm md:text-base font-black">DEMATHIEU</span>
-                            <span className="text-sm md:text-base font-black">BARD</span>
-                          </div>
-                        ) : partner.name === "Spie Batignolles" ? (
-                          <div className="flex flex-col items-center">
-                            <span className="text-sm md:text-lg font-black">SPIE</span>
-                            <span className="text-[10px] md:text-xs tracking-wider">BATIGNOLLES</span>
-                          </div>
-                        ) : partner.name === "Rabot Dutilleul" ? (
-                          <div className="flex flex-col items-center">
-                            <span className="text-sm md:text-base font-black">RABOT</span>
-                            <span className="text-sm md:text-base font-black">DUTILLEUL</span>
-                          </div>
-                        ) : partner.name === "Urbaine de Travaux" ? (
-                          <div className="flex flex-col items-center">
-                            <span className="text-xs md:text-sm font-black">URBAINE DE</span>
-                            <span className="text-xs md:text-sm font-black">TRAVAUX</span>
-                          </div>
-                        ) : (
-                          <span className="text-sm md:text-base font-black">{partner.name.toUpperCase()}</span>
-                        )}
-                      </div>
-                    )}
+                          ) : partner.name === "Bouygues Construction" ? (
+                            <div className="flex flex-col items-center justify-center leading-tight">
+                              <span className="text-sm md:text-base font-black">BOUYGUES</span>
+                              <span className="text-[9px] md:text-[10px] tracking-wider">Construction</span>
+                            </div>
+                          ) : partner.name === "VINCI" ? (
+                            <div className="flex items-center justify-center gap-1">
+                              <span className="text-lg md:text-xl font-black">VINCI</span>
+                              <div className="flex flex-col gap-0.5">
+                                <div className="w-1.5 h-1.5 bg-current" />
+                                <div className="w-1.5 h-1.5 bg-current" />
+                              </div>
+                            </div>
+                          ) : partner.name === "EIFFAGE" ? (
+                            <span className="text-lg md:text-xl font-black italic">EIFFAGE</span>
+                          ) : partner.name === "SAINT-GOBAIN" ? (
+                            <span className="text-sm md:text-base font-black">SAINT-GOBAIN</span>
+                          ) : partner.name === "Demathieu Bard" ? (
+                            <div className="flex flex-col items-center justify-center leading-tight">
+                              <span className="text-xs md:text-sm font-black">DEMATHIEU</span>
+                              <span className="text-xs md:text-sm font-black">BARD</span>
+                            </div>
+                          ) : partner.name === "Spie Batignolles" ? (
+                            <div className="flex flex-col items-center justify-center leading-tight">
+                              <span className="text-sm md:text-base font-black">SPIE</span>
+                              <span className="text-[9px] md:text-[10px] tracking-wider">BATIGNOLLES</span>
+                            </div>
+                          ) : partner.name === "Rabot Dutilleul" ? (
+                            <div className="flex flex-col items-center justify-center leading-tight">
+                              <span className="text-xs md:text-sm font-black">RABOT</span>
+                              <span className="text-xs md:text-sm font-black">DUTILLEUL</span>
+                            </div>
+                          ) : partner.name === "Urbaine de Travaux" ? (
+                            <div className="flex flex-col items-center justify-center leading-tight">
+                              <span className="text-[10px] md:text-xs font-black">URBAINE DE</span>
+                              <span className="text-[10px] md:text-xs font-black">TRAVAUX</span>
+                            </div>
+                          ) : (
+                            <span className="text-sm md:text-base font-black">{partner.name.toUpperCase()}</span>
+                          )}
+                        </div>
+                      )}
+                    </div>
                   </motion.div>
                 );
               })}
