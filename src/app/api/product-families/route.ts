@@ -10,11 +10,6 @@ export async function GET(request: NextRequest) {
     if (slug) {
       const family = await prisma.productFamily.findUnique({
         where: { slug },
-        include: {
-          heroImages: {
-            orderBy: { ordre: "asc" },
-          },
-        },
       });
 
       if (!family) {
@@ -31,11 +26,6 @@ export async function GET(request: NextRequest) {
     const families = await prisma.productFamily.findMany({
       where: { active: true },
       orderBy: { ordre: "asc" },
-      include: {
-        heroImages: {
-          orderBy: { ordre: "asc" },
-        },
-      },
     });
 
     return NextResponse.json({ success: true, families });
@@ -95,25 +85,10 @@ export async function POST(request: NextRequest) {
 
     if (id) {
       // Update existing
-      family = await prisma.productFamily.update({
-        where: { id },
-        data,
-        include: {
-          heroImages: {
-            orderBy: { ordre: "asc" },
-          },
-        },
-      });
+      family = await prisma.productFamily.update({ where: { id }, data });
     } else {
       // Create new
-      family = await prisma.productFamily.create({
-        data,
-        include: {
-          heroImages: {
-            orderBy: { ordre: "asc" },
-          },
-        },
-      });
+      family = await prisma.productFamily.create({ data });
     }
 
     return NextResponse.json({ success: true, family });

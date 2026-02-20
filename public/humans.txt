@@ -1,0 +1,22 @@
+/* TEAM */
+
+Développeur: AZ Construction Team
+Site: https://azconstruction.fr
+Contact: contact@azconstruction.fr
+Localisation: Bruyères-sur-Oise, France
+
+/* SITE */
+
+Dernière mise à jour: 2026/01/23
+Standards: HTML5, CSS3, JavaScript ES2022
+Composants: Next.js 16, React 19, TypeScript, Tailwind CSS 4
+Logiciels: VS Code, Cursor, Git, Vercel
+Hébergement: Vercel (CDG1 - Paris)
+
+/* REMERCIEMENTS */
+
+Profilés: Jansen AG
+Certification: QualiBat
+Police: Space Grotesk (Google Fonts)
+Icônes: Lucide React
+Animations: Framer Motion

@@ -1,0 +1,15 @@
+# AZ Construction Security Policy
+# https://securitytxt.org/
+
+Contact: mailto:contact@azconstruction.fr
+Contact: tel:+33971357496
+Expires: 2027-01-31T23:59:59.000Z
+Preferred-Languages: fr, en
+Canonical: https://azconstruction.fr/.well-known/security.txt
+
+# Nous prenons la sécurité au sérieux. Si vous découvrez une vulnérabilité,
+# merci de nous contacter à l'adresse ci-dessus.
+# We take security seriously. If you discover a vulnerability,
+# please contact us at the address above.
+
+Policy: https://azconstruction.fr/confidentialite
