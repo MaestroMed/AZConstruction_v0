@@ -23,87 +23,59 @@ import {
   Ruler,
   Factory,
   CheckCircle2,
+  MapPin,
 } from "lucide-react";
 import { GlowButton } from "@/components/ui/GlowButton";
-import { GlassCard } from "@/components/ui/GlassCard";
 import { MeshGradient, ParticleBackground, GradientOrb } from "@/components/ui/MeshGradient";
 import { PhoneLink, usePhone } from "@/components/ui/PhoneLink";
 import { useSiteImages } from "@/lib/hooks/useSiteImages";
 import { toast } from "sonner";
 
+/* ─── Types ─── */
+interface B2BCard {
+  title: string;
+  client: string;
+  location: string;
+  imageKey: string;
+}
+
+/* ─── Static data ─── */
 const advantages = [
   {
     icon: Clock,
     title: "Délai 24/48h",
-    description: "Vos commandes sont traitées en priorité avec des délais de fabrication optimisés pour les professionnels.",
+    description: "Commandes traitées en priorité avec délais de fabrication optimisés pour les professionnels.",
     stat: "48h",
+    accent: "text-cyan-600",
   },
   {
     icon: FileText,
     title: "Devis rapide",
-    description: "Obtenez des devis détaillés adaptés à vos projets avec plans techniques et descriptifs complets.",
+    description: "Devis détaillés avec plans techniques, descriptifs matériaux et délais de fabrication.",
     stat: "Gratuit",
+    accent: "text-blue-600",
   },
   {
     icon: HeadphonesIcon,
     title: "Interlocuteur dédié",
-    description: "Un chargé de compte vous accompagne dans tous vos projets de A à Z, du devis à la livraison.",
+    description: "Un chargé de compte unique vous accompagne de A à Z, du devis à la livraison.",
     stat: "1:1",
+    accent: "text-indigo-600",
   },
   {
     icon: Truck,
     title: "Livraison sur chantier",
-    description: "Livraison directe sur vos chantiers en Île-de-France et régions limitrophes selon vos plannings.",
+    description: "Livraison directe en Île-de-France et régions limitrophes selon vos plannings.",
     stat: "IDF",
+    accent: "text-cyan-600",
   },
 ];
 
 const sectors = [
-  {
-    step: "01",
-    name: "Entreprises générales",
-    description: "Constructions neuves ou rénovations, nous accompagnons tous vos projets avec réactivité.",
-    icon: Building,
-  },
-  {
-    step: "02",
-    name: "Architectes & Bureaux d'études",
-    description: "Collaborons sur vos projets les plus ambitieux avec plans d'exécution sur mesure.",
-    icon: Ruler,
-  },
-  {
-    step: "03",
-    name: "Artisans du bâtiment",
-    description: "Sous-traitance métallerie pour vos chantiers avec délais adaptés à vos contraintes.",
-    icon: Hammer,
-  },
-  {
-    step: "04",
-    name: "Industriels",
-    description: "Structures, passerelles et équipements industriels sur mesure fabriqués en atelier.",
-    icon: Factory,
-  },
-];
-
-const realisationsB2B = [
-  {
-    title: "Garde-corps collectif",
-    client: "Promoteur IDF",
-    surface: "250 ml installés",
-    imageKey: "realisation-b2b-1",
-  },
-  {
-    title: "Escalier industriel",
-    client: "Usine automobile",
-    surface: "3 niveaux",
-    imageKey: "realisation-b2b-2",
-  },
-  {
-    title: "Portails résidence",
-    client: "Collectivité locale",
-    surface: "12 portails",
-    imageKey: "realisation-b2b-3",
-  },
+  { step: "01", name: "Entreprises générales", description: "Constructions neuves ou rénovations, nous accompagnons tous vos projets.", icon: Building },
+  { step: "02", name: "Architectes & Bureaux d'études", description: "Collaborons sur vos projets ambitieux avec plans d'exécution sur mesure.", icon: Ruler },
+  { step: "03", name: "Artisans du bâtiment", description: "Sous-traitance métallerie avec délais adaptés à vos contraintes chantier.", icon: Hammer },
+  { step: "04", name: "Industriels", description: "Structures, passerelles et équipements industriels fabriqués en atelier.", icon: Factory },
 ];
 
 const heroStats = [
@@ -113,9 +85,16 @@ const heroStats = [
   { value: "2018", label: "Depuis" },
 ];
 
+const DEFAULT_CARDS: B2BCard[] = [
+  { title: "Garde-corps collectif", client: "Promoteur IDF", location: "Île-de-France", imageKey: "realisation-b2b-1" },
+  { title: "Escalier industriel", client: "Usine automobile", location: "Seine-et-Marne (77)", imageKey: "realisation-b2b-2" },
+  { title: "Portails résidence", client: "Collectivité locale", location: "Val-d'Oise (95)", imageKey: "realisation-b2b-3" },
+];
+
 export default function ProfessionnelsPage() {
-  const phone = usePhone();
+  usePhone();
   const { getImage } = useSiteImages();
+  const [b2bCards, setB2bCards] = React.useState<B2BCard[]>(DEFAULT_CARDS);
   const [formData, setFormData] = React.useState({
     entreprise: "",
     nom: "",
@@ -125,6 +104,22 @@ export default function ProfessionnelsPage() {
     message: "",
   });
   const [isSubmitting, setIsSubmitting] = React.useState(false);
+
+  React.useEffect(() => {
+    fetch("/api/b2b-cards")
+      .then((r) => r.json())
+      .then((data) => {
+        if (data.success && data.cards?.length) {
+          setB2bCards(
+            data.cards.map((card: Partial<B2BCard>, i: number) => ({
+              ...DEFAULT_CARDS[i],
+              ...card,
+            }))
+          );
+        }
+      })
+      .catch(() => {});
+  }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -143,10 +138,7 @@ export default function ProfessionnelsPage() {
           entreprise: formData.entreprise,
         }),
       });
-      if (!response.ok) {
-        const data = await response.json();
-        throw new Error(data.error || "Erreur lors de l'envoi");
-      }
+      if (!response.ok) throw new Error((await response.json()).error || "Erreur");
       toast.success("Demande envoyée ! Nous vous recontactons sous 24h.");
       setFormData({ entreprise: "", nom: "", email: "", telephone: "", secteur: "", message: "" });
     } catch (err) {
@@ -157,11 +149,9 @@ export default function ProfessionnelsPage() {
   };
 
   return (
-    <div className="min-h-screen bg-navy-dark overflow-x-hidden">
+    <div className="min-h-screen bg-white overflow-x-hidden">
 
-      {/* ═══════════════════════════════════════════════════════
-          HERO — Dark glassmorphism + stats animées
-      ═══════════════════════════════════════════════════════ */}
+      {/* ═══ HERO — Dark glassmorphism ═══ */}
       <section className="relative min-h-[90vh] flex items-center overflow-hidden">
         <MeshGradient variant="animated" className="absolute inset-0" />
         <GradientOrb color="cyan" size="xl" position={{ top: "5%", right: "-10%" }} blur="xl" opacity={0.15} />
@@ -170,11 +160,7 @@ export default function ProfessionnelsPage() {
 
         <div className="container mx-auto px-6 relative z-10 py-32">
           <div className="grid lg:grid-cols-2 gap-16 items-center">
-            <motion.div
-              initial={{ opacity: 0, y: 30 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.7 }}
-            >
+            <motion.div initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.7 }}>
               <motion.div
                 className="inline-flex items-center gap-3 glass-card-glow px-5 py-2.5 mb-8"
                 initial={{ opacity: 0, y: 10 }}
@@ -213,21 +199,14 @@ export default function ProfessionnelsPage() {
               </div>
             </motion.div>
 
-            {/* Stats glassmorphism */}
             <motion.div
               className="grid grid-cols-2 gap-4"
               initial={{ opacity: 0, x: 30 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ delay: 0.3 }}
             >
-              {heroStats.map((stat, index) => (
-                <motion.div
-                  key={index}
-                  className="glass-card p-8 text-center"
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.4 + index * 0.1 }}
-                >
+              {heroStats.map((stat, i) => (
+                <motion.div key={i} className="glass-card p-8 text-center" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.4 + i * 0.1 }}>
                   <div className="text-3xl md:text-4xl font-bold text-cyan-glow mb-2">{stat.value}</div>
                   <div className="text-white/50 text-sm">{stat.label}</div>
                 </motion.div>
@@ -237,118 +216,95 @@ export default function ProfessionnelsPage() {
         </div>
       </section>
 
-      {/* ═══════════════════════════════════════════════════════
-          AVANTAGES — Aurora + GlassCard
-      ═══════════════════════════════════════════════════════ */}
-      <MeshGradient variant="aurora" className="py-24">
-        <GradientOrb color="cyan" size="xl" position={{ top: "-10%", right: "-5%" }} opacity={0.08} />
-        <GradientOrb color="blue" size="lg" position={{ bottom: "-10%", left: "-5%" }} opacity={0.1} />
-
-        <div className="container mx-auto px-6 relative z-10">
+      {/* ═══ AVANTAGES — Fond gris clair, cartes blanches ═══ */}
+      <section className="py-24 bg-gray-50">
+        <div className="container mx-auto px-6">
           <motion.div
             className="text-center mb-16"
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
           >
-            <span className="inline-flex items-center gap-2 px-4 py-2 bg-cyan-glow/10 border border-cyan-glow/20 text-cyan-glow rounded-full text-sm font-medium mb-6">
+            <span className="inline-flex items-center gap-2 px-4 py-2 bg-cyan-50 border border-cyan-200 text-cyan-700 rounded-full text-sm font-medium mb-6">
               Vos avantages
             </span>
-            <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">
+            <h2 className="text-3xl md:text-4xl font-bold text-navy-dark mb-4">
               Pourquoi travailler avec{" "}
-              <span className="text-gradient-cyan font-serif italic">AZ Construction ?</span>
+              <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-600 to-blue-600">AZ Construction ?</span>
             </h2>
-            <p className="text-white/50 max-w-2xl mx-auto">
+            <p className="text-gray-500 max-w-2xl mx-auto">
               Des avantages concrets pour simplifier vos projets et optimiser vos chantiers.
             </p>
           </motion.div>
 
           <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {advantages.map((adv, index) => (
+            {advantages.map((adv, i) => (
               <motion.div
-                key={index}
+                key={i}
+                className="bg-white rounded-2xl p-8 shadow-sm border border-gray-100 hover:shadow-md hover:-translate-y-1 transition-all duration-300 text-center"
                 initial={{ opacity: 0, y: 30 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
-                transition={{ delay: index * 0.1 }}
+                transition={{ delay: i * 0.1 }}
               >
-                <GlassCard variant="glow" padding="lg" className="h-full text-center">
-                  <div className="text-2xl font-bold text-cyan-glow mb-4">{adv.stat}</div>
-                  <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-cyan-glow/20 to-blue-corporate/20 flex items-center justify-center mx-auto mb-4 ring-1 ring-cyan-glow/20">
-                    <adv.icon className="w-6 h-6 text-cyan-glow" />
-                  </div>
-                  <h3 className="text-lg font-bold text-white mb-3">{adv.title}</h3>
-                  <p className="text-white/50 text-sm leading-relaxed">{adv.description}</p>
-                </GlassCard>
-              </motion.div>
-            ))}
-          </div>
-        </div>
-      </MeshGradient>
-
-      {/* ═══════════════════════════════════════════════════════
-          SECTEURS — Dark navy, numéros 01-04 en grand
-      ═══════════════════════════════════════════════════════ */}
-      <section className="py-24 bg-navy-medium relative overflow-hidden">
-        <div className="absolute inset-0 opacity-5">
-          <div className="absolute inset-0" style={{
-            backgroundImage: `repeating-linear-gradient(0deg, transparent, transparent 80px, rgba(0,212,255,0.3) 80px, rgba(0,212,255,0.3) 81px), repeating-linear-gradient(90deg, transparent, transparent 80px, rgba(0,212,255,0.3) 80px, rgba(0,212,255,0.3) 81px)`,
-          }} />
-        </div>
-
-        <div className="container mx-auto px-6 relative z-10">
-          <motion.div
-            className="text-center mb-16"
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-          >
-            <span className="inline-block px-4 py-2 bg-white/5 border border-white/10 text-white/50 rounded-full text-xs font-bold tracking-widest uppercase mb-6">
-              Nos secteurs
-            </span>
-            <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">
-              Nous travaillons avec{" "}
-              <span className="text-gradient-cyan font-serif italic">tous les métiers</span>
-            </h2>
-            <p className="text-white/40 max-w-xl mx-auto">
-              Que vous soyez constructeur, architecte ou artisan, nous adaptons nos services à vos contraintes.
-            </p>
-          </motion.div>
-
-          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {sectors.map((sector, index) => (
-              <motion.div
-                key={index}
-                className="relative group border border-white/10 p-8 hover:border-cyan-glow/30 transition-all duration-300 hover:bg-white/5"
-                initial={{ opacity: 0, y: 30 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: index * 0.1 }}
-              >
-                {/* Numéro en arrière-plan */}
-                <span className="absolute top-4 right-6 text-7xl font-bold text-white/4 leading-none pointer-events-none select-none">
-                  {sector.step}
-                </span>
-
-                <div className="inline-block px-3 py-1 bg-cyan-glow/10 rounded-full text-cyan-glow text-xs font-bold mb-5 tracking-widest">
-                  {sector.step}
+                <div className={`text-3xl font-bold mb-4 ${adv.accent}`}>{adv.stat}</div>
+                <div className="w-12 h-12 rounded-xl bg-gray-50 border border-gray-100 flex items-center justify-center mx-auto mb-4">
+                  <adv.icon className={`w-6 h-6 ${adv.accent}`} />
                 </div>
-
-                <div className="w-12 h-12 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center mb-5 group-hover:border-cyan-glow/30 transition-colors">
-                  <sector.icon className="w-6 h-6 text-white/60 group-hover:text-cyan-glow transition-colors" />
-                </div>
-
-                <h3 className="text-lg font-bold text-white mb-3">{sector.name}</h3>
-                <p className="text-white/40 text-sm leading-relaxed">{sector.description}</p>
+                <h3 className="text-lg font-bold text-navy-dark mb-3">{adv.title}</h3>
+                <p className="text-gray-500 text-sm leading-relaxed">{adv.description}</p>
               </motion.div>
             ))}
           </div>
         </div>
       </section>
 
-      {/* ═══════════════════════════════════════════════════════
-          RÉALISATIONS B2B — Dark, cartes pleine hauteur
-      ═══════════════════════════════════════════════════════ */}
+      {/* ═══ SECTEURS — Blanc, bordures légères ═══ */}
+      <section className="py-20 bg-white">
+        <div className="container mx-auto px-6">
+          <motion.div
+            className="text-center mb-16"
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+          >
+            <h2 className="text-3xl md:text-4xl font-bold text-navy-dark mb-4">
+              Nous travaillons avec{" "}
+              <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-600 to-blue-600">tous les métiers</span>
+            </h2>
+            <p className="text-gray-500 max-w-xl mx-auto">
+              Constructeur, architecte, artisan ou industriel — nous adaptons nos services à vos contraintes.
+            </p>
+          </motion.div>
+
+          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+            {sectors.map((sector, i) => (
+              <motion.div
+                key={i}
+                className="relative group border border-gray-200 rounded-2xl p-8 hover:border-cyan-300 hover:shadow-lg transition-all duration-300"
+                initial={{ opacity: 0, y: 30 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: i * 0.1 }}
+              >
+                <span className="absolute top-4 right-6 text-7xl font-bold text-gray-100 leading-none pointer-events-none select-none">
+                  {sector.step}
+                </span>
+                <div className="inline-block px-3 py-1 bg-cyan-50 rounded-full text-cyan-700 text-xs font-bold mb-5 tracking-widest border border-cyan-200">
+                  {sector.step}
+                </div>
+                <div className="w-12 h-12 rounded-xl bg-gray-50 border border-gray-100 flex items-center justify-center mb-5 group-hover:bg-cyan-50 group-hover:border-cyan-200 transition-colors">
+                  <sector.icon className="w-6 h-6 text-gray-400 group-hover:text-cyan-600 transition-colors" />
+                </div>
+                <h3 className="text-lg font-bold text-navy-dark mb-3">{sector.name}</h3>
+                <p className="text-gray-500 text-sm leading-relaxed">{sector.description}</p>
+              </motion.div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ═══ RÉALISATIONS B2B — Dark conservé ═══ */}
       <section className="py-24 bg-navy-dark">
         <div className="container mx-auto px-6">
           <motion.div
@@ -370,35 +326,31 @@ export default function ProfessionnelsPage() {
           </motion.div>
 
           <div className="grid md:grid-cols-3 gap-6">
-            {realisationsB2B.map((realisation, index) => (
+            {b2bCards.map((card, i) => (
               <motion.div
-                key={index}
+                key={i}
                 className="group relative overflow-hidden rounded-2xl"
                 style={{ height: "420px" }}
                 initial={{ opacity: 0, y: 30 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
-                transition={{ delay: index * 0.1 }}
+                transition={{ delay: i * 0.1 }}
               >
                 <Image
-                  src={getImage(realisation.imageKey)}
-                  alt={realisation.title}
+                  src={getImage(card.imageKey)}
+                  alt={card.title}
                   fill
                   className="object-cover group-hover:scale-105 transition-transform duration-700"
                 />
-                {/* Overlay */}
                 <div className="absolute inset-0 bg-gradient-to-t from-navy-dark/90 via-navy-dark/30 to-transparent" />
-
-                {/* Contenu overlay bas */}
                 <div className="absolute bottom-0 left-0 right-0 p-8">
-                  <div className="inline-block px-3 py-1 bg-cyan-glow/20 backdrop-blur-sm rounded-full text-cyan-glow text-xs font-bold mb-3">
-                    {realisation.surface}
+                  <div className="inline-flex items-center gap-1.5 px-3 py-1 bg-cyan-glow/20 backdrop-blur-sm rounded-full text-cyan-glow text-xs font-bold mb-3">
+                    <MapPin className="w-3 h-3" />
+                    {card.location}
                   </div>
-                  <h3 className="text-xl font-bold text-white mb-1">{realisation.title}</h3>
-                  <p className="text-white/50 text-sm">{realisation.client}</p>
+                  <h3 className="text-xl font-bold text-white mb-1">{card.title}</h3>
+                  <p className="text-white/50 text-sm">{card.client}</p>
                 </div>
-
-                {/* Hover overlay */}
                 <div className="absolute inset-0 border border-cyan-glow/0 group-hover:border-cyan-glow/20 rounded-2xl transition-colors duration-300" />
               </motion.div>
             ))}
@@ -414,16 +366,9 @@ export default function ProfessionnelsPage() {
         </div>
       </section>
 
-      {/* ═══════════════════════════════════════════════════════
-          FORMULAIRE CONTACT PRO — Dark + ParticleBackground
-      ═══════════════════════════════════════════════════════ */}
-      <section id="contact-pro" className="relative py-24 overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-br from-navy-dark via-navy-medium to-blue-corporate" />
-        <ParticleBackground count={15} />
-        <GradientOrb color="cyan" size="xl" position={{ top: "-10%", right: "5%" }} opacity={0.1} animate />
-        <GradientOrb color="blue" size="lg" position={{ bottom: "-10%", left: "5%" }} opacity={0.08} />
-
-        <div className="container mx-auto px-6 relative z-10">
+      {/* ═══ FORMULAIRE — Fond blanc propre ═══ */}
+      <section id="contact-pro" className="py-24 bg-white">
+        <div className="container mx-auto px-6">
           <div className="max-w-5xl mx-auto">
             <motion.div
               className="text-center mb-12"
@@ -431,21 +376,20 @@ export default function ProfessionnelsPage() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
             >
-              <span className="inline-flex items-center gap-2 px-4 py-2 bg-cyan-glow/10 border border-cyan-glow/20 text-cyan-glow rounded-full text-sm font-medium mb-6">
+              <span className="inline-flex items-center gap-2 px-4 py-2 bg-cyan-50 border border-cyan-200 text-cyan-700 rounded-full text-sm font-medium mb-6">
                 <Building2 className="w-4 h-4" />
                 Espace Pro
               </span>
-              <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">
-                Demande de devis{" "}
-                <span className="text-gradient-cyan font-serif italic">professionnel</span>
+              <h2 className="text-3xl md:text-4xl font-bold text-navy-dark mb-4">
+                Demande de devis professionnel
               </h2>
-              <p className="text-white/50 max-w-xl mx-auto">
-                Remplissez le formulaire ci-dessous. Notre équipe commerciale vous recontacte sous 24h ouvrées.
+              <p className="text-gray-500 max-w-xl mx-auto">
+                Notre équipe commerciale vous recontacte sous 24h ouvrées.
               </p>
             </motion.div>
 
             <motion.div
-              className="bg-white rounded-3xl p-8 md:p-10 shadow-2xl shadow-black/40"
+              className="bg-gray-50 rounded-3xl p-8 md:p-10 border border-gray-200"
               initial={{ opacity: 0, y: 30 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
@@ -456,56 +400,32 @@ export default function ProfessionnelsPage() {
                     <label className="block text-sm font-medium text-gray-700 mb-2">Entreprise *</label>
                     <div className="relative">
                       <Building className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
-                      <input
-                        type="text"
-                        required
-                        value={formData.entreprise}
-                        onChange={(e) => setFormData({ ...formData, entreprise: e.target.value })}
-                        className="w-full pl-12 pr-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-cyan-500 focus:border-transparent transition-all"
-                        placeholder="Nom de votre entreprise"
-                      />
+                      <input type="text" required value={formData.entreprise} onChange={(e) => setFormData({ ...formData, entreprise: e.target.value })}
+                        className="w-full pl-12 pr-4 py-3 border border-gray-200 bg-white rounded-xl focus:ring-2 focus:ring-cyan-500 focus:border-transparent transition-all" placeholder="Nom de votre entreprise" />
                     </div>
                   </div>
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">Nom & Prénom *</label>
                     <div className="relative">
                       <User className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
-                      <input
-                        type="text"
-                        required
-                        value={formData.nom}
-                        onChange={(e) => setFormData({ ...formData, nom: e.target.value })}
-                        className="w-full pl-12 pr-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-cyan-500 focus:border-transparent transition-all"
-                        placeholder="Votre nom complet"
-                      />
+                      <input type="text" required value={formData.nom} onChange={(e) => setFormData({ ...formData, nom: e.target.value })}
+                        className="w-full pl-12 pr-4 py-3 border border-gray-200 bg-white rounded-xl focus:ring-2 focus:ring-cyan-500 focus:border-transparent transition-all" placeholder="Votre nom complet" />
                     </div>
                   </div>
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">Email professionnel *</label>
                     <div className="relative">
                       <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
-                      <input
-                        type="email"
-                        required
-                        value={formData.email}
-                        onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                        className="w-full pl-12 pr-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-cyan-500 focus:border-transparent transition-all"
-                        placeholder="pro@entreprise.fr"
-                      />
+                      <input type="email" required value={formData.email} onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                        className="w-full pl-12 pr-4 py-3 border border-gray-200 bg-white rounded-xl focus:ring-2 focus:ring-cyan-500 focus:border-transparent transition-all" placeholder="pro@entreprise.fr" />
                     </div>
                   </div>
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">Téléphone *</label>
                     <div className="relative">
                       <Phone className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
-                      <input
-                        type="tel"
-                        required
-                        value={formData.telephone}
-                        onChange={(e) => setFormData({ ...formData, telephone: e.target.value })}
-                        className="w-full pl-12 pr-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-cyan-500 focus:border-transparent transition-all"
-                        placeholder="06 12 34 56 78"
-                      />
+                      <input type="tel" required value={formData.telephone} onChange={(e) => setFormData({ ...formData, telephone: e.target.value })}
+                        className="w-full pl-12 pr-4 py-3 border border-gray-200 bg-white rounded-xl focus:ring-2 focus:ring-cyan-500 focus:border-transparent transition-all" placeholder="06 12 34 56 78" />
                     </div>
                   </div>
                 </div>
@@ -514,12 +434,8 @@ export default function ProfessionnelsPage() {
                   <label className="block text-sm font-medium text-gray-700 mb-2">Secteur d&apos;activité *</label>
                   <div className="relative">
                     <Briefcase className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
-                    <select
-                      required
-                      value={formData.secteur}
-                      onChange={(e) => setFormData({ ...formData, secteur: e.target.value })}
-                      className="w-full pl-12 pr-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-cyan-500 focus:border-transparent transition-all appearance-none bg-white"
-                    >
+                    <select required value={formData.secteur} onChange={(e) => setFormData({ ...formData, secteur: e.target.value })}
+                      className="w-full pl-12 pr-4 py-3 border border-gray-200 bg-white rounded-xl focus:ring-2 focus:ring-cyan-500 focus:border-transparent transition-all appearance-none">
                       <option value="">Sélectionnez votre secteur</option>
                       <option value="constructeur">Constructeur de maisons</option>
                       <option value="architecte">Architecte / Bureau d&apos;études</option>
@@ -536,41 +452,24 @@ export default function ProfessionnelsPage() {
                   <label className="block text-sm font-medium text-gray-700 mb-2">Décrivez votre projet</label>
                   <div className="relative">
                     <MessageSquare className="absolute left-4 top-4 w-5 h-5 text-gray-400" />
-                    <textarea
-                      rows={4}
-                      value={formData.message}
-                      onChange={(e) => setFormData({ ...formData, message: e.target.value })}
-                      className="w-full pl-12 pr-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-cyan-500 focus:border-transparent transition-all resize-none"
-                      placeholder="Type de produits, quantités estimées, délais souhaités..."
-                    />
+                    <textarea rows={4} value={formData.message} onChange={(e) => setFormData({ ...formData, message: e.target.value })}
+                      className="w-full pl-12 pr-4 py-3 border border-gray-200 bg-white rounded-xl focus:ring-2 focus:ring-cyan-500 focus:border-transparent transition-all resize-none"
+                      placeholder="Type de produits, quantités estimées, délais souhaités..." />
                   </div>
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Pièces jointes (plans, photos, dossier)
-                  </label>
-                  <input
-                    type="file"
-                    multiple
-                    accept=".pdf,.doc,.docx,.xls,.xlsx,.jpg,.jpeg,.png,.dwg"
-                    className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-cyan-500 focus:border-transparent transition-all file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-medium file:bg-cyan-glow/10 file:text-cyan-700 hover:file:bg-cyan-glow/20"
-                  />
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Pièces jointes (plans, photos, dossier)</label>
+                  <input type="file" multiple accept=".pdf,.doc,.docx,.xls,.xlsx,.jpg,.jpeg,.png,.dwg"
+                    className="w-full px-4 py-3 border border-gray-200 bg-white rounded-xl focus:ring-2 focus:ring-cyan-500 transition-all file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-medium file:bg-cyan-50 file:text-cyan-700 hover:file:bg-cyan-100" />
                   <p className="text-xs text-gray-400 mt-1">PDF, DOC, XLS, JPG, PNG, DWG (max 10 Mo)</p>
                 </div>
 
                 <div className="flex flex-col sm:flex-row gap-4 items-center justify-between pt-4">
                   <p className="text-sm text-gray-500">* Champs obligatoires. Réponse garantie sous 24h ouvrées.</p>
-                  <button
-                    type="submit"
-                    disabled={isSubmitting}
-                    className="inline-flex items-center gap-2 px-8 py-4 bg-navy-dark text-white text-sm font-semibold hover:bg-navy-medium transition-colors disabled:opacity-50 rounded-xl w-full sm:w-auto justify-center"
-                  >
-                    {isSubmitting ? (
-                      <><Loader2 className="w-5 h-5 animate-spin" /> Envoi en cours...</>
-                    ) : (
-                      <><Send className="w-5 h-5" /> Envoyer ma demande</>
-                    )}
+                  <button type="submit" disabled={isSubmitting}
+                    className="inline-flex items-center gap-2 px-8 py-4 bg-navy-dark text-white text-sm font-semibold hover:bg-navy-medium transition-colors disabled:opacity-50 rounded-xl w-full sm:w-auto justify-center">
+                    {isSubmitting ? <><Loader2 className="w-5 h-5 animate-spin" /> Envoi...</> : <><Send className="w-5 h-5" /> Envoyer ma demande</>}
                   </button>
                 </div>
               </form>
@@ -578,48 +477,45 @@ export default function ProfessionnelsPage() {
 
             {/* Contact rapide */}
             <div className="mt-8 grid md:grid-cols-2 gap-4">
-              <div className="flex items-center gap-4 glass-card rounded-2xl p-5 border border-white/10">
-                <div className="w-10 h-10 rounded-xl bg-cyan-glow/20 flex items-center justify-center flex-shrink-0">
-                  <Phone className="w-5 h-5 text-cyan-glow" />
+              <div className="flex items-center gap-4 bg-gray-50 border border-gray-200 rounded-2xl p-5">
+                <div className="w-10 h-10 rounded-xl bg-cyan-50 flex items-center justify-center flex-shrink-0">
+                  <Phone className="w-5 h-5 text-cyan-600" />
                 </div>
                 <div>
-                  <p className="text-xs text-white/40 mb-1">Ligne directe commerciale</p>
-                  <PhoneLink className="font-semibold text-white" showIcon={false} />
+                  <p className="text-xs text-gray-400 mb-1">Ligne directe commerciale</p>
+                  <PhoneLink className="font-semibold text-navy-dark" showIcon={false} />
                 </div>
               </div>
-              <a
-                href="mailto:contact@azconstruction.fr"
-                className="flex items-center gap-4 glass-card rounded-2xl p-5 border border-white/10 hover:border-cyan-glow/20 transition-colors"
-              >
-                <div className="w-10 h-10 rounded-xl bg-cyan-glow/20 flex items-center justify-center flex-shrink-0">
-                  <Mail className="w-5 h-5 text-cyan-glow" />
+              <a href="mailto:contact@azconstruction.fr"
+                className="flex items-center gap-4 bg-gray-50 border border-gray-200 rounded-2xl p-5 hover:border-cyan-300 transition-colors">
+                <div className="w-10 h-10 rounded-xl bg-cyan-50 flex items-center justify-center flex-shrink-0">
+                  <Mail className="w-5 h-5 text-cyan-600" />
                 </div>
                 <div>
-                  <p className="text-xs text-white/40 mb-1">Email professionnel</p>
-                  <p className="font-semibold text-white">contact@azconstruction.fr</p>
+                  <p className="text-xs text-gray-400 mb-1">Email professionnel</p>
+                  <p className="font-semibold text-navy-dark">contact@azconstruction.fr</p>
                 </div>
               </a>
             </div>
+          </div>
+        </div>
+      </section>
 
-            {/* CTA compte Pro intégré */}
-            <motion.div
-              className="mt-8 text-center glass-card rounded-3xl p-8 border border-white/10"
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-            >
-              <h3 className="text-xl font-bold text-white mb-2">
-                Vous souhaitez créer un compte Pro ?
-              </h3>
-              <p className="text-white/40 text-sm mb-6">
-                Accédez à votre espace dédié pour suivre vos commandes, télécharger vos factures et gérer vos projets.
-              </p>
-              <Link href="/inscription-pro">
-                <GlowButton variant="secondary" icon={<ArrowRight className="w-4 h-4" />}>
-                  Créer mon compte Pro
-                </GlowButton>
-              </Link>
-            </motion.div>
+      {/* ═══ CTA COMPTE PRO ═══ */}
+      <section className="py-16 bg-gray-900">
+        <div className="container mx-auto px-6">
+          <div className="max-w-3xl mx-auto text-center">
+            <h2 className="text-2xl md:text-3xl font-bold text-white mb-4">
+              Vous souhaitez créer un compte Pro ?
+            </h2>
+            <p className="text-white/50 mb-8">
+              Suivez vos commandes, téléchargez vos factures et gérez vos projets depuis votre espace dédié.
+            </p>
+            <Link href="/inscription-pro">
+              <GlowButton variant="secondary" icon={<ArrowRight className="w-4 h-4" />}>
+                Créer mon compte Pro
+              </GlowButton>
+            </Link>
           </div>
         </div>
       </section>
