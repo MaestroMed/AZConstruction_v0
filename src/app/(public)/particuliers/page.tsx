@@ -17,6 +17,7 @@ import {
   ChevronDown,
   Sparkles,
   Eye,
+  Layers,
 } from "lucide-react";
 import { GlowButton } from "@/components/ui/GlowButton";
 import { GlassCard } from "@/components/ui/GlassCard";
@@ -68,6 +69,18 @@ const services = [
     imageKey: "product-grilles",
     configLink: "grilles-ventilation",
     accent: "from-navy-medium to-cyan-glow",
+  },
+  {
+    icon: Layers,
+    title: "Pliage sur mesure",
+    description:
+      "Pliage de tôles et profilés acier réalisé dans notre atelier de Bruyères-sur-Oise. Pièces unitaires ou petites séries, tolérances précises, finition thermolaquage disponible.",
+    features: ["Tôle acier & alu", "Pliage CNC", "Finition thermolaquage", "Petites séries"],
+    price: "Sur devis",
+    imageKey: "page-atelier",
+    configLink: null,
+    href: "/contact",
+    accent: "from-slate-600 to-navy-dark",
   },
 ];
 
@@ -405,13 +418,13 @@ export default function ParticuliersPage() {
               </div>
 
               <div>
-                <Link href={`/produits/${service.configLink}`}>
+                <Link href={"href" in service && service.href ? service.href : `/produits/${service.configLink}`}>
                   <GlowButton
                     variant="outline"
                     className="border-navy-dark/30 text-navy-dark hover:bg-navy-dark/5"
                     icon={<ArrowRight className="w-4 h-4" />}
                   >
-                    Découvrir
+                    {"href" in service && service.href ? "Nous contacter" : "Découvrir"}
                   </GlowButton>
                 </Link>
               </div>
