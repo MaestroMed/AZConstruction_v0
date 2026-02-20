@@ -133,13 +133,6 @@ export default function ProfessionnelsBPage() {
   const { getImage } = useSiteImages();
   const heroRef = React.useRef<HTMLDivElement>(null);
   const { scrollYProgress } = useScroll({ target: heroRef, offset: ["start start", "end start"] });
-  const sceneProgress = useTransform(scrollYProgress, [0, 1], [0.3, 1]);
-  const [sceneP, setSceneP] = React.useState(0.3);
-
-  React.useEffect(() => {
-    return sceneProgress.on("change", setSceneP);
-  }, [sceneProgress]);
-
   const textY = useTransform(scrollYProgress, [0, 1], [0, 80]);
   const textOpacity = useTransform(scrollYProgress, [0, 0.6], [1, 0]);
 
@@ -190,10 +183,7 @@ export default function ProfessionnelsBPage() {
       ═══════════════════════════════════════════════════════ */}
       <section ref={heroRef} className="relative min-h-screen flex items-center justify-center overflow-hidden">
         {/* Three.js canvas */}
-        <SteelSceneClient
-          progress={sceneP}
-          className="absolute inset-0 z-0"
-        />
+        <SteelSceneClient className="absolute inset-0 z-0" />
 
         {/* Dark gradient overlay */}
         <div className="absolute inset-0 z-10 bg-gradient-to-b from-black/60 via-black/30 to-black/80" />
