@@ -100,9 +100,7 @@ function Sparks({ active }: { active: boolean }) {
       <bufferGeometry>
         <bufferAttribute
           attach="attributes-position"
-          array={positions}
-          count={count}
-          itemSize={3}
+          args={[positions, 3]}
         />
       </bufferGeometry>
       <pointsMaterial
