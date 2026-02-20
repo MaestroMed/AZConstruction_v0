@@ -72,8 +72,8 @@ const services = [
     title: "Grilles de ventilation",
     tagline: "L'invisible, magnifié.",
     description:
-      "Grilles techniques et décoratives pour bâtiments résidentiels. Solutions caliboutis pour intégrations architecturales sur mesure.",
-    features: ["Décoratives", "Techniques", "Caliboutis", "Sur mesure"],
+      "Grilles techniques et décoratives pour bâtiments résidentiels. Solutions caillebotis pour intégrations architecturales sur mesure.",
+    features: ["Décoratives", "Techniques", "Caillebotis", "Sur mesure"],
     price: "À partir de 180€",
     imageKey: "product-grilles",
     configLink: "grilles-ventilation",

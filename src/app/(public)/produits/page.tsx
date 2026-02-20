@@ -177,7 +177,7 @@ const productFamilies = [
         <line x1="10" y1="38" x2="38" y2="38" />
       </svg>
     ),
-    products: ["Grille Décorative", "Grille Technique", "Grille Caliboutis"],
+    products: ["Grille Décorative", "Grille Technique", "Grille Caillebotis"],
     startingPrice: "180",
     features: ["7 modèles", "Anti-corrosion", "Sur mesure"],
   },

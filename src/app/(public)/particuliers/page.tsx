@@ -62,8 +62,8 @@ const services = [
     icon: Palette,
     title: "Grilles de ventilation",
     description:
-      "Grilles de ventilation techniques et décoratives pour bâtiments résidentiels. Solutions sur mesure esthétiques incluant les grilles caliboutis pour intégrations architecturales.",
-    features: ["Décoratives", "Techniques", "Caliboutis", "Sur mesure"],
+      "Grilles de ventilation techniques et décoratives pour bâtiments résidentiels. Solutions sur mesure esthétiques incluant les grilles caillebotis pour intégrations architecturales.",
+    features: ["Décoratives", "Techniques", "Caillebotis", "Sur mesure"],
     price: "À partir de 180€",
     imageKey: "product-grilles",
     configLink: "grilles-ventilation",

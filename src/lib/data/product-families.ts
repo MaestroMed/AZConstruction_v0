@@ -378,7 +378,7 @@ export const productFamilies: ProductFamily[] = [
     variants: [
       { id: "decorative", name: "Grille Décorative", description: "Esthétique pour façades et intérieurs.", features: ["Motifs variés", "Lames ou perforations", "Finitions RAL"], startingPrice: "" },
       { id: "technique", name: "Grille Technique", description: "Performance pour locaux techniques.", features: ["Haute performance", "Anti-effraction option", "Grande dimension"], startingPrice: "" },
-      { id: "caliboutis", name: "Grille Caliboutis", description: "Grille caliboutis métallique sur mesure, pour passages muraux et intégrations architecturales.", features: ["Sur mesure", "Acier thermolaqué", "Intégration architecturale"], startingPrice: "" },
+      { id: "caillebotis", name: "Grille Caillebotis", description: "Grille caillebotis métallique sur mesure, pour passages muraux et intégrations architecturales.", features: ["Sur mesure", "Acier thermolaqué", "Intégration architecturale"], startingPrice: "" },
     ],
     specifications: [
       { label: "Dimensions", value: "Sur mesure, toutes tailles" },

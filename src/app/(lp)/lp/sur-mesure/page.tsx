@@ -32,7 +32,7 @@ const products = [
   { icon: Wrench, name: "Escaliers", description: "Droits, hélicoïdaux", imageKey: "product-escaliers" },
   { icon: Fence, name: "Portails", description: "Coulissants, battants", imageKey: "product-portails" },
   { icon: Home, name: "Portes & Fenêtres", description: "Profilés Jansen", imageKey: "product-portes" },
-  { icon: Grid3X3, name: "Grilles ventilation", description: "Caliboutis, techniques", imageKey: "product-grilles" },
+  { icon: Grid3X3, name: "Grilles ventilation", description: "Caillebotis, techniques", imageKey: "product-grilles" },
   { icon: Umbrella, name: "Marquises", description: "Verre & acier", imageKey: "product-marquises" },
 ];
 
