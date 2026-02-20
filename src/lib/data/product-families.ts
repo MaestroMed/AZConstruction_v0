@@ -145,7 +145,7 @@ export const productFamilies: ProductFamily[] = [
     name: "Portails",
     nameSingular: "Portail",
     tagline: "L'Entrée de Votre Style",
-    description: "Portails battants et coulissants en acier ou aluminium.",
+    description: "Portails battants et coulissants en acier.",
     longDescription: "Votre portail est la première impression de votre propriété. Nous créons des portails sur mesure qui allient esthétique, sécurité et durabilité. Du design contemporain au style classique, motorisés ou manuels.",
     heroImages: defaultHeroImages,
     startingPrice: "",
@@ -167,14 +167,14 @@ export const productFamilies: ProductFamily[] = [
     specifications: [
       { label: "Largeur max.", value: "Jusqu'à 7m (coulissant)" },
       { label: "Hauteur", value: "1m à 2.5m" },
-      { label: "Matériaux", value: "Acier, aluminium" },
+      { label: "Matériaux", value: "Acier" },
       { label: "Motorisation", value: "Bras articulés, vérin, crémaillère" },
       { label: "Télécommande", value: "2 ou 4 canaux incluses" },
       { label: "Assurance", value: "Décennale" },
     ],
     gallery: [],
     seoTitle: "Portails Sur Mesure | Battants, Coulissants, Motorisés | AZ Construction",
-    seoDescription: "Portails sur mesure en acier et aluminium. Battants, coulissants, motorisés. 200+ couleurs RAL. Devis gratuit.",
+    seoDescription: "Portails sur mesure en acier. Battants, coulissants, motorisés. 200+ couleurs RAL. Devis gratuit.",
   },
   {
     id: "clotures",
@@ -199,7 +199,6 @@ export const productFamilies: ProductFamily[] = [
       { id: "grillagee", name: "Clôture Grillagée", description: "Économique et robuste.", features: ["Panneaux rigides", "Installation rapide", "Rapport qualité-prix"], startingPrice: "" },
       { id: "lames", name: "Clôture à Lames", description: "Occultation et design moderne.", features: ["Lames horizontales", "100% occultant", "Style contemporain"], startingPrice: "" },
       { id: "decorative", name: "Clôture Décorative", description: "Motifs découpés laser personnalisés.", features: ["Découpe laser", "Motifs sur mesure", "Design unique"], startingPrice: "" },
-      { id: "piscine", name: "Clôture Piscine", description: "Conforme à la norme NF P90-306.", features: ["Norme piscine", "Portillon sécurisé", "Transparence verre"], startingPrice: "" },
     ],
     specifications: [
       { label: "Hauteur", value: "1m à 2m" },
@@ -343,7 +342,7 @@ export const productFamilies: ProductFamily[] = [
     ],
     variants: [
       { id: "porte-entree", name: "Marquise Porte d'Entrée", description: "Protégez votre porte d'entrée.", features: ["Largeur 80-150cm", "Profondeur 80-120cm", "Pose murale"], startingPrice: "" },
-      { id: "verre", name: "Marquise Verre", description: "Élégance et transparence.", features: ["Verre feuilleté", "Tirants inox", "Design épuré"], startingPrice: "" },
+      { id: "verre", name: "Marquise Verre", description: "Élégance et transparence.", features: ["Verre feuilleté", "Tirants acier", "Design épuré"], startingPrice: "" },
       { id: "casquette", name: "Marquise Casquette", description: "Style architectural contemporain.", features: ["Sans tirants", "Porte-à-faux", "Design audacieux"], startingPrice: "" },
     ],
     specifications: [
@@ -379,8 +378,7 @@ export const productFamilies: ProductFamily[] = [
     variants: [
       { id: "decorative", name: "Grille Décorative", description: "Esthétique pour façades et intérieurs.", features: ["Motifs variés", "Lames ou perforations", "Finitions RAL"], startingPrice: "" },
       { id: "technique", name: "Grille Technique", description: "Performance pour locaux techniques.", features: ["Haute performance", "Anti-effraction option", "Grande dimension"], startingPrice: "" },
-      { id: "acoustique", name: "Grille Acoustique", description: "Réduction du bruit avec ventilation.", features: ["Atténuation 15-35 dB", "Lames acoustiques", "Studios, machines"], startingPrice: "" },
-      { id: "coupe-feu", name: "Grille Coupe-feu", description: "Protection incendie certifiée.", features: ["EI30 à EI120", "Certification CE", "Bâtiments ERP"], startingPrice: "" },
+      { id: "caliboutis", name: "Grille Caliboutis", description: "Grille caliboutis métallique sur mesure, pour passages muraux et intégrations architecturales.", features: ["Sur mesure", "Acier thermolaqué", "Intégration architecturale"], startingPrice: "" },
     ],
     specifications: [
       { label: "Dimensions", value: "Sur mesure, toutes tailles" },

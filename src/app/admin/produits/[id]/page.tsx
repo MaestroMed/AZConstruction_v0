@@ -30,7 +30,7 @@ const mockProduct = {
   actif: true,
   imageUrl: "",
   model3dUrl: "",
-  promptIA: "Porte d'entrée moderne en profilés acier Jansen avec design épuré, vitrage feuilleté, couleur anthracite, poignée inox",
+  promptIA: "Porte d'entrée moderne en profilés acier Jansen avec design épuré, vitrage feuilleté, couleur anthracite, poignée acier thermolaqué",
 };
 
 export default function ProductEditPage() {

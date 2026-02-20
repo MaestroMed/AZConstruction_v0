@@ -114,7 +114,7 @@ const recentOrders = [
   {
     id: "ORD-2024-0155",
     client: "SARL Martin Construction",
-    produit: "Garde-corps Inox (x5)",
+    produit: "Garde-corps Acier (x5)",
     montant: "8 920 €",
     status: "payee",
     date: "Il y a 5h",

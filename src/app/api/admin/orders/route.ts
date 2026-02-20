@@ -64,7 +64,7 @@ const mockOrders = [
       {
         id: "2",
         productId: "2",
-        product: { nom: "Garde-corps Verre & Inox" },
+        product: { nom: "Garde-corps Verre & Acier" },
         quantity: 5,
         prixUnitaireHT: 1486.67,
         prixTotalHT: 7433.33,

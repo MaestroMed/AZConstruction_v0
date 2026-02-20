@@ -23,7 +23,7 @@ const productFamilies = [
     id: "garde-corps",
     name: "Garde-corps",
     description:
-      "Garde-corps et balustrades pour terrasses, balcons et escaliers. Verre feuilleté, câbles tendus ou barreaux design. Inox 316L.",
+      "Garde-corps et balustrades pour terrasses, balcons et escaliers. Verre feuilleté, câbles tendus ou barreaux design.",
     icon: (
       <svg className="w-12 h-12" viewBox="0 0 48 48" fill="none" stroke="currentColor" strokeWidth="2">
         <line x1="4" y1="16" x2="44" y2="16" />
@@ -37,15 +37,15 @@ const productFamilies = [
         <circle cx="44" cy="12" r="3" />
       </svg>
     ),
-    products: ["Garde-corps Verre & Inox", "Garde-corps Câbles", "Garde-corps Barreaudé", "Garde-corps Tôles Perforées"],
+    products: ["Garde-corps Verre & Acier", "Garde-corps Câbles", "Garde-corps Barreaudé", "Garde-corps Tôles Perforées"],
     startingPrice: "290",
-    features: ["Norme NF P01-012", "Inox 316L", "8 modèles"],
+    features: ["Norme NF P01-012", "8 modèles"],
   },
   {
     id: "escaliers",
     name: "Escaliers",
     description:
-      "Escaliers droits, quart-tournant, double quart-tournant et hélicoïdaux. Structures acier, inox ou mixte bois-métal.",
+      "Escaliers droits, quart-tournant, double quart-tournant et hélicoïdaux. Structures acier ou mixte bois-métal.",
     icon: (
       <svg className="w-12 h-12" viewBox="0 0 48 48" fill="none" stroke="currentColor" strokeWidth="2">
         <path d="M4 44 L4 36 L12 36 L12 28 L20 28 L20 20 L28 20 L28 12 L36 12 L36 4 L44 4" />
@@ -53,13 +53,13 @@ const productFamilies = [
     ),
     products: ["Escalier Hélicoïdal", "Escalier Droit", "Escalier Quart-tournant", "Escalier Suspendu"],
     startingPrice: "4 500",
-    features: ["Étude 3D gratuite", "8 modèles", "Marches bois/métal"],
+    features: ["8 modèles", "Marches bois/métal"],
   },
   {
     id: "portails",
     name: "Portails",
     description:
-      "Portails battants et coulissants en acier, aluminium ou inox. Design moderne ou classique, motorisation disponible.",
+      "Portails battants et coulissants en acier. Design moderne ou classique, motorisation disponible.",
     icon: (
       <svg className="w-12 h-12" viewBox="0 0 48 48" fill="none" stroke="currentColor" strokeWidth="2">
         <rect x="4" y="8" width="18" height="32" rx="2" />
@@ -87,30 +87,9 @@ const productFamilies = [
         <line x1="40" y1="8" x2="40" y2="40" />
       </svg>
     ),
-    products: ["Clôture Barreaudée", "Clôture à Lames", "Clôture Décorative", "Clôture Piscine"],
+    products: ["Clôture Barreaudée", "Clôture à Lames", "Clôture Décorative"],
     startingPrice: "85",
     features: ["Prix au mètre", "8 modèles", "Anti-corrosion"],
-  },
-  {
-    id: "pergolas",
-    name: "Pergolas",
-    description:
-      "Pergolas bioclimatiques à lames orientables, classiques, adossées ou autoportées. Carports inclus. Options stores, LED, chauffage.",
-    icon: (
-      <svg className="w-12 h-12" viewBox="0 0 48 48" fill="none" stroke="currentColor" strokeWidth="2">
-        <rect x="6" y="32" width="36" height="12" rx="1" />
-        <line x1="10" y1="32" x2="10" y2="44" />
-        <line x1="38" y1="32" x2="38" y2="44" />
-        <line x1="6" y1="36" x2="42" y2="36" />
-        <line x1="6" y1="28" x2="42" y2="28" />
-        <line x1="12" y1="28" x2="12" y2="32" />
-        <line x1="24" y1="28" x2="24" y2="32" />
-        <line x1="36" y1="28" x2="36" y2="32" />
-      </svg>
-    ),
-    products: ["Pergola Bioclimatique", "Pergola Adossée", "Pergola Autoportée", "Carport"],
-    startingPrice: "4 500",
-    features: ["Lames orientables", "7 modèles", "Options LED/chauffage"],
   },
   {
     id: "marquises",
@@ -135,7 +114,7 @@ const productFamilies = [
     id: "portes",
     name: "Portes",
     description:
-      "Portes en acier et profilés Jansen : portes d'entrée design, techniques, coupe-feu EI30 à EI120, acoustiques et blindées.",
+      "Portes en acier et profilés Jansen : portes d'entrée design, techniques, coupe-feu EI30 à EI120, taulées et vitrées.",
     icon: (
       <svg className="w-12 h-12" viewBox="0 0 48 48" fill="none" stroke="currentColor" strokeWidth="2">
         <rect x="8" y="4" width="32" height="40" rx="2" />
@@ -144,7 +123,7 @@ const productFamilies = [
         <line x1="32" y1="24" x2="28" y2="24" />
       </svg>
     ),
-    products: ["Porte d'Entrée Acier", "Porte Atelier", "Porte Coupe-feu", "Porte Blindée A2P"],
+    products: ["Porte d'Entrée Acier", "Porte Atelier", "Porte Coupe-feu", "Porte Vitrée"],
     startingPrice: "1 200",
     features: ["Profilés Jansen", "8 modèles", "Coupe-feu EI120"],
   },
@@ -198,7 +177,7 @@ const productFamilies = [
         <line x1="10" y1="38" x2="38" y2="38" />
       </svg>
     ),
-    products: ["Grille Décorative", "Grille Technique", "Grille Acoustique", "Grille Coupe-feu"],
+    products: ["Grille Décorative", "Grille Technique", "Grille Caliboutis"],
     startingPrice: "180",
     features: ["7 modèles", "Anti-corrosion", "Sur mesure"],
   },

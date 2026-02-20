@@ -30,7 +30,7 @@ const services = [
     title: "Garde-corps & Balustrades",
     description:
       "Protégez vos terrasses, balcons et escaliers avec des garde-corps alliant sécurité maximale et design contemporain. Profilés Jansen.",
-    features: ["Verre feuilleté", "Câbles inox", "Barreaux design", "Inox 316"],
+    features: ["Verre feuilleté", "Câbles acier", "Barreaux design"],
     price: "À partir de 290€/ml",
     imageKey: "product-garde-corps",
     configLink: "garde-corps",
@@ -39,7 +39,7 @@ const services = [
     icon: Wrench,
     title: "Escaliers",
     description:
-      "Des escaliers droits aux hélicoïdaux, nous réalisons l'escalier de vos rêves. Acier, inox ou mixte bois-métal.",
+      "Des escaliers droits aux hélicoïdaux, nous réalisons l'escalier de vos rêves. Acier ou mixte bois-métal.",
     features: ["Droits", "Quart-tournant", "Hélicoïdaux", "Extérieurs"],
     price: "À partir de 4 500€",
     imageKey: "product-escaliers",
@@ -60,7 +60,7 @@ const services = [
     title: "Grilles de ventilation",
     description:
       "Grilles de ventilation techniques et décoratives pour bâtiments résidentiels. Solutions sur mesure esthétiques.",
-    features: ["Décoratives", "Techniques", "Acoustiques", "Sur mesure"],
+    features: ["Décoratives", "Techniques", "Caliboutis", "Sur mesure"],
     price: "À partir de 180€",
     imageKey: "product-grilles",
     configLink: "grilles-ventilation",
@@ -142,7 +142,7 @@ const testimonials = [
   {
     name: "Sophie D.",
     location: "Persan (95)",
-    text: "Des garde-corps en verre et inox magnifiques pour notre terrasse. Le rendu est moderne et la vue est dégagée.",
+        text: "Des garde-corps en verre magnifiques pour notre terrasse. Le rendu est moderne et la vue est dégagée.",
     rating: 5,
     product: "Garde-corps verre",
   },

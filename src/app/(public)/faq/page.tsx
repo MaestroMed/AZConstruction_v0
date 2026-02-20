@@ -49,12 +49,12 @@ const faqCategories = [
       {
         question: "Quels matériaux utilisez-vous ?",
         answer:
-          "Nous travaillons principalement l'acier (brut, thermolaqué, galvanisé), l'inox 304 et 316, l'aluminium, et le fer forgé. Nous pouvons également combiner le métal avec d'autres matériaux comme le verre, le bois ou le composite.",
+          "Nous travaillons principalement l'acier (brut, thermolaqué, galvanisé), l'aluminium, et le fer forgé. Nous pouvons également combiner le métal avec d'autres matériaux comme le verre, le bois ou le composite.",
       },
       {
         question: "Comment choisir la finition de mon produit ?",
         answer:
-          "Nous proposons plus de 200 couleurs RAL en thermolaquage, ainsi que des finitions spéciales (effet rouillé Corten, inox brossé ou poli, etc.). Notre équipe peut vous conseiller selon votre projet et l'environnement extérieur.",
+          "Nous proposons plus de 200 couleurs RAL en thermolaquage, ainsi que des finitions spéciales (effet rouillé Corten, teintes métallisées, etc.). Notre équipe peut vous conseiller selon votre projet et l'environnement extérieur.",
       },
     ],
   },
@@ -124,7 +124,7 @@ const faqCategories = [
       {
         question: "Comment entretenir mon ouvrage métallique ?",
         answer:
-          "L'entretien dépend du matériau : pour l'acier thermolaqué, un nettoyage à l'eau savonneuse 2 fois par an suffit. L'inox nécessite un nettoyage régulier avec un produit adapté. Évitez les produits abrasifs et rincez abondamment.",
+          "Pour l'acier thermolaqué, un nettoyage à l'eau savonneuse 2 fois par an suffit. Évitez les produits abrasifs et rincez abondamment pour préserver la finition.",
       },
       {
         question: "Que faire en cas de problème après la pose ?",

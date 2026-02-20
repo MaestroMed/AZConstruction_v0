@@ -235,7 +235,7 @@ const DEFAULT_IMAGES: {
     category: "realisations",
     label: "Réalisation Pro 2",
     description: "2ème réalisation B2B mise en avant",
-    fallbackUrl: "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=600&q=80",
+    fallbackUrl: "https://images.unsplash.com/photo-1555041469-a586c61ea9bc?w=600&q=80",
   },
   {
     key: "realisation-b2b-3",
@@ -280,6 +280,43 @@ const DEFAULT_IMAGES: {
     label: "Logo Saint-Gobain",
     description: "Logo du partenaire Saint-Gobain",
     fallbackUrl: "https://via.placeholder.com/200x80/004990/FFFFFF?text=SAINT-GOBAIN",
+  },
+  {
+    key: "partner-demathieu-bard",
+    category: "partners",
+    label: "Logo Demathieu & Bard",
+    description: "Logo du partenaire Demathieu & Bard",
+    fallbackUrl: "https://via.placeholder.com/200x80/1E3A8A/FFFFFF?text=DEMATHIEU+BARD",
+  },
+  {
+    key: "partner-spie-batignolles",
+    category: "partners",
+    label: "Logo Spie Batignolles",
+    description: "Logo du partenaire Spie Batignolles",
+    fallbackUrl: "https://via.placeholder.com/200x80/DC2626/FFFFFF?text=SPIE+BATIGNOLLES",
+  },
+  {
+    key: "partner-rabot-dutilleul",
+    category: "partners",
+    label: "Logo Rabot Dutilleul",
+    description: "Logo du partenaire Rabot Dutilleul",
+    fallbackUrl: "https://via.placeholder.com/200x80/059669/FFFFFF?text=RABOT+DUTILLEUL",
+  },
+  {
+    key: "partner-urbaine-travaux",
+    category: "partners",
+    label: "Logo Urbaine de Travaux",
+    description: "Logo du partenaire Urbaine de Travaux",
+    fallbackUrl: "https://via.placeholder.com/200x80/7C3AED/FFFFFF?text=URBAINE+TRAVAUX",
+  },
+
+  // === THERMOLAQUAGE ===
+  {
+    key: "thermolaquage-process",
+    category: "pages",
+    label: "Photo Process Thermolaquage",
+    description: "Image illustrant le processus de thermolaquage (four, cabine de projection...)",
+    fallbackUrl: "https://images.unsplash.com/photo-1565793298595-6a879b1d9492?w=1200&q=80",
   },
 ];
 

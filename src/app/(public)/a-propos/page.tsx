@@ -6,395 +6,421 @@ import Link from "next/link";
 import Image from "next/image";
 import {
   Award,
-  Users,
-  Target,
   Heart,
-  Clock,
   Shield,
-  Wrench,
-  MapPin,
+  Users,
   ArrowRight,
   CheckCircle2,
+  MapPin,
+  Quote,
 } from "lucide-react";
-import { Button } from "@/components/ui/Button";
+import { GlowButton } from "@/components/ui/GlowButton";
+import { GlassCard } from "@/components/ui/GlassCard";
+import { MeshGradient, ParticleBackground, GradientOrb } from "@/components/ui/MeshGradient";
 import { useSiteImages } from "@/lib/hooks/useSiteImages";
 
+/* ─── Données ─── */
+
 const stats = [
-  { number: "10", label: "Années d'expérience" },
   { number: "1 500+", label: "Projets réalisés" },
   { number: "1 800m²", label: "D'atelier" },
   { number: "98%", label: "Clients satisfaits" },
+  { number: "IDF", label: "& France entière" },
 ];
 
 const values = [
   {
     icon: Award,
     title: "Excellence",
-    description:
-      "Chaque projet est réalisé avec la plus grande attention aux détails et un niveau d'exigence sans compromis.",
+    description: "Chaque projet est réalisé avec la plus grande attention aux détails et un niveau d'exigence sans compromis.",
   },
   {
     icon: Heart,
     title: "Passion",
-    description:
-      "Notre amour du métier se reflète dans chaque création. Le travail du métal est pour nous un art.",
+    description: "Le travail du métal est pour nous un art. Notre amour du métier se reflète dans chaque création.",
   },
   {
     icon: Shield,
     title: "Fiabilité",
-    description:
-      "Nous respectons nos engagements en termes de délais, de qualité et de budget.",
+    description: "Nous respectons nos engagements en termes de délais, de qualité et de budget, toujours.",
   },
   {
     icon: Users,
     title: "Proximité",
-    description:
-      "Un interlocuteur unique vous accompagne de la conception à la pose pour une relation de confiance.",
+    description: "Un interlocuteur unique vous accompagne de la conception à la pose pour une relation de confiance durable.",
   },
 ];
 
 const timeline = [
   {
-    year: "2015",
-    title: "Les débuts",
-    description:
-      "Création d'AZ Construction à Bruyères-sur-Oise, spécialisé en métallerie sur mesure.",
-  },
-  {
     year: "2018",
-    title: "Expansion",
-    description:
-      "Installation dans nos ateliers actuels de 1800m² à Bruyères-sur-Oise.",
+    title: "Création",
+    description: "Fondation d'AZ Construction à Bruyères-sur-Oise, spécialisée en métallerie sur mesure pour particuliers et professionnels.",
   },
   {
     year: "2020",
     title: "Partenariat Jansen",
-    description:
-      "Devenu partenaire officiel Jansen pour les profilés acier haut de gamme.",
+    description: "AZ Construction devient partenaire officiel Jansen Steel Systems, permettant d'accéder aux profilés acier haut de gamme.",
   },
   {
     year: "2022",
-    title: "Modernisation",
-    description:
-      "Investissement dans des machines à commande numérique pour plus de précision.",
+    title: "Atelier 1 800m²",
+    description: "Installation dans l'atelier actuel de 1 800m² à Bruyères-sur-Oise, avec machines à commande numérique.",
   },
   {
-    year: "2024",
-    title: "Innovation",
-    description:
-      "Lancement de notre plateforme digitale et de notre atelier de 1800m².",
-  },
-];
-
-const team = [
-  {
-    name: "Jean-Pierre Azoulay",
-    role: "Fondateur & Directeur",
-    description: "35 ans d'expérience dans la métallerie",
-    imageKey: "team-member-1",
-  },
-  {
-    name: "Marie Dubois",
-    role: "Responsable Bureau d'études",
-    description: "Ingénieure spécialisée en structures métalliques",
-    imageKey: "team-member-2",
-  },
-  {
-    name: "Thomas Martin",
-    role: "Chef d'atelier",
-    description: "Maître ferronnier d'art",
-    imageKey: "team-member-3",
-  },
-  {
-    name: "Sophie Lambert",
-    role: "Responsable Commerciale",
-    description: "Experte en accompagnement client",
-    imageKey: "team-member-4",
+    year: "Aujourd'hui",
+    title: "AZ Construction",
+    description: "Plus de 1 500 projets réalisés. Métallerie acier, verre et bois, pour particuliers comme pour les plus grands groupes de construction.",
   },
 ];
 
 const certifications = [
-  "Artisan d'Art",
   "Made in France",
   "Garantie décennale",
   "Partenaire Jansen",
+  "Artisan du bâtiment",
 ];
 
 export default function AProposPage() {
   const { getImage } = useSiteImages();
-  
+
   return (
-    <div className="min-h-screen bg-white">
-      {/* Hero Section with dynamic background */}
-      <section className="relative pt-32 pb-20 overflow-hidden">
-        {/* Background image */}
+    <div className="min-h-screen bg-navy-dark">
+
+      {/* ═══════════════════════════════════════════════════════
+          HERO — Dark, minimaliste, honnête
+      ═══════════════════════════════════════════════════════ */}
+      <section className="relative min-h-[75vh] flex items-center overflow-hidden">
+        {/* Background image avec overlay fort */}
         <div className="absolute inset-0">
           <Image
             src={getImage("hero-a-propos")}
-            alt="À propos d'AZ Construction"
+            alt="AZ Construction — atelier"
             fill
             className="object-cover"
             priority
           />
-          <div className="absolute inset-0 bg-gradient-to-br from-navy-dark/95 via-navy-medium/90 to-blue-corporate/85" />
-        </div>
-        <div className="absolute inset-0 opacity-10">
-          <div className="absolute inset-0" style={{
-            backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.4'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`,
-          }} />
+          <div className="absolute inset-0 bg-gradient-to-br from-navy-dark/97 via-navy-dark/90 to-navy-medium/85" />
         </div>
 
-        <div className="container mx-auto px-6 relative z-10">
+        <GradientOrb color="cyan" size="lg" position={{ top: "10%", right: "5%" }} opacity={0.08} animate />
+        <ParticleBackground count={10} />
+
+        <div className="container mx-auto px-6 relative z-10 pt-32 pb-16">
           <motion.div
             className="max-w-3xl"
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
+            transition={{ duration: 0.8 }}
           >
-            <span className="inline-block px-4 py-2 bg-cyan-glow/20 text-cyan-glow rounded-full text-sm font-medium mb-6">
-              Notre histoire
-            </span>
-            <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-6 leading-tight">
-              L'excellence du métal depuis <span className="text-cyan-glow">1998</span>
+            <motion.span
+              className="inline-flex items-center gap-2 px-4 py-2 bg-cyan-glow/10 border border-cyan-glow/20 text-cyan-glow rounded-full text-sm font-medium mb-8"
+              initial={{ opacity: 0, scale: 0.9 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ delay: 0.2 }}
+            >
+              <MapPin className="w-4 h-4" />
+              Bruyères-sur-Oise, Île-de-France
+            </motion.span>
+
+            <h1 className="text-5xl md:text-6xl lg:text-7xl font-bold text-white mb-6 leading-[1.05] tracking-tight">
+              L&apos;art du métal,{" "}
+              <span className="font-serif italic text-gradient-cyan">sur mesure</span>
             </h1>
-            <p className="text-xl text-white/80 mb-8 leading-relaxed">
-              AZ Construction, c'est l'histoire d'une passion transmise de génération en génération.
-              Nous créons des ouvrages métalliques sur mesure qui allient esthétique, durabilité et innovation.
+
+            <p className="text-xl text-white/55 mb-12 leading-relaxed max-w-2xl">
+              Depuis <span className="text-white font-semibold">2018</span>, AZ Construction fabrique des ouvrages métalliques qui allient esthétique, durabilité et précision artisanale — pour les particuliers comme pour les professionnels du bâtiment.
             </p>
           </motion.div>
 
-          {/* Stats */}
+          {/* Stats glassmorphism */}
           <motion.div
-            className="grid grid-cols-2 md:grid-cols-4 gap-6 mt-12"
-            initial={{ opacity: 0, y: 30 }}
+            className="grid grid-cols-2 md:grid-cols-4 gap-4 max-w-3xl"
+            initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.2 }}
+            transition={{ delay: 0.4 }}
           >
-            {stats.map((stat) => (
-              <div
+            {stats.map((stat, i) => (
+              <motion.div
                 key={stat.label}
-                className="bg-white/10 backdrop-blur-sm rounded-2xl p-6 text-center border border-white/10"
+                className="glass-card rounded-2xl p-5 text-center border border-white/10"
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.5 + i * 0.1 }}
               >
-                <div className="text-3xl md:text-4xl font-bold text-cyan-glow mb-2">
-                  {stat.number}
-                </div>
-                <div className="text-white/70 text-sm">{stat.label}</div>
-              </div>
+                <div className="text-2xl md:text-3xl font-bold text-cyan-glow mb-1">{stat.number}</div>
+                <div className="text-white/40 text-xs">{stat.label}</div>
+              </motion.div>
             ))}
           </motion.div>
         </div>
       </section>
 
-      {/* Values Section */}
-      <section className="py-20 bg-gray-50">
-        <div className="container mx-auto px-6">
+      {/* ═══════════════════════════════════════════════════════
+          FONDATEUR — Focus 50/50
+      ═══════════════════════════════════════════════════════ */}
+      <section className="bg-navy-dark py-0">
+        <div className="grid lg:grid-cols-2 min-h-[600px]">
+          {/* Photo fondateur — pleine hauteur */}
+          <div className="relative min-h-[400px] lg:min-h-[600px] overflow-hidden">
+            <Image
+              src={getImage("team-member-1")}
+              alt="Le fondateur d'AZ Construction"
+              fill
+              className="object-cover object-top"
+            />
+            {/* Overlay gradient vers la droite pour transition */}
+            <div className="absolute inset-0 bg-gradient-to-r from-transparent via-transparent to-navy-dark/50 hidden lg:block" />
+            <div className="absolute inset-0 bg-gradient-to-t from-navy-dark/70 via-navy-dark/10 to-transparent lg:hidden" />
+
+            {/* Badge "Fondateur" */}
+            <div className="absolute bottom-8 left-8 flex items-center gap-3">
+              <div className="w-2 h-2 rounded-full bg-cyan-glow" />
+              <span className="text-white/70 text-sm font-medium tracking-wide uppercase">Fondateur</span>
+            </div>
+          </div>
+
+          {/* Texte fondateur */}
+          <motion.div
+            className="flex flex-col justify-center px-10 py-16 md:px-16 bg-navy-dark"
+            initial={{ opacity: 0, x: 40 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.7 }}
+          >
+            <span className="inline-block px-3 py-1 bg-cyan-glow/10 border border-cyan-glow/20 text-cyan-glow text-xs font-bold tracking-widest uppercase rounded-full mb-8">
+              Le mot du fondateur
+            </span>
+
+            <div className="relative mb-8">
+              <Quote className="absolute -top-3 -left-2 w-10 h-10 text-cyan-glow/20" />
+              <blockquote className="text-xl md:text-2xl text-white/80 leading-relaxed font-light pl-6 italic">
+                "Chaque ouvrage que l'on fabrique, on le signe. Ce n'est pas juste du métal — c'est notre réputation, notre passion, notre engagement envers chaque client."
+              </blockquote>
+            </div>
+
+            <div className="mb-8">
+              <div className="text-lg font-bold text-white mb-1">
+                Le Fondateur {/* Remplacer par le vrai prénom/nom */}
+              </div>
+              <div className="text-cyan-glow text-sm font-medium">Fondateur & Directeur — AZ Construction</div>
+            </div>
+
+            <div className="space-y-3">
+              {[
+                "Artisan métallier de formation",
+                "Spécialiste acier, verre et profilés Jansen",
+                "Basé à Bruyères-sur-Oise depuis 2018",
+              ].map((item, i) => (
+                <div key={i} className="flex items-center gap-3 text-white/50 text-sm">
+                  <CheckCircle2 className="w-4 h-4 text-cyan-glow flex-shrink-0" />
+                  {item}
+                </div>
+              ))}
+            </div>
+          </motion.div>
+        </div>
+      </section>
+
+      {/* ═══════════════════════════════════════════════════════
+          VALEURS — Aurora + GlassCard
+      ═══════════════════════════════════════════════════════ */}
+      <MeshGradient variant="aurora" className="py-24">
+        <GradientOrb color="cyan" size="xl" position={{ top: "-10%", right: "-5%" }} opacity={0.07} />
+        <GradientOrb color="blue" size="lg" position={{ bottom: "-10%", left: "-5%" }} opacity={0.09} />
+
+        <div className="container mx-auto px-6 relative z-10">
           <motion.div
             className="text-center mb-16"
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
           >
-            <h2 className="text-3xl md:text-4xl font-bold text-navy-dark mb-4">
+            <span className="inline-block px-4 py-2 bg-white/5 border border-white/10 text-white/50 rounded-full text-xs font-bold tracking-widest uppercase mb-6">
+              Ce qui nous anime
+            </span>
+            <h2 className="text-3xl md:text-4xl font-bold text-white">
               Nos valeurs
             </h2>
-            <p className="text-gray-600 max-w-2xl mx-auto">
-              Ces principes guident chacune de nos actions et font la différence dans nos réalisations.
-            </p>
           </motion.div>
 
-          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
+          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
             {values.map((value, index) => (
               <motion.div
                 key={value.title}
-                className="bg-white rounded-2xl p-8 shadow-lg hover:shadow-xl transition-shadow"
                 initial={{ opacity: 0, y: 30 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: index * 0.1 }}
               >
-                <div className="w-14 h-14 rounded-xl bg-gradient-to-br from-cyan-glow to-blue-corporate flex items-center justify-center mb-6">
-                  <value.icon className="w-7 h-7 text-white" />
-                </div>
-                <h3 className="text-xl font-semibold text-navy-dark mb-3">
-                  {value.title}
-                </h3>
-                <p className="text-gray-600">{value.description}</p>
+                <GlassCard variant="dark" padding="lg" className="h-full text-center hover:border-cyan-glow/20 border border-white/10">
+                  <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-cyan-glow/20 to-blue-corporate/20 flex items-center justify-center mx-auto mb-5 ring-1 ring-cyan-glow/20">
+                    <value.icon className="w-6 h-6 text-cyan-glow" />
+                  </div>
+                  <h3 className="text-lg font-bold text-white mb-3">{value.title}</h3>
+                  <p className="text-white/45 text-sm leading-relaxed">{value.description}</p>
+                </GlassCard>
               </motion.div>
             ))}
           </div>
         </div>
-      </section>
+      </MeshGradient>
 
-      {/* Timeline Section */}
-      <section className="py-20 bg-white">
-        <div className="container mx-auto px-6">
+      {/* ═══════════════════════════════════════════════════════
+          PARCOURS — Timeline verticale dark
+      ═══════════════════════════════════════════════════════ */}
+      <section className="py-24 bg-navy-medium relative overflow-hidden">
+        <div className="absolute inset-0 opacity-[0.03]" style={{
+          backgroundImage: `repeating-linear-gradient(0deg, transparent, transparent 60px, rgba(0,212,255,1) 60px, rgba(0,212,255,1) 61px), repeating-linear-gradient(90deg, transparent, transparent 60px, rgba(0,212,255,1) 60px, rgba(0,212,255,1) 61px)`,
+        }} />
+
+        <div className="container mx-auto px-6 relative z-10">
           <motion.div
             className="text-center mb-16"
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
           >
-            <h2 className="text-3xl md:text-4xl font-bold text-navy-dark mb-4">
-              Notre parcours
+            <span className="inline-block px-4 py-2 bg-white/5 border border-white/10 text-white/50 rounded-full text-xs font-bold tracking-widest uppercase mb-6">
+              Notre histoire
+            </span>
+            <h2 className="text-3xl md:text-4xl font-bold text-white">
+              Le parcours <span className="text-gradient-cyan font-serif italic">AZ Construction</span>
             </h2>
-            <p className="text-gray-600 max-w-2xl mx-auto">
-              Plus de 10 ans d&apos;évolution et d&apos;innovation au service de nos clients.
-            </p>
           </motion.div>
 
-          <div className="relative">
-            {/* Timeline line */}
-            <div className="absolute left-1/2 transform -translate-x-1/2 w-0.5 h-full bg-gradient-to-b from-cyan-glow via-blue-corporate to-navy-dark hidden md:block" />
+          {/* Timeline verticale centrée */}
+          <div className="relative max-w-3xl mx-auto">
+            {/* Ligne centrale */}
+            <div className="absolute left-1/2 -translate-x-1/2 top-0 bottom-0 w-px bg-gradient-to-b from-cyan-glow/40 via-cyan-glow/20 to-transparent" />
 
-            <div className="space-y-12">
-              {timeline.map((event, index) => (
-                <motion.div
-                  key={event.year}
-                  className={`flex flex-col md:flex-row gap-8 items-center ${
-                    index % 2 === 0 ? "md:flex-row" : "md:flex-row-reverse"
-                  }`}
-                  initial={{ opacity: 0, x: index % 2 === 0 ? -50 : 50 }}
-                  whileInView={{ opacity: 1, x: 0 }}
-                  viewport={{ once: true }}
-                >
-                  <div className={`flex-1 ${index % 2 === 0 ? "md:text-right" : "md:text-left"}`}>
-                    <div className="bg-white rounded-2xl p-6 shadow-lg border border-gray-100">
-                      <span className="text-cyan-glow font-bold text-2xl">{event.year}</span>
-                      <h3 className="text-xl font-semibold text-navy-dark mt-2 mb-2">
-                        {event.title}
-                      </h3>
-                      <p className="text-gray-600">{event.description}</p>
+            <div className="space-y-16">
+              {timeline.map((event, index) => {
+                const isLeft = index % 2 === 0;
+                return (
+                  <motion.div
+                    key={event.year}
+                    className={`flex items-center gap-6 ${isLeft ? "flex-row" : "flex-row-reverse"}`}
+                    initial={{ opacity: 0, x: isLeft ? -40 : 40 }}
+                    whileInView={{ opacity: 1, x: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ duration: 0.6, delay: index * 0.1 }}
+                  >
+                    {/* Contenu */}
+                    <div className={`flex-1 ${isLeft ? "text-right" : "text-left"}`}>
+                      <div className="inline-block glass-card border border-white/10 rounded-2xl p-6 hover:border-cyan-glow/20 transition-colors">
+                        <div className="text-2xl font-bold text-cyan-glow mb-2">{event.year}</div>
+                        <h3 className="text-lg font-bold text-white mb-2">{event.title}</h3>
+                        <p className="text-white/40 text-sm leading-relaxed">{event.description}</p>
+                      </div>
                     </div>
-                  </div>
-                  <div className="w-4 h-4 rounded-full bg-cyan-glow border-4 border-white shadow-lg hidden md:block" />
-                  <div className="flex-1 hidden md:block" />
-                </motion.div>
-              ))}
+
+                    {/* Dot central */}
+                    <div className="w-4 h-4 rounded-full bg-cyan-glow border-2 border-navy-medium flex-shrink-0 relative z-10 shadow-[0_0_12px_rgba(0,212,255,0.5)]" />
+
+                    {/* Côté vide */}
+                    <div className="flex-1" />
+                  </motion.div>
+                );
+              })}
             </div>
           </div>
         </div>
       </section>
 
-      {/* Team Section */}
-      <section className="py-20 bg-gray-50">
-        <div className="container mx-auto px-6">
-          <motion.div
-            className="text-center mb-16"
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-          >
-            <h2 className="text-3xl md:text-4xl font-bold text-navy-dark mb-4">
-              Notre équipe
-            </h2>
-            <p className="text-gray-600 max-w-2xl mx-auto">
-              Des experts passionnés qui mettent leur savoir-faire à votre service.
-            </p>
-          </motion.div>
+      {/* ═══════════════════════════════════════════════════════
+          ATELIER — Photo + certifications intégrées
+      ═══════════════════════════════════════════════════════ */}
+      <section className="bg-navy-dark">
+        <div className="grid lg:grid-cols-2 min-h-[420px]">
+          {/* Photo atelier */}
+          <div className="relative min-h-[300px] lg:min-h-[420px] overflow-hidden">
+            <Image
+              src={getImage("page-atelier")}
+              alt="Atelier AZ Construction — Bruyères-sur-Oise"
+              fill
+              className="object-cover"
+            />
+            <div className="absolute inset-0 bg-navy-dark/40" />
+            <div className="absolute bottom-6 left-6">
+              <span className="px-4 py-2 bg-navy-dark/80 backdrop-blur-sm text-white/70 text-sm rounded-full border border-white/10">
+                Atelier 1 800m² — Bruyères-sur-Oise
+              </span>
+            </div>
+          </div>
 
-          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
-            {team.map((member, index) => (
-              <motion.div
-                key={member.name}
-                className="bg-white rounded-2xl overflow-hidden shadow-lg group"
-                initial={{ opacity: 0, y: 30 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: index * 0.1 }}
-              >
-                <div className="h-48 bg-gradient-to-br from-blue-corporate to-navy-dark relative overflow-hidden">
-                  <Image
-                    src={getImage(member.imageKey)}
-                    alt={member.name}
-                    fill
-                    className="object-cover group-hover:scale-105 transition-transform duration-500"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-navy-dark/40 to-transparent" />
-                </div>
-                <div className="p-6">
-                  <h3 className="text-lg font-semibold text-navy-dark mb-1">
-                    {member.name}
-                  </h3>
-                  <p className="text-cyan-glow text-sm font-medium mb-2">{member.role}</p>
-                  <p className="text-gray-600 text-sm">{member.description}</p>
-                </div>
-              </motion.div>
-            ))}
+          {/* Certifications */}
+          <div className="flex flex-col justify-center px-10 py-14 md:px-14 bg-navy-dark">
+            <motion.div
+              initial={{ opacity: 0, x: 40 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.7 }}
+            >
+              <span className="inline-block px-3 py-1 bg-cyan-glow/10 border border-cyan-glow/20 text-cyan-glow text-xs font-bold tracking-widest uppercase rounded-full mb-8">
+                Nos engagements
+              </span>
+              <h2 className="text-3xl font-bold text-white mb-8">
+                Certifications & labels
+              </h2>
+
+              <div className="space-y-4">
+                {certifications.map((cert, i) => (
+                  <motion.div
+                    key={cert}
+                    className="flex items-center gap-4 glass-card rounded-xl p-4 border border-white/10 hover:border-cyan-glow/20 transition-colors"
+                    initial={{ opacity: 0, x: 20 }}
+                    whileInView={{ opacity: 1, x: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ delay: i * 0.1 }}
+                  >
+                    <div className="w-8 h-8 rounded-lg bg-cyan-glow/15 flex items-center justify-center flex-shrink-0">
+                      <CheckCircle2 className="w-4 h-4 text-cyan-glow" />
+                    </div>
+                    <span className="text-white font-medium">{cert}</span>
+                  </motion.div>
+                ))}
+              </div>
+            </motion.div>
           </div>
         </div>
       </section>
 
-      {/* Certifications */}
-      <section className="py-16 bg-navy-dark">
-        <div className="container mx-auto px-6">
-          <motion.div
-            className="text-center mb-10"
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-          >
-            <h2 className="text-2xl font-bold text-white mb-2">
-              Nos certifications & labels
-            </h2>
-            <p className="text-white/60">
-              Gages de qualité et de professionnalisme
-            </p>
-          </motion.div>
+      {/* ═══════════════════════════════════════════════════════
+          CTA FINAL — Particles dark
+      ═══════════════════════════════════════════════════════ */}
+      <MeshGradient variant="animated" className="py-24 relative overflow-hidden">
+        <ParticleBackground count={15} />
+        <GradientOrb color="cyan" size="xl" position={{ top: "-20%", left: "10%" }} opacity={0.1} animate />
 
-          <div className="flex flex-wrap justify-center gap-6">
-            {certifications.map((cert, index) => (
-              <motion.div
-                key={cert}
-                className="flex items-center gap-2 bg-white/10 backdrop-blur-sm px-6 py-3 rounded-full"
-                initial={{ opacity: 0, scale: 0.9 }}
-                whileInView={{ opacity: 1, scale: 1 }}
-                viewport={{ once: true }}
-                transition={{ delay: index * 0.1 }}
-              >
-                <CheckCircle2 className="w-5 h-5 text-cyan-glow" />
-                <span className="text-white font-medium">{cert}</span>
-              </motion.div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* CTA Section */}
-      <section className="py-20 bg-white">
-        <div className="container mx-auto px-6">
+        <div className="container mx-auto px-6 relative z-10 text-center">
           <motion.div
-            className="bg-gradient-to-br from-blue-corporate to-navy-dark rounded-3xl p-12 text-center relative overflow-hidden"
             initial={{ opacity: 0, y: 30 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
+            transition={{ duration: 0.8 }}
           >
-            <div className="relative z-10">
-              <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">
-                Prêt à concrétiser votre projet ?
-              </h2>
-              <p className="text-white/80 max-w-xl mx-auto mb-8">
-                Contactez-nous pour discuter de vos besoins. Notre équipe est à votre écoute
-                pour vous accompagner dans la réalisation de votre projet sur mesure.
-              </p>
-              <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                <Link href="/contact">
-                  <Button size="lg" className="bg-cyan-glow text-navy-dark hover:bg-cyan-pale">
-                    Demander un devis
-                    <ArrowRight className="w-5 h-5 ml-2" />
-                  </Button>
-                </Link>
-                <Link href="/realisations">
-                  <Button variant="outline" size="lg" className="border-white/30 text-white hover:bg-white/10">
-                    Voir nos réalisations
-                  </Button>
-                </Link>
-              </div>
+            <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">
+              Prêt à concrétiser votre projet ?
+            </h2>
+            <p className="text-white/45 max-w-xl mx-auto mb-10 leading-relaxed">
+              Discutons de vos besoins. Notre équipe est à votre écoute pour vous accompagner de la conception à la pose.
+            </p>
+            <div className="flex flex-col sm:flex-row gap-4 justify-center">
+              <Link href="/contact">
+                <GlowButton size="lg" icon={<ArrowRight className="w-5 h-5" />}>
+                  Demander un devis
+                </GlowButton>
+              </Link>
+              <Link href="/realisations">
+                <GlowButton variant="outline" size="lg">
+                  Voir nos réalisations
+                </GlowButton>
+              </Link>
             </div>
           </motion.div>
         </div>
-      </section>
+      </MeshGradient>
     </div>
   );
 }
-
-

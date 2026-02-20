@@ -64,7 +64,7 @@ const mockQuotes = [
       {
         id: "3",
         productId: "2",
-        product: { nom: "Garde-corps Verre & Inox" },
+        product: { nom: "Garde-corps Verre & Acier" },
         quantity: 12,
         prixUnitaireHT: 450,
         prixTotalHT: 5400,

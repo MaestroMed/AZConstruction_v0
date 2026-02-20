@@ -188,14 +188,14 @@ export default function NouveauProduitPage() {
               value={form.nom}
               onChange={(e) => updateField("nom", e.target.value)}
               error={errors.nom}
-              placeholder="Garde-corps Design Inox"
+              placeholder="Garde-corps Design Acier"
               leftIcon={<Package className="w-4 h-4" />}
             />
             <Input
               label="Slug (URL)"
               value={form.slug}
               onChange={(e) => updateField("slug", e.target.value)}
-              placeholder="garde-corps-design-inox"
+              placeholder="garde-corps-design-acier"
               leftIcon={<Tag className="w-4 h-4" />}
             />
             <Select

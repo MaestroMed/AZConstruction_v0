@@ -22,10 +22,11 @@ import {
   Hammer,
   Ruler,
   Factory,
+  CheckCircle2,
 } from "lucide-react";
-import { Button } from "@/components/ui/Button";
-import { Card, CardContent } from "@/components/ui/Card";
-import { GlowButton, MeshGradient, ParticleBackground, GradientOrb, AnimatedCounter } from "@/components/ui";
+import { GlowButton } from "@/components/ui/GlowButton";
+import { GlassCard } from "@/components/ui/GlassCard";
+import { MeshGradient, ParticleBackground, GradientOrb } from "@/components/ui/MeshGradient";
 import { PhoneLink, usePhone } from "@/components/ui/PhoneLink";
 import { useSiteImages } from "@/lib/hooks/useSiteImages";
 import { toast } from "sonner";
@@ -34,69 +35,82 @@ const advantages = [
   {
     icon: Clock,
     title: "Délai 24/48h",
-    description:
-      "Vos commandes sont traitées en priorité avec des délais de fabrication optimisés.",
+    description: "Vos commandes sont traitées en priorité avec des délais de fabrication optimisés pour les professionnels.",
+    stat: "48h",
   },
   {
     icon: FileText,
     title: "Devis rapide",
-    description:
-      "Obtenez des devis détaillés adaptés à vos projets rapidement.",
+    description: "Obtenez des devis détaillés adaptés à vos projets avec plans techniques et descriptifs complets.",
+    stat: "Gratuit",
   },
   {
     icon: HeadphonesIcon,
     title: "Interlocuteur dédié",
-    description:
-      "Un chargé de compte vous accompagne dans tous vos projets de A à Z.",
+    description: "Un chargé de compte vous accompagne dans tous vos projets de A à Z, du devis à la livraison.",
+    stat: "1:1",
   },
   {
     icon: Truck,
     title: "Livraison sur chantier",
-    description:
-      "Livraison directe sur vos chantiers en Île-de-France et régions limitrophes.",
+    description: "Livraison directe sur vos chantiers en Île-de-France et régions limitrophes selon vos plannings.",
+    stat: "IDF",
   },
 ];
 
 const sectors = [
   {
+    step: "01",
     name: "Entreprises générales",
-    description: "Constructions neuves ou rénovations, nous accompagnons vos projets.",
+    description: "Constructions neuves ou rénovations, nous accompagnons tous vos projets avec réactivité.",
     icon: Building,
   },
   {
+    step: "02",
     name: "Architectes & Bureaux d'études",
-    description: "Collaborons sur vos projets les plus ambitieux.",
+    description: "Collaborons sur vos projets les plus ambitieux avec plans d'exécution sur mesure.",
     icon: Ruler,
   },
   {
+    step: "03",
     name: "Artisans du bâtiment",
-    description: "Sous-traitance métallerie pour vos chantiers.",
+    description: "Sous-traitance métallerie pour vos chantiers avec délais adaptés à vos contraintes.",
     icon: Hammer,
   },
   {
+    step: "04",
     name: "Industriels",
-    description: "Structures, passerelles et équipements sur mesure.",
+    description: "Structures, passerelles et équipements industriels sur mesure fabriqués en atelier.",
     icon: Factory,
   },
 ];
 
-// Réalisations B2B - liées aux images dynamiques
 const realisationsB2B = [
   {
     title: "Garde-corps collectif",
     client: "Promoteur IDF",
+    surface: "250 ml installés",
     imageKey: "realisation-b2b-1",
   },
   {
     title: "Escalier industriel",
     client: "Usine automobile",
+    surface: "3 niveaux",
     imageKey: "realisation-b2b-2",
   },
   {
     title: "Portails résidence",
     client: "Collectivité locale",
+    surface: "12 portails",
     imageKey: "realisation-b2b-3",
   },
+];
+
+const heroStats = [
+  { value: "200+", label: "Partenaires actifs" },
+  { value: "24h", label: "Réponse devis" },
+  { value: "1 800m²", label: "D'atelier" },
+  { value: "2018", label: "Depuis" },
 ];
 
 export default function ProfessionnelsPage() {
@@ -115,7 +129,6 @@ export default function ProfessionnelsPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
-
     try {
       const response = await fetch("/api/contact", {
         method: "POST",
@@ -130,21 +143,12 @@ export default function ProfessionnelsPage() {
           entreprise: formData.entreprise,
         }),
       });
-
       if (!response.ok) {
         const data = await response.json();
         throw new Error(data.error || "Erreur lors de l'envoi");
       }
-
       toast.success("Demande envoyée ! Nous vous recontactons sous 24h.");
-      setFormData({
-        entreprise: "",
-        nom: "",
-        email: "",
-        telephone: "",
-        secteur: "",
-        message: "",
-      });
+      setFormData({ entreprise: "", nom: "", email: "", telephone: "", secteur: "", message: "" });
     } catch (err) {
       toast.error(err instanceof Error ? err.message : "Erreur lors de l'envoi");
     } finally {
@@ -153,58 +157,44 @@ export default function ProfessionnelsPage() {
   };
 
   return (
-    <div className="min-h-screen bg-white overflow-x-hidden">
-      {/* Hero - Glassmorphism */}
-      <section className="relative min-h-[80vh] flex items-center overflow-hidden">
+    <div className="min-h-screen bg-navy-dark overflow-x-hidden">
+
+      {/* ═══════════════════════════════════════════════════════
+          HERO — Dark glassmorphism + stats animées
+      ═══════════════════════════════════════════════════════ */}
+      <section className="relative min-h-[90vh] flex items-center overflow-hidden">
         <MeshGradient variant="animated" className="absolute inset-0" />
-        
-        <GradientOrb
-          color="cyan"
-          size="xl"
-          position={{ top: "5%", right: "-10%" }}
-          blur="xl"
-          opacity={0.15}
-        />
-        <GradientOrb
-          color="blue"
-          size="lg"
-          position={{ bottom: "10%", left: "-5%" }}
-          blur="lg"
-          opacity={0.1}
-        />
-        
+        <GradientOrb color="cyan" size="xl" position={{ top: "5%", right: "-10%" }} blur="xl" opacity={0.15} />
+        <GradientOrb color="blue" size="lg" position={{ bottom: "10%", left: "-5%" }} blur="lg" opacity={0.1} />
         <ParticleBackground count={12} />
 
         <div className="container mx-auto px-6 relative z-10 py-32">
-          <div className="grid lg:grid-cols-2 gap-12 items-center">
+          <div className="grid lg:grid-cols-2 gap-16 items-center">
             <motion.div
               initial={{ opacity: 0, y: 30 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6 }}
+              transition={{ duration: 0.7 }}
             >
-              <motion.div 
+              <motion.div
                 className="inline-flex items-center gap-3 glass-card-glow px-5 py-2.5 mb-8"
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.1 }}
               >
                 <Building2 className="w-5 h-5 text-cyan-glow" />
-                <span className="text-cyan-glow font-medium tracking-wide">ESPACE PROFESSIONNEL</span>
+                <span className="text-cyan-glow font-medium tracking-wide text-sm">ESPACE PROFESSIONNEL</span>
               </motion.div>
-              
+
               <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-6 leading-[1.1]">
                 Votre partenaire{" "}
-                <span className="text-gradient-premium">
-                  métallerie
-                </span>
+                <span className="text-gradient-cyan font-serif italic">métallerie</span>
               </h1>
-              
-              <p className="text-xl text-white/70 mb-10 leading-relaxed">
-                Depuis <span className="text-cyan-glow font-semibold">2018</span>, AZ Construction accompagne les professionnels du bâtiment.
-                Transformation métal, bois et verre sur mesure.
+
+              <p className="text-xl text-white/60 mb-10 leading-relaxed max-w-lg">
+                Depuis <span className="text-cyan-glow font-semibold">2018</span>, AZ Construction accompagne les professionnels du bâtiment. Fabrication acier, verre et bois sur mesure.
               </p>
-              
-              <div className="flex flex-col sm:flex-row gap-4">
+
+              <div className="flex flex-col sm:flex-row gap-4 mb-12">
                 <a href="#contact-pro">
                   <GlowButton size="lg" icon={<ArrowRight className="w-5 h-5" />}>
                     Demander un devis Pro
@@ -212,30 +202,34 @@ export default function ProfessionnelsPage() {
                 </a>
                 <PhoneLink variant="button" className="justify-center" />
               </div>
+
+              <div className="flex flex-wrap gap-4">
+                {["Réactivité garantie", "Devis sous 48h", "Livraison chantier", "Interlocuteur dédié"].map((b, i) => (
+                  <span key={i} className="inline-flex items-center gap-2 text-white/40 text-sm">
+                    <CheckCircle2 className="w-3.5 h-3.5 text-cyan-glow" />
+                    {b}
+                  </span>
+                ))}
+              </div>
             </motion.div>
 
+            {/* Stats glassmorphism */}
             <motion.div
-              className="grid grid-cols-3 gap-4"
+              className="grid grid-cols-2 gap-4"
               initial={{ opacity: 0, x: 30 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ delay: 0.3 }}
             >
-              {[
-                { value: 200, suffix: "", label: "Partenaires actifs" },
-                { value: 24, suffix: "h", label: "Réponse devis" },
-                { value: 2018, suffix: "", label: "Depuis" },
-              ].map((stat, index) => (
+              {heroStats.map((stat, index) => (
                 <motion.div
                   key={index}
+                  className="glass-card p-8 text-center"
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.4 + index * 0.1 }}
-                  className="glass-card p-6 text-center"
                 >
-                  <div className="text-3xl font-bold text-white mb-1">
-                    <AnimatedCounter value={stat.value} suffix={stat.suffix} duration={2} />
-                  </div>
-                  <div className="text-white/60 text-sm">{stat.label}</div>
+                  <div className="text-3xl md:text-4xl font-bold text-cyan-glow mb-2">{stat.value}</div>
+                  <div className="text-white/50 text-sm">{stat.label}</div>
                 </motion.div>
               ))}
             </motion.div>
@@ -243,31 +237,34 @@ export default function ProfessionnelsPage() {
         </div>
       </section>
 
-      {/* Avantages - Glassmorphism */}
-      <section className="py-24 bg-gradient-to-b from-gray-50 to-white">
-        <div className="container mx-auto px-6">
+      {/* ═══════════════════════════════════════════════════════
+          AVANTAGES — Aurora + GlassCard
+      ═══════════════════════════════════════════════════════ */}
+      <MeshGradient variant="aurora" className="py-24">
+        <GradientOrb color="cyan" size="xl" position={{ top: "-10%", right: "-5%" }} opacity={0.08} />
+        <GradientOrb color="blue" size="lg" position={{ bottom: "-10%", left: "-5%" }} opacity={0.1} />
+
+        <div className="container mx-auto px-6 relative z-10">
           <motion.div
             className="text-center mb-16"
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
           >
-            <span className="inline-block text-cyan-700 font-semibold text-sm tracking-wider uppercase mb-4">
+            <span className="inline-flex items-center gap-2 px-4 py-2 bg-cyan-glow/10 border border-cyan-glow/20 text-cyan-glow rounded-full text-sm font-medium mb-6">
               Vos avantages
             </span>
-            <h2 className="text-3xl md:text-4xl font-bold text-navy-dark mb-4">
+            <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">
               Pourquoi travailler avec{" "}
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-600 to-blue-600">
-                AZ Construction
-              </span>
+              <span className="text-gradient-cyan font-serif italic">AZ Construction ?</span>
             </h2>
-            <p className="text-gray-600 max-w-2xl mx-auto">
+            <p className="text-white/50 max-w-2xl mx-auto">
               Des avantages concrets pour simplifier vos projets et optimiser vos chantiers.
             </p>
           </motion.div>
 
           <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {advantages.map((advantage, index) => (
+            {advantages.map((adv, index) => (
               <motion.div
                 key={index}
                 initial={{ opacity: 0, y: 30 }}
@@ -275,38 +272,46 @@ export default function ProfessionnelsPage() {
                 viewport={{ once: true }}
                 transition={{ delay: index * 0.1 }}
               >
-                <div className="glass-card-light p-8 h-full text-center group hover:shadow-xl transition-all hover:scale-[1.02]">
-                  <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-cyan-100 to-blue-100 flex items-center justify-center mx-auto mb-6 group-hover:from-cyan-200 group-hover:to-blue-200 transition-colors">
-                    <advantage.icon className="w-8 h-8 text-blue-corporate" />
+                <GlassCard variant="glow" padding="lg" className="h-full text-center">
+                  <div className="text-2xl font-bold text-cyan-glow mb-4">{adv.stat}</div>
+                  <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-cyan-glow/20 to-blue-corporate/20 flex items-center justify-center mx-auto mb-4 ring-1 ring-cyan-glow/20">
+                    <adv.icon className="w-6 h-6 text-cyan-glow" />
                   </div>
-                  <h3 className="text-lg font-semibold text-navy-dark mb-2">
-                    {advantage.title}
-                  </h3>
-                  <p className="text-sm text-gray-500 leading-relaxed">
-                    {advantage.description}
-                  </p>
-                </div>
+                  <h3 className="text-lg font-bold text-white mb-3">{adv.title}</h3>
+                  <p className="text-white/50 text-sm leading-relaxed">{adv.description}</p>
+                </GlassCard>
               </motion.div>
             ))}
           </div>
         </div>
-      </section>
+      </MeshGradient>
 
-      {/* Secteurs */}
-      <section className="py-20 bg-white">
-        <div className="container mx-auto px-6">
+      {/* ═══════════════════════════════════════════════════════
+          SECTEURS — Dark navy, numéros 01-04 en grand
+      ═══════════════════════════════════════════════════════ */}
+      <section className="py-24 bg-navy-medium relative overflow-hidden">
+        <div className="absolute inset-0 opacity-5">
+          <div className="absolute inset-0" style={{
+            backgroundImage: `repeating-linear-gradient(0deg, transparent, transparent 80px, rgba(0,212,255,0.3) 80px, rgba(0,212,255,0.3) 81px), repeating-linear-gradient(90deg, transparent, transparent 80px, rgba(0,212,255,0.3) 80px, rgba(0,212,255,0.3) 81px)`,
+          }} />
+        </div>
+
+        <div className="container mx-auto px-6 relative z-10">
           <motion.div
             className="text-center mb-16"
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
           >
-            <h2 className="text-3xl md:text-4xl font-bold text-navy-dark mb-4">
-              Nous travaillons avec tous les métiers du bâtiment
+            <span className="inline-block px-4 py-2 bg-white/5 border border-white/10 text-white/50 rounded-full text-xs font-bold tracking-widest uppercase mb-6">
+              Nos secteurs
+            </span>
+            <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">
+              Nous travaillons avec{" "}
+              <span className="text-gradient-cyan font-serif italic">tous les métiers</span>
             </h2>
-            <p className="text-gray-600 max-w-2xl mx-auto">
-              Que vous soyez constructeur, architecte ou artisan, nous adaptons
-              nos services à vos contraintes.
+            <p className="text-white/40 max-w-xl mx-auto">
+              Que vous soyez constructeur, architecte ou artisan, nous adaptons nos services à vos contraintes.
             </p>
           </motion.div>
 
@@ -314,30 +319,37 @@ export default function ProfessionnelsPage() {
             {sectors.map((sector, index) => (
               <motion.div
                 key={index}
+                className="relative group border border-white/10 p-8 hover:border-cyan-glow/30 transition-all duration-300 hover:bg-white/5"
                 initial={{ opacity: 0, y: 30 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: index * 0.1 }}
               >
-                <Card variant="elevated" hover className="h-full">
-                  <CardContent className="p-6 text-center">
-                    <div className="w-12 h-12 rounded-xl bg-cyan-glow/10 flex items-center justify-center mx-auto mb-4">
-                      <sector.icon className="w-6 h-6 text-cyan-700" />
-                    </div>
-                    <h3 className="text-lg font-semibold text-navy-dark mb-2">
-                      {sector.name}
-                    </h3>
-                    <p className="text-sm text-gray-500">{sector.description}</p>
-                  </CardContent>
-                </Card>
+                {/* Numéro en arrière-plan */}
+                <span className="absolute top-4 right-6 text-7xl font-bold text-white/4 leading-none pointer-events-none select-none">
+                  {sector.step}
+                </span>
+
+                <div className="inline-block px-3 py-1 bg-cyan-glow/10 rounded-full text-cyan-glow text-xs font-bold mb-5 tracking-widest">
+                  {sector.step}
+                </div>
+
+                <div className="w-12 h-12 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center mb-5 group-hover:border-cyan-glow/30 transition-colors">
+                  <sector.icon className="w-6 h-6 text-white/60 group-hover:text-cyan-glow transition-colors" />
+                </div>
+
+                <h3 className="text-lg font-bold text-white mb-3">{sector.name}</h3>
+                <p className="text-white/40 text-sm leading-relaxed">{sector.description}</p>
               </motion.div>
             ))}
           </div>
         </div>
       </section>
 
-      {/* Réalisations B2B */}
-      <section className="py-20 bg-gray-50">
+      {/* ═══════════════════════════════════════════════════════
+          RÉALISATIONS B2B — Dark, cartes pleine hauteur
+      ═══════════════════════════════════════════════════════ */}
+      <section className="py-24 bg-navy-dark">
         <div className="container mx-auto px-6">
           <motion.div
             className="text-center mb-16"
@@ -345,52 +357,73 @@ export default function ProfessionnelsPage() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
           >
-            <h2 className="text-3xl md:text-4xl font-bold text-navy-dark mb-4">
-              Réalisations professionnelles
+            <span className="inline-block px-4 py-2 bg-white/5 border border-white/10 text-white/50 rounded-full text-xs font-bold tracking-widest uppercase mb-6">
+              Portfolio
+            </span>
+            <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">
+              Réalisations{" "}
+              <span className="text-gradient-cyan font-serif italic">professionnelles</span>
             </h2>
-            <p className="text-gray-600 max-w-2xl mx-auto">
-              Quelques exemples de projets réalisés pour nos partenaires.
+            <p className="text-white/40 max-w-xl mx-auto">
+              Quelques exemples de projets réalisés pour nos partenaires en Île-de-France et en France.
             </p>
           </motion.div>
 
-          <div className="grid md:grid-cols-3 gap-8">
+          <div className="grid md:grid-cols-3 gap-6">
             {realisationsB2B.map((realisation, index) => (
               <motion.div
                 key={index}
+                className="group relative overflow-hidden rounded-2xl"
+                style={{ height: "420px" }}
                 initial={{ opacity: 0, y: 30 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: index * 0.1 }}
-                className="group"
               >
-                <div className="relative aspect-[4/3] rounded-2xl overflow-hidden bg-gray-200 mb-4">
-                  <Image
-                    src={getImage(realisation.imageKey)}
-                    alt={realisation.title}
-                    fill
-                    className="object-cover group-hover:scale-105 transition-transform duration-500"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+                <Image
+                  src={getImage(realisation.imageKey)}
+                  alt={realisation.title}
+                  fill
+                  className="object-cover group-hover:scale-105 transition-transform duration-700"
+                />
+                {/* Overlay */}
+                <div className="absolute inset-0 bg-gradient-to-t from-navy-dark/90 via-navy-dark/30 to-transparent" />
+
+                {/* Contenu overlay bas */}
+                <div className="absolute bottom-0 left-0 right-0 p-8">
+                  <div className="inline-block px-3 py-1 bg-cyan-glow/20 backdrop-blur-sm rounded-full text-cyan-glow text-xs font-bold mb-3">
+                    {realisation.surface}
+                  </div>
+                  <h3 className="text-xl font-bold text-white mb-1">{realisation.title}</h3>
+                  <p className="text-white/50 text-sm">{realisation.client}</p>
                 </div>
-                <h3 className="font-semibold text-navy-dark">{realisation.title}</h3>
-                <p className="text-sm text-gray-500">{realisation.client}</p>
+
+                {/* Hover overlay */}
+                <div className="absolute inset-0 border border-cyan-glow/0 group-hover:border-cyan-glow/20 rounded-2xl transition-colors duration-300" />
               </motion.div>
             ))}
           </div>
 
           <div className="text-center mt-10">
             <Link href="/realisations">
-              <Button variant="outline" icon={<ArrowRight className="w-4 h-4" />}>
+              <GlowButton variant="outline" icon={<ArrowRight className="w-4 h-4" />}>
                 Voir toutes nos réalisations
-              </Button>
+              </GlowButton>
             </Link>
           </div>
         </div>
       </section>
 
-      {/* Formulaire Contact Pro */}
-      <section id="contact-pro" className="py-20 bg-gradient-to-br from-navy-dark via-navy-medium to-blue-corporate">
-        <div className="container mx-auto px-6">
+      {/* ═══════════════════════════════════════════════════════
+          FORMULAIRE CONTACT PRO — Dark + ParticleBackground
+      ═══════════════════════════════════════════════════════ */}
+      <section id="contact-pro" className="relative py-24 overflow-hidden">
+        <div className="absolute inset-0 bg-gradient-to-br from-navy-dark via-navy-medium to-blue-corporate" />
+        <ParticleBackground count={15} />
+        <GradientOrb color="cyan" size="xl" position={{ top: "-10%", right: "5%" }} opacity={0.1} animate />
+        <GradientOrb color="blue" size="lg" position={{ bottom: "-10%", left: "5%" }} opacity={0.08} />
+
+        <div className="container mx-auto px-6 relative z-10">
           <div className="max-w-5xl mx-auto">
             <motion.div
               className="text-center mb-12"
@@ -398,97 +431,78 @@ export default function ProfessionnelsPage() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
             >
+              <span className="inline-flex items-center gap-2 px-4 py-2 bg-cyan-glow/10 border border-cyan-glow/20 text-cyan-glow rounded-full text-sm font-medium mb-6">
+                <Building2 className="w-4 h-4" />
+                Espace Pro
+              </span>
               <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">
-                Demande de devis professionnel
+                Demande de devis{" "}
+                <span className="text-gradient-cyan font-serif italic">professionnel</span>
               </h2>
-              <p className="text-white/70 max-w-2xl mx-auto">
-                Remplissez le formulaire ci-dessous et notre équipe commerciale
-                vous recontacte sous 24h.
+              <p className="text-white/50 max-w-xl mx-auto">
+                Remplissez le formulaire ci-dessous. Notre équipe commerciale vous recontacte sous 24h ouvrées.
               </p>
             </motion.div>
 
             <motion.div
-              className="bg-white rounded-3xl p-8 md:p-10 shadow-2xl"
+              className="bg-white rounded-3xl p-8 md:p-10 shadow-2xl shadow-black/40"
               initial={{ opacity: 0, y: 30 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
             >
               <form onSubmit={handleSubmit} className="space-y-6">
                 <div className="grid md:grid-cols-2 gap-6">
-                  {/* Entreprise */}
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Entreprise *
-                    </label>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Entreprise *</label>
                     <div className="relative">
                       <Building className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
                       <input
                         type="text"
                         required
                         value={formData.entreprise}
-                        onChange={(e) =>
-                          setFormData({ ...formData, entreprise: e.target.value })
-                        }
+                        onChange={(e) => setFormData({ ...formData, entreprise: e.target.value })}
                         className="w-full pl-12 pr-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-cyan-500 focus:border-transparent transition-all"
                         placeholder="Nom de votre entreprise"
                       />
                     </div>
                   </div>
-
-                  {/* Nom */}
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Nom & Prénom *
-                    </label>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Nom & Prénom *</label>
                     <div className="relative">
                       <User className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
                       <input
                         type="text"
                         required
                         value={formData.nom}
-                        onChange={(e) =>
-                          setFormData({ ...formData, nom: e.target.value })
-                        }
+                        onChange={(e) => setFormData({ ...formData, nom: e.target.value })}
                         className="w-full pl-12 pr-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-cyan-500 focus:border-transparent transition-all"
                         placeholder="Votre nom complet"
                       />
                     </div>
                   </div>
-
-                  {/* Email */}
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Email professionnel *
-                    </label>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Email professionnel *</label>
                     <div className="relative">
                       <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
                       <input
                         type="email"
                         required
                         value={formData.email}
-                        onChange={(e) =>
-                          setFormData({ ...formData, email: e.target.value })
-                        }
+                        onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                         className="w-full pl-12 pr-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-cyan-500 focus:border-transparent transition-all"
                         placeholder="pro@entreprise.fr"
                       />
                     </div>
                   </div>
-
-                  {/* Téléphone */}
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Téléphone *
-                    </label>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Téléphone *</label>
                     <div className="relative">
                       <Phone className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
                       <input
                         type="tel"
                         required
                         value={formData.telephone}
-                        onChange={(e) =>
-                          setFormData({ ...formData, telephone: e.target.value })
-                        }
+                        onChange={(e) => setFormData({ ...formData, telephone: e.target.value })}
                         className="w-full pl-12 pr-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-cyan-500 focus:border-transparent transition-all"
                         placeholder="06 12 34 56 78"
                       />
@@ -496,19 +510,14 @@ export default function ProfessionnelsPage() {
                   </div>
                 </div>
 
-                {/* Secteur */}
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Secteur d&apos;activité *
-                  </label>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Secteur d&apos;activité *</label>
                   <div className="relative">
                     <Briefcase className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
                     <select
                       required
                       value={formData.secteur}
-                      onChange={(e) =>
-                        setFormData({ ...formData, secteur: e.target.value })
-                      }
+                      onChange={(e) => setFormData({ ...formData, secteur: e.target.value })}
                       className="w-full pl-12 pr-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-cyan-500 focus:border-transparent transition-all appearance-none bg-white"
                     >
                       <option value="">Sélectionnez votre secteur</option>
@@ -523,120 +532,97 @@ export default function ProfessionnelsPage() {
                   </div>
                 </div>
 
-                {/* Message */}
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Décrivez votre projet
-                  </label>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Décrivez votre projet</label>
                   <div className="relative">
                     <MessageSquare className="absolute left-4 top-4 w-5 h-5 text-gray-400" />
                     <textarea
                       rows={4}
                       value={formData.message}
-                      onChange={(e) =>
-                        setFormData({ ...formData, message: e.target.value })
-                      }
+                      onChange={(e) => setFormData({ ...formData, message: e.target.value })}
                       className="w-full pl-12 pr-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-cyan-500 focus:border-transparent transition-all resize-none"
                       placeholder="Type de produits, quantités estimées, délais souhaités..."
                     />
                   </div>
                 </div>
 
-                {/* Pièces jointes */}
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
                     Pièces jointes (plans, photos, dossier)
                   </label>
-                  <div className="relative">
-                    <input
-                      type="file"
-                      multiple
-                      accept=".pdf,.doc,.docx,.xls,.xlsx,.jpg,.jpeg,.png,.dwg"
-                      className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-cyan-500 focus:border-transparent transition-all file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-medium file:bg-cyan-glow/10 file:text-cyan-700 hover:file:bg-cyan-glow/20"
-                    />
-                    <p className="text-xs text-gray-400 mt-1">
-                      Formats acceptés : PDF, DOC, XLS, JPG, PNG, DWG (max 10 Mo par fichier)
-                    </p>
-                  </div>
+                  <input
+                    type="file"
+                    multiple
+                    accept=".pdf,.doc,.docx,.xls,.xlsx,.jpg,.jpeg,.png,.dwg"
+                    className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-cyan-500 focus:border-transparent transition-all file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-medium file:bg-cyan-glow/10 file:text-cyan-700 hover:file:bg-cyan-glow/20"
+                  />
+                  <p className="text-xs text-gray-400 mt-1">PDF, DOC, XLS, JPG, PNG, DWG (max 10 Mo)</p>
                 </div>
 
-                {/* Submit */}
                 <div className="flex flex-col sm:flex-row gap-4 items-center justify-between pt-4">
-                  <p className="text-sm text-gray-500">
-                    * Champs obligatoires. Réponse garantie sous 24h ouvrées.
-                  </p>
-                  <Button
+                  <p className="text-sm text-gray-500">* Champs obligatoires. Réponse garantie sous 24h ouvrées.</p>
+                  <button
                     type="submit"
-                    size="lg"
                     disabled={isSubmitting}
-                    className="bg-cyan-glow text-navy-dark hover:bg-cyan-pale w-full sm:w-auto"
-                    icon={
-                      isSubmitting ? (
-                        <Loader2 className="w-5 h-5 animate-spin" />
-                      ) : (
-                        <Send className="w-5 h-5" />
-                      )
-                    }
+                    className="inline-flex items-center gap-2 px-8 py-4 bg-navy-dark text-white text-sm font-semibold hover:bg-navy-medium transition-colors disabled:opacity-50 rounded-xl w-full sm:w-auto justify-center"
                   >
-                    {isSubmitting ? "Envoi en cours..." : "Envoyer ma demande"}
-                  </Button>
+                    {isSubmitting ? (
+                      <><Loader2 className="w-5 h-5 animate-spin" /> Envoi en cours...</>
+                    ) : (
+                      <><Send className="w-5 h-5" /> Envoyer ma demande</>
+                    )}
+                  </button>
                 </div>
               </form>
             </motion.div>
 
             {/* Contact rapide */}
-            <div className="mt-10 grid md:grid-cols-2 gap-6">
-              <div className="flex items-center gap-4 bg-white/10 backdrop-blur-sm rounded-2xl p-6 border border-white/10">
-                <div className="w-12 h-12 rounded-xl bg-cyan-glow/20 flex items-center justify-center">
+            <div className="mt-8 grid md:grid-cols-2 gap-4">
+              <div className="flex items-center gap-4 glass-card rounded-2xl p-5 border border-white/10">
+                <div className="w-10 h-10 rounded-xl bg-cyan-glow/20 flex items-center justify-center flex-shrink-0">
                   <Phone className="w-5 h-5 text-cyan-glow" />
                 </div>
                 <div>
-                  <p className="text-sm text-white/60">Ligne directe commerciale</p>
+                  <p className="text-xs text-white/40 mb-1">Ligne directe commerciale</p>
                   <PhoneLink className="font-semibold text-white" showIcon={false} />
                 </div>
               </div>
               <a
                 href="mailto:contact@azconstruction.fr"
-                className="flex items-center gap-4 bg-white/10 backdrop-blur-sm rounded-2xl p-6 border border-white/10 hover:bg-white/20 transition-colors"
+                className="flex items-center gap-4 glass-card rounded-2xl p-5 border border-white/10 hover:border-cyan-glow/20 transition-colors"
               >
-                <div className="w-12 h-12 rounded-xl bg-cyan-glow/20 flex items-center justify-center">
+                <div className="w-10 h-10 rounded-xl bg-cyan-glow/20 flex items-center justify-center flex-shrink-0">
                   <Mail className="w-5 h-5 text-cyan-glow" />
                 </div>
                 <div>
-                  <p className="text-sm text-white/60">Email professionnel</p>
+                  <p className="text-xs text-white/40 mb-1">Email professionnel</p>
                   <p className="font-semibold text-white">contact@azconstruction.fr</p>
                 </div>
               </a>
             </div>
-          </div>
-        </div>
-      </section>
 
-      {/* CTA Inscription */}
-      <section className="py-16 bg-gray-50">
-        <div className="container mx-auto px-6">
-          <div className="max-w-3xl mx-auto text-center">
-            <h2 className="text-2xl md:text-3xl font-bold text-navy-dark mb-4">
-              Vous souhaitez créer un compte Pro ?
-            </h2>
-            <p className="text-gray-600 mb-8">
-              Accédez à votre espace dédié pour suivre vos commandes, 
-              télécharger vos factures et gérer vos projets.
-            </p>
-            <Link href="/inscription-pro">
-              <Button
-                size="lg"
-                className="bg-navy-dark text-white hover:bg-navy-medium"
-                icon={<ArrowRight className="w-5 h-5" />}
-              >
-                Créer mon compte Pro
-              </Button>
-            </Link>
+            {/* CTA compte Pro intégré */}
+            <motion.div
+              className="mt-8 text-center glass-card rounded-3xl p-8 border border-white/10"
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+            >
+              <h3 className="text-xl font-bold text-white mb-2">
+                Vous souhaitez créer un compte Pro ?
+              </h3>
+              <p className="text-white/40 text-sm mb-6">
+                Accédez à votre espace dédié pour suivre vos commandes, télécharger vos factures et gérer vos projets.
+              </p>
+              <Link href="/inscription-pro">
+                <GlowButton variant="secondary" icon={<ArrowRight className="w-4 h-4" />}>
+                  Créer mon compte Pro
+                </GlowButton>
+              </Link>
+            </motion.div>
           </div>
         </div>
       </section>
     </div>
   );
 }
-
-

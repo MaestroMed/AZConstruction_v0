@@ -78,7 +78,7 @@ const FALLBACK_IMAGES: Record<string, string> = {
   
   // Réalisations B2B
   "realisation-b2b-1": "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=600&q=80",
-  "realisation-b2b-2": "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=600&q=80",
+  "realisation-b2b-2": "https://images.unsplash.com/photo-1555041469-a586c61ea9bc?w=600&q=80",
   "realisation-b2b-3": "https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=600&q=80",
 };
 

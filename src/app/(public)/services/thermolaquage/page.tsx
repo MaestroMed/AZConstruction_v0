@@ -97,20 +97,32 @@ const processSteps = [
   },
   {
     step: 2,
-    title: "Application",
-    description: "Projection d'un primaire 80 microns avec gélification, puis poudre polyester 60 microns pour la finition.",
+    title: "Application primaire",
+    description: "Projection électrostatique du primaire 80 microns avec gélification en étuve. Garantit l'accroche et la protection anticorrosion.",
     icon: <Sparkles className="w-5 h-5" />,
   },
   {
     step: 3,
-    title: "Cuisson",
-    description: "Polymérisation au four à 180-200°C pendant 15-20 minutes. La poudre fusionne en un film protecteur.",
+    title: "Cuisson 1",
+    description: "Polymérisation du primaire au four à 180°C pendant 15 minutes. Le primaire durcit et forme une base rigide.",
     icon: <Flame className="w-5 h-5" />,
   },
   {
     step: 4,
+    title: "Finition",
+    description: "Application de la poudre polyester de finition 60 microns. Teinte RAL au choix parmi 200+ coloris, aspects mat, satiné ou brillant.",
+    icon: <Sparkles className="w-5 h-5" />,
+  },
+  {
+    step: 5,
+    title: "Cuisson 2",
+    description: "Polymérisation finale au four à 200°C pendant 15-20 minutes. La poudre fusionne en un film protecteur homogène et durable.",
+    icon: <Flame className="w-5 h-5" />,
+  },
+  {
+    step: 6,
     title: "Contrôle Qualité",
-    description: "Vérification de l'épaisseur, de l'adhérence et de l'aspect. Chaque pièce est inspectée avant livraison.",
+    description: "Vérification de l'épaisseur, de l'adhérence et de l'aspect visuel. Chaque pièce est inspectée avant livraison.",
     icon: <Eye className="w-5 h-5" />,
   },
 ];
@@ -635,7 +647,7 @@ export default function ThermolaquagePage() {
               Notre processus
             </span>
             <h2 className="text-4xl md:text-5xl font-bold text-navy-dark mb-6">
-              4 étapes vers la{" "}
+              6 étapes vers la{" "}
               <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-600 to-blue-600">
                 perfection
               </span>

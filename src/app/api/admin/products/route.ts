@@ -20,8 +20,8 @@ const mockProducts = [
   {
     id: "2",
     slug: "garde-corps-verre",
-    nom: "Garde-corps Verre & Inox",
-    description: "Garde-corps en verre trempé avec fixations inox",
+    nom: "Garde-corps Verre & Acier",
+    description: "Garde-corps en verre trempé avec fixations acier",
     familleId: "2",
     famille: { id: "2", nom: "Garde-corps", slug: "garde-corps" },
     prixBaseHT: 450,
