@@ -277,9 +277,6 @@ export default function Footer() {
                         : "text-white/50 hover:text-cyan-glow"
                     }`}
                   >
-                    {"highlight" in link && link.highlight && (
-                      <span className="text-xs">★</span>
-                    )}
                     {link.label}
                   </Link>
                 </li>

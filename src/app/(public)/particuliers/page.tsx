@@ -336,101 +336,89 @@ export default function ParticuliersPage() {
       </section>
 
       {/* ═══════════════════════════════════════════════════════
-          SERVICES — Sections pleine largeur alternées dark/white
+          SERVICES — Sections pleine largeur, fond blanc partout
       ═══════════════════════════════════════════════════════ */}
-      {services.map((service, index) => {
-        const isDark = index % 2 === 0;
-        return (
-          <section
-            key={index}
-            className={`relative overflow-hidden ${isDark ? "bg-navy-dark" : "bg-white"}`}
-          >
-            <div className={`grid lg:grid-cols-2 min-h-[520px] ${index % 2 === 1 ? "lg:[&>*:first-child]:order-last" : ""}`}>
-              {/* Image full-height */}
-              <div className="relative h-72 lg:h-auto min-h-[320px]">
-                <Image
-                  src={getImage(service.imageKey)}
-                  alt={service.title}
-                  fill
-                  className="object-cover"
-                />
-                <div className={`absolute inset-0 bg-gradient-to-${index % 2 === 1 ? "r" : "l"} from-transparent ${isDark ? "to-navy-dark/60" : "to-white/40"}`} />
-                {/* Price badge */}
-                <div className="absolute bottom-6 left-6">
-                  <span className={`px-5 py-2.5 bg-gradient-to-r ${service.accent} text-white text-sm font-bold rounded-full shadow-xl`}>
-                    {service.price}
-                  </span>
+      {services.map((service, index) => (
+        <section
+          key={index}
+          className="relative overflow-hidden bg-white"
+        >
+          <div className={`grid lg:grid-cols-2 min-h-[520px] ${index % 2 === 1 ? "lg:[&>*:first-child]:order-last" : ""}`}>
+            {/* Image full-height */}
+            <div className="relative h-72 lg:h-auto min-h-[320px]">
+              <Image
+                src={getImage(service.imageKey)}
+                alt={service.title}
+                fill
+                className="object-cover"
+              />
+              <div className={`absolute inset-0 bg-gradient-to-${index % 2 === 1 ? "r" : "l"} from-transparent to-white/30`} />
+              {/* Price badge */}
+              <div className="absolute bottom-6 left-6">
+                <span className={`px-5 py-2.5 bg-gradient-to-r ${service.accent} text-white text-sm font-bold rounded-full shadow-xl`}>
+                  {service.price}
+                </span>
+              </div>
+            </div>
+
+            {/* Content — toujours fond blanc */}
+            <motion.div
+              className="flex flex-col justify-center px-10 py-16 md:px-16 bg-white"
+              initial={{ opacity: 0, x: index % 2 === 0 ? 40 : -40 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true, margin: "-80px" }}
+              transition={{ duration: 0.7, ease: [0.25, 0.46, 0.45, 0.94] }}
+            >
+              {/* Icon + numéro */}
+              <div className="flex items-center gap-4 mb-6">
+                <div
+                  className="w-14 h-14 rounded-2xl flex items-center justify-center"
+                  style={{ background: `linear-gradient(135deg, rgba(0,212,255,0.15), rgba(30,90,160,0.2))` }}
+                >
+                  <service.icon className="w-7 h-7 text-cyan-glow" />
                 </div>
+                <span className="text-xs font-bold tracking-widest uppercase text-blue-corporate/60">
+                  Service {String(index + 1).padStart(2, "0")}
+                </span>
               </div>
 
-              {/* Content */}
-              <motion.div
-                className={`flex flex-col justify-center px-10 py-16 md:px-16 ${isDark ? "bg-navy-dark" : "bg-white"}`}
-                initial={{ opacity: 0, x: index % 2 === 0 ? 40 : -40 }}
-                whileInView={{ opacity: 1, x: 0 }}
-                viewport={{ once: true, margin: "-80px" }}
-                transition={{ duration: 0.7, ease: [0.25, 0.46, 0.45, 0.94] }}
-              >
-                {/* Icon + title */}
-                <div className="flex items-center gap-4 mb-6">
-                  <div className={`w-14 h-14 rounded-2xl bg-gradient-to-br ${service.accent} bg-opacity-20 flex items-center justify-center`}
-                    style={{ background: `linear-gradient(135deg, rgba(0,212,255,0.15), rgba(30,90,160,0.2))` }}
+              <h2 className="text-3xl md:text-4xl font-bold mb-4 text-navy-dark">
+                {service.title}
+              </h2>
+              <p className="leading-relaxed mb-8 text-gray-600">
+                {service.description}
+              </p>
+
+              {/* Features pills claires */}
+              <div className="grid grid-cols-2 gap-3 mb-10">
+                {service.features.map((feature, i) => (
+                  <div
+                    key={i}
+                    className="flex items-center gap-2.5 rounded-xl px-4 py-3 bg-gray-50 border border-gray-100"
                   >
-                    <service.icon className="w-7 h-7 text-cyan-glow" />
+                    <CheckCircle2 className="w-4 h-4 text-cyan-glow flex-shrink-0" />
+                    <span className="text-sm font-medium text-navy-dark">
+                      {feature}
+                    </span>
                   </div>
-                  <span className={`text-xs font-bold tracking-widest uppercase ${isDark ? "text-cyan-glow/60" : "text-blue-corporate/60"}`}>
-                    Service {String(index + 1).padStart(2, "0")}
-                  </span>
-                </div>
+                ))}
+              </div>
 
-                <h2 className={`text-3xl md:text-4xl font-bold mb-4 ${isDark ? "text-white" : "text-navy-dark"}`}>
-                  {service.title}
-                </h2>
-                <p className={`leading-relaxed mb-8 ${isDark ? "text-white/60" : "text-gray-600"}`}>
-                  {service.description}
-                </p>
-
-                {/* Features as glass-card or light pill */}
-                <div className={`grid grid-cols-2 gap-3 mb-10`}>
-                  {service.features.map((feature, i) => (
-                    <div
-                      key={i}
-                      className={`flex items-center gap-2.5 rounded-xl px-4 py-3 ${
-                        isDark
-                          ? "glass-card border border-white/10"
-                          : "bg-gray-50 border border-gray-100"
-                      }`}
-                    >
-                      <CheckCircle2 className="w-4 h-4 text-cyan-glow flex-shrink-0" />
-                      <span className={`text-sm font-medium ${isDark ? "text-white/80" : "text-navy-dark"}`}>
-                        {feature}
-                      </span>
-                    </div>
-                  ))}
-                </div>
-
-                <div>
-                  <Link href={`/produits/${service.configLink}`}>
-                    {isDark ? (
-                      <GlowButton icon={<ArrowRight className="w-4 h-4" />}>
-                        Découvrir
-                      </GlowButton>
-                    ) : (
-                      <GlowButton
-                        variant="outline"
-                        className="border-navy-dark/30 text-navy-dark hover:bg-navy-dark/5"
-                        icon={<ArrowRight className="w-4 h-4" />}
-                      >
-                        Découvrir
-                      </GlowButton>
-                    )}
-                  </Link>
-                </div>
-              </motion.div>
-            </div>
-          </section>
-        );
-      })}
+              <div>
+                <Link href={`/produits/${service.configLink}`}>
+                  <GlowButton
+                    variant="outline"
+                    className="border-navy-dark/30 text-navy-dark hover:bg-navy-dark/5"
+                    icon={<ArrowRight className="w-4 h-4" />}
+                  >
+                    Découvrir
+                  </GlowButton>
+                </Link>
+              </div>
+            </motion.div>
+          </div>
+        </section>
+      ))}
 
       {/* ═══════════════════════════════════════════════════════
           AVANTAGES — Glassmorphism sur aurora gradient

@@ -2,19 +2,16 @@
 
 import * as React from "react";
 import { motion } from "framer-motion";
-import Link from "next/link";
 import Image from "next/image";
 import {
   Award,
   Heart,
   Shield,
   Users,
-  ArrowRight,
   CheckCircle2,
   MapPin,
   Quote,
 } from "lucide-react";
-import { GlowButton } from "@/components/ui/GlowButton";
 import { GlassCard } from "@/components/ui/GlassCard";
 import { MeshGradient, ParticleBackground, GradientOrb } from "@/components/ui/MeshGradient";
 import { useSiteImages } from "@/lib/hooks/useSiteImages";
@@ -386,41 +383,6 @@ export default function AProposPage() {
         </div>
       </section>
 
-      {/* ═══════════════════════════════════════════════════════
-          CTA FINAL — Particles dark
-      ═══════════════════════════════════════════════════════ */}
-      <MeshGradient variant="animated" className="py-24 relative overflow-hidden">
-        <ParticleBackground count={15} />
-        <GradientOrb color="cyan" size="xl" position={{ top: "-20%", left: "10%" }} opacity={0.1} animate />
-
-        <div className="container mx-auto px-6 relative z-10 text-center">
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.8 }}
-          >
-            <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">
-              Prêt à concrétiser votre projet ?
-            </h2>
-            <p className="text-white/45 max-w-xl mx-auto mb-10 leading-relaxed">
-              Discutons de vos besoins. Notre équipe est à votre écoute pour vous accompagner de la conception à la pose.
-            </p>
-            <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Link href="/contact">
-                <GlowButton size="lg" icon={<ArrowRight className="w-5 h-5" />}>
-                  Demander un devis
-                </GlowButton>
-              </Link>
-              <Link href="/realisations">
-                <GlowButton variant="outline" size="lg">
-                  Voir nos réalisations
-                </GlowButton>
-              </Link>
-            </div>
-          </motion.div>
-        </div>
-      </MeshGradient>
     </div>
   );
 }

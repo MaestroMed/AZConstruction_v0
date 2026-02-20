@@ -494,46 +494,6 @@ export default function HabitatPage() {
         </div>
       </section>
 
-      {/* CTA */}
-      <section className="py-20 bg-gradient-to-r from-navy-dark to-blue-corporate">
-        <div className="container mx-auto px-6 text-center">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-          >
-            <Heart className="w-12 h-12 text-cyan-glow mx-auto mb-6" />
-            <h2 className="text-3xl md:text-4xl font-bold text-white mb-6">
-              Prêt à transformer votre habitat ?
-            </h2>
-            <p className="text-white/70 max-w-2xl mx-auto mb-8">
-              Configurez votre projet en quelques clics et recevez un devis
-              gratuit sous 48h. Notre équipe est à votre écoute.
-            </p>
-            <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Link href="/produits">
-                <Button
-                  size="lg"
-                  className="bg-cyan-glow text-navy-dark hover:bg-cyan-pale"
-                  icon={<ArrowRight className="w-5 h-5" />}
-                >
-                  Démarrer mon projet
-                </Button>
-              </Link>
-              <a href="tel:+33123456789">
-                <Button
-                  variant="outline"
-                  size="lg"
-                  className="border-white/30 text-white hover:bg-white/10"
-                  icon={<Phone className="w-5 h-5" />}
-                >
-                  09 71 35 74 96
-                </Button>
-              </a>
-            </div>
-          </motion.div>
-        </div>
-      </section>
     </div>
   );
 }

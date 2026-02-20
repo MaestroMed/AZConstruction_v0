@@ -400,50 +400,6 @@ export default function RealisationsPage() {
         </section>
       )}
 
-      {/* CTA Section */}
-      <section className="py-20 bg-gray-50">
-        <div className="container mx-auto px-6">
-          <motion.div
-            className="bg-gradient-to-br from-blue-corporate to-navy-dark rounded-3xl p-12 relative overflow-hidden"
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-          >
-            <div className="absolute top-0 right-0 w-96 h-96 bg-cyan-glow/10 rounded-full blur-3xl" />
-            <div className="relative z-10 flex flex-col lg:flex-row items-center gap-10">
-              <div className="flex-1 text-center lg:text-left">
-                <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">
-                  Votre projet mérite le meilleur
-                </h2>
-                <p className="text-white/70 max-w-xl mb-8 lg:mb-0">
-                  Rejoignez nos clients satisfaits et confiez-nous la réalisation
-                  de votre ouvrage métallique sur mesure.
-                </p>
-              </div>
-              <div className="flex flex-col sm:flex-row gap-4">
-                <Link href="/contact">
-                  <Button
-                    size="lg"
-                    className="bg-cyan-glow text-navy-dark hover:bg-cyan-pale"
-                    icon={<ArrowRight className="w-5 h-5" />}
-                  >
-                    Demander un devis
-                  </Button>
-                </Link>
-                <Link href="/produits">
-                  <Button
-                    variant="outline"
-                    size="lg"
-                    className="border-white/30 text-white hover:bg-white/10"
-                  >
-                    Voir nos produits
-                  </Button>
-                </Link>
-              </div>
-            </div>
-          </motion.div>
-        </div>
-      </section>
     </div>
   );
 }
