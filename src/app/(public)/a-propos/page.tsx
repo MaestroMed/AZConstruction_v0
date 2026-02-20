@@ -97,7 +97,7 @@ export default function AProposPage() {
             className="object-cover"
             priority
           />
-          <div className="absolute inset-0 bg-gradient-to-br from-navy-dark/97 via-navy-dark/90 to-navy-medium/85" />
+          <div className="absolute inset-0 bg-gradient-to-br from-navy-dark/80 via-navy-dark/60 to-navy-medium/35" />
         </div>
 
         <GradientOrb color="cyan" size="lg" position={{ top: "10%", right: "5%" }} opacity={0.08} animate />

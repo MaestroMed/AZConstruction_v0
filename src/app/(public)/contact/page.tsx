@@ -118,7 +118,7 @@ export default function ContactPage() {
             className="object-cover"
             priority
           />
-          <div className="absolute inset-0 bg-gradient-to-br from-navy-dark/95 via-navy-medium/90 to-blue-corporate/85" />
+          <div className="absolute inset-0 bg-gradient-to-br from-navy-dark/75 via-navy-medium/55 to-blue-corporate/40" />
         </div>
         <div className="absolute inset-0 opacity-10">
           <div className="absolute inset-0" style={{

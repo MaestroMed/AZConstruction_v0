@@ -237,7 +237,7 @@ export default function ParticuliersPage() {
             className="object-cover"
             priority
           />
-          <div className="absolute inset-0 bg-gradient-to-br from-navy-dark/95 via-navy-dark/85 to-navy-medium/90" />
+          <div className="absolute inset-0 bg-gradient-to-br from-navy-dark/75 via-navy-dark/55 to-navy-medium/40" />
         </div>
 
         {/* Decorative orbs */}
