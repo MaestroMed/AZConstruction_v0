@@ -1,11 +1,12 @@
 "use client";
 
 /**
- * SteelScene -- "Atelier Noir"
+ * SteelScene -- "Atelier Noir" + Reveal AZ
  *
- * 5 IPN HEB-300 thermolaquees anthracite dans un hangar noir.
- * Eclairage unique : radar spotLight rotatif + nappe laser cyan horizontale.
- * Camera tres proche des flanges (raking light sur texture).
+ * 6 IPN HEB-300 thermolaquees anthracite dans un hangar noir.
+ * Les plans A/B/C montrent des gros plans sur les diagonales du "A".
+ * Le Plan D revele que la structure entiere forme les lettres "AZ".
+ * A t=15s les joints de soudure s allument en cyan.
  */
 
 import * as React from "react";
@@ -15,7 +16,7 @@ import { EffectComposer, Bloom, Vignette } from "@react-three/postprocessing";
 import * as THREE from "three";
 
 /* ====================================================================
-   IPN HEB-300 GEOMETRY  (section reelle mise a l echelle)
+   IPN HEB-300 GEOMETRY
    h=0.80  b=0.75  tf=0.14  tw=0.095
 ==================================================================== */
 
@@ -29,7 +30,7 @@ function createHEBGeometry(length: number): THREE.ExtrudeGeometry {
   shape.moveTo(-b / 2, 0);
   shape.lineTo( b / 2, 0);
   shape.lineTo( b / 2, tf);
-  shape.lineTo( tw / 2 + 0.015, tf + 0.015);   // raccord congé
+  shape.lineTo( tw / 2 + 0.015, tf + 0.015);
   shape.lineTo( tw / 2, h - tf - 0.015);
   shape.lineTo( b / 2, h - tf);
   shape.lineTo( b / 2, h);
@@ -64,13 +65,27 @@ interface BeamDef {
   roughness?: number;
 }
 
-// 5 IPN : structure de chantier
+/**
+ * 6 IPN forment les lettres "AZ"
+ * AZ global : x de -5.5 a +6.5, y de -3 a +3, centre en (0.5, 0, 0)
+ *
+ * Lettre A -- apex (-2.5, 3, 0), pieds (-5.5, -3, 0) et (0.5, -3, 0)
+ * Lettre Z -- top-left (1.5, 3, 0), top-right (6.5, 3, 0)
+ *             bot-left (1.5,-3, 0), bot-right (6.5,-3, 0)
+ */
 const BEAMS: BeamDef[] = [
-  { center: [-3.5,  0.0,  0.0], dir: [0, 1, 0],            length: 14, roughness: 0.33 },
-  { center: [ 3.5,  0.0, -0.5], dir: [0, 1, 0],            length: 12, roughness: 0.36 },
-  { center: [ 0.5,  3.2, -1.2], dir: [1, 0, 0],            length: 11, roughness: 0.32 },
-  { center: [-1.5, -2.0, -1.8], dir: [1, 0.06, 0],         length:  9, roughness: 0.38 },
-  { center: [ 1.0,  0.5, -0.8], dir: [0.55, 0.83, 0.06],   length:  9, roughness: 0.35 },
+  // A -- diagonale gauche : (-5.5,-3,0) -> (-2.5,3,0)
+  { center: [-4.0,  0.0, 0], dir: [ 0.447, 0.894, 0], length: 6.72, roughness: 0.34 },
+  // A -- diagonale droite : (0.5,-3,0) -> (-2.5,3,0)
+  { center: [-1.0,  0.0, 0], dir: [-0.447, 0.894, 0], length: 6.72, roughness: 0.33 },
+  // A -- traverse : (-4.5,0,0) -> (-0.5,0,0)
+  { center: [-2.5,  0.0, 0], dir: [ 1.000, 0.000, 0], length: 4.00, roughness: 0.36 },
+  // Z -- barre haute : (1.5,3,0) -> (6.5,3,0)
+  { center: [ 4.0,  3.0, 0], dir: [ 1.000, 0.000, 0], length: 5.00, roughness: 0.35 },
+  // Z -- diagonale : (6.5,3,0) -> (1.5,-3,0)
+  { center: [ 4.0,  0.0, 0], dir: [-0.640,-0.768, 0], length: 7.81, roughness: 0.33 },
+  // Z -- barre basse : (1.5,-3,0) -> (6.5,-3,0)
+  { center: [ 4.0, -3.0, 0], dir: [ 1.000, 0.000, 0], length: 5.00, roughness: 0.36 },
 ];
 
 function IPNBeam({ center, dir, length, roughness = 0.35 }: BeamDef) {
@@ -98,6 +113,70 @@ function IPNBeam({ center, dir, length, roughness = 0.35 }: BeamDef) {
 }
 
 /* ====================================================================
+   WELD GLOW -- joints de soudure qui s allument a t=15s
+==================================================================== */
+
+const JOINT_POSITIONS: [number, number, number][] = [
+  // Lettre A
+  [-2.5,  3.0, 0],   // apex
+  [-5.5, -3.0, 0],   // pied gauche
+  [ 0.5, -3.0, 0],   // pied droit
+  [-4.5,  0.0, 0],   // traverse cote gauche
+  [-0.5,  0.0, 0],   // traverse cote droit
+  // Lettre Z
+  [ 1.5,  3.0, 0],   // coin haut-gauche
+  [ 6.5,  3.0, 0],   // coin haut-droit
+  [ 1.5, -3.0, 0],   // coin bas-gauche
+  [ 6.5, -3.0, 0],   // coin bas-droit
+];
+
+function WeldGlow() {
+  const matsRef  = React.useRef<(THREE.MeshStandardMaterial | null)[]>([]);
+  const lightRef = React.useRef<THREE.PointLight>(null!);
+
+  useFrame((state) => {
+    const t      = state.clock.elapsedTime;
+    const fadeIn = Math.min(1, Math.max(0, (t - 15) / 2));  // 0->1 de t=15 a t=17
+    const pulse  = 1 + Math.sin(t * 3.2) * 0.22;
+    const target = fadeIn * 4.2 * pulse;
+
+    matsRef.current.forEach(m => { if (m) m.emissiveIntensity = target; });
+
+    if (lightRef.current) {
+      lightRef.current.intensity = fadeIn * 8 * pulse;
+    }
+  });
+
+  return (
+    <>
+      {/* Spheres emissives aux joints */}
+      {JOINT_POSITIONS.map(([x, y, z], i) => (
+        <mesh key={i} position={[x, y, z]}>
+          <sphereGeometry args={[0.10, 8, 8]} />
+          <meshStandardMaterial
+            ref={el => { matsRef.current[i] = el; }}
+            color="#00d4ff"
+            emissive="#00d4ff"
+            emissiveIntensity={0}
+            metalness={0}
+            roughness={1}
+          />
+        </mesh>
+      ))}
+      {/* Point light cyan a l apex pour marquer la signature */}
+      <pointLight
+        ref={lightRef}
+        position={[-2.5, 3.0, 2]}
+        color="#00d4ff"
+        intensity={0}
+        distance={14}
+        decay={2}
+      />
+    </>
+  );
+}
+
+/* ====================================================================
    RADAR SPOT -- spotlight rotatif (lumiere principale)
 ==================================================================== */
 
@@ -115,7 +194,6 @@ function RadarSpot() {
       9,
       Math.cos(t * speed) * r + 2,
     );
-
     spotRef.current.target.position.set(
       Math.sin(t * speed + 0.35) * 1.5,
       -0.5,
@@ -123,7 +201,6 @@ function RadarSpot() {
     );
     spotRef.current.target.updateMatrixWorld();
 
-    // Variation d intensite : cree l illusion d un balayage plus marque
     const sweep = Math.pow(Math.abs(Math.cos(t * speed * 2.1)), 2.5);
     spotRef.current.intensity = 95 + sweep * 55;
   });
@@ -147,7 +224,7 @@ function RadarSpot() {
 }
 
 /* ====================================================================
-   LASER SHEET -- nappe cyan horizontale qui remonte
+   LASER SHEET -- nappe cyan horizontale
 ==================================================================== */
 
 function LaserSheet() {
@@ -158,7 +235,7 @@ function LaserSheet() {
     if (!meshRef.current || !glowRef.current) return;
     const t     = state.clock.elapsedTime;
     const cycle = (t * 0.14) % 1;
-    const y     = -5.8 + cycle * 13;     // balayage -5.8 -> +7.2
+    const y     = -5.8 + cycle * 13;
 
     meshRef.current.position.y = y;
     glowRef.current.position.y = y;
@@ -170,7 +247,6 @@ function LaserSheet() {
 
   return (
     <>
-      {/* Nappe visuelle emissive */}
       <mesh ref={meshRef} position={[0, 0, 0]}>
         <planeGeometry args={[26, 0.07]} />
         <meshBasicMaterial
@@ -182,8 +258,6 @@ function LaserSheet() {
           side={THREE.DoubleSide}
         />
       </mesh>
-
-      {/* PointLight positionne au niveau de la nappe pour eclairer les surfaces */}
       <pointLight
         ref={glowRef}
         color="#00d4ff"
@@ -198,7 +272,6 @@ function LaserSheet() {
 
 /* ====================================================================
    DUST MOTES -- poussiere d atelier
-   Visibles uniquement quand le radar les traverse (AdditiveBlending)
 ==================================================================== */
 
 function DustMotes() {
@@ -286,6 +359,8 @@ function SteelFloor() {
 
 /* ====================================================================
    CAMERA DIRECTOR -- cinematographie documentaire industrielle
+   Plans A/B/C : gros plans sur la diagonale gauche du "A"
+   Plan D : reveal "AZ"
 ==================================================================== */
 
 function easeInOutSine(t: number): number {
@@ -304,41 +379,44 @@ interface Shot {
 }
 
 const SHOTS: Shot[] = [
-  // Plan A : Macro -- rasant sur la flange du pilier gauche
+  // Plan A : Macro -- rasant sur la flange de la diagonale gauche du A
+  // Le spectateur voit une grande diagonale d IPN sans savoir que c est un A
   {
     t0: 0, t1: 5,
-    posA: new THREE.Vector3(-2.6,  0.4, 1.3),
-    posB: new THREE.Vector3(-2.9,  0.1, 1.1),
-    tgtA: new THREE.Vector3(-3.5,  0.2, 0),
-    tgtB: new THREE.Vector3(-3.5, -0.1, 0),
+    posA: new THREE.Vector3(-3.2,  0.6, 1.3),
+    posB: new THREE.Vector3(-3.5,  0.1, 1.1),
+    tgtA: new THREE.Vector3(-4.0,  0.3, 0),
+    tgtB: new THREE.Vector3(-4.0, -0.1, 0),
     fovA: 32, fovB: 28,
   },
-  // Plan B : Orbital -- intersection pilier/poutre horizontale haute
+  // Plan B : Orbital -- autour de l apex du A
+  // On commence a voir une pointe -- etrange pour un chantier
   {
     t0: 5, t1: 9,
-    posA: new THREE.Vector3(-2.9,  0.1,  1.1),
-    posB: new THREE.Vector3( 0.5,  4.5,  5.5),
-    tgtA: new THREE.Vector3(-3.5,  0.0,  0.0),
-    tgtB: new THREE.Vector3(-2.5,  2.8, -1.0),
+    posA: new THREE.Vector3(-3.5,  0.1,  1.1),
+    posB: new THREE.Vector3( 0.0,  5.0,  5.5),
+    tgtA: new THREE.Vector3(-4.0,  0.0,  0.0),
+    tgtB: new THREE.Vector3(-2.5,  3.0,  0.0),
     fovA: 28, fovB: 44,
   },
-  // Plan C : Travelling -- remontee le long du pilier gauche
+  // Plan C : Travelling -- remontee de la diagonale, pied bas visible
   {
     t0: 9, t1: 13,
-    posA: new THREE.Vector3( 0.5,  4.5,  5.5),
-    posB: new THREE.Vector3(-5.5, -5.0,  2.8),
-    tgtA: new THREE.Vector3(-2.5,  2.8, -1.0),
-    tgtB: new THREE.Vector3(-3.5,  0.0,  0.0),
+    posA: new THREE.Vector3( 0.0,  5.0,  5.5),
+    posB: new THREE.Vector3(-6.5, -4.0,  2.5),
+    tgtA: new THREE.Vector3(-2.5,  3.0,  0.0),
+    tgtB: new THREE.Vector3(-4.0,  0.0,  0.0),
     fovA: 44, fovB: 38,
   },
-  // Plan D : Reveal -- les 5 IPN dans la penombre
+  // Plan D : Reveal AZ -- le pull-back revele la structure entiere
+  // A t=15 les joints de soudure s allument
   {
     t0: 13, t1: 18,
-    posA: new THREE.Vector3(-5.5, -5.0,  2.8),
-    posB: new THREE.Vector3( 1.0,  1.5, 16.0),
-    tgtA: new THREE.Vector3(-3.5,  0.0,  0.0),
-    tgtB: new THREE.Vector3( 0.0,  0.0, -1.0),
-    fovA: 38, fovB: 50,
+    posA: new THREE.Vector3(-6.5, -4.0,  2.5),
+    posB: new THREE.Vector3( 0.5,  0.5, 19.0),
+    tgtA: new THREE.Vector3(-4.0,  0.0,  0.0),
+    tgtB: new THREE.Vector3( 0.5,  0.0,  0.0),
+    fovA: 38, fovB: 52,
   },
 ];
 
@@ -347,10 +425,10 @@ const IDLE_START = 18;
 function CameraDirector() {
   const { camera } = useThree();
   const mouse    = React.useRef({ x: 0, y: 0 });
-  const lookAt   = React.useRef(new THREE.Vector3(-3.5, 0.2, 0));
+  const lookAt   = React.useRef(new THREE.Vector3(-4.0, 0.3, 0));
 
   React.useEffect(() => {
-    camera.position.set(-2.6, 0.4, 1.3);
+    camera.position.set(-3.2, 0.6, 1.3);
     (camera as THREE.PerspectiveCamera).fov = 32;
     (camera as THREE.PerspectiveCamera).updateProjectionMatrix();
   }, [camera]);
@@ -369,19 +447,20 @@ function CameraDirector() {
     const cam = camera as THREE.PerspectiveCamera;
 
     if (t >= IDLE_START) {
-      const it    = t - IDLE_START;
-      const tgtX  = Math.sin(it * 0.07) * 3.5 + mouse.current.x * 1.4;
-      const tgtY  = 1.5 + Math.sin(it * 0.05) * 0.8 + mouse.current.y * 0.7;
-      const tgtZ  = 14.5 + Math.cos(it * 0.06) * 1.5;
+      // Idle : orbite lente centree sur le milieu de l AZ (x=0.5)
+      const it   = t - IDLE_START;
+      const tgtX = 0.5 + Math.sin(it * 0.07) * 4.0 + mouse.current.x * 1.4;
+      const tgtY = 0.8 + Math.sin(it * 0.05) * 0.9 + mouse.current.y * 0.7;
+      const tgtZ = 17.5 + Math.cos(it * 0.06) * 1.5;
 
       camera.position.x += (tgtX - camera.position.x) * Math.min(1, delta * 1.0);
       camera.position.y += (tgtY - camera.position.y) * Math.min(1, delta * 1.0);
       camera.position.z += (tgtZ - camera.position.z) * Math.min(1, delta * 0.7);
 
-      lookAt.current.lerp(new THREE.Vector3(0, 0.5, -1), Math.min(1, delta * 1.5));
+      lookAt.current.lerp(new THREE.Vector3(0.5, 0.3, -0.5), Math.min(1, delta * 1.5));
       camera.lookAt(lookAt.current);
 
-      cam.fov += (50 - cam.fov) * Math.min(1, delta * 1.5);
+      cam.fov += (52 - cam.fov) * Math.min(1, delta * 1.5);
       cam.updateProjectionMatrix();
       return;
     }
@@ -413,7 +492,7 @@ export default function SteelScene({ className = "" }: { className?: string }) {
   return (
     <div className={className}>
       <Canvas
-        camera={{ position: [-2.6, 0.4, 1.3], fov: 32, near: 0.05, far: 200 }}
+        camera={{ position: [-3.2, 0.6, 1.3], fov: 32, near: 0.05, far: 200 }}
         gl={{
           antialias: true,
           alpha: true,
@@ -424,7 +503,7 @@ export default function SteelScene({ className = "" }: { className?: string }) {
         dpr={[1, 1.5]}
         shadows
       >
-        {/* Quasi-noir : seul le radar et le laser eclairent */}
+        {/* Quasi-noir total */}
         <ambientLight intensity={0.04} color="#0a1020" />
 
         {/* Radar SpotLight rotatif */}
@@ -436,8 +515,11 @@ export default function SteelScene({ className = "" }: { className?: string }) {
         {/* Camera cinematographique */}
         <CameraDirector />
 
-        {/* 5 IPN HEB-300 thermolaquees */}
+        {/* 6 IPN HEB-300 formant AZ */}
         {BEAMS.map((b, i) => <IPNBeam key={i} {...b} />)}
+
+        {/* Joints de soudure -- s allument a t=15 lors du reveal */}
+        <WeldGlow />
 
         {/* Poussiere d atelier */}
         <DustMotes />
