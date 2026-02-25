@@ -12,8 +12,9 @@
 
 import * as React from "react";
 import { Canvas, useFrame, useThree } from "@react-three/fiber";
-import { MeshReflectorMaterial } from "@react-three/drei";
-import { EffectComposer, Bloom, Vignette } from "@react-three/postprocessing";
+import { MeshReflectorMaterial, Environment } from "@react-three/drei";
+import { EffectComposer, Bloom, Vignette, ChromaticAberration, Noise } from "@react-three/postprocessing";
+import { BlendFunction } from "postprocessing";
 import * as THREE from "three";
 
 const Z_VEC = new THREE.Vector3(0, 0, 1);
@@ -32,7 +33,7 @@ function createHEBGeometry(length: number): THREE.ExtrudeGeometry {
   shape.lineTo(-tw/2-0.015,tf+0.015); shape.lineTo(-b/2,tf); shape.closePath();
   const geom = new THREE.ExtrudeGeometry(shape, {
     depth: length, bevelEnabled: true,
-    bevelSize: 0.010, bevelThickness: 0.010, bevelSegments: 2,
+    bevelSize: 0.010, bevelThickness: 0.010, bevelSegments: 6,
   });
   geom.center();
   return geom;
@@ -285,23 +286,24 @@ interface Shot {
 }
 
 const SHOTS: Shot[] = [
-  // Plan A : Macro sur la surface chaude du 2e beam (le plus proche)
+  // Plan A : Macro sur la surface chaude du beam frontal (beam 4 a z=2.8)
+  // Camera a z=5.0, regardant le beam dont la face avant est a z=3.175
   {
     t0:0, t1:4.5,
-    posA: new THREE.Vector3(0.5,  0.5, 2.5),
-    posB: new THREE.Vector3(1.2,  0.1, 2.0),
-    tgtA: new THREE.Vector3(0,    0.3, 0.3),
-    tgtB: new THREE.Vector3(0,   -0.1, -0.2),
-    fovA: 34, fovB: 28,
+    posA: new THREE.Vector3(0.5,  0.5, 5.0),
+    posB: new THREE.Vector3(1.5,  0.2, 4.4),
+    tgtA: new THREE.Vector3(0,    0.0, 2.8),
+    tgtB: new THREE.Vector3(0,   -0.3, 2.8),
+    fovA: 34, fovB: 26,
   },
-  // Plan B : Recul, le metal refroidit, 2 beams visibles
+  // Plan B : Recul, le metal refroidit, beams en profondeur visibles
   {
     t0:4.5, t1:9,
-    posA: new THREE.Vector3(1.2,  0.1,  2.0),
-    posB: new THREE.Vector3(3.0,  2.0,  7.5),
-    tgtA: new THREE.Vector3(0,   -0.1, -0.2),
+    posA: new THREE.Vector3(1.5,  0.2,  4.4),
+    posB: new THREE.Vector3(3.0,  2.0,  8.5),
+    tgtA: new THREE.Vector3(0,   -0.3,  2.8),
     tgtB: new THREE.Vector3(0,    0.0, -1.0),
-    fovA: 28, fovB: 46,
+    fovA: 26, fovB: 46,
   },
   // Plan C : Pull-back reveal des 4 IPN
   {
@@ -321,7 +323,7 @@ function CameraDirector() {
   const lookAt = React.useRef(new THREE.Vector3(0, 0.3, 0.3));
 
   React.useEffect(() => {
-    camera.position.set(0.5, 0.5, 2.5);
+    camera.position.set(0.5, 0.5, 5.0);
     (camera as THREE.PerspectiveCamera).fov = 34;
     (camera as THREE.PerspectiveCamera).updateProjectionMatrix();
   }, [camera]);
@@ -376,17 +378,21 @@ export default function ForgeScene({ className = "" }: { className?: string }) {
   return (
     <div className={className}>
       <Canvas
-        camera={{ position: [0.5, 0.5, 2.5], fov: 34, near: 0.05, far: 200 }}
+        camera={{ position: [0.5, 0.5, 5.0], fov: 34, near: 0.05, far: 200 }}
         gl={{
           antialias: true, alpha: true,
           powerPreference: "high-performance",
           toneMapping: THREE.ACESFilmicToneMapping,
-          toneMappingExposure: 1.50,
+          toneMappingExposure: 1.55,
         }}
-        dpr={[1, 1.5]}
+        dpr={[1, 2]}
         shadows
       >
-        <ambientLight intensity={0.04} color="#100804" />
+        {/* Ambient plus fort pour que les braises soient visibles */}
+        <ambientLight intensity={0.08} color="#100804" />
+
+        {/* Environment map warehouse : chaleur, reflections industrielles */}
+        <Environment preset="warehouse" />
 
         <ForgeLight />
         <CameraDirector />
@@ -401,6 +407,13 @@ export default function ForgeScene({ className = "" }: { className?: string }) {
 
         <EffectComposer>
           <Bloom intensity={2.5} luminanceThreshold={0.18} luminanceSmoothing={0.85} mipmapBlur />
+          <ChromaticAberration
+            offset={[0.003, 0.003]}
+            radialModulation={false}
+            modulationOffset={0}
+            blendFunction={BlendFunction.NORMAL}
+          />
+          <Noise opacity={0.025} />
           <Vignette offset={0.38} darkness={0.85} />
         </EffectComposer>
       </Canvas>

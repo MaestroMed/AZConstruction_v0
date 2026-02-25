@@ -11,8 +11,9 @@
 
 import * as React from "react";
 import { Canvas, useFrame, useThree } from "@react-three/fiber";
-import { MeshReflectorMaterial } from "@react-three/drei";
-import { EffectComposer, Bloom, Vignette } from "@react-three/postprocessing";
+import { MeshReflectorMaterial, Environment } from "@react-three/drei";
+import { EffectComposer, Bloom, Vignette, ChromaticAberration, Noise, HueSaturation } from "@react-three/postprocessing";
+import { BlendFunction } from "postprocessing";
 import * as THREE from "three";
 
 /* ====================================================================
@@ -53,9 +54,9 @@ const RAL_PALETTE = [
   { color: "#6b1c23", roughness: 0.35, name: "RAL 3004 Bordeaux" },
 ];
 
-// Espacement : de x=-8 a x=+8 (5 beams, pitch = 4)
-const BEAM_X = [-8, -4, 0, 4, 8];
-const BEAM_LENGTH = 11;
+// Espacement elargi : de x=-10 a x=+10 (5 beams, pitch = 5)
+const BEAM_X = [-10, -5, 0, 5, 10];
+const BEAM_LENGTH = 14;
 
 /* ====================================================================
    IPN BEAM COLORE
@@ -123,8 +124,8 @@ function ColorParticles({ x, color }: { x: number; color: string }) {
         <bufferAttribute attach="attributes-position" args={[positions, 3]} />
       </bufferGeometry>
       <pointsMaterial
-        color={color} size={0.055} sizeAttenuation
-        transparent opacity={0.55}
+        color={color} size={0.08} sizeAttenuation
+        transparent opacity={0.80}
         blending={THREE.AdditiveBlending} depthWrite={false}
       />
     </points>
@@ -155,7 +156,7 @@ function LateralRadar() {
 
     // Intensite : tres forte quand le spot est en face (axe Z), plus douce sur les cotes
     const sweep = Math.pow(Math.max(0, Math.cos(t * 0.28 * 1.5)), 2);
-    spotRef.current.intensity = fadeIn * (110 + sweep * 60);
+    spotRef.current.intensity = fadeIn * (160 + sweep * 90);
   });
 
   return (
@@ -352,10 +353,13 @@ export default function SpectreScene({ className = "" }: { className?: string })
           toneMapping: THREE.ACESFilmicToneMapping,
           toneMappingExposure: 1.55,
         }}
-        dpr={[1, 1.5]}
+        dpr={[1, 2]}
         shadows
       >
         <ambientLight intensity={0.04} color="#0a1020" />
+
+        {/* Environment map studio : critique pour les couleurs RAL */}
+        <Environment preset="studio" />
 
         {/* Radar lateral */}
         <LateralRadar />
@@ -378,6 +382,14 @@ export default function SpectreScene({ className = "" }: { className?: string })
 
         <EffectComposer>
           <Bloom intensity={2.0} luminanceThreshold={0.20} luminanceSmoothing={0.85} mipmapBlur />
+          <HueSaturation saturation={0.3} />
+          <ChromaticAberration
+            offset={[0.004, 0.004]}
+            radialModulation={false}
+            modulationOffset={0}
+            blendFunction={BlendFunction.NORMAL}
+          />
+          <Noise opacity={0.020} />
           <Vignette offset={0.40} darkness={0.85} />
         </EffectComposer>
       </Canvas>

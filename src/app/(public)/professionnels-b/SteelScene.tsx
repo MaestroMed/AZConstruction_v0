@@ -11,8 +11,9 @@
 
 import * as React from "react";
 import { Canvas, useFrame, useThree } from "@react-three/fiber";
-import { MeshReflectorMaterial } from "@react-three/drei";
-import { EffectComposer, Bloom, Vignette } from "@react-three/postprocessing";
+import { MeshReflectorMaterial, Environment } from "@react-three/drei";
+import { EffectComposer, Bloom, Vignette, ChromaticAberration, Noise } from "@react-three/postprocessing";
+import { BlendFunction } from "postprocessing";
 import * as THREE from "three";
 
 /* ====================================================================
@@ -46,7 +47,7 @@ function createHEBGeometry(length: number): THREE.ExtrudeGeometry {
     bevelEnabled: true,
     bevelSize: 0.010,
     bevelThickness: 0.010,
-    bevelSegments: 2,
+    bevelSegments: 5,
   });
   geom.center();
   return geom;
@@ -218,8 +219,8 @@ function RadarSpot() {
       penumbra={0.58}
       decay={1.4}
       castShadow
-      shadow-mapSize-width={2048}
-      shadow-mapSize-height={2048}
+      shadow-mapSize-width={4096}
+      shadow-mapSize-height={4096}
       shadow-camera-near={1}
       shadow-camera-far={50}
     />
@@ -503,11 +504,14 @@ export default function SteelScene({ className = "" }: { className?: string }) {
           toneMapping: THREE.ACESFilmicToneMapping,
           toneMappingExposure: 1.65,
         }}
-        dpr={[1, 1.5]}
+        dpr={[1, 2]}
         shadows
       >
         {/* Quasi-noir total */}
         <ambientLight intensity={0.04} color="#0a1020" />
+
+        {/* Environment map night : coherent avec l ambiance sombre industrielle */}
+        <Environment preset="night" />
 
         {/* Radar SpotLight rotatif */}
         <RadarSpot />
@@ -538,6 +542,13 @@ export default function SteelScene({ className = "" }: { className?: string }) {
             luminanceSmoothing={0.85}
             mipmapBlur
           />
+          <ChromaticAberration
+            offset={[0.003, 0.003]}
+            radialModulation={false}
+            modulationOffset={0}
+            blendFunction={BlendFunction.NORMAL}
+          />
+          <Noise opacity={0.030} />
           <Vignette offset={0.40} darkness={0.88} />
         </EffectComposer>
       </Canvas>

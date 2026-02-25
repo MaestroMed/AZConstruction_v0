@@ -12,7 +12,9 @@
 
 import * as React from "react";
 import { Canvas, useFrame, useThree } from "@react-three/fiber";
-import { EffectComposer, Bloom, Vignette, DepthOfField } from "@react-three/postprocessing";
+import { MeshReflectorMaterial, Environment } from "@react-three/drei";
+import { EffectComposer, Bloom, Vignette, DepthOfField, ChromaticAberration, Noise } from "@react-three/postprocessing";
+import { BlendFunction } from "postprocessing";
 import * as THREE from "three";
 
 /* ====================================================================
@@ -82,20 +84,20 @@ function GardeCorps() {
         <meshStandardMaterial {...STEEL_PROPS} />
       </mesh>
 
-      {/* Panneaux verre feuillete -- MeshPhysicalMaterial */}
+      {/* Panneaux verre feuillete -- MeshPhysicalMaterial avec env map */}
       {GLASS_X.map((x, i) => (
         <mesh key={i} geometry={gGeom} position={[x, 0, 0]}>
           <meshPhysicalMaterial
             color="#c8dde8"
-            transmission={0.88}
+            transmission={0.90}
             opacity={0.95}
             transparent
-            roughness={0.04}
+            roughness={0.03}
             metalness={0.0}
             ior={1.52}
-            thickness={0.012}
-            reflectivity={0.5}
-            envMapIntensity={0.8}
+            thickness={0.015}
+            reflectivity={0.6}
+            envMapIntensity={1.5}
             side={THREE.DoubleSide}
           />
         </mesh>
@@ -118,11 +120,10 @@ function ResidentialLighting() {
     const fadeIn = Math.min(1, t / 1.5);
 
     if (mainRef.current) {
-      // Legere variation organique (comme nuages qui passent)
-      mainRef.current.intensity = fadeIn * (2.8 + Math.sin(t * 0.15) * 0.15);
+      mainRef.current.intensity = fadeIn * (4.5 + Math.sin(t * 0.15) * 0.2);
     }
     if (fillRef.current) {
-      fillRef.current.intensity = fadeIn * (0.8 + Math.sin(t * 0.11) * 0.06);
+      fillRef.current.intensity = fadeIn * (1.5 + Math.sin(t * 0.11) * 0.08);
     }
   });
 
@@ -132,7 +133,7 @@ function ResidentialLighting() {
       <directionalLight
         ref={mainRef}
         color="#ffe8cc"
-        intensity={2.8}
+        intensity={4.5}
         position={[-5, 8, 4]}
         castShadow
         shadow-mapSize-width={2048}
@@ -148,13 +149,15 @@ function ResidentialLighting() {
       <pointLight
         ref={fillRef}
         color="#dde8ff"
-        intensity={0.8}
-        distance={12}
+        intensity={1.5}
+        distance={14}
         decay={2}
         position={[4, -3, 3]}
       />
-      {/* Ambient warm */}
-      <ambientLight intensity={0.18} color="#f5eedc" />
+      {/* Second fill : lumiere rebond depuis le sol */}
+      <pointLight color="#f0e8d0" intensity={1.2} distance={10} decay={2} position={[0, -4, 2]} />
+      {/* Ambient warm plus fort pour lisibilite */}
+      <ambientLight intensity={0.35} color="#f5eedc" />
     </>
   );
 }
@@ -312,11 +315,14 @@ export default function LumiereScene({ className = "" }: { className?: string })
           antialias: true, alpha: true,
           powerPreference: "high-performance",
           toneMapping: THREE.ACESFilmicToneMapping,
-          toneMappingExposure: 1.20,
+          toneMappingExposure: 1.30,
         }}
-        dpr={[1, 1.5]}
+        dpr={[1, 2]}
         shadows
       >
+        {/* Environment map apartment : critique pour les reflexions du verre */}
+        <Environment preset="apartment" />
+
         <ResidentialLighting />
         <CameraDirector />
 
@@ -326,16 +332,27 @@ export default function LumiereScene({ className = "" }: { className?: string })
         {/* Poussiere en suspension (lumiere du matin) */}
         <DustInLight />
 
-        {/* Sol sombre neutre */}
+        {/* Sol avec reflexions -- MeshReflectorMaterial */}
         <mesh rotation={[-Math.PI/2,0,0]} position={[0,-0.57,0]} receiveShadow>
           <planeGeometry args={[20, 20]} />
-          <meshStandardMaterial color="#0d0f12" metalness={0.3} roughness={0.8} />
+          <MeshReflectorMaterial
+            blur={[400, 100]} resolution={512} mirror={0.4}
+            roughness={0.6} depthScale={1.0} minDepthThreshold={0.4}
+            maxDepthThreshold={1.4} color="#0e1014" metalness={0.5}
+          />
         </mesh>
 
         <EffectComposer>
-          <Bloom intensity={0.6} luminanceThreshold={0.35} luminanceSmoothing={0.9} mipmapBlur />
-          <Vignette offset={0.35} darkness={0.70} />
-          <DepthOfField focusDistance={0.012} focalLength={0.025} bokehScale={2} />
+          <Bloom intensity={0.7} luminanceThreshold={0.30} luminanceSmoothing={0.9} mipmapBlur />
+          <ChromaticAberration
+            offset={[0.002, 0.002]}
+            radialModulation={false}
+            modulationOffset={0}
+            blendFunction={BlendFunction.NORMAL}
+          />
+          <Noise opacity={0.018} />
+          <Vignette offset={0.32} darkness={0.65} />
+          <DepthOfField focusDistance={0.008} focalLength={0.022} bokehScale={1.8} />
         </EffectComposer>
       </Canvas>
     </div>
