@@ -128,9 +128,7 @@ ADMIN_EMAIL="contact@azconstruction.fr"
 # Stripe (Paiements)
 # STRIPE_SECRET_KEY="sk_test_..."
 # STRIPE_PUBLISHABLE_KEY="pk_test_..."
-# STRIPE_WEBHOOK_SECRET="whsec_..."
-
-# Resend (Emails)
+# STRIPE_WEBHOOK_SECRET="whsec_..."# Resend (Emails)
 # RESEND_API_KEY="re_..."
 # EMAIL_FROM="AZ Construction <contact@azconstruction.fr>"# Cloudinary (Images)
 # CLOUDINARY_CLOUD_NAME=""
@@ -154,9 +152,7 @@ npm run dev
 
 Le serveur affichera des avertissements pour les variables manquantes.
 
-## Déploiement Vercel
-
-1. Allez dans **Settings > Environment Variables** de votre projet Vercel
+## Déploiement Vercel1. Allez dans **Settings > Environment Variables** de votre projet Vercel
 2. Ajoutez chaque variable avec sa valeur
 3. Sélectionnez les environnements appropriés (Production, Preview, Development)
 4. Redéployez le projet

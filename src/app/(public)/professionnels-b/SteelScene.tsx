@@ -138,7 +138,7 @@ function WeldGlow() {
     const t      = state.clock.elapsedTime;
     const fadeIn = Math.min(1, Math.max(0, (t - 15) / 2));  // 0->1 de t=15 a t=17
     const pulse  = 1 + Math.sin(t * 3.2) * 0.22;
-    const target = fadeIn * 4.2 * pulse;
+    const target = fadeIn * 5.5 * pulse;
 
     matsRef.current.forEach(m => { if (m) m.emissiveIntensity = target; });
 
@@ -152,7 +152,7 @@ function WeldGlow() {
       {/* Spheres emissives aux joints */}
       {JOINT_POSITIONS.map(([x, y, z], i) => (
         <mesh key={i} position={[x, y, z]}>
-          <sphereGeometry args={[0.10, 8, 8]} />
+          <sphereGeometry args={[0.06, 8, 8]} />
           <meshStandardMaterial
             ref={el => { matsRef.current[i] = el; }}
             color="#00d4ff"
@@ -189,6 +189,9 @@ function RadarSpot() {
     const speed = 0.38;
     const r     = 14;
 
+    // 0.6s de noir total au debut
+    const fadeIn = Math.min(1, Math.max(0, (t - 0.6) / 0.8));
+
     spotRef.current.position.set(
       Math.sin(t * speed) * r,
       9,
@@ -202,7 +205,7 @@ function RadarSpot() {
     spotRef.current.target.updateMatrixWorld();
 
     const sweep = Math.pow(Math.abs(Math.cos(t * speed * 2.1)), 2.5);
-    spotRef.current.intensity = 95 + sweep * 55;
+    spotRef.current.intensity = fadeIn * (95 + sweep * 55);
   });
 
   return (
@@ -379,10 +382,10 @@ interface Shot {
 }
 
 const SHOTS: Shot[] = [
-  // Plan A : Macro -- rasant sur la flange de la diagonale gauche du A
+  // Plan A : 0.6s de noir pur, puis macro sur la flange de la diagonale gauche du A
   // Le spectateur voit une grande diagonale d IPN sans savoir que c est un A
   {
-    t0: 0, t1: 5,
+    t0: 0, t1: 5.6,
     posA: new THREE.Vector3(-3.2,  0.6, 1.3),
     posB: new THREE.Vector3(-3.5,  0.1, 1.1),
     tgtA: new THREE.Vector3(-4.0,  0.3, 0),
@@ -530,8 +533,8 @@ export default function SteelScene({ className = "" }: { className?: string }) {
         {/* Post-processing */}
         <EffectComposer>
           <Bloom
-            intensity={1.8}
-            luminanceThreshold={0.22}
+            intensity={2.2}
+            luminanceThreshold={0.18}
             luminanceSmoothing={0.85}
             mipmapBlur
           />

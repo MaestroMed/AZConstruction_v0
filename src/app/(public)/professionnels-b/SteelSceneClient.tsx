@@ -11,6 +11,7 @@ const SteelScene = dynamic(() => import("./SteelScene"), {
 function SteelLoader() {
   const [progress, setProgress] = React.useState(0);
   const [label, setLabel] = React.useState("Initialisation...");
+  const [timedOut, setTimedOut] = React.useState(false);
 
   React.useEffect(() => {
     const steps = [
@@ -24,38 +25,40 @@ function SteelLoader() {
     const timers = steps.map(({ delay, pct, txt }) =>
       setTimeout(() => { setProgress(pct); setLabel(txt); }, delay),
     );
-    return () => timers.forEach(clearTimeout);
+    // Fallback si WebGL non dispo apres 6s
+    const fallback = setTimeout(() => setTimedOut(true), 6000);
+    return () => { timers.forEach(clearTimeout); clearTimeout(fallback); };
   }, []);
+
+  if (timedOut) {
+    return (
+      <div className="absolute inset-0 bg-gradient-to-br from-[#0a1020] via-[#0d1a2a] to-black flex items-center justify-center">
+        <div className="text-center">
+          <div className="text-6xl font-bold tracking-widest bg-gradient-to-r from-cyan-400 to-cyan-600 bg-clip-text text-transparent mb-2">
+            AZ
+          </div>
+          <div className="text-white/30 text-xs tracking-[0.3em] uppercase">Construction</div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="absolute inset-0 flex flex-col items-center justify-center bg-black">
-      {/* Logo AZ stylisé */}
       <div className="mb-10 relative">
         <svg width="80" height="56" viewBox="0 0 80 56" fill="none">
-          {/* A */}
           <line x1="8"  y1="52" x2="22" y2="8"  stroke="#00d4ff" strokeWidth="4" strokeLinecap="round" />
           <line x1="36" y1="52" x2="22" y2="8"  stroke="#00d4ff" strokeWidth="4" strokeLinecap="round" />
           <line x1="13" y1="33" x2="31" y2="33" stroke="#00d4ff" strokeWidth="3" strokeLinecap="round" />
-          {/* Z */}
           <line x1="44" y1="8"  x2="72" y2="8"  stroke="#00d4ff" strokeWidth="4" strokeLinecap="round" />
           <line x1="72" y1="8"  x2="44" y2="52" stroke="#00d4ff" strokeWidth="4" strokeLinecap="round" />
           <line x1="44" y1="52" x2="72" y2="52" stroke="#00d4ff" strokeWidth="4" strokeLinecap="round" />
-          {/* Glow effect via filter */}
-          <defs>
-            <filter id="glow">
-              <feGaussianBlur stdDeviation="3" result="blur" />
-              <feMerge><feMergeNode in="blur" /><feMergeNode in="SourceGraphic" /></feMerge>
-            </filter>
-          </defs>
         </svg>
-        {/* Pulsation */}
         <div
           className="absolute inset-0 blur-2xl opacity-40 animate-pulse"
           style={{ background: "radial-gradient(circle, #00d4ff 0%, transparent 70%)" }}
         />
       </div>
-
-      {/* Barre de progression */}
       <div className="w-56 h-px bg-white/10 rounded-full overflow-hidden mb-4">
         <div
           className="h-full rounded-full transition-all duration-500 ease-out"
@@ -66,10 +69,7 @@ function SteelLoader() {
           }}
         />
       </div>
-
-      <p className="text-white/35 text-xs tracking-[0.25em] uppercase font-medium">
-        {label}
-      </p>
+      <p className="text-white/35 text-xs tracking-[0.25em] uppercase font-medium">{label}</p>
     </div>
   );
 }

@@ -2,6 +2,7 @@
 
 import * as React from "react";
 import { motion, useInView } from "framer-motion";
+import LumiereSceneClient from "./LumiereSceneClient";
 import Link from "next/link";
 import Image from "next/image";
 import {
@@ -241,26 +242,13 @@ export default function ParticuliersPage() {
           HERO — Dark premium avec overlay sombre
       ═══════════════════════════════════════════════════════ */}
       <section className="relative min-h-screen flex flex-col justify-center overflow-hidden">
-        {/* Background image with dark overlay */}
-        <div className="absolute inset-0">
-          <Image
-            src={getImage("hero-particuliers")}
-            alt="Métallerie pour particuliers"
-            fill
-            className="object-cover"
-            priority
-          />
-          <div className="absolute inset-0 bg-gradient-to-br from-navy-dark/75 via-navy-dark/55 to-navy-medium/40" />
-        </div>
+        {/* LumiereScene -- garde-corps verre + acier, lumiere residentielle */}
+        <LumiereSceneClient className="absolute inset-0 z-0" />
 
-        {/* Decorative orbs */}
-        <GradientOrb color="cyan" size="lg" position={{ top: "10%", right: "5%" }} opacity={0.12} animate />
-        <GradientOrb color="blue" size="md" position={{ bottom: "20%", left: "5%" }} opacity={0.1} />
+        {/* Overlay gradient pour lisibilite du texte */}
+        <div className="absolute inset-0 z-10 bg-gradient-to-b from-black/40 via-transparent to-black/60" />
 
-        {/* Particle background */}
-        <ParticleBackground count={15} />
-
-        <div className="container mx-auto px-6 relative z-10 pt-32 pb-20">
+        <div className="container mx-auto px-6 relative z-20 pt-32 pb-20">
           <motion.div
             className="max-w-4xl mx-auto text-center"
             initial={{ opacity: 0, y: 40 }}
