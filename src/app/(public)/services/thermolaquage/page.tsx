@@ -2,7 +2,6 @@
 
 import * as React from "react";
 import { motion, useScroll, useTransform } from "framer-motion";
-import SpectreSceneClient from "./SpectreSceneClient";
 import Link from "next/link";
 import Image from "next/image";
 import {
@@ -329,14 +328,46 @@ export default function ThermolaquagePage() {
           HERO SECTION - Full Impact
           ============================================ */}
       <section className="relative min-h-screen flex items-center overflow-hidden">
-        {/* SpectreScene -- 5 IPN RAL en rang, radar lateral */}
-        <SpectreSceneClient className="absolute inset-0 z-0" />
-
-        {/* Overlay sombre pour lisibilite du texte */}
-        <div className="absolute inset-0 z-10 bg-gradient-to-b from-black/50 via-transparent to-black/70" />
+        {/* Mesh Gradient Background */}
+        <MeshGradient variant="animated" className="absolute inset-0" />
+        
+        {/* Gradient Orbs for depth */}
+        <GradientOrb
+          color="cyan"
+          size="xl"
+          position={{ top: "10%", right: "-10%" }}
+          blur="xl"
+          opacity={0.2}
+          animate
+        />
+        <GradientOrb
+          color="blue"
+          size="lg"
+          position={{ bottom: "20%", left: "-5%" }}
+          blur="lg"
+          opacity={0.15}
+        />
+        
+        {/* Particles */}
+        <ParticleBackground count={15} />
+        
+        {/* Background Image with Parallax */}
+        <motion.div
+          className="absolute inset-0"
+          style={{ y: heroY, opacity: heroOpacity }}
+        >
+          <Image
+            src={heroImage}
+            alt="Thermolaquage Professionnel - AZ Construction"
+            fill
+            priority
+            className="object-cover object-center opacity-20"
+            quality={85}
+          />
+        </motion.div>
 
         {/* Content */}
-        <div className="container mx-auto px-6 relative z-20 py-32">
+        <div className="container mx-auto px-6 relative z-10 py-32">
           <div className="max-w-4xl mx-auto text-center">
             {/* Badge */}
             <motion.div

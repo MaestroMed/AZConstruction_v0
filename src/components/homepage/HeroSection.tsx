@@ -6,7 +6,6 @@ import { ArrowRight, Play } from "lucide-react";
 import Link from "next/link";
 import ConfiguratorPreview from "./ConfiguratorPreview";
 import HeroCarousel from "./HeroCarousel";
-import ForgeSceneClient from "@/app/(public)/ForgeSceneClient";
 
 // Image par défaut
 const DEFAULT_HERO_IMAGE = "/images/hero/atelier-facade.jpg";
@@ -127,13 +126,8 @@ export default function HeroSection() {
         </div>
       )}
     <section className={`relative min-h-screen overflow-hidden bg-[#0a0f1a] ${settings.promoEnabled ? "mt-10" : ""}`}>
-      {/* ForgeScene -- IPN incandescents qui refroidissent */}
-      <ForgeSceneClient className="absolute inset-0 z-0" />
-
-      {/* Background Carousel fallback derriere (masque si ForgeScene charge) */}
-      <div className="absolute inset-0 z-[1] opacity-20">
-        <HeroCarousel />
-      </div>
+      {/* Background Carousel - Photos des réalisations */}
+      <HeroCarousel />
 
       {/* Subtle grain texture */}
       <div 
