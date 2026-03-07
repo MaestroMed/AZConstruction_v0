@@ -7,15 +7,17 @@ import Image from "next/image";
 import {
   MapPin,
   Calendar,
-  ArrowRight,
   Search,
   Grid3X3,
   LayoutList,
   Eye,
   Award,
-  CheckCircle2,
   Building2,
   Loader2,
+  X,
+  ChevronLeft,
+  ChevronRight,
+  ZoomIn,
 } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 import { cn } from "@/lib/utils";
@@ -80,6 +82,47 @@ export default function RealisationsPage() {
   const [selectedCategory, setSelectedCategory] = React.useState("all");
   const [searchTerm, setSearchTerm] = React.useState("");
   const [viewMode, setViewMode] = React.useState<"grid" | "list">("grid");
+
+  // Modal state
+  const [activeRealization, setActiveRealization] = React.useState<Realization | null>(null);
+  const [carouselIndex, setCarouselIndex] = React.useState(0);
+
+  const openModal = (r: Realization) => {
+    setActiveRealization(r);
+    setCarouselIndex(0);
+    document.body.style.overflow = "hidden";
+  };
+
+  const closeModal = () => {
+    setActiveRealization(null);
+    document.body.style.overflow = "";
+  };
+
+  const carouselImages = React.useMemo(() => {
+    if (!activeRealization) return [];
+    const imgs = activeRealization.images.length > 0
+      ? activeRealization.images
+      : activeRealization.imageUrl
+      ? [activeRealization.imageUrl]
+      : [];
+    return imgs;
+  }, [activeRealization]);
+
+  const prevImage = () => setCarouselIndex((i) => (i - 1 + carouselImages.length) % carouselImages.length);
+  const nextImage = () => setCarouselIndex((i) => (i + 1) % carouselImages.length);
+
+  // Keyboard navigation
+  React.useEffect(() => {
+    const handler = (e: KeyboardEvent) => {
+      if (!activeRealization) return;
+      if (e.key === "Escape") closeModal();
+      if (e.key === "ArrowLeft") prevImage();
+      if (e.key === "ArrowRight") nextImage();
+    };
+    window.addEventListener("keydown", handler);
+    return () => window.removeEventListener("keydown", handler);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [activeRealization, carouselImages.length]);
 
   // Charger les réalisations depuis l'API
   React.useEffect(() => {
@@ -269,8 +312,9 @@ export default function RealisationsPage() {
                 {filteredRealizations.map((realization) => (
                   <motion.div key={realization.id} variants={cardVariants} layout>
                     <div
+                      onClick={() => openModal(realization)}
                       className={cn(
-                        "group relative rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300 bg-white",
+                        "group relative rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300 bg-white cursor-pointer",
                         viewMode === "list" && "flex"
                       )}
                     >
@@ -399,6 +443,163 @@ export default function RealisationsPage() {
           </div>
         </section>
       )}
+
+      {/* ── MODAL ─────────────────────────────────────────── */}
+      <AnimatePresence>
+        {activeRealization && (
+          <motion.div
+            className="fixed inset-0 z-[100] flex items-center justify-center p-4"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+          >
+            {/* Backdrop */}
+            <motion.div
+              className="absolute inset-0 bg-black/80 backdrop-blur-sm"
+              onClick={closeModal}
+            />
+
+            {/* Panel */}
+            <motion.div
+              className="relative z-10 bg-white rounded-3xl overflow-hidden w-full max-w-4xl max-h-[90vh] flex flex-col shadow-2xl"
+              initial={{ scale: 0.92, opacity: 0, y: 24 }}
+              animate={{ scale: 1, opacity: 1, y: 0 }}
+              exit={{ scale: 0.92, opacity: 0, y: 24 }}
+              transition={{ type: "spring", damping: 28, stiffness: 260 }}
+            >
+              {/* Close */}
+              <button
+                onClick={closeModal}
+                className="absolute top-4 right-4 z-20 w-10 h-10 rounded-full bg-black/50 hover:bg-black/70 flex items-center justify-center transition-colors"
+              >
+                <X className="w-5 h-5 text-white" />
+              </button>
+
+              {/* Carousel */}
+              {carouselImages.length > 0 ? (
+                <div className="relative h-72 md:h-96 bg-gray-900 flex-shrink-0">
+                  <Image
+                    key={carouselIndex}
+                    src={carouselImages[carouselIndex]}
+                    alt={`${activeRealization.titre} — photo ${carouselIndex + 1}`}
+                    fill
+                    className="object-cover"
+                    sizes="(max-width: 896px) 100vw, 896px"
+                  />
+
+                  {/* Navigation arrows */}
+                  {carouselImages.length > 1 && (
+                    <>
+                      <button
+                        onClick={(e) => { e.stopPropagation(); prevImage(); }}
+                        className="absolute left-4 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-black/50 hover:bg-black/70 flex items-center justify-center transition-colors"
+                      >
+                        <ChevronLeft className="w-5 h-5 text-white" />
+                      </button>
+                      <button
+                        onClick={(e) => { e.stopPropagation(); nextImage(); }}
+                        className="absolute right-4 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-black/50 hover:bg-black/70 flex items-center justify-center transition-colors"
+                      >
+                        <ChevronRight className="w-5 h-5 text-white" />
+                      </button>
+
+                      {/* Dots */}
+                      <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-2">
+                        {carouselImages.map((_, i) => (
+                          <button
+                            key={i}
+                            onClick={(e) => { e.stopPropagation(); setCarouselIndex(i); }}
+                            className={cn(
+                              "w-2 h-2 rounded-full transition-all",
+                              i === carouselIndex ? "bg-white w-5" : "bg-white/50"
+                            )}
+                          />
+                        ))}
+                      </div>
+
+                      {/* Counter */}
+                      <div className="absolute bottom-4 right-4 px-3 py-1 bg-black/60 text-white text-xs rounded-full flex items-center gap-1">
+                        <ZoomIn className="w-3 h-3" />
+                        {carouselIndex + 1} / {carouselImages.length}
+                      </div>
+                    </>
+                  )}
+
+                  {/* Thumbnails strip */}
+                  {carouselImages.length > 1 && (
+                    <div className="absolute bottom-0 left-0 right-0 h-16 bg-gradient-to-t from-black/60 to-transparent flex items-end pb-2 px-4 gap-2 overflow-x-auto">
+                      {carouselImages.map((img, i) => (
+                        <button
+                          key={i}
+                          onClick={(e) => { e.stopPropagation(); setCarouselIndex(i); }}
+                          className={cn(
+                            "relative w-12 h-10 rounded flex-shrink-0 overflow-hidden border-2 transition-all",
+                            i === carouselIndex ? "border-cyan-400 opacity-100" : "border-transparent opacity-60 hover:opacity-100"
+                          )}
+                        >
+                          <Image src={img} alt="" fill className="object-cover" sizes="48px" />
+                        </button>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              ) : (
+                <div className="h-48 bg-gradient-to-br from-navy-medium to-navy-dark flex items-center justify-center flex-shrink-0">
+                  <Building2 className="w-20 h-20 text-white/20" />
+                </div>
+              )}
+
+              {/* Info */}
+              <div className="p-6 md:p-8 overflow-y-auto">
+                <div className="flex flex-wrap items-start gap-3 mb-4">
+                  <span className="px-3 py-1 bg-blue-corporate/10 text-blue-corporate rounded-full text-sm font-medium">
+                    {activeRealization.categorie}
+                  </span>
+                  {activeRealization.dateRealisation && (
+                    <span className="px-3 py-1 bg-cyan-glow/10 text-cyan-glow rounded-full text-sm font-medium">
+                      {new Date(activeRealization.dateRealisation).getFullYear()}
+                    </span>
+                  )}
+                </div>
+
+                <h2 className="text-2xl md:text-3xl font-bold text-navy-dark mb-3">
+                  {activeRealization.titre}
+                </h2>
+
+                {activeRealization.description && (
+                  <p className="text-gray-600 leading-relaxed mb-6">
+                    {activeRealization.description}
+                  </p>
+                )}
+
+                <div className="flex flex-wrap gap-6 text-sm text-gray-500 border-t border-gray-100 pt-4">
+                  {activeRealization.ville && (
+                    <span className="flex items-center gap-2">
+                      <MapPin className="w-4 h-4 text-cyan-glow" />
+                      {activeRealization.ville}
+                    </span>
+                  )}
+                  {activeRealization.dateRealisation && (
+                    <span className="flex items-center gap-2">
+                      <Calendar className="w-4 h-4 text-cyan-glow" />
+                      {new Date(activeRealization.dateRealisation).toLocaleDateString("fr-FR", {
+                        month: "long",
+                        year: "numeric",
+                      })}
+                    </span>
+                  )}
+                  {carouselImages.length > 1 && (
+                    <span className="flex items-center gap-2">
+                      <ZoomIn className="w-4 h-4 text-cyan-glow" />
+                      {carouselImages.length} photos
+                    </span>
+                  )}
+                </div>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
     </div>
   );
