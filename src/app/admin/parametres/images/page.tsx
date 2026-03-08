@@ -21,6 +21,8 @@ import {
   Users,
   Handshake,
   Route,
+  ExternalLink,
+  Brush,
 } from "lucide-react";
 import { toast } from "sonner";
 
@@ -78,6 +80,13 @@ interface SiteImage {
   updatedAt?: string;
 }
 
+interface BrandingSettings {
+  logoUrl?: string | null;
+  logoLightUrl?: string | null;
+  faviconUrl?: string | null;
+  brandName?: string;
+}
+
 export default function ImagesSettingsPage() {
   const [images, setImages] = React.useState<SiteImage[]>([]);
   const [grouped, setGrouped] = React.useState<Record<string, SiteImage[]>>({});
@@ -85,6 +94,7 @@ export default function ImagesSettingsPage() {
   const [uploading, setUploading] = React.useState<string | null>(null);
   const [expandedCategories, setExpandedCategories] = React.useState<string[]>(["hero", "products"]);
   const fileInputRefs = React.useRef<Record<string, HTMLInputElement | null>>({});
+  const [branding, setBranding] = React.useState<BrandingSettings>({});
 
   // Charger les images
   const loadImages = async () => {
@@ -103,8 +113,27 @@ export default function ImagesSettingsPage() {
     }
   };
 
+  // Charger les infos de branding depuis les paramètres
+  const loadBranding = async () => {
+    try {
+      const response = await fetch("/api/settings");
+      if (response.ok) {
+        const data = await response.json();
+        setBranding({
+          logoUrl: data.logoUrl,
+          logoLightUrl: data.logoLightUrl,
+          faviconUrl: data.faviconUrl,
+          brandName: data.brandName || data.companyName || "AZ Construction",
+        });
+      }
+    } catch {
+      // silently ignore
+    }
+  };
+
   React.useEffect(() => {
     loadImages();
+    loadBranding();
   }, []);
 
   const handleUpload = async (key: string, file: File) => {
@@ -243,6 +272,80 @@ export default function ImagesSettingsPage() {
 
         {/* Content */}
         <div className="lg:col-span-3 space-y-6">
+          {/* ── Identité visuelle (branding) ───────────────── */}
+          <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
+            <div className="flex items-center justify-between p-4 border-b border-gray-100">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-violet-500/10 to-purple-500/10 flex items-center justify-center">
+                  <Brush className="w-5 h-5 text-violet-600" />
+                </div>
+                <div>
+                  <h2 className="text-lg font-semibold text-gray-900">Identité visuelle</h2>
+                  <p className="text-sm text-gray-500">Logo, logo clair, favicon</p>
+                </div>
+              </div>
+              <Link
+                href="/admin/parametres"
+                className="inline-flex items-center gap-2 px-3 py-2 bg-violet-50 text-violet-700 rounded-lg text-sm font-medium hover:bg-violet-100 transition-colors"
+              >
+                <ExternalLink className="w-4 h-4" />
+                Modifier dans Paramètres généraux
+              </Link>
+            </div>
+            <div className="p-4">
+              <div className="grid md:grid-cols-3 gap-4">
+                {/* Logo principal */}
+                <div className="bg-gray-50 rounded-xl p-4 border border-gray-100">
+                  <div className="relative aspect-video rounded-lg overflow-hidden bg-navy-dark flex items-center justify-center mb-3">
+                    {branding.logoUrl ? (
+                      <Image src={branding.logoUrl} alt="Logo principal" fill className="object-contain p-3" unoptimized />
+                    ) : (
+                      <span className="text-white/30 text-sm font-medium">Aucun logo</span>
+                    )}
+                  </div>
+                  <h3 className="font-semibold text-gray-900 text-sm mb-1">Logo principal</h3>
+                  <p className="text-xs text-gray-500">Affiché dans le header (fond sombre)</p>
+                  <div className={`mt-2 inline-flex items-center gap-1 px-2 py-1 rounded-full text-xs font-medium ${branding.logoUrl ? "bg-green-100 text-green-700" : "bg-orange-100 text-orange-700"}`}>
+                    {branding.logoUrl ? "✓ Configuré" : "↺ Non configuré"}
+                  </div>
+                </div>
+
+                {/* Logo clair */}
+                <div className="bg-gray-50 rounded-xl p-4 border border-gray-100">
+                  <div className="relative aspect-video rounded-lg overflow-hidden bg-white border border-gray-200 flex items-center justify-center mb-3">
+                    {branding.logoLightUrl ? (
+                      <Image src={branding.logoLightUrl} alt="Logo fond clair" fill className="object-contain p-3" unoptimized />
+                    ) : (
+                      <span className="text-gray-300 text-sm font-medium">Aucun logo clair</span>
+                    )}
+                  </div>
+                  <h3 className="font-semibold text-gray-900 text-sm mb-1">Logo fond clair</h3>
+                  <p className="text-xs text-gray-500">Version du logo sur fond blanc</p>
+                  <div className={`mt-2 inline-flex items-center gap-1 px-2 py-1 rounded-full text-xs font-medium ${branding.logoLightUrl ? "bg-green-100 text-green-700" : "bg-orange-100 text-orange-700"}`}>
+                    {branding.logoLightUrl ? "✓ Configuré" : "↺ Non configuré"}
+                  </div>
+                </div>
+
+                {/* Favicon */}
+                <div className="bg-gray-50 rounded-xl p-4 border border-gray-100">
+                  <div className="relative aspect-video rounded-lg overflow-hidden bg-white border border-gray-200 flex items-center justify-center mb-3">
+                    {branding.faviconUrl ? (
+                      <Image src={branding.faviconUrl} alt="Favicon" width={48} height={48} className="object-contain" unoptimized />
+                    ) : (
+                      <span className="text-gray-300 text-sm font-medium">Aucun favicon</span>
+                    )}
+                  </div>
+                  <h3 className="font-semibold text-gray-900 text-sm mb-1">Favicon</h3>
+                  <p className="text-xs text-gray-500">Icône onglet navigateur</p>
+                  <div className={`mt-2 inline-flex items-center gap-1 px-2 py-1 rounded-full text-xs font-medium ${branding.faviconUrl ? "bg-green-100 text-green-700" : "bg-orange-100 text-orange-700"}`}>
+                    {branding.faviconUrl ? "✓ Configuré" : "↺ Non configuré"}
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* ── Images par catégorie ────────────────────────── */}
           {Object.entries(grouped).map(([category, categoryImages]) => {
             const isExpanded = expandedCategories.includes(category);
 

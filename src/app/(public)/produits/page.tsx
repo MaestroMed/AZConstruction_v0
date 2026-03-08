@@ -3,6 +3,7 @@
 import * as React from "react";
 import { motion } from "framer-motion";
 import Link from "next/link";
+import Image from "next/image";
 import {
   ArrowRight,
   Settings,
@@ -17,10 +18,12 @@ import {
 } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 import { Card, CardContent } from "@/components/ui/Card";
+import { useSiteImages } from "@/lib/hooks/useSiteImages";
 
 const productFamilies = [
   {
     id: "garde-corps",
+    imageKey: "product-garde-corps",
     name: "Garde-corps",
     description:
       "Garde-corps et balustrades pour terrasses, balcons et escaliers. Verre feuilleté, câbles tendus ou barreaux design.",
@@ -43,6 +46,7 @@ const productFamilies = [
   },
   {
     id: "escaliers",
+    imageKey: "product-escaliers",
     name: "Escaliers",
     description:
       "Escaliers droits, quart-tournant, double quart-tournant et hélicoïdaux. Structures acier ou mixte bois-métal.",
@@ -57,6 +61,7 @@ const productFamilies = [
   },
   {
     id: "portails",
+    imageKey: "product-portails",
     name: "Portails",
     description:
       "Portails battants et coulissants en acier. Design moderne ou classique, motorisation disponible.",
@@ -74,6 +79,7 @@ const productFamilies = [
   },
   {
     id: "clotures",
+    imageKey: "product-clotures",
     name: "Clôtures",
     description:
       "Clôtures barreaudées, à lames, panneaux rigides et décoratives. Solutions esthétiques et sécuritaires pour votre propriété.",
@@ -93,6 +99,7 @@ const productFamilies = [
   },
   {
     id: "marquises",
+    imageKey: "product-marquises",
     name: "Marquises & Auvents",
     description:
       "Marquises pour portes d'entrée, auvents terrasse et casquettes architecturales. Protection pluie et soleil design.",
@@ -112,6 +119,7 @@ const productFamilies = [
   },
   {
     id: "portes",
+    imageKey: "product-portes",
     name: "Portes",
     description:
       "Portes en acier et profilés Jansen : portes d'entrée design, techniques, coupe-feu EI30 à EI120, taulées et vitrées.",
@@ -129,6 +137,7 @@ const productFamilies = [
   },
   {
     id: "fenetres",
+    imageKey: "product-fenetres",
     name: "Fenêtres & Châssis",
     description:
       "Fenêtres et châssis en profilés acier Jansen. Fixes, oscillo-battantes, coulissantes. Style atelier ou contemporain.",
@@ -147,6 +156,7 @@ const productFamilies = [
   },
   {
     id: "verrieres",
+    imageKey: "product-verrieres",
     name: "Verrières",
     description:
       "Verrières intérieures style atelier. Cloisons vitrées avec ou sans porte. Du sol au plafond ou en imposte. Sur mesure.",
@@ -165,6 +175,7 @@ const productFamilies = [
   },
   {
     id: "grilles-ventilation",
+    imageKey: "product-grilles",
     name: "Grilles de ventilation",
     description:
       "Grilles de ventilation techniques et décoratives. Fixes, orientables, acoustiques ou coupe-feu. Sur mesure pour tous bâtiments.",
@@ -275,6 +286,8 @@ const cardVariants = {
 };
 
 export default function ProduitsPage() {
+  const { getImage, isPlaceholder } = useSiteImages();
+
   return (
     <div className="min-h-screen bg-white">
       {/* Hero Section */}
@@ -351,32 +364,52 @@ export default function ProduitsPage() {
           >
             {productFamilies.map((family) => (
               <motion.div key={family.id} id={family.id} variants={cardVariants}>
-                <Card variant="elevated" hover className="h-full group">
-                  <CardContent className="p-8">
-                    {/* Icon */}
-                    <div className="flex justify-between items-start mb-6">
-                      <div className="w-20 h-20 rounded-2xl bg-gradient-to-br from-blue-corporate/10 to-cyan-glow/10 flex items-center justify-center text-blue-corporate group-hover:scale-110 transition-transform">
+                <Card variant="elevated" hover className="h-full group overflow-hidden">
+                  {/* Image / Icon area */}
+                  <div className="relative h-48 bg-gradient-to-br from-blue-corporate/10 to-navy-dark/20 overflow-hidden">
+                    {!isPlaceholder(family.imageKey) ? (
+                      <Image
+                        src={getImage(family.imageKey)}
+                        alt={family.name}
+                        fill
+                        className="object-cover group-hover:scale-105 transition-transform duration-500"
+                        sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                      />
+                    ) : (
+                      <div className="absolute inset-0 flex items-center justify-center text-blue-corporate/40 group-hover:scale-110 transition-transform duration-300">
                         {family.icon}
                       </div>
-                      <span className="inline-flex items-center px-3 py-1 bg-green-100 text-green-700 rounded-full text-xs font-medium">
+                    )}
+                    {/* Gradient overlay for readability */}
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent" />
+                    {/* Price badge */}
+                    <div className="absolute bottom-3 left-4">
+                      <span className="px-2 py-1 bg-navy-dark/80 text-cyan-glow text-xs font-bold rounded backdrop-blur-sm">
+                        À partir de {family.startingPrice} €
+                      </span>
+                    </div>
+                  </div>
+
+                  <CardContent className="p-6">
+                    {/* Header */}
+                    <div className="flex justify-between items-start mb-3">
+                      <h2 className="text-xl font-bold text-navy-dark">
+                        {family.name}
+                      </h2>
+                      <span className="inline-flex items-center px-2 py-1 bg-green-100 text-green-700 rounded-full text-xs font-medium flex-shrink-0 ml-2">
                         Décennale
                       </span>
                     </div>
-
-                    {/* Content */}
-                    <h2 className="text-2xl font-bold text-navy-dark mb-3">
-                      {family.name}
-                    </h2>
-                    <p className="text-gray-500 mb-6 leading-relaxed">
+                    <p className="text-gray-500 mb-4 leading-relaxed text-sm">
                       {family.description}
                     </p>
 
                     {/* Features */}
-                    <div className="flex flex-wrap gap-2 mb-6">
+                    <div className="flex flex-wrap gap-2 mb-4">
                       {family.features.map((feature, idx) => (
                         <span
                           key={idx}
-                          className="inline-flex items-center gap-1 px-3 py-1 bg-cyan-glow/10 text-cyan-600 rounded-full text-xs font-medium"
+                          className="inline-flex items-center gap-1 px-2 py-1 bg-cyan-glow/10 text-cyan-600 rounded-full text-xs font-medium"
                         >
                           <CheckCircle2 className="w-3 h-3" />
                           {feature}
@@ -385,12 +418,12 @@ export default function ProduitsPage() {
                     </div>
 
                     {/* Products list */}
-                    <div className="mb-6 pb-6 border-b border-gray-100">
-                      <p className="text-sm text-gray-400 mb-2">Modèles populaires :</p>
+                    <div className="mb-4 pb-4 border-b border-gray-100">
+                      <p className="text-xs text-gray-400 mb-2">Modèles populaires :</p>
                       <ul className="space-y-1">
                         {family.products.map((product, idx) => (
                           <li key={idx} className="text-sm text-gray-600 flex items-center gap-2">
-                            <span className="w-1.5 h-1.5 rounded-full bg-cyan-glow" />
+                            <span className="w-1.5 h-1.5 rounded-full bg-cyan-glow flex-shrink-0" />
                             {product}
                           </li>
                         ))}

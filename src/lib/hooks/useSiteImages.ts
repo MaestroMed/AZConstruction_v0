@@ -51,6 +51,7 @@ const FALLBACK_IMAGES: Record<string, string> = {
   // Pages
   "page-atelier": "https://images.unsplash.com/photo-1504307651254-35680f356dfd?w=1200&q=80",
   "page-equipe": "https://images.unsplash.com/photo-1600880292203-757bb62b4baf?w=1200&q=80",
+  "thermolaquage-process": "https://images.unsplash.com/photo-1565793298595-6a879b1d9492?w=1200&q=80",
   
   // Process
   "process-consultation": "https://images.unsplash.com/photo-1560439514-4e9645039924?w=800&q=80",
