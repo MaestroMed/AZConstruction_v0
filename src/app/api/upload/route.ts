@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import { v4 as uuidv4 } from "uuid";
 import { prisma } from "@/lib/prisma";
+import path from "path";
+import { writeFile, mkdir } from "fs/promises";
 
 // Types de fichiers autorisés
 const ALLOWED_TYPES = {
@@ -21,6 +23,9 @@ const useCloudinary = !!(
   process.env.CLOUDINARY_API_SECRET
 );
 
+// Vérifier si on est en local (pas sur Vercel)
+const isLocal = !process.env.VERCEL;
+
 async function uploadToCloudinary(buffer: Buffer, fileName: string, mimeType: string, folder: string = "az-construction") {
   try {
     const { uploadImage } = await import("@/lib/cloudinary");
@@ -39,6 +44,16 @@ async function uploadToVercelBlob(buffer: Buffer, fileName: string, contentType:
     contentType,
   });
   return blob;
+}
+
+async function saveToLocalDisk(buffer: Buffer, originalName: string, folder: string): Promise<string> {
+  const uploadsDir = path.join(process.cwd(), "public", "uploads");
+  await mkdir(uploadsDir, { recursive: true });
+  const ext = path.extname(originalName) || ".jpg";
+  const fileName = `${uuidv4()}${ext}`;
+  const filePath = path.join(uploadsDir, fileName);
+  await writeFile(filePath, buffer);
+  return `/uploads/${fileName}`;
 }
 
 export async function POST(request: NextRequest) {
@@ -99,7 +114,6 @@ export async function POST(request: NextRequest) {
             uploadedAt: new Date().toISOString(),
           };
           
-          // Sauvegarder en base de données
           await prisma.media.create({
             data: {
               id: fileData.id,
@@ -139,7 +153,6 @@ export async function POST(request: NextRequest) {
             uploadedAt: new Date().toISOString(),
           };
           
-          // Sauvegarder en base de données
           await prisma.media.create({
             data: {
               id: fileData.id,
@@ -163,7 +176,52 @@ export async function POST(request: NextRequest) {
         }
       }
 
-      // 3. Fallback: retourner l'image en base64 (ne pas sauvegarder en DB car trop gros)
+      // 3. Stockage local sur disque (uniquement en développement local)
+      if (isLocal && fileType === "image") {
+        try {
+          const url = await saveToLocalDisk(buffer, file.name, folder);
+          const fileData = {
+            id: uuidv4(),
+            originalName: file.name,
+            fileName: path.basename(url),
+            url,
+            type: fileType,
+            size: file.size,
+            mimeType: file.type,
+            provider: "local",
+            uploadedAt: new Date().toISOString(),
+          };
+
+          await prisma.media.create({
+            data: {
+              id: fileData.id,
+              fileName: fileData.fileName,
+              originalName: fileData.originalName,
+              url: fileData.url,
+              type: fileData.type,
+              mimeType: fileData.mimeType,
+              size: fileData.size,
+              provider: fileData.provider,
+            },
+          });
+
+          uploadedFiles.push(fileData);
+          continue;
+        } catch (localError) {
+          console.error("Local disk upload failed:", localError);
+        }
+      }
+
+      // 4. Dernier recours : base64 (images compressées uniquement)
+      if (file.size > 2 * 1024 * 1024) {
+        return NextResponse.json(
+          {
+            error: `Image trop grande (${Math.round(file.size / 1024)}KB). Compressez-la sous 2MB ou configurez Cloudinary/Vercel Blob dans les variables d'environnement.`,
+          },
+          { status: 413 }
+        );
+      }
+
       const base64 = `data:${file.type};base64,${buffer.toString("base64")}`;
       uploadedFiles.push({
         id: uuidv4(),

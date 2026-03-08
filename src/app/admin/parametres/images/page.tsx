@@ -26,6 +26,45 @@ import {
 } from "lucide-react";
 import { toast } from "sonner";
 
+// Compression côté client — réduit l'image à max 1920px et 85% qualité JPEG
+async function compressImage(file: File, maxWidth = 1920, quality = 0.85): Promise<File> {
+  // Ne compresse pas les SVG ou les petites images déjà légères
+  if (file.type === "image/svg+xml" || file.size < 500 * 1024) return file;
+
+  return new Promise((resolve) => {
+    const img = document.createElement("img");
+    const url = URL.createObjectURL(file);
+    img.onload = () => {
+      URL.revokeObjectURL(url);
+      let { width, height } = img;
+      if (width > maxWidth) {
+        height = Math.round((height * maxWidth) / width);
+        width = maxWidth;
+      }
+      const canvas = document.createElement("canvas");
+      canvas.width = width;
+      canvas.height = height;
+      const ctx = canvas.getContext("2d")!;
+      ctx.drawImage(img, 0, 0, width, height);
+      canvas.toBlob(
+        (blob) => {
+          if (!blob) { resolve(file); return; }
+          const compressed = new File([blob], file.name.replace(/\.[^.]+$/, ".jpg"), {
+            type: "image/jpeg",
+            lastModified: Date.now(),
+          });
+          // Si la compression a rendu le fichier plus grand, garder l'original
+          resolve(compressed.size < file.size ? compressed : file);
+        },
+        "image/jpeg",
+        quality
+      );
+    };
+    img.onerror = () => { URL.revokeObjectURL(url); resolve(file); };
+    img.src = url;
+  });
+}
+
 const settingsSections = [
   { id: "general", label: "Général", icon: Building, href: "/admin/parametres" },
   { id: "images", label: "Images du site", icon: ImageIcon, href: "/admin/parametres/images" },
@@ -138,18 +177,26 @@ export default function ImagesSettingsPage() {
 
   const handleUpload = async (key: string, file: File) => {
     setUploading(key);
-    const formData = new FormData();
-    formData.append("files", file);
-    formData.append("folder", "site-images");
-
     try {
+      // Comprimer l'image côté client avant envoi
+      const compressed = await compressImage(file);
+      const sizeMB = (compressed.size / 1024 / 1024).toFixed(1);
+      console.log(`Upload: ${file.name} → ${compressed.name} (${sizeMB}MB)`);
+
+      const formData = new FormData();
+      formData.append("files", compressed);
+      formData.append("folder", "site-images");
+
       // 1. Upload le fichier
       const uploadResponse = await fetch("/api/upload", {
         method: "POST",
         body: formData,
       });
 
-      if (!uploadResponse.ok) throw new Error("Erreur upload");
+      if (!uploadResponse.ok) {
+        const errData = await uploadResponse.json().catch(() => ({}));
+        throw new Error(errData.error || `Erreur upload (${uploadResponse.status})`);
+      }
 
       const uploadData = await uploadResponse.json();
       const imageUrl = uploadData.files[0]?.url;
@@ -170,7 +217,8 @@ export default function ImagesSettingsPage() {
       toast.success("Image mise à jour !");
     } catch (error) {
       console.error("Erreur upload:", error);
-      toast.error("Erreur lors de l'upload");
+      const msg = error instanceof Error ? error.message : "Erreur lors de l'upload";
+      toast.error(msg);
     } finally {
       setUploading(null);
     }
@@ -478,7 +526,7 @@ export default function ImagesSettingsPage() {
             );
           })}
 
-          {/* Info box */}
+          {/* ── Info box ────────────────────────────────────── */}
           <div className="bg-gradient-to-br from-blue-50 to-cyan-50 rounded-xl p-6 border border-blue-100">
             <div className="flex gap-4">
               <div className="w-12 h-12 rounded-xl bg-blue-100 flex items-center justify-center flex-shrink-0">
@@ -489,10 +537,10 @@ export default function ImagesSettingsPage() {
                   Comment ça marche ?
                 </h3>
                 <ul className="text-sm text-blue-700 space-y-1">
-                  <li>• Chaque image a un <strong>fallback</strong> par défaut (image gratuite Unsplash)</li>
-                  <li>• Uploadez vos propres images pour les personnaliser</li>
+                  <li>• Les images sont <strong>automatiquement compressées</strong> sous 1920px avant envoi</li>
+                  <li>• <strong>En local</strong> : stockage dans <code className="bg-blue-100 px-1 rounded">/public/uploads/</code> (format recommandé : JPG/WebP, max 10MB)</li>
+                  <li>• <strong>En production</strong> : configurez <strong>Cloudinary</strong> ou <strong>Vercel Blob</strong> dans les variables d'environnement</li>
                   <li>• Cliquez sur 🗑️ pour revenir à l'image par défaut</li>
-                  <li>• Les images sont automatiquement optimisées via Cloudinary</li>
                 </ul>
               </div>
             </div>
