@@ -23,6 +23,10 @@ import {
   Route,
   ExternalLink,
   Brush,
+  Save,
+  FileText,
+  User,
+  MapPin,
 } from "lucide-react";
 import { toast } from "sonner";
 
@@ -68,6 +72,7 @@ async function compressImage(file: File, maxWidth = 1920, quality = 0.85): Promi
 const settingsSections = [
   { id: "general", label: "Général", icon: Building, href: "/admin/parametres" },
   { id: "images", label: "Images du site", icon: ImageIcon, href: "/admin/parametres/images" },
+  { id: "realisations-pro", label: "Réalisations Pro", icon: LayoutGrid, href: "/admin/parametres/realisations-pro" },
   { id: "ecommerce", label: "E-commerce", icon: CreditCard, href: "/admin/parametres/ecommerce" },
   { id: "emails", label: "Emails", icon: Mail, href: "/admin/parametres/emails" },
   { id: "seo", label: "SEO", icon: SearchIcon, href: "/admin/parametres/seo" },
@@ -126,6 +131,26 @@ interface BrandingSettings {
   brandName?: string;
 }
 
+interface B2BCard {
+  title: string;
+  client: string;
+  location: string;
+  imageKey: string;
+}
+
+// Mapping imageKey → card index
+const B2B_IMAGE_KEYS: Record<string, number> = {
+  "realisation-b2b-1": 0,
+  "realisation-b2b-2": 1,
+  "realisation-b2b-3": 2,
+};
+
+const DEFAULT_B2B_CARDS: B2BCard[] = [
+  { title: "Garde-corps collectif", client: "Promoteur IDF", location: "Île-de-France", imageKey: "realisation-b2b-1" },
+  { title: "Escalier industriel", client: "Usine automobile", location: "Seine-et-Marne (77)", imageKey: "realisation-b2b-2" },
+  { title: "Portails résidence", client: "Collectivité locale", location: "Val-d'Oise (95)", imageKey: "realisation-b2b-3" },
+];
+
 export default function ImagesSettingsPage() {
   const [images, setImages] = React.useState<SiteImage[]>([]);
   const [grouped, setGrouped] = React.useState<Record<string, SiteImage[]>>({});
@@ -134,6 +159,8 @@ export default function ImagesSettingsPage() {
   const [expandedCategories, setExpandedCategories] = React.useState<string[]>(["hero", "products"]);
   const fileInputRefs = React.useRef<Record<string, HTMLInputElement | null>>({});
   const [branding, setBranding] = React.useState<BrandingSettings>({});
+  const [b2bCards, setB2bCards] = React.useState<B2BCard[]>(DEFAULT_B2B_CARDS);
+  const [b2bSaving, setB2bSaving] = React.useState(false);
 
   // Charger les images
   const loadImages = async () => {
@@ -170,9 +197,49 @@ export default function ImagesSettingsPage() {
     }
   };
 
+  // Charger les cartes B2B
+  const loadB2bCards = async () => {
+    try {
+      const res = await fetch("/api/b2b-cards");
+      const data = await res.json();
+      if (data.success && data.cards?.length) {
+        const merged = data.cards.map((card: Partial<B2BCard>, i: number) => ({
+          ...DEFAULT_B2B_CARDS[i],
+          ...card,
+        }));
+        setB2bCards(merged);
+      }
+    } catch {
+      // silently ignore — use defaults
+    }
+  };
+
+  // Sauvegarder les cartes B2B
+  const saveB2bCards = async () => {
+    setB2bSaving(true);
+    try {
+      const res = await fetch("/api/b2b-cards", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ cards: b2bCards }),
+      });
+      if (!res.ok) throw new Error("Erreur sauvegarde");
+      toast.success("Textes des réalisations sauvegardés !");
+    } catch {
+      toast.error("Erreur lors de la sauvegarde");
+    } finally {
+      setB2bSaving(false);
+    }
+  };
+
+  const updateB2bCard = (index: number, field: keyof B2BCard, value: string) => {
+    setB2bCards((prev) => prev.map((card, i) => i === index ? { ...card, [field]: value } : card));
+  };
+
   React.useEffect(() => {
     loadImages();
     loadBranding();
+    loadB2bCards();
   }, []);
 
   const handleUpload = async (key: string, file: File) => {
@@ -438,6 +505,8 @@ export default function ImagesSettingsPage() {
                       {categoryImages.map((img) => {
                         const isCustom = !!img.imageUrl;
                         const isUploading = uploading === img.key;
+                        const b2bIndex = B2B_IMAGE_KEYS[img.key];
+                        const b2bCard = b2bIndex !== undefined ? b2bCards[b2bIndex] : undefined;
 
                         return (
                           <div
@@ -478,6 +547,49 @@ export default function ImagesSettingsPage() {
                             <p className="text-xs text-gray-500 mb-3">
                               {img.description}
                             </p>
+
+                            {/* ── Champs texte inline pour les cartes B2B ── */}
+                            {b2bCard !== undefined && (
+                              <div className="mb-3 space-y-2 border-t border-gray-100 pt-3">
+                                <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-2">Texte affiché sur la carte</p>
+                                <div>
+                                  <label className="flex items-center gap-1 text-xs text-gray-500 mb-1">
+                                    <FileText className="w-3 h-3" /> Titre du projet
+                                  </label>
+                                  <input
+                                    type="text"
+                                    value={b2bCard.title}
+                                    onChange={(e) => updateB2bCard(b2bIndex, "title", e.target.value)}
+                                    className="w-full px-2.5 py-1.5 text-xs border border-gray-200 rounded-lg focus:ring-1 focus:ring-cyan-500 focus:border-cyan-500 outline-none"
+                                    placeholder="Ex : Garde-corps collectif résidence"
+                                  />
+                                </div>
+                                <div>
+                                  <label className="flex items-center gap-1 text-xs text-gray-500 mb-1">
+                                    <User className="w-3 h-3" /> Client / Maître d&apos;ouvrage
+                                  </label>
+                                  <input
+                                    type="text"
+                                    value={b2bCard.client}
+                                    onChange={(e) => updateB2bCard(b2bIndex, "client", e.target.value)}
+                                    className="w-full px-2.5 py-1.5 text-xs border border-gray-200 rounded-lg focus:ring-1 focus:ring-cyan-500 focus:border-cyan-500 outline-none"
+                                    placeholder="Ex : Promoteur IDF"
+                                  />
+                                </div>
+                                <div>
+                                  <label className="flex items-center gap-1 text-xs text-gray-500 mb-1">
+                                    <MapPin className="w-3 h-3" /> Localisation
+                                  </label>
+                                  <input
+                                    type="text"
+                                    value={b2bCard.location}
+                                    onChange={(e) => updateB2bCard(b2bIndex, "location", e.target.value)}
+                                    className="w-full px-2.5 py-1.5 text-xs border border-gray-200 rounded-lg focus:ring-1 focus:ring-cyan-500 focus:border-cyan-500 outline-none"
+                                    placeholder="Ex : Seine-et-Marne (77)"
+                                  />
+                                </div>
+                              </div>
+                            )}
 
                             {/* Actions */}
                             <div className="flex gap-2">
@@ -520,6 +632,23 @@ export default function ImagesSettingsPage() {
                         );
                       })}
                     </div>
+
+                    {/* Bouton sauvegarde texte B2B (affiché uniquement pour la catégorie realisations) */}
+                    {category === "realisations" && (
+                      <div className="mt-4 flex justify-end">
+                        <button
+                          onClick={saveB2bCards}
+                          disabled={b2bSaving}
+                          className="inline-flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg text-sm font-medium hover:bg-blue-700 transition-colors disabled:opacity-60"
+                        >
+                          {b2bSaving ? (
+                            <><Loader2 className="w-4 h-4 animate-spin" /> Sauvegarde...</>
+                          ) : (
+                            <><Save className="w-4 h-4" /> Sauvegarder les textes</>
+                          )}
+                        </button>
+                      </div>
+                    )}
                   </div>
                 )}
               </div>

@@ -18,9 +18,11 @@ import {
   ChevronLeft,
   ChevronRight,
   ZoomIn,
+  Briefcase,
 } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 import { cn } from "@/lib/utils";
+import { useSiteImages } from "@/lib/hooks/useSiteImages";
 
 interface Realization {
   id: string;
@@ -33,6 +35,7 @@ interface Realization {
   images: string[];
   published: boolean;
   ordre: number;
+  isPro?: boolean;
 }
 
 const stats = [
@@ -82,6 +85,7 @@ export default function RealisationsPage() {
   const [selectedCategory, setSelectedCategory] = React.useState("all");
   const [searchTerm, setSearchTerm] = React.useState("");
   const [viewMode, setViewMode] = React.useState<"grid" | "list">("grid");
+  const { getImage } = useSiteImages();
 
   // Modal state
   const [activeRealization, setActiveRealization] = React.useState<Realization | null>(null);
@@ -128,14 +132,45 @@ export default function RealisationsPage() {
   React.useEffect(() => {
     const fetchRealizations = async () => {
       try {
-        const response = await fetch("/api/realizations");
-        if (response.ok) {
-          const data = await response.json();
-          if (data.success && data.realizations) {
-            const withImages = data.realizations.filter((r: Realization) => r.imageUrl);
-            setRealizations(withImages);
+        const [realizationsRes, b2bRes] = await Promise.all([
+          fetch("/api/realizations"),
+          fetch("/api/b2b-cards"),
+        ]);
+
+        let allRealizations: Realization[] = [];
+
+        // Cartes B2B (réalisations pro mises en avant)
+        if (b2bRes.ok) {
+          const b2bData = await b2bRes.json();
+          if (b2bData.success && b2bData.cards?.length) {
+            const b2bMapped: Realization[] = b2bData.cards.map(
+              (card: { title: string; client: string; location: string; imageKey: string }, i: number) => ({
+                id: `b2b-${i}`,
+                titre: card.title,
+                description: card.client,
+                categorie: "Bâtiment",
+                ville: card.location,
+                imageUrl: getImage(card.imageKey),
+                images: [],
+                published: true,
+                ordre: -1,
+                isPro: true,
+              })
+            );
+            allRealizations = [...b2bMapped];
           }
         }
+
+        // Réalisations du portfolio
+        if (realizationsRes.ok) {
+          const data = await realizationsRes.json();
+          if (data.success && data.realizations) {
+            const withImages = data.realizations.filter((r: Realization) => r.imageUrl);
+            allRealizations = [...allRealizations, ...withImages];
+          }
+        }
+
+        setRealizations(allRealizations);
       } catch (error) {
         console.error("Erreur chargement réalisations:", error);
       } finally {
@@ -144,6 +179,7 @@ export default function RealisationsPage() {
     };
 
     fetchRealizations();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const filteredRealizations = realizations.filter((r) => {
@@ -339,10 +375,16 @@ export default function RealisationsPage() {
                         )}
 
                         {/* Category badge */}
-                        <div className="absolute top-4 left-4 z-10">
+                        <div className="absolute top-4 left-4 z-10 flex flex-col gap-1">
                           <span className="px-3 py-1 bg-white/90 backdrop-blur-sm rounded-full text-xs font-medium text-navy-dark">
                             {realization.categorie}
                           </span>
+                          {realization.isPro && (
+                            <span className="px-3 py-1 bg-cyan-glow/90 backdrop-blur-sm rounded-full text-xs font-bold text-navy-dark flex items-center gap-1">
+                              <Briefcase className="w-3 h-3" />
+                              Professionnel
+                            </span>
+                          )}
                         </div>
 
                         {/* Year badge */}
