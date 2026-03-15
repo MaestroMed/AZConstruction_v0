@@ -35,7 +35,7 @@ export const clientDemands: ClientDemandItem[] = [
     id: "portails",
     title: "Portails",
     description: "Portails coulissants et battants, protection longue durée.",
-    imageUrl: "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=600&q=80",
+    imageUrl: "https://images.unsplash.com/photo-1705440990932-a31431b9e692?w=600&q=80",
     size: "wide",
   },
   {
@@ -49,7 +49,7 @@ export const clientDemands: ClientDemandItem[] = [
     id: "radiateurs",
     title: "Radiateurs",
     description: "Rénovation radiateurs fonte et acier, nouvelle couleur.",
-    imageUrl: "https://images.unsplash.com/photo-1585771724684-38269d6639fd?w=600&q=80",
+    imageUrl: "https://images.unsplash.com/photo-1673038111329-d0fdc5eb5014?w=600&q=80",
     size: "default",
   },
   {
@@ -70,7 +70,7 @@ export const clientDemands: ClientDemandItem[] = [
     id: "grilles-clotures",
     title: "Grilles & Clôtures",
     description: "Clôtures, grilles de défense, barreaudage - protection durable.",
-    imageUrl: "https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=600&q=80",
+    imageUrl: "https://images.unsplash.com/photo-1680538995038-4cf6424bdfd7?w=600&q=80",
     size: "default",
   },
   {
