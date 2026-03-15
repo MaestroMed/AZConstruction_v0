@@ -153,9 +153,20 @@ export default function ProfessionnelsPage() {
 
       {/* ═══ HERO — Dark glassmorphism ═══ */}
       <section className="relative min-h-[90vh] flex items-center overflow-hidden">
-        <MeshGradient variant="animated" className="absolute inset-0" />
-        <GradientOrb color="cyan" size="xl" position={{ top: "5%", right: "-10%" }} blur="xl" opacity={0.15} />
-        <GradientOrb color="blue" size="lg" position={{ bottom: "10%", left: "-5%" }} blur="lg" opacity={0.1} />
+        {/* Background image from admin (hero-professionnels) */}
+        <div className="absolute inset-0">
+          <Image
+            src={getImage("hero-professionnels")}
+            alt="Métallerie pour professionnels"
+            fill
+            className="object-cover"
+            priority
+          />
+          <div className="absolute inset-0 bg-gradient-to-br from-navy-dark/80 via-navy-dark/60 to-navy-medium/50" />
+        </div>
+        <MeshGradient variant="animated" className="absolute inset-0 opacity-30 mix-blend-overlay" />
+        <GradientOrb color="cyan" size="xl" position={{ top: "5%", right: "-10%" }} blur="xl" opacity={0.12} />
+        <GradientOrb color="blue" size="lg" position={{ bottom: "10%", left: "-5%" }} blur="lg" opacity={0.08} />
         <ParticleBackground count={12} />
 
         <div className="container mx-auto px-6 relative z-10 py-32">
