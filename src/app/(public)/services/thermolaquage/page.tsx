@@ -824,6 +824,20 @@ export default function ThermolaquagePage() {
                       <div className="w-8 h-8 border-2 border-cyan-glow border-t-transparent rounded-full animate-spin" />
                     </div>
                   )}
+
+                  {/* CSS color overlay — simule la couleur RAL tant qu'aucune image custom n'est uploadée */}
+                  {!hasCustomImage() && (
+                    <motion.div
+                      className="absolute inset-0 pointer-events-none rounded-2xl"
+                      style={{
+                        backgroundColor: selectedColor.hex,
+                        mixBlendMode: "color",
+                        opacity: 0.75,
+                      }}
+                      animate={{ backgroundColor: selectedColor.hex }}
+                      transition={{ duration: 0.35, ease: "easeInOut" }}
+                    />
+                  )}
                   
                   {/* Gradient for depth */}
                   <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent pointer-events-none" />
@@ -831,7 +845,7 @@ export default function ThermolaquagePage() {
                   {/* Indicator if using fallback image */}
                   {!hasCustomImage() && (
                     <div className="absolute top-4 right-4 glass-card px-3 py-1.5 text-xs text-white/70">
-                      Aperçu indicatif
+                      Simulation couleur RAL
                     </div>
                   )}
                   

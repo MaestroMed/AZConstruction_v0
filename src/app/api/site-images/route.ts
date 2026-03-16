@@ -150,8 +150,8 @@ const DEFAULT_IMAGES: {
   {
     key: "page-atelier",
     category: "pages",
-    label: "Photo Atelier",
-    description: "Photo de l'atelier AZ Construction",
+    label: "Photo Atelier / Pliage sur mesure",
+    description: "Photo de l'atelier AZ Construction — utilisée dans la section 'Pliage sur mesure' de la page Particuliers",
     fallbackUrl: "https://images.unsplash.com/photo-1504307651254-35680f356dfd?w=1200&q=80",
   },
   {

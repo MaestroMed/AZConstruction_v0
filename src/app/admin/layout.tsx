@@ -22,6 +22,7 @@ import {
   X,
   FolderOpen,
   ChevronDown,
+  MessageSquare,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Toaster } from "sonner";
@@ -72,6 +73,11 @@ const navigationItems = [
       { title: "Professionnels", href: "/admin/clients?type=pro" },
       { title: "En attente", href: "/admin/clients?status=pending" },
     ],
+  },
+  {
+    title: "Messages",
+    href: "/admin/contact",
+    icon: MessageSquare,
   },
   {
     title: "Réalisations",

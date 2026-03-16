@@ -134,6 +134,7 @@ export default function Header() {
   const [isScrolled, setIsScrolled] = React.useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = React.useState(false);
   const [settings, setSettings] = React.useState<SiteSettings>({});
+  const [logoLoaded, setLogoLoaded] = React.useState(false);
 
   // Parallax scroll values for subtle effects
   const { scrollY } = useScroll();
@@ -239,17 +240,49 @@ export default function Header() {
                   whileHover={{ scale: 1.02 }}
                   transition={{ duration: 0.2 }}
                 >
+                  {/* SVG fallback — visible tant que le logo custom n'est pas chargé */}
+                  <div
+                    className={cn(
+                      "absolute inset-0 flex items-center transition-opacity duration-500",
+                      logoLoaded ? "opacity-0 pointer-events-none" : "opacity-100"
+                    )}
+                  >
+                    <svg
+                      viewBox="0 0 60 60"
+                      fill="none"
+                      xmlns="http://www.w3.org/2000/svg"
+                      className={cn(
+                        "transition-all duration-300",
+                        isScrolled ? "w-10 h-10" : "w-12 h-12"
+                      )}
+                    >
+                      <path d="M20 8L20 20M20 8L35 8M20 8L15 3M35 8L35 14" stroke="url(#lgFade)" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
+                      <path d="M35 14L35 22M35 22L38 22" stroke="url(#lgFade)" strokeWidth="1.5" strokeLinecap="round" />
+                      <path d="M8 50L20 25L32 50M12 42H28" stroke="url(#lgFade)" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" />
+                      <path d="M34 50L40 37L46 50" stroke="url(#lgFade)" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" />
+                      <defs>
+                        <linearGradient id="lgFade" x1="8" y1="3" x2="46" y2="50" gradientUnits="userSpaceOnUse">
+                          <stop stopColor="#00d4ff" />
+                          <stop offset="1" stopColor="#0066cc" />
+                        </linearGradient>
+                      </defs>
+                    </svg>
+                  </div>
+                  {/* Image custom — entre en fondu */}
                   <Image
                     src={customLogo}
-                    alt="AZ"
+                    alt="AZ Construction"
                     width={200}
                     height={64}
                     className={cn(
                       "object-contain transition-all duration-300",
-                      isScrolled ? "h-10 w-auto" : "h-14 w-auto"
+                      isScrolled ? "h-10 w-auto" : "h-14 w-auto",
+                      "transition-opacity duration-500",
+                      logoLoaded ? "opacity-100" : "opacity-0"
                     )}
                     priority
                     unoptimized={customLogo.startsWith("data:")}
+                    onLoad={() => setLogoLoaded(true)}
                   />
                 </motion.div>
                 
