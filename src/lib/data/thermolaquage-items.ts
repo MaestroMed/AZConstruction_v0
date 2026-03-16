@@ -132,7 +132,7 @@ export const ralModels: RALModel[] = [
     id: "coccinelle",
     name: "coccinelle",
     label: "Coccinelle",
-    defaultImage: "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=800&q=80",
+    defaultImage: "https://images.unsplash.com/photo-1626115171991-bd19a787daf0?w=800&q=80",
     description: "Voiture vintage classique",
   },
   {
@@ -153,7 +153,7 @@ export const ralModels: RALModel[] = [
     id: "portail",
     name: "portail",
     label: "Portail",
-    defaultImage: "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=800&q=80",
+    defaultImage: "https://images.unsplash.com/photo-1705237099061-273ce699f920?w=800&q=80",
     description: "Portail métallique élégant",
   },
 ];
