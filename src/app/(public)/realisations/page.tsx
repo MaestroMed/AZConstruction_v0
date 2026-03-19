@@ -503,7 +503,7 @@ export default function RealisationsPage() {
 
             {/* Panel */}
             <motion.div
-              className="relative z-10 bg-white rounded-3xl overflow-hidden w-full max-w-4xl max-h-[90vh] flex flex-col shadow-2xl"
+              className="relative z-10 bg-white rounded-3xl overflow-hidden w-full max-w-6xl max-h-[95vh] flex flex-col shadow-2xl"
               initial={{ scale: 0.92, opacity: 0, y: 24 }}
               animate={{ scale: 1, opacity: 1, y: 0 }}
               exit={{ scale: 0.92, opacity: 0, y: 24 }}
@@ -519,14 +519,13 @@ export default function RealisationsPage() {
 
               {/* Carousel */}
               {carouselImages.length > 0 ? (
-                <div className="relative h-72 md:h-96 bg-gray-900 flex-shrink-0">
+                <div className="relative h-[55vh] md:h-[65vh] bg-gray-900 flex-shrink-0">
                   <Image
                     key={carouselIndex}
                     src={carouselImages[carouselIndex]}
                     alt={`${activeRealization.titre} — photo ${carouselIndex + 1}`}
                     fill
-                    className="object-cover"
-                    sizes="(max-width: 896px) 100vw, 896px"
+                    className="object-contain"
                   />
 
                   {/* Navigation arrows */}

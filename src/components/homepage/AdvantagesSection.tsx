@@ -3,7 +3,7 @@
 import * as React from "react";
 import { motion } from "framer-motion";
 import Link from "next/link";
-import { Factory, Clock, Paintbrush, ArrowRight, Sparkles } from "lucide-react";
+import { Factory, Clock, Layers, ArrowRight, Sparkles } from "lucide-react";
 
 const advantages = [
   {
@@ -21,12 +21,11 @@ const advantages = [
     link: "/contact",
   },
   {
-    icon: Paintbrush,
-    title: "Thermolaquage Pro",
+    icon: Layers,
+    title: "10 gammes produits",
     description:
-      "200+ couleurs RAL. Protection durable haut de gamme pour tous métaux.",
-    link: "/services/thermolaquage",
-    highlight: true,
+      "Garde-corps, escaliers, portails, fenêtres Jansen, verrières... tout sur mesure.",
+    link: "/produits",
   },
 ];
 

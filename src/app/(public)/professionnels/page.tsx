@@ -270,6 +270,59 @@ export default function ProfessionnelsPage() {
         </div>
       </section>
 
+      {/* ═══ ILS NOUS FONT CONFIANCE — Logos partenaires ═══ */}
+      <section className="py-14 bg-navy-dark border-t border-white/5">
+        <div className="container mx-auto px-6">
+          <motion.p
+            className="text-center text-white/40 text-xs font-bold tracking-widest uppercase mb-10"
+            initial={{ opacity: 0, y: 10 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+          >
+            Ils nous font confiance
+          </motion.p>
+          <motion.div
+            className="flex flex-wrap items-center justify-center gap-8 md:gap-12"
+            initial={{ opacity: 0, y: 16 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ delay: 0.1 }}
+          >
+            {[
+              { key: "partner-jansen", name: "Jansen" },
+              { key: "partner-bouygues", name: "Bouygues" },
+              { key: "partner-vinci", name: "Vinci" },
+              { key: "partner-eiffage", name: "Eiffage" },
+              { key: "partner-saint-gobain", name: "Saint-Gobain" },
+              { key: "partner-demathieu-bard", name: "Demathieu & Bard" },
+              { key: "partner-spie-batignolles", name: "Spie Batignolles" },
+              { key: "partner-rabot-dutilleul", name: "Rabot Dutilleul" },
+              { key: "partner-urbaine-travaux", name: "Urbaine de Travaux" },
+            ].map(({ key, name }) => {
+              const src = getImage(key);
+              const isPlaceholder = src.includes("via.placeholder.com");
+              return (
+                <div
+                  key={key}
+                  className="flex items-center justify-center h-10 opacity-40 hover:opacity-80 transition-opacity duration-300"
+                  title={name}
+                >
+                  {isPlaceholder ? (
+                    <span className="text-white/60 text-sm font-semibold tracking-wide uppercase">{name}</span>
+                  ) : (
+                    <img
+                      src={src}
+                      alt={name}
+                      className="h-8 w-auto object-contain brightness-0 invert"
+                    />
+                  )}
+                </div>
+              );
+            })}
+          </motion.div>
+        </div>
+      </section>
+
       {/* ═══ SECTEURS — Blanc, bordures légères ═══ */}
       <section className="py-20 bg-white">
         <div className="container mx-auto px-6">

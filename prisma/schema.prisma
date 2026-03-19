@@ -609,3 +609,18 @@ model RALModelImage {
   @@unique([modelId, ralCode])
   @@map("ral_model_images")
 }
+
+// ============================================
+// PRODUCT FAMILY IMAGES (Multi-images per family)
+// ============================================
+
+model ProductFamilyImage {
+  id         String   @id @default(cuid())
+  familySlug String   // ex: "garde-corps", "escaliers"
+  imageUrl   String
+  ordre      Int      @default(0)
+
+  createdAt  DateTime @default(now())
+
+  @@map("product_family_images")
+}

@@ -21,7 +21,7 @@ import {
 } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import { Modal } from "@/components/admin/ui/Modal";
-import { Input, Textarea, Switch, FileUpload } from "@/components/admin/ui/FormFields";
+import { Input, Textarea, Switch } from "@/components/admin/ui/FormFields";
 import { toast } from "sonner";
 
 interface Family {
@@ -333,6 +333,11 @@ function FamilyModal({
     description: "",
   });
 
+  // Images de la famille
+  const [images, setImages] = React.useState<{ id: string; imageUrl: string; ordre: number }[]>([]);
+  const [uploading, setUploading] = React.useState(false);
+  const fileInputRef = React.useRef<HTMLInputElement>(null);
+
   React.useEffect(() => {
     if (family) {
       setFormData({
@@ -340,8 +345,16 @@ function FamilyModal({
         slug: family.slug,
         description: family.description,
       });
+      // Charger les images existantes
+      fetch(`/api/product-families/images?familySlug=${family.slug}`)
+        .then((r) => r.json())
+        .then((data) => {
+          if (data.success) setImages(data.images || []);
+        })
+        .catch(() => {});
     } else {
       setFormData({ nom: "", slug: "", description: "" });
+      setImages([]);
     }
   }, [family]);
 
@@ -352,6 +365,48 @@ function FamilyModal({
       .replace(/[\u0300-\u036f]/g, "")
       .replace(/[^a-z0-9]+/g, "-")
       .replace(/(^-|-$)/g, "");
+  };
+
+  const handleUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file || !family) return;
+    setUploading(true);
+    try {
+      // Upload via l'API upload existante
+      const formDataUpload = new FormData();
+      formDataUpload.append("file", file);
+      const uploadRes = await fetch("/api/upload", { method: "POST", body: formDataUpload });
+      if (!uploadRes.ok) throw new Error("Upload échoué");
+      const uploadData = await uploadRes.json();
+      const imageUrl = uploadData.url || uploadData.imageUrl;
+      if (!imageUrl) throw new Error("URL manquante");
+
+      // Enregistrer dans la DB
+      const saveRes = await fetch("/api/product-families/images", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ familySlug: family.slug, imageUrl, ordre: images.length }),
+      });
+      if (!saveRes.ok) throw new Error("Sauvegarde échouée");
+      const saveData = await saveRes.json();
+      setImages((prev) => [...prev, saveData.image]);
+      toast.success("Image ajoutée");
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : "Erreur upload");
+    } finally {
+      setUploading(false);
+      if (fileInputRef.current) fileInputRef.current.value = "";
+    }
+  };
+
+  const handleDeleteImage = async (id: string) => {
+    try {
+      await fetch(`/api/product-families/images?id=${id}`, { method: "DELETE" });
+      setImages((prev) => prev.filter((img) => img.id !== id));
+      toast.success("Image supprimée");
+    } catch {
+      toast.error("Erreur lors de la suppression");
+    }
   };
 
   return (
@@ -406,11 +461,66 @@ function FamilyModal({
           placeholder="Description de la famille..."
           rows={3}
         />
-        <FileUpload
-          label="Image"
-          accept="image/*"
-          hint="Image représentative de la famille"
-        />
+
+        {/* ── Section Images ── */}
+        {family && (
+          <div>
+            <p className="block text-sm font-medium text-gray-700 mb-2">
+              Images de la famille
+            </p>
+
+            {/* Grille miniatures */}
+            <div className="flex flex-wrap gap-3 mb-3">
+              {images.map((img) => (
+                <div key={img.id} className="relative group w-20 h-20 rounded-lg overflow-hidden border border-gray-200 bg-gray-100 flex-shrink-0">
+                  <img src={img.imageUrl} alt="" className="w-full h-full object-cover" />
+                  <button
+                    onClick={() => handleDeleteImage(img.id)}
+                    className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity"
+                    title="Supprimer"
+                  >
+                    <Trash2 className="w-4 h-4 text-white" />
+                  </button>
+                </div>
+              ))}
+
+              {/* Bouton ajouter */}
+              <button
+                onClick={() => fileInputRef.current?.click()}
+                disabled={uploading}
+                className="w-20 h-20 rounded-lg border-2 border-dashed border-gray-300 hover:border-cyan-400 flex flex-col items-center justify-center gap-1 text-gray-400 hover:text-cyan-500 transition-colors disabled:opacity-50 flex-shrink-0"
+              >
+                {uploading ? (
+                  <div className="w-5 h-5 border-2 border-cyan-500 border-t-transparent rounded-full animate-spin" />
+                ) : (
+                  <>
+                    <Plus className="w-5 h-5" />
+                    <span className="text-xs">Ajouter</span>
+                  </>
+                )}
+              </button>
+            </div>
+
+            <input
+              ref={fileInputRef}
+              type="file"
+              accept="image/*"
+              className="hidden"
+              onChange={handleUpload}
+            />
+            <p className="text-xs text-gray-400">
+              {images.length === 0
+                ? "Aucune image. Cliquez sur + pour en ajouter."
+                : `${images.length} image${images.length > 1 ? "s" : ""}. La première est utilisée comme vignette principale.`}
+            </p>
+          </div>
+        )}
+
+        {!family && (
+          <p className="text-xs text-gray-400 bg-blue-50 border border-blue-100 rounded-lg p-3">
+            Créez d&apos;abord la famille, puis revenez modifier pour ajouter des images.
+          </p>
+        )}
       </div>
     </Modal>
   );

@@ -468,12 +468,14 @@ export default function ParticuliersPage() {
                 viewport={{ once: true }}
                 transition={{ delay: index * 0.1 }}
               >
-                <GlassCard variant="glow" padding="lg" className="h-full text-center">
-                  <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-cyan-glow/20 to-blue-corporate/20 flex items-center justify-center mx-auto mb-5 ring-1 ring-cyan-glow/20">
-                    <item.icon className="w-7 h-7 text-cyan-glow" />
+                <GlassCard variant="dark" padding="none" className="h-full text-center">
+                  <div className="bg-white rounded-2xl p-8 h-full border border-gray-100 shadow-sm">
+                    <div className="w-14 h-14 rounded-2xl bg-cyan-50 flex items-center justify-center mx-auto mb-5">
+                      <item.icon className="w-7 h-7 text-cyan-600" />
+                    </div>
+                    <h3 className="text-lg font-bold text-navy-dark mb-3">{item.title}</h3>
+                    <p className="text-gray-500 text-sm leading-relaxed">{item.description}</p>
                   </div>
-                  <h3 className="text-lg font-bold text-white mb-3">{item.title}</h3>
-                  <p className="text-white/50 text-sm leading-relaxed">{item.description}</p>
                 </GlassCard>
               </motion.div>
             ))}
@@ -552,47 +554,6 @@ export default function ParticuliersPage() {
         </div>
       </section>
 
-      {/* ═══════════════════════════════════════════════════════
-          CTA FINAL — Full-width dark avec particles
-      ═══════════════════════════════════════════════════════ */}
-      <MeshGradient variant="animated" className="py-32 relative overflow-hidden">
-        <ParticleBackground count={20} />
-        <GradientOrb color="cyan" size="xl" position={{ top: "-20%", left: "10%" }} opacity={0.12} animate />
-        <GradientOrb color="blue" size="lg" position={{ bottom: "-10%", right: "10%" }} opacity={0.1} />
-
-        <div className="container mx-auto px-6 relative z-10 text-center">
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.8 }}
-          >
-            <div className="inline-flex items-center gap-2 px-4 py-2 bg-cyan-glow/10 border border-cyan-glow/20 text-cyan-glow rounded-full text-sm font-medium mb-8">
-              <Sparkles className="w-4 h-4" />
-              Votre projet commence ici
-            </div>
-
-            <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-6 leading-tight">
-              Prêt à transformer{" "}
-              <span className="font-serif italic text-gradient-cyan">votre habitat ?</span>
-            </h2>
-
-            <p className="text-white/50 text-xl max-w-2xl mx-auto mb-12 leading-relaxed">
-              Configurez votre projet en quelques clics et recevez un devis
-              gratuit sous 48h. Notre équipe est à votre écoute.
-            </p>
-
-            <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
-              <Link href="/produits">
-                <GlowButton size="xl" icon={<ArrowRight className="w-5 h-5" />}>
-                  Démarrer mon projet
-                </GlowButton>
-              </Link>
-              <PhoneLink variant="button" className="justify-center" />
-            </div>
-          </motion.div>
-        </div>
-      </MeshGradient>
     </div>
   );
 }

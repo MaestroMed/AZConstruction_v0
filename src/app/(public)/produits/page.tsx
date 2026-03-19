@@ -382,12 +382,6 @@ export default function ProduitsPage() {
                     )}
                     {/* Gradient overlay for readability */}
                     <div className="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent" />
-                    {/* Price badge */}
-                    <div className="absolute bottom-3 left-4">
-                      <span className="px-2 py-1 bg-navy-dark/80 text-cyan-glow text-xs font-bold rounded backdrop-blur-sm">
-                        À partir de {family.startingPrice} €
-                      </span>
-                    </div>
                   </div>
 
                   <CardContent className="p-6">

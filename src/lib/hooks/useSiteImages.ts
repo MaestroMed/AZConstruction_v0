@@ -45,7 +45,7 @@ const FALLBACK_IMAGES: Record<string, string> = {
   "product-marquises": "https://images.unsplash.com/photo-1600585154526-990dced4db0d?w=800&q=80",
   "product-portes": "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=800&q=80",
   "product-fenetres": "https://images.unsplash.com/photo-1600573472550-8090b5e0745e?w=800&q=80",
-  "product-verrieres": "https://images.unsplash.com/photo-1600566753190-17f0baa2a6c3?w=800&q=80",
+  "product-verrieres": "https://images.unsplash.com/photo-1600210492486-724fe5c67fb0?w=800&q=80",
   "product-grilles": "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=800&q=80",
   
   // Pages
