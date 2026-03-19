@@ -3,7 +3,7 @@
 import * as React from "react";
 import { motion } from "framer-motion";
 import Link from "next/link";
-import { Factory, Clock, Layers, ArrowRight, Sparkles } from "lucide-react";
+import { Factory, Clock, Layers, ArrowRight } from "lucide-react";
 
 const advantages = [
   {
@@ -33,9 +33,7 @@ const containerVariants = {
   hidden: { opacity: 0 },
   visible: {
     opacity: 1,
-    transition: {
-      staggerChildren: 0.15,
-    },
+    transition: { staggerChildren: 0.15 },
   },
 };
 
@@ -44,10 +42,7 @@ const cardVariants = {
   visible: {
     opacity: 1,
     y: 0,
-    transition: {
-      duration: 0.6,
-      ease: "easeOut" as const,
-    },
+    transition: { duration: 0.6, ease: "easeOut" as const },
   },
 };
 
@@ -65,34 +60,12 @@ export default function AdvantagesSection() {
           {advantages.map((advantage, index) => (
             <motion.div key={index} variants={cardVariants}>
               <Link href={advantage.link}>
-                <div
-                  className={`
-                    relative h-full group cursor-pointer transition-all duration-300
-                    rounded-2xl p-6
-                    ${advantage.highlight
-                      ? "glass-card-light ring-1 ring-cyan-glow/20 hover:ring-cyan-glow/40"
-                      : "glass-card-light hover:shadow-xl"
-                    }
-                  `}
-                >
-                  {/* Highlight glow effect */}
-                  {advantage.highlight && (
-                    <div className="absolute inset-0 rounded-2xl bg-gradient-to-br from-cyan-glow/5 to-blue-500/5 pointer-events-none" />
-                  )}
-
+                <div className="relative h-full group cursor-pointer transition-all duration-300 rounded-2xl p-6 glass-card-light hover:shadow-xl">
                   <div className="relative flex items-start gap-5">
                     {/* Icon */}
                     <div className="flex-shrink-0">
-                      <div className={`
-                        w-16 h-16 rounded-xl flex items-center justify-center transition-all duration-300
-                        ${advantage.highlight
-                          ? "bg-gradient-to-br from-cyan-glow/20 to-blue-corporate/20 group-hover:from-cyan-glow/30 group-hover:to-blue-corporate/30 ring-1 ring-cyan-glow/20"
-                          : "bg-gradient-to-br from-blue-corporate/10 to-cyan-glow/10 group-hover:from-blue-corporate/20 group-hover:to-cyan-glow/20"
-                        }
-                      `}>
-                        <advantage.icon className={`w-8 h-8 ${
-                          advantage.highlight ? "text-cyan-600" : "text-blue-corporate"
-                        }`} />
+                      <div className="w-16 h-16 rounded-xl flex items-center justify-center transition-all duration-300 bg-gradient-to-br from-blue-corporate/10 to-cyan-glow/10 group-hover:from-blue-corporate/20 group-hover:to-cyan-glow/20">
+                        <advantage.icon className="w-8 h-8 text-blue-corporate" />
                       </div>
                     </div>
 
@@ -107,12 +80,6 @@ export default function AdvantagesSection() {
                       <p className="text-sm text-gray-500 leading-relaxed">
                         {advantage.description}
                       </p>
-                      {advantage.highlight && (
-                        <span className="inline-flex items-center gap-1.5 text-xs bg-gradient-to-r from-cyan-glow/20 to-blue-500/20 text-cyan-700 px-3 py-1.5 rounded-full font-medium ring-1 ring-cyan-glow/20">
-                          <Sparkles className="w-3 h-3" />
-                          Service Premium
-                        </span>
-                      )}
                     </div>
                   </div>
                 </div>
