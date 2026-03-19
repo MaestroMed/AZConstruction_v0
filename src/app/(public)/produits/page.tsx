@@ -584,42 +584,21 @@ export default function ProduitsPage() {
 
       {/* Bottom CTA */}
       <section className="py-20 bg-white">
-        <div className="container mx-auto px-6">
+        <div className="container mx-auto px-6 text-center">
           <motion.div
-            className="bg-gradient-to-r from-blue-corporate to-navy-dark rounded-3xl p-12 text-center relative overflow-hidden"
-            initial={{ opacity: 0, y: 30 }}
+            initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
           >
-            <div className="relative z-10">
-              <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">
-                Un projet spécifique ?
-              </h2>
-              <p className="text-white/70 mb-8 max-w-xl mx-auto">
-                Notre équipe est à votre disposition pour étudier vos projets sur mesure
-                et vous proposer une solution adaptée à vos besoins.
-              </p>
-              <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                <Link href="/contact">
-                  <Button
-                    size="lg"
-                    className="bg-cyan-glow text-navy-dark hover:bg-cyan-pale"
-                    icon={<ArrowRight className="w-5 h-5" />}
-                  >
-                    Demander un devis personnalisé
-                  </Button>
-                </Link>
-                <Link href="/realisations">
-                  <Button
-                    variant="outline"
-                    size="lg"
-                    className="border-white/50 text-white hover:bg-white/10"
-                  >
-                    Voir nos réalisations
-                  </Button>
-                </Link>
-              </div>
-            </div>
+            <Link href="/contact">
+              <Button
+                size="lg"
+                className="bg-navy-dark text-white hover:bg-navy-medium"
+                icon={<ArrowRight className="w-5 h-5" />}
+              >
+                Demander un devis
+              </Button>
+            </Link>
           </motion.div>
         </div>
       </section>

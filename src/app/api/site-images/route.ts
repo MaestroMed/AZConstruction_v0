@@ -56,7 +56,7 @@ const DEFAULT_IMAGES: {
     key: "hero-carousel-1",
     category: "hero",
     label: "Carousel Hero 1",
-    description: "1ère image du carousel (si pas de réalisations)",
+    description: "1ère image du carousel",
     fallbackUrl: "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=1920&q=80",
   },
   {
@@ -72,6 +72,27 @@ const DEFAULT_IMAGES: {
     label: "Carousel Hero 3",
     description: "3ème image du carousel",
     fallbackUrl: "https://images.unsplash.com/photo-1530124566582-a618bc2615dc?w=1920&q=80",
+  },
+  {
+    key: "hero-carousel-4",
+    category: "hero",
+    label: "Carousel Hero 4",
+    description: "4ème image du carousel",
+    fallbackUrl: "https://images.unsplash.com/photo-1504307651254-35680f356dfd?w=1920&q=80",
+  },
+  {
+    key: "hero-carousel-5",
+    category: "hero",
+    label: "Carousel Hero 5",
+    description: "5ème image du carousel",
+    fallbackUrl: "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=1920&q=80",
+  },
+  {
+    key: "hero-carousel-6",
+    category: "hero",
+    label: "Carousel Hero 6",
+    description: "6ème image du carousel",
+    fallbackUrl: "https://images.unsplash.com/photo-1555041469-a586c61ea9bc?w=1920&q=80",
   },
 
   // === PRODUITS / FAMILLES ===

@@ -42,7 +42,7 @@ import {
   PhoneLink,
 } from "@/components/ui";
 import { useSiteImages } from "@/lib/hooks/useSiteImages";
-import { clientDemands, ralModels, ralColors20, type RALColor } from "@/lib/data/thermolaquage-items";
+import { ralModels, ralColors20, type RALColor } from "@/lib/data/thermolaquage-items";
 import { AnimatePresence } from "framer-motion";
 
 // Utiliser les 20 couleurs RAL depuis le fichier de données
@@ -272,10 +272,21 @@ export default function ThermolaquagePage() {
   const [selectedModel, setSelectedModel] = React.useState(ralModels[0]);
   const [modelImages, setModelImages] = React.useState<ModelColorImages>({});
   const [isImageLoading, setIsImageLoading] = React.useState(false);
+  const [demandsItems, setDemandsItems] = React.useState<{ id: string; label: string; imageUrl: string; href?: string | null; size: string }[]>([]);
   const { getImage } = useSiteImages();
   const heroImage = getImage("hero-thermolaquage");
 
-  // Charger les images des modèles depuis l'API
+  // Charger les vignettes "ce que demandent nos clients" depuis l'API
+  React.useEffect(() => {
+    fetch("/api/thermolaquage-demands")
+      .then(r => r.json())
+      .then(data => {
+        if (data.success && data.items?.length) {
+          setDemandsItems(data.items);
+        }
+      })
+      .catch(() => {});
+  }, []);
   React.useEffect(() => {
     const loadModelImages = async () => {
       try {
@@ -454,6 +465,71 @@ export default function ThermolaquagePage() {
       </section>
 
       {/* ============================================
+          MOSAÏQUE - Ce que demandent nos clients
+          ============================================ */}
+      <section className="py-24 bg-white relative">
+        <div className="container mx-auto px-6">
+          <motion.div
+            className="text-center max-w-3xl mx-auto mb-16"
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+          >
+            <span className="inline-block text-cyan-700 font-semibold text-sm tracking-wider uppercase mb-4">
+              Nos réalisations
+            </span>
+            <h2 className="text-4xl md:text-5xl font-bold text-navy-dark mb-6">
+              Ce que demandent{" "}
+              <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-600 to-blue-600">
+                nos clients
+              </span>
+            </h2>
+            <p className="text-gray-600 text-lg">
+              Du vélo vintage au portail contemporain, découvrez les projets
+              que nous réalisons pour nos clients.
+            </p>
+          </motion.div>
+
+          {/* Masonry Grid */}
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 auto-rows-[200px]">
+            {demandsItems.map((item, index) => (
+              <motion.div
+                key={item.id}
+                initial={{ opacity: 0, scale: 0.9 }}
+                whileInView={{ opacity: 1, scale: 1 }}
+                viewport={{ once: true }}
+                transition={{ delay: index * 0.05 }}
+                className={`relative group overflow-hidden rounded-2xl cursor-pointer ${
+                  item.size === "large" ? "col-span-2 row-span-2" :
+                  item.size === "wide" ? "col-span-2" :
+                  item.size === "tall" ? "row-span-2" : ""
+                }`}
+              >
+                <Image
+                  src={item.imageUrl}
+                  alt={item.label}
+                  fill
+                  className="object-cover transition-transform duration-500 group-hover:scale-110"
+                />
+                {/* Overlay */}
+                <div className="absolute inset-0 bg-gradient-to-t from-navy-dark/90 via-navy-dark/30 to-transparent opacity-60 group-hover:opacity-90 transition-opacity" />
+                
+                {/* Content */}
+                <div className="absolute inset-0 p-6 flex flex-col justify-end">
+                  <h3 className="text-white font-bold text-lg md:text-xl mb-1 transform translate-y-4 group-hover:translate-y-0 transition-transform">
+                    {item.label}
+                  </h3>
+                </div>
+
+                {/* Hover border glow */}
+                <div className="absolute inset-0 rounded-2xl ring-2 ring-transparent group-hover:ring-cyan-glow/50 transition-all" />
+              </motion.div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ============================================
           AVANTAGES - Bento Grid
           ============================================ */}
       <section className="py-24 bg-gradient-to-b from-gray-50 to-white relative">
@@ -558,74 +634,6 @@ export default function ThermolaquagePage() {
                     </div>
                   </GlassCard>
                 </Link>
-              </motion.div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* ============================================
-          MOSAÏQUE - Ce que demandent nos clients
-          ============================================ */}
-      <section className="py-24 bg-white relative">
-        <div className="container mx-auto px-6">
-          <motion.div
-            className="text-center max-w-3xl mx-auto mb-16"
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-          >
-            <span className="inline-block text-cyan-700 font-semibold text-sm tracking-wider uppercase mb-4">
-              Nos réalisations
-            </span>
-            <h2 className="text-4xl md:text-5xl font-bold text-navy-dark mb-6">
-              Ce que demandent{" "}
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-600 to-blue-600">
-                nos clients
-              </span>
-            </h2>
-            <p className="text-gray-600 text-lg">
-              Du vélo vintage au portail contemporain, découvrez les projets
-              que nous réalisons pour nos clients.
-            </p>
-          </motion.div>
-
-          {/* Masonry Grid */}
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 auto-rows-[200px]">
-            {clientDemands.map((item, index) => (
-              <motion.div
-                key={item.id}
-                initial={{ opacity: 0, scale: 0.9 }}
-                whileInView={{ opacity: 1, scale: 1 }}
-                viewport={{ once: true }}
-                transition={{ delay: index * 0.05 }}
-                className={`relative group overflow-hidden rounded-2xl cursor-pointer ${
-                  item.size === "large" ? "col-span-2 row-span-2" :
-                  item.size === "wide" ? "col-span-2" :
-                  item.size === "tall" ? "row-span-2" : ""
-                }`}
-              >
-                <Image
-                  src={item.imageUrl}
-                  alt={item.title}
-                  fill
-                  className="object-cover transition-transform duration-500 group-hover:scale-110"
-                />
-                {/* Overlay */}
-                <div className="absolute inset-0 bg-gradient-to-t from-navy-dark/90 via-navy-dark/30 to-transparent opacity-60 group-hover:opacity-90 transition-opacity" />
-                
-                {/* Content */}
-                <div className="absolute inset-0 p-6 flex flex-col justify-end">
-                  <h3 className="text-white font-bold text-lg md:text-xl mb-1 transform translate-y-4 group-hover:translate-y-0 transition-transform">
-                    {item.title}
-                  </h3>
-                  <p className="text-white/70 text-sm opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                    {item.description}
-                  </p>
-                </div>
-
-                {/* Hover border glow */}
-                <div className="absolute inset-0 rounded-2xl ring-2 ring-transparent group-hover:ring-cyan-glow/50 transition-all" />
               </motion.div>
             ))}
           </div>

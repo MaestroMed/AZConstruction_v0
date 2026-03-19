@@ -21,6 +21,7 @@ const productCategories = [
 ];
 
 const navItems = [
+  { label: "Accueil", href: "/" },
   { label: "Produits", href: "/produits", hasDropdown: true },
   { label: "Réalisations", href: "/realisations" },
   { label: "Particuliers", href: "/particuliers" },

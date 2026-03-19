@@ -12,8 +12,8 @@ export default function HomePage() {
       <HeroSection />
       <AdvantagesSection />
       <RealizationsSection />
-      <ThermolaquageSection />
       <PartnersCarousel />
+      <ThermolaquageSection />
     </>
   );
 }

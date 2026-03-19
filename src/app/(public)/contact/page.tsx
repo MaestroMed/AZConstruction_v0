@@ -50,10 +50,12 @@ export default function ContactPage() {
     nom: "",
     email: "",
     telephone: "",
+    codePostal: "",
     sujet: "",
     message: "",
     type: "particulier",
     entreprise: "",
+    website: "", // honeypot — invisible pour les humains
   });
   const [isSubmitting, setIsSubmitting] = React.useState(false);
   const [submitted, setSubmitted] = React.useState(false);
@@ -65,6 +67,10 @@ export default function ContactPage() {
     setError(null);
 
     try {
+      const messageWithCP = formData.codePostal
+        ? `[Code postal : ${formData.codePostal}]\n\n${formData.message}`
+        : formData.message;
+
       const response = await fetch("/api/contact", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -73,9 +79,10 @@ export default function ContactPage() {
           email: formData.email,
           telephone: formData.telephone,
           sujet: formData.sujet,
-          message: formData.message,
+          message: messageWithCP,
           type: formData.type,
           entreprise: formData.entreprise,
+          website: formData.website, // honeypot
         }),
       });
 
@@ -437,6 +444,40 @@ export default function ContactPage() {
                             />
                           </div>
                           <div>
+                            <label
+                              htmlFor="codePostal"
+                              className="block text-sm font-medium text-gray-700 mb-2"
+                            >
+                              Code postal
+                            </label>
+                            <input
+                              type="text"
+                              id="codePostal"
+                              name="codePostal"
+                              value={formData.codePostal}
+                              onChange={handleChange}
+                              maxLength={5}
+                              pattern="[0-9]{5}"
+                              className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-cyan-glow focus:ring-2 focus:ring-cyan-glow/20 outline-none transition-all"
+                              placeholder="75001"
+                            />
+                          </div>
+                        </div>
+
+                        {/* Honeypot — invisible pour les utilisateurs */}
+                        <input
+                          type="text"
+                          name="website"
+                          value={formData.website}
+                          onChange={handleChange}
+                          tabIndex={-1}
+                          autoComplete="off"
+                          className="sr-only"
+                          aria-hidden="true"
+                        />
+
+                        <div className="grid md:grid-cols-2 gap-6">
+                          <div className="md:col-span-2">
                             <label
                               htmlFor="sujet"
                               className="block text-sm font-medium text-gray-700 mb-2"

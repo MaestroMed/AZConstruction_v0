@@ -565,7 +565,8 @@ export default function ProfessionnelsPage() {
         </div>
       </section>
 
-      {/* ═══ CTA COMPTE PRO ═══ */}
+      {/* ═══ CTA COMPTE PRO — masqué (phase 2) ═══ */}
+      {false && (
       <section className="py-16 bg-gray-900">
         <div className="container mx-auto px-6">
           <div className="max-w-3xl mx-auto text-center">
@@ -583,6 +584,7 @@ export default function ProfessionnelsPage() {
           </div>
         </div>
       </section>
+      )}
     </div>
   );
 }

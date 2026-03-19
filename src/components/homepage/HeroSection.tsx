@@ -5,31 +5,13 @@ import { motion, AnimatePresence } from "framer-motion";
 import { ArrowRight, Play } from "lucide-react";
 import Link from "next/link";
 import ConfiguratorPreview from "./ConfiguratorPreview";
-import HeroCarousel from "./HeroCarousel";
+import HeroCarousel, { type HeroSlide } from "./HeroCarousel";
 
-/* ── Slides par famille de produit ── */
-const slides = [
-  {
-    headline: "Garde-corps",
-    headlineAccent: "sur mesure.",
-    subheadline: "Verre feuilleté, câbles acier, barreaux design — fabriqués dans notre atelier de 1 800m² à Bruyères-sur-Oise.",
-    ctaPrimaryText: "Découvrir les garde-corps",
-    ctaPrimaryLink: "/produits/garde-corps",
-  },
-  {
-    headline: "Escaliers",
-    headlineAccent: "d'exception.",
-    subheadline: "Droits, hélicoïdaux, quart-tournant — chaque escalier est une pièce unique conçue sur mesure.",
-    ctaPrimaryText: "Voir nos escaliers",
-    ctaPrimaryLink: "/produits/escaliers",
-  },
-  {
-    headline: "L'acier",
-    headlineAccent: "à votre image.",
-    subheadline: "Portails, clôtures, portes Jansen, verrières — tout fabriqué sur mesure depuis 2018.",
-    ctaPrimaryText: "Explorer nos produits",
-    ctaPrimaryLink: "/produits",
-  },
+/* ── Fallback statique si DB vide ── */
+const DEFAULT_SLIDES: HeroSlide[] = [
+  { id: "d1", ordre: 0, active: true, imageKey: "hero-carousel-1", headline: "Garde-corps", headlineAccent: "sur mesure.", subheadline: "Verre feuilleté, câbles acier, barreaux design — fabriqués dans notre atelier de 1 800m² à Bruyères-sur-Oise.", ctaText: "Découvrir les garde-corps", ctaLink: "/produits/garde-corps" },
+  { id: "d2", ordre: 1, active: true, imageKey: "hero-carousel-2", headline: "Escaliers", headlineAccent: "d'exception.", subheadline: "Droits, hélicoïdaux, quart-tournant — chaque escalier est une pièce unique conçue sur mesure.", ctaText: "Voir nos escaliers", ctaLink: "/produits/escaliers" },
+  { id: "d3", ordre: 2, active: true, imageKey: "hero-carousel-3", headline: "L'acier", headlineAccent: "à votre image.", subheadline: "Portails, clôtures, portes Jansen, verrières — tout fabriqué sur mesure depuis 2018.", ctaText: "Explorer nos produits", ctaLink: "/produits" },
 ];
 
 interface HeroSettings {
@@ -71,22 +53,37 @@ const defaultSettings: HeroSettings = {
 export default function HeroSection() {
   const [settings, setSettings] = React.useState<HeroSettings>(defaultSettings);
   const [showConfigurator, setShowConfigurator] = React.useState(false);
+  const [slides, setSlides] = React.useState<HeroSlide[]>(DEFAULT_SLIDES);
   const [slideIndex, setSlideIndex] = React.useState(0);
 
   React.useEffect(() => {
-    const loadSettings = async () => {
-      const saved = localStorage.getItem("az_hero_settings");
-      if (saved) {
-        try {
-          setSettings({ ...defaultSettings, ...JSON.parse(saved) });
-        } catch (e) {
-          console.error("Erreur parsing hero settings:", e);
-        }
-      }
+    const load = async () => {
+      // Charger les slides depuis l'API
       try {
-        const response = await fetch("/api/settings");
-        if (response.ok) {
-          const data = await response.json();
+        const res = await fetch("/api/hero-slides");
+        if (res.ok) {
+          const data = await res.json();
+          if (data.success && data.slides?.length) {
+            setSlides(data.slides);
+          }
+        }
+      } catch (e) {
+        console.error("Erreur chargement slides:", e);
+      }
+
+      // Charger les paramètres hero depuis localStorage
+      try {
+        const saved = localStorage.getItem("az_hero_settings");
+        if (saved) setSettings({ ...defaultSettings, ...JSON.parse(saved) });
+      } catch (e) {
+        console.error("Erreur parsing hero settings:", e);
+      }
+
+      // Toggle configurateur
+      try {
+        const res = await fetch("/api/settings");
+        if (res.ok) {
+          const data = await res.json();
           if (data.settings?.showConfigurator !== undefined) {
             setShowConfigurator(data.settings.showConfigurator);
           }
@@ -95,7 +92,8 @@ export default function HeroSection() {
         console.error("Erreur chargement settings:", e);
       }
     };
-    loadSettings();
+
+    load();
 
     const handleUpdate = (e: CustomEvent) => {
       setSettings({ ...defaultSettings, ...e.detail });
@@ -115,36 +113,34 @@ export default function HeroSection() {
           style={{ backgroundColor: settings.promoBgColor }}
         >
           {settings.promoLink ? (
-            <Link href={settings.promoLink} className="hover:underline">{settings.promoText}</Link>
+            <a href={settings.promoLink} className="hover:underline">{settings.promoText}</a>
           ) : settings.promoText}
         </div>
       )}
 
       <section className={`relative min-h-screen overflow-hidden bg-[#0a0f1a] ${settings.promoEnabled ? "mt-10" : ""}`}>
-        {/* Background Carousel — images hero-carousel-1/2/3 */}
-        <HeroCarousel onSlideChange={setSlideIndex} />
+        {/* Background Carousel — slides gérés depuis /admin/hero-slides */}
+        <HeroCarousel
+          slides={slides}
+          currentIndex={slideIndex}
+          onIndexChange={setSlideIndex}
+          onSlideChange={setSlideIndex}
+        />
 
         {/* Grain texture */}
-        <div
-          className="absolute inset-0 opacity-[0.03] pointer-events-none z-10"
-          style={{ backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E")` }}
-        />
+        <div className="absolute inset-0 opacity-[0.03] pointer-events-none z-10" style={{ backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E")` }} />
 
         {/* Accent light */}
         <div className="absolute top-0 right-0 w-1/2 h-full pointer-events-none z-10">
-          <div
-            className="absolute top-1/4 right-1/4 w-[600px] h-[600px] rounded-full opacity-20"
-            style={{ background: "radial-gradient(circle, rgba(0,212,255,0.15) 0%, transparent 70%)" }}
-          />
+          <div className="absolute top-1/4 right-1/4 w-[600px] h-[600px] rounded-full opacity-20" style={{ background: "radial-gradient(circle, rgba(0,212,255,0.15) 0%, transparent 70%)" }} />
         </div>
 
         {/* Content */}
         <div className="container mx-auto px-6 lg:px-12 pt-32 pb-20 relative z-20">
           <div className="grid lg:grid-cols-2 gap-12 lg:gap-20 items-center min-h-[calc(100vh-200px)]">
 
-            {/* Left Column — texte variable par slide */}
+            {/* Left Column — texte animé par slide */}
             <div className="relative max-w-2xl">
-              {/* Badge */}
               {settings.badgeEnabled && (
                 <motion.div
                   initial={{ opacity: 0, y: 10 }}
@@ -157,7 +153,7 @@ export default function HeroSection() {
                 </motion.div>
               )}
 
-              {/* Headline — animé par slide */}
+              {/* Headline animé par slide */}
               <AnimatePresence mode="wait">
                 <motion.div
                   key={slideIndex}
@@ -167,10 +163,10 @@ export default function HeroSection() {
                   transition={{ duration: 0.5, ease: [0.25, 0.46, 0.45, 0.94] }}
                 >
                   <h1 className="font-display text-5xl md:text-6xl lg:text-7xl font-semibold text-white leading-[1.05] tracking-tight mb-6">
-                    {currentSlide.headline}{" "}
+                    {currentSlide?.headline}{" "}
                     <span className="relative inline-block">
                       <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-blue-400">
-                        {currentSlide.headlineAccent}
+                        {currentSlide?.headlineAccent}
                       </span>
                       <motion.span
                         className="absolute -bottom-2 left-0 w-full h-[3px] bg-gradient-to-r from-cyan-400 to-blue-400 rounded-full"
@@ -182,18 +178,17 @@ export default function HeroSection() {
                   </h1>
 
                   <p className="text-lg md:text-xl text-white/60 max-w-lg leading-relaxed mb-10">
-                    {currentSlide.subheadline}
+                    {currentSlide?.subheadline}
                   </p>
 
-                  {/* CTA Buttons */}
                   <div className="flex flex-col sm:flex-row gap-4">
-                    <Link href={currentSlide.ctaPrimaryLink}>
+                    <Link href={currentSlide?.ctaLink || "/produits"}>
                       <button className="group relative inline-flex items-center justify-center gap-3 px-8 py-4 bg-white text-[#0a0f1a] font-semibold rounded-full text-base overflow-hidden transition-all hover:shadow-lg hover:shadow-white/20">
-                        <span className="relative z-10">{currentSlide.ctaPrimaryText}</span>
+                        <span className="relative z-10">{currentSlide?.ctaText}</span>
                         <ArrowRight className="w-5 h-5 relative z-10 transition-transform group-hover:translate-x-1" />
                         <div className="absolute inset-0 bg-gradient-to-r from-cyan-400 to-blue-400 opacity-0 group-hover:opacity-100 transition-opacity" />
                         <span className="absolute inset-0 z-10 flex items-center justify-center gap-3 text-white opacity-0 group-hover:opacity-100 transition-opacity">
-                          <span>{currentSlide.ctaPrimaryText}</span>
+                          <span>{currentSlide?.ctaText}</span>
                           <ArrowRight className="w-5 h-5" />
                         </span>
                       </button>

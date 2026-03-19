@@ -5,45 +5,53 @@ import Image from "next/image";
 import { motion, AnimatePresence } from "framer-motion";
 import { useSiteImages } from "@/lib/hooks/useSiteImages";
 
-interface HeroCarouselProps {
-  onSlideChange?: (index: number) => void;
+export interface HeroSlide {
+  id: string;
+  ordre: number;
+  active: boolean;
+  imageKey: string;
+  headline: string;
+  headlineAccent: string;
+  subheadline: string;
+  ctaText: string;
+  ctaLink: string;
 }
 
-export default function HeroCarousel({ onSlideChange }: HeroCarouselProps) {
-  const { getImage, loading } = useSiteImages();
-  const [currentIndex, setCurrentIndex] = React.useState(0);
+interface HeroCarouselProps {
+  slides: HeroSlide[];
+  onSlideChange?: (index: number) => void;
+  currentIndex: number;
+  onIndexChange: (index: number) => void;
+}
 
-  // 3 slides fixes depuis les clés admin hero-carousel-1/2/3
-  const images = React.useMemo(() => [
-    getImage("hero-carousel-1"),
-    getImage("hero-carousel-2"),
-    getImage("hero-carousel-3"),
-  ], [getImage]);
+export default function HeroCarousel({ slides, onSlideChange, currentIndex, onIndexChange }: HeroCarouselProps) {
+  const { getImage } = useSiteImages();
 
   // Défilement automatique toutes les 5s
   React.useEffect(() => {
+    if (slides.length <= 1) return;
     const interval = setInterval(() => {
-      setCurrentIndex((prev) => {
-        const next = (prev + 1) % images.length;
-        onSlideChange?.(next);
-        return next;
-      });
+      const next = (currentIndex + 1) % slides.length;
+      onIndexChange(next);
+      onSlideChange?.(next);
     }, 5000);
     return () => clearInterval(interval);
-  }, [images.length, onSlideChange]);
+  }, [slides.length, currentIndex, onIndexChange, onSlideChange]);
 
   const goToSlide = (index: number) => {
-    setCurrentIndex(index);
+    onIndexChange(index);
     onSlideChange?.(index);
   };
 
-  if (loading) {
+  if (slides.length === 0) {
     return <div className="absolute inset-0 bg-gradient-to-br from-navy-dark via-navy-medium to-navy-dark" />;
   }
 
+  const currentSlide = slides[currentIndex];
+  const imageUrl = getImage(currentSlide.imageKey);
+
   return (
     <div className="absolute inset-0 overflow-hidden">
-      {/* Images avec transition fade */}
       <AnimatePresence mode="wait">
         <motion.div
           key={currentIndex}
@@ -53,10 +61,10 @@ export default function HeroCarousel({ onSlideChange }: HeroCarouselProps) {
           transition={{ duration: 1.2, ease: "easeInOut" }}
           className="absolute inset-0"
         >
-          {images[currentIndex] ? (
+          {imageUrl ? (
             <Image
-              src={images[currentIndex]}
-              alt={`AZ Construction - ${currentIndex + 1}`}
+              src={imageUrl}
+              alt={`AZ Construction - ${currentSlide.headline}`}
               fill
               priority={currentIndex === 0}
               className="object-cover object-center"
@@ -67,24 +75,24 @@ export default function HeroCarousel({ onSlideChange }: HeroCarouselProps) {
         </motion.div>
       </AnimatePresence>
 
-      {/* Overlay unique — alégé */}
+      {/* Overlay unique allégé */}
       <div className="absolute inset-0 bg-gradient-to-r from-navy-dark/75 via-navy-dark/45 to-navy-dark/20" />
 
       {/* Navigation dots */}
-      <div className="absolute bottom-8 left-1/2 -translate-x-1/2 z-30 flex items-center gap-2">
-        {images.map((_, index) => (
-          <button
-            key={index}
-            onClick={() => goToSlide(index)}
-            className={`transition-all duration-300 rounded-full ${
-              index === currentIndex
-                ? "w-8 h-2 bg-cyan-400"
-                : "w-2 h-2 bg-white/40 hover:bg-white/60"
-            }`}
-            aria-label={`Slide ${index + 1}`}
-          />
-        ))}
-      </div>
+      {slides.length > 1 && (
+        <div className="absolute bottom-8 left-1/2 -translate-x-1/2 z-30 flex items-center gap-2">
+          {slides.map((_, index) => (
+            <button
+              key={index}
+              onClick={() => goToSlide(index)}
+              className={`transition-all duration-300 rounded-full ${
+                index === currentIndex ? "w-8 h-2 bg-cyan-400" : "w-2 h-2 bg-white/40 hover:bg-white/60"
+              }`}
+              aria-label={`Slide ${index + 1}`}
+            />
+          ))}
+        </div>
+      )}
     </div>
   );
 }

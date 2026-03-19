@@ -610,3 +610,42 @@ model RALModelImage {
   @@map("ral_model_images")
 }
 
+// ============================================
+// HERO SLIDES (Homepage carousel manageable)
+// ============================================
+
+model HeroSlide {
+  id             String   @id @default(cuid())
+  ordre          Int      @default(0)
+  active         Boolean  @default(true)
+  imageKey       String   // ex: "hero-carousel-1" — clé dans useSiteImages
+  headline       String
+  headlineAccent String
+  subheadline    String
+  ctaText        String
+  ctaLink        String
+
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  @@map("hero_slides")
+}
+
+// ============================================
+// THERMOLAQUAGE DEMANDS (Mosaic section)
+// ============================================
+
+model ThermolaquageDemand {
+  id       String  @id @default(cuid())
+  label    String
+  imageUrl String
+  href     String?
+  size     String  @default("default") // "large", "wide", "tall", "default"
+  ordre    Int     @default(0)
+  active   Boolean @default(true)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("thermolaquage_demands")
+}

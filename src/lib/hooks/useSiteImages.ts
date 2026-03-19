@@ -35,6 +35,9 @@ const FALLBACK_IMAGES: Record<string, string> = {
   "hero-carousel-1": "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=1920&q=80",
   "hero-carousel-2": "https://images.unsplash.com/photo-1587293852726-70cdb56c2866?w=1920&q=80",
   "hero-carousel-3": "https://images.unsplash.com/photo-1530124566582-a618bc2615dc?w=1920&q=80",
+  "hero-carousel-4": "https://images.unsplash.com/photo-1504307651254-35680f356dfd?w=1920&q=80",
+  "hero-carousel-5": "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=1920&q=80",
+  "hero-carousel-6": "https://images.unsplash.com/photo-1555041469-a586c61ea9bc?w=1920&q=80",
   
   // Products
   "product-garde-corps": "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=800&q=80",

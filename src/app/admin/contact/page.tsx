@@ -16,6 +16,7 @@ import {
   Eye,
   RefreshCw,
   X,
+  Trash2,
 } from "lucide-react";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
@@ -57,6 +58,23 @@ export default function AdminContactPage() {
   const [notes, setNotes] = React.useState("");
   const [savingNotes, setSavingNotes] = React.useState(false);
   const [updatingStatus, setUpdatingStatus] = React.useState<string | null>(null);
+  const [deleting, setDeleting] = React.useState(false);
+
+  const deleteMessage = async (id: string) => {
+    if (!confirm("Supprimer ce message définitivement ?")) return;
+    setDeleting(true);
+    try {
+      const res = await fetch(`/api/contact?id=${id}`, { method: "DELETE" });
+      if (!res.ok) throw new Error();
+      setMessages((prev) => prev.filter((m) => m.id !== id));
+      setSelectedMessage(null);
+      toast.success("Message supprimé");
+    } catch {
+      toast.error("Erreur lors de la suppression");
+    } finally {
+      setDeleting(false);
+    }
+  };
 
   const loadMessages = async () => {
     setLoading(true);
@@ -339,8 +357,8 @@ export default function AdminContactPage() {
               </div>
             </div>
 
-            {/* Quick reply */}
-            <div className="mt-4 pt-4 border-t border-gray-100">
+            {/* Quick reply + Delete */}
+            <div className="mt-4 pt-4 border-t border-gray-100 flex items-center justify-between gap-3">
               <a
                 href={`mailto:${selectedMessage.email}?subject=Re: ${encodeURIComponent(selectedMessage.sujet)}`}
                 className="inline-flex items-center gap-2 px-4 py-2 bg-gray-100 text-gray-700 rounded-lg text-sm font-medium hover:bg-gray-200 transition-colors"
@@ -348,6 +366,14 @@ export default function AdminContactPage() {
                 <Mail className="w-4 h-4" />
                 Répondre par email
               </a>
+              <button
+                onClick={() => deleteMessage(selectedMessage.id)}
+                disabled={deleting}
+                className="inline-flex items-center gap-2 px-4 py-2 bg-red-50 text-red-600 rounded-lg text-sm font-medium hover:bg-red-100 transition-colors disabled:opacity-50"
+              >
+                {deleting ? <Loader2 className="w-4 h-4 animate-spin" /> : <Trash2 className="w-4 h-4" />}
+                Supprimer
+              </button>
             </div>
           </div>
         )}

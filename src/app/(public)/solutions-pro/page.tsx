@@ -604,7 +604,8 @@ export default function SolutionsProPage() {
         </div>
       </section>
 
-      {/* CTA Inscription */}
+      {/* CTA Inscription — masqué (phase 2) */}
+      {false && (
       <section className="py-16 bg-gray-50">
         <div className="container mx-auto px-6">
           <div className="max-w-3xl mx-auto text-center">
@@ -627,6 +628,7 @@ export default function SolutionsProPage() {
           </div>
         </div>
       </section>
+      )}
     </div>
   );
 }

@@ -6,7 +6,12 @@ import { sendContactConfirmation, sendContactNotificationToAdmin } from "@/lib/e
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-    const { nom, email, telephone, sujet, message, type = "particulier", entreprise } = body;
+    const { nom, email, telephone, sujet, message, type = "particulier", entreprise, website } = body;
+
+    // Honeypot anti-spam : si le champ website est rempli, c'est un bot
+    if (website) {
+      return NextResponse.json({ success: true, message: "Message envoyé." });
+    }
 
     // Validation
     if (!nom || !email || !sujet || !message) {
@@ -124,5 +129,19 @@ export async function PUT(request: NextRequest) {
       { error: "Erreur lors de la mise à jour" },
       { status: 500 }
     );
+  }
+}
+
+// DELETE: Supprimer un message
+export async function DELETE(request: NextRequest) {
+  try {
+    const { searchParams } = new URL(request.url);
+    const id = searchParams.get("id");
+    if (!id) return NextResponse.json({ error: "ID requis" }, { status: 400 });
+    await prisma.contactMessage.delete({ where: { id } });
+    return NextResponse.json({ success: true });
+  } catch (error) {
+    console.error("Error deleting contact message:", error);
+    return NextResponse.json({ error: "Erreur lors de la suppression" }, { status: 500 });
   }
 }
