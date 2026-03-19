@@ -1,6 +1,21 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 
+// Récupère ou crée une ProductFamily par slug (pour les familles mock du backoffice)
+async function getOrCreateFamily(familySlug: string) {
+  let family = await prisma.productFamily.findUnique({ where: { slug: familySlug } });
+  if (!family) {
+    family = await prisma.productFamily.create({
+      data: {
+        nom: familySlug,
+        slug: familySlug,
+        ordre: 0,
+      },
+    });
+  }
+  return family;
+}
+
 // GET /api/product-families/images?familySlug=garde-corps
 export async function GET(request: NextRequest) {
   const { searchParams } = new URL(request.url);
@@ -9,8 +24,11 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({ error: "familySlug is required" }, { status: 400 });
   }
   try {
+    const family = await prisma.productFamily.findUnique({ where: { slug: familySlug } });
+    if (!family) return NextResponse.json({ success: true, images: [] });
+
     const images = await prisma.productFamilyImage.findMany({
-      where: { familySlug },
+      where: { familyId: family.id },
       orderBy: { ordre: "asc" },
     });
     return NextResponse.json({ success: true, images });
@@ -28,8 +46,9 @@ export async function POST(request: NextRequest) {
     if (!familySlug || !imageUrl) {
       return NextResponse.json({ error: "familySlug and imageUrl are required" }, { status: 400 });
     }
+    const family = await getOrCreateFamily(familySlug);
     const image = await prisma.productFamilyImage.create({
-      data: { familySlug, imageUrl, ordre },
+      data: { familyId: family.id, imageUrl, ordre },
     });
     return NextResponse.json({ success: true, image });
   } catch (error) {
