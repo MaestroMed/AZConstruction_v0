@@ -55,13 +55,11 @@ const navigationItems = [
     title: "Commandes",
     href: "/admin/commandes",
     icon: ShoppingCart,
-    badge: 12,
   },
   {
     title: "Devis",
     href: "/admin/devis",
     icon: FileText,
-    badge: 5,
   },
   {
     title: "Clients",
@@ -105,6 +103,8 @@ const navigationItems = [
     href: "/admin/parametres",
     subItems: [
       { title: "Général", href: "/admin/parametres" },
+      { title: "Images du site", href: "/admin/parametres/images" },
+      { title: "Réalisations Pro", href: "/admin/parametres/realisations-pro" },
       { title: "Stripe (Paiement)", href: "/admin/parametres/stripe" },
       { title: "E-commerce", href: "/admin/parametres/ecommerce" },
       { title: "Emails", href: "/admin/parametres/emails" },

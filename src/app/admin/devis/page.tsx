@@ -55,26 +55,27 @@ export default function QuotesPage() {
   const [selectedStatus, setSelectedStatus] = React.useState("all");
   const [loading, setLoading] = React.useState(true);
 
-  // Charger les devis depuis localStorage
+  // Charger les devis depuis l'API (vraies données Prisma)
   React.useEffect(() => {
-    const loadQuotes = () => {
+    const loadQuotes = async () => {
       try {
-        const saved = localStorage.getItem("az_quotes");
-        if (saved) {
-          const parsed = JSON.parse(saved);
-          setQuotes(parsed.map((q: { id: string; numero: string; clientName: string; clientEmail: string; clientType: string; createdAt: string; expiresAt: string; status: string; totalTTC: number; items: unknown[] }) => ({
+        const res = await fetch("/api/admin/quotes");
+        const data = await res.json();
+        if (data.success && data.quotes) {
+          setQuotes(data.quotes.map((q: {
+            id: string; numero: string;
+            user: { nom?: string; prenom?: string; raisonSociale?: string; email: string; type: string };
+            dateDemande: string; dateExpiration?: string;
+            status: string; totalTTC: number; itemsCount: number;
+          }) => ({
             id: q.id,
             numero: q.numero,
-            user: {
-              nom: q.clientName,
-              email: q.clientEmail,
-              type: q.clientType === "professionnel" ? "client_pro" : "client_particulier",
-            },
-            dateDemande: new Date(q.createdAt),
-            dateExpiration: new Date(q.expiresAt),
+            user: q.user,
+            dateDemande: new Date(q.dateDemande),
+            dateExpiration: q.dateExpiration ? new Date(q.dateExpiration) : new Date(Date.now() + 30 * 24 * 60 * 60 * 1000),
             status: q.status,
             totalTTC: q.totalTTC,
-            itemsCount: q.items?.length || 0,
+            itemsCount: q.itemsCount || 0,
           })));
         }
       } catch (e) {

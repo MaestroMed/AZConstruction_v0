@@ -10,318 +10,411 @@ import {
   Loader2,
   RefreshCw,
   Check,
-  Building,
-  CreditCard,
-  Mail,
-  Search as SearchIcon,
-  Palette,
-  LayoutGrid,
-  Home,
-  Layers,
-  Users,
-  Handshake,
-  Route,
-  ExternalLink,
-  Brush,
   Save,
   FileText,
   User,
   MapPin,
+  Home,
+  Users,
+  Building2,
+  Flame,
+  Phone,
+  Globe,
+  Share2,
 } from "lucide-react";
 import { toast } from "sonner";
+import { cn } from "@/lib/utils";
 
-// Compression côté client — réduit l'image à max 1920px et 85% qualité JPEG
+// ── Compression côté client ────────────────────────────────
 async function compressImage(file: File, maxWidth = 1920, quality = 0.85): Promise<File> {
-  // Ne compresse pas les SVG ou les petites images déjà légères
   if (file.type === "image/svg+xml" || file.size < 500 * 1024) return file;
-
   return new Promise((resolve) => {
     const img = document.createElement("img");
     const url = URL.createObjectURL(file);
     img.onload = () => {
       URL.revokeObjectURL(url);
       let { width, height } = img;
-      if (width > maxWidth) {
-        height = Math.round((height * maxWidth) / width);
-        width = maxWidth;
-      }
+      if (width > maxWidth) { height = Math.round((height * maxWidth) / width); width = maxWidth; }
       const canvas = document.createElement("canvas");
-      canvas.width = width;
-      canvas.height = height;
-      const ctx = canvas.getContext("2d")!;
-      ctx.drawImage(img, 0, 0, width, height);
-      canvas.toBlob(
-        (blob) => {
-          if (!blob) { resolve(file); return; }
-          const compressed = new File([blob], file.name.replace(/\.[^.]+$/, ".jpg"), {
-            type: "image/jpeg",
-            lastModified: Date.now(),
-          });
-          // Si la compression a rendu le fichier plus grand, garder l'original
-          resolve(compressed.size < file.size ? compressed : file);
-        },
-        "image/jpeg",
-        quality
-      );
+      canvas.width = width; canvas.height = height;
+      canvas.getContext("2d")!.drawImage(img, 0, 0, width, height);
+      canvas.toBlob((blob) => {
+        if (!blob) { resolve(file); return; }
+        const c = new File([blob], file.name.replace(/\.[^.]+$/, ".jpg"), { type: "image/jpeg", lastModified: Date.now() });
+        resolve(c.size < file.size ? c : file);
+      }, "image/jpeg", quality);
     };
     img.onerror = () => { URL.revokeObjectURL(url); resolve(file); };
     img.src = url;
   });
 }
 
-const settingsSections = [
-  { id: "general", label: "Général", icon: Building, href: "/admin/parametres" },
-  { id: "images", label: "Images du site", icon: ImageIcon, href: "/admin/parametres/images" },
-  { id: "realisations-pro", label: "Réalisations Pro", icon: LayoutGrid, href: "/admin/parametres/realisations-pro" },
-  { id: "ecommerce", label: "E-commerce", icon: CreditCard, href: "/admin/parametres/ecommerce" },
-  { id: "emails", label: "Emails", icon: Mail, href: "/admin/parametres/emails" },
-  { id: "seo", label: "SEO", icon: SearchIcon, href: "/admin/parametres/seo" },
+// ── Mapping page → image keys ──────────────────────────────
+const PAGE_TABS = [
+  {
+    id: "identite",
+    label: "Identité",
+    icon: Globe,
+    description: "Logo, favicon, image de partage",
+    keys: [],
+  },
+  {
+    id: "accueil",
+    label: "Accueil",
+    icon: Home,
+    description: "Images de la page d'accueil",
+    keys: ["hero-homepage", "hero-carousel-1", "hero-carousel-2", "hero-carousel-3"],
+  },
+  {
+    id: "particuliers",
+    label: "Particuliers",
+    icon: Home,
+    description: "Page Particuliers",
+    keys: ["hero-particuliers", "product-garde-corps", "product-escaliers", "product-portes", "product-grilles", "page-atelier"],
+  },
+  {
+    id: "professionnels",
+    label: "Professionnels",
+    icon: Building2,
+    description: "Page Professionnels",
+    keys: ["hero-professionnels", "realisation-b2b-1", "realisation-b2b-2", "realisation-b2b-3"],
+  },
+  {
+    id: "thermolaquage",
+    label: "Thermolaquage",
+    icon: Flame,
+    description: "Page Thermolaquage",
+    keys: ["hero-thermolaquage", "thermolaquage-process"],
+  },
+  {
+    id: "apropos",
+    label: "À propos",
+    icon: Users,
+    description: "Page À propos et équipe",
+    keys: ["hero-a-propos", "page-equipe", "team-member-1", "team-member-2", "team-member-3", "team-member-4"],
+  },
+  {
+    id: "contact",
+    label: "Contact",
+    icon: Phone,
+    description: "Page Contact",
+    keys: ["hero-contact"],
+  },
+  {
+    id: "global",
+    label: "Global",
+    icon: ImageIcon,
+    description: "Produits, partenaires, processus",
+    keys: [
+      "product-portails", "product-clotures", "product-pergolas", "product-marquises",
+      "product-fenetres", "product-verrieres", "product-grilles",
+      "partner-jansen", "partner-bouygues", "partner-vinci", "partner-eiffage",
+      "partner-saint-gobain", "partner-demathieu-bard", "partner-spie-batignolles",
+      "partner-rabot-dutilleul", "partner-urbaine-travaux",
+      "process-consultation", "process-devis", "process-fabrication", "process-installation",
+    ],
+  },
 ];
 
-function getCategoryIcon(category: string) {
-  const iconClass = "w-5 h-5 text-cyan-600";
-  switch (category) {
-    case "hero":
-      return <Home className={iconClass} />;
-    case "products":
-      return <LayoutGrid className={iconClass} />;
-    case "pages":
-      return <Layers className={iconClass} />;
-    case "configurators":
-      return <Palette className={iconClass} />;
-    case "process":
-      return <Route className={iconClass} />;
-    case "team":
-      return <Users className={iconClass} />;
-    case "partners":
-      return <Handshake className={iconClass} />;
-    case "realisations":
-      return <ImageIcon className={iconClass} />;
-    default:
-      return <ImageIcon className={iconClass} />;
-  }
-}
-
-const categoryLabels: Record<string, string> = {
-  hero: "🏠 Sections Hero",
-  products: "📦 Images Produits / Familles",
-  pages: "📄 Pages du site",
-  configurators: "⚙️ Configurateurs",
-  process: "📍 Parcours Client",
-  team: "👥 Équipe",
-  partners: "🤝 Partenaires",
-  realisations: "🏗️ Réalisations B2B",
-};
-
-interface SiteImage {
-  key: string;
-  category: string;
-  label: string;
-  description: string;
-  imageUrl: string | null;
-  fallbackUrl: string;
-  url: string;
-  updatedAt?: string;
-}
-
-interface BrandingSettings {
-  logoUrl?: string | null;
-  logoLightUrl?: string | null;
-  faviconUrl?: string | null;
-  brandName?: string;
-}
-
-interface B2BCard {
-  title: string;
-  client: string;
-  location: string;
-  imageKey: string;
-}
-
-// Mapping imageKey → card index
+// ── B2B card keys ──────────────────────────────────────────
 const B2B_IMAGE_KEYS: Record<string, number> = {
-  "realisation-b2b-1": 0,
-  "realisation-b2b-2": 1,
-  "realisation-b2b-3": 2,
+  "realisation-b2b-1": 0, "realisation-b2b-2": 1, "realisation-b2b-3": 2,
 };
-
-const DEFAULT_B2B_CARDS: B2BCard[] = [
+const DEFAULT_B2B_CARDS = [
   { title: "Garde-corps collectif", client: "Promoteur IDF", location: "Île-de-France", imageKey: "realisation-b2b-1" },
   { title: "Escalier industriel", client: "Usine automobile", location: "Seine-et-Marne (77)", imageKey: "realisation-b2b-2" },
   { title: "Portails résidence", client: "Collectivité locale", location: "Val-d'Oise (95)", imageKey: "realisation-b2b-3" },
 ];
 
+interface SiteImage {
+  key: string; category: string; label: string; description: string;
+  imageUrl: string | null; fallbackUrl: string; url: string; updatedAt?: string;
+}
+interface B2BCard { title: string; client: string; location: string; imageKey: string; }
+interface BrandingSettings {
+  logoUrl?: string | null; logoLightUrl?: string | null;
+  faviconUrl?: string | null; ogImageUrl?: string | null;
+}
+
+// ── Image card component ───────────────────────────────────
+function ImageCard({
+  img,
+  uploading,
+  onUpload,
+  onRemove,
+  b2bCard,
+  b2bIndex,
+  onB2bUpdate,
+}: {
+  img: SiteImage;
+  uploading: boolean;
+  onUpload: (file: File) => void;
+  onRemove: () => void;
+  b2bCard?: B2BCard;
+  b2bIndex?: number;
+  onB2bUpdate?: (idx: number, field: keyof B2BCard, val: string) => void;
+}) {
+  const fileRef = React.useRef<HTMLInputElement>(null);
+  const isCustom = !!img.imageUrl;
+  const isOgFormat = img.key.includes("og") || img.label.toLowerCase().includes("og");
+  return (
+    <div className="bg-white rounded-2xl border border-gray-200 overflow-hidden shadow-sm hover:shadow-md transition-shadow">
+      {/* Image preview */}
+      <div className={cn("relative bg-gray-100 overflow-hidden", isOgFormat ? "aspect-[1200/630]" : "aspect-video")}>
+        <Image
+          src={img.url} alt={img.label} fill
+          className="object-cover"
+          unoptimized={img.url.startsWith("data:")}
+          onError={() => {}}
+        />
+        {uploading && (
+          <div className="absolute inset-0 bg-black/50 flex items-center justify-center">
+            <Loader2 className="w-6 h-6 animate-spin text-white" />
+          </div>
+        )}
+        <div className={cn(
+          "absolute top-2 right-2 text-xs px-2 py-0.5 rounded-full font-medium",
+          isCustom ? "bg-green-500/90 text-white" : "bg-orange-400/90 text-white"
+        )}>
+          {isCustom ? "✓ Personnalisée" : "Défaut"}
+        </div>
+      </div>
+
+      {/* Content */}
+      <div className="p-4">
+        <p className="font-semibold text-gray-900 text-sm">{img.label}</p>
+        <p className="text-xs text-gray-500 mt-0.5 mb-3">{img.description}</p>
+
+        {/* B2B text fields */}
+        {b2bCard !== undefined && b2bIndex !== undefined && onB2bUpdate && (
+          <div className="mb-3 space-y-2 pt-3 border-t border-gray-100">
+            <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider">Texte affiché</p>
+            <div>
+              <label className="flex items-center gap-1 text-xs text-gray-500 mb-1"><FileText className="w-3 h-3" /> Titre</label>
+              <input type="text" value={b2bCard.title}
+                onChange={(e) => onB2bUpdate(b2bIndex, "title", e.target.value)}
+                className="w-full px-2.5 py-1.5 text-xs border border-gray-200 rounded-lg focus:ring-1 focus:ring-cyan-500 outline-none" />
+            </div>
+            <div>
+              <label className="flex items-center gap-1 text-xs text-gray-500 mb-1"><User className="w-3 h-3" /> Client</label>
+              <input type="text" value={b2bCard.client}
+                onChange={(e) => onB2bUpdate(b2bIndex, "client", e.target.value)}
+                className="w-full px-2.5 py-1.5 text-xs border border-gray-200 rounded-lg focus:ring-1 focus:ring-cyan-500 outline-none" />
+            </div>
+            <div>
+              <label className="flex items-center gap-1 text-xs text-gray-500 mb-1"><MapPin className="w-3 h-3" /> Localisation</label>
+              <input type="text" value={b2bCard.location}
+                onChange={(e) => onB2bUpdate(b2bIndex, "location", e.target.value)}
+                className="w-full px-2.5 py-1.5 text-xs border border-gray-200 rounded-lg focus:ring-1 focus:ring-cyan-500 outline-none" />
+            </div>
+          </div>
+        )}
+
+        {/* Actions */}
+        <div className="flex gap-2">
+          <button
+            onClick={() => fileRef.current?.click()}
+            disabled={uploading}
+            className="flex-1 inline-flex items-center justify-center gap-1.5 px-3 py-2 bg-cyan-600 text-white rounded-xl text-xs font-medium hover:bg-cyan-700 transition-colors disabled:opacity-50"
+          >
+            <Upload className="w-3 h-3" />
+            {isCustom ? "Remplacer" : "Uploader"}
+          </button>
+          {isCustom && (
+            <button onClick={onRemove} className="p-2 text-red-500 hover:bg-red-50 rounded-xl transition-colors" title="Supprimer">
+              <Trash2 className="w-4 h-4" />
+            </button>
+          )}
+          <input ref={fileRef} type="file" accept="image/*"
+            onChange={(e) => { const f = e.target.files?.[0]; if (f) onUpload(f); e.target.value = ""; }}
+            className="hidden" />
+        </div>
+        <p className="text-[9px] text-gray-300 mt-1.5 font-mono">{img.key}</p>
+      </div>
+    </div>
+  );
+}
+
+// ── Branding upload card ───────────────────────────────────
+function BrandingCard({
+  label,
+  description,
+  url,
+  uploading,
+  darkBg,
+  aspectRatio,
+  onUpload,
+  onRemove,
+}: {
+  label: string; description: string; url?: string | null;
+  uploading: boolean; darkBg?: boolean; aspectRatio?: string;
+  onUpload: (file: File) => void; onRemove: () => void;
+}) {
+  const fileRef = React.useRef<HTMLInputElement>(null);
+  return (
+    <div className="bg-white rounded-2xl border border-gray-200 overflow-hidden shadow-sm">
+      <div className={cn(
+        "relative overflow-hidden flex items-center justify-center",
+        aspectRatio || "aspect-video",
+        darkBg ? "bg-gray-900" : "bg-gray-50 border-b border-gray-100"
+      )}>
+        {url ? (
+          <Image src={url} alt={label} fill className="object-contain p-4" unoptimized />
+        ) : (
+          <div className="flex flex-col items-center gap-2 text-gray-300">
+            <ImageIcon className="w-10 h-10" />
+            <p className="text-xs">Aucun fichier</p>
+          </div>
+        )}
+        {uploading && (
+          <div className="absolute inset-0 bg-black/50 flex items-center justify-center">
+            <Loader2 className="w-6 h-6 animate-spin text-white" />
+          </div>
+        )}
+        {url && (
+          <span className="absolute top-2 right-2 text-xs px-2 py-0.5 rounded-full font-medium bg-green-500/90 text-white">
+            ✓ Configuré
+          </span>
+        )}
+      </div>
+      <div className="p-4">
+        <p className="font-semibold text-gray-900 text-sm">{label}</p>
+        <p className="text-xs text-gray-500 mt-0.5 mb-3">{description}</p>
+        <div className="flex gap-2">
+          <button onClick={() => fileRef.current?.click()} disabled={uploading}
+            className="flex-1 inline-flex items-center justify-center gap-1.5 px-3 py-2 bg-cyan-600 text-white rounded-xl text-xs font-medium hover:bg-cyan-700 transition-colors disabled:opacity-50">
+            <Upload className="w-3 h-3" />{url ? "Remplacer" : "Uploader"}
+          </button>
+          {url && (
+            <button onClick={onRemove} className="p-2 text-red-500 hover:bg-red-50 rounded-xl transition-colors">
+              <Trash2 className="w-4 h-4" />
+            </button>
+          )}
+          <input ref={fileRef} type="file" accept="image/*,.ico,.svg"
+            onChange={(e) => { const f = e.target.files?.[0]; if (f) onUpload(f); e.target.value = ""; }}
+            className="hidden" />
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// ── Main page ──────────────────────────────────────────────
 export default function ImagesSettingsPage() {
   const [images, setImages] = React.useState<SiteImage[]>([]);
-  const [grouped, setGrouped] = React.useState<Record<string, SiteImage[]>>({});
+  const [allImages, setAllImages] = React.useState<Record<string, SiteImage>>({});
   const [loading, setLoading] = React.useState(true);
   const [uploading, setUploading] = React.useState<string | null>(null);
-  const [expandedCategories, setExpandedCategories] = React.useState<string[]>(["hero", "products"]);
-  const fileInputRefs = React.useRef<Record<string, HTMLInputElement | null>>({});
+  const [activeTab, setActiveTab] = React.useState("identite");
   const [branding, setBranding] = React.useState<BrandingSettings>({});
+  const [brandingUploading, setBrandingUploading] = React.useState<string | null>(null);
   const [b2bCards, setB2bCards] = React.useState<B2BCard[]>(DEFAULT_B2B_CARDS);
   const [b2bSaving, setB2bSaving] = React.useState(false);
 
-  // Charger les images
   const loadImages = async () => {
     try {
-      const response = await fetch("/api/site-images");
-      if (response.ok) {
-        const data = await response.json();
-        setImages(data.images || []);
-        setGrouped(data.grouped || {});
+      const [imgRes, settingsRes, b2bRes] = await Promise.all([
+        fetch("/api/site-images"),
+        fetch("/api/settings"),
+        fetch("/api/b2b-cards"),
+      ]);
+      if (imgRes.ok) {
+        const data = await imgRes.json();
+        const imgs: SiteImage[] = data.images || [];
+        setImages(imgs);
+        const map: Record<string, SiteImage> = {};
+        imgs.forEach((i) => { map[i.key] = i; });
+        setAllImages(map);
       }
-    } catch (error) {
-      console.error("Erreur chargement images:", error);
-      toast.error("Erreur de chargement");
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  // Charger les infos de branding depuis les paramètres
-  const loadBranding = async () => {
-    try {
-      const response = await fetch("/api/settings");
-      if (response.ok) {
-        const data = await response.json();
-        setBranding({
-          logoUrl: data.logoUrl,
-          logoLightUrl: data.logoLightUrl,
-          faviconUrl: data.faviconUrl,
-          brandName: data.brandName || data.companyName || "AZ Construction",
-        });
+      if (settingsRes.ok) {
+        const s = await settingsRes.json();
+        setBranding({ logoUrl: s.logoUrl, logoLightUrl: s.logoLightUrl, faviconUrl: s.faviconUrl, ogImageUrl: s.ogImageUrl });
       }
-    } catch {
-      // silently ignore
-    }
-  };
-
-  // Charger les cartes B2B
-  const loadB2bCards = async () => {
-    try {
-      const res = await fetch("/api/b2b-cards");
-      const data = await res.json();
-      if (data.success && data.cards?.length) {
-        const merged = data.cards.map((card: Partial<B2BCard>, i: number) => ({
-          ...DEFAULT_B2B_CARDS[i],
-          ...card,
-        }));
-        setB2bCards(merged);
+      if (b2bRes.ok) {
+        const b = await b2bRes.json();
+        if (b.success && b.cards?.length) {
+          setB2bCards(b.cards.map((c: Partial<B2BCard>, i: number) => ({ ...DEFAULT_B2B_CARDS[i], ...c })));
+        }
       }
-    } catch {
-      // silently ignore — use defaults
-    }
+    } catch { toast.error("Erreur de chargement"); }
+    finally { setLoading(false); }
   };
 
-  // Sauvegarder les cartes B2B
-  const saveB2bCards = async () => {
-    setB2bSaving(true);
-    try {
-      const res = await fetch("/api/b2b-cards", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ cards: b2bCards }),
-      });
-      if (!res.ok) throw new Error("Erreur sauvegarde");
-      toast.success("Textes des réalisations sauvegardés !");
-    } catch {
-      toast.error("Erreur lors de la sauvegarde");
-    } finally {
-      setB2bSaving(false);
-    }
-  };
+  React.useEffect(() => { loadImages(); }, []);
 
-  const updateB2bCard = (index: number, field: keyof B2BCard, value: string) => {
-    setB2bCards((prev) => prev.map((card, i) => i === index ? { ...card, [field]: value } : card));
-  };
-
-  React.useEffect(() => {
-    loadImages();
-    loadBranding();
-    loadB2bCards();
-  }, []);
-
+  // Upload image du site (clé/valeur)
   const handleUpload = async (key: string, file: File) => {
     setUploading(key);
     try {
-      // Comprimer l'image côté client avant envoi
       const compressed = await compressImage(file);
-      const sizeMB = (compressed.size / 1024 / 1024).toFixed(1);
-      console.log(`Upload: ${file.name} → ${compressed.name} (${sizeMB}MB)`);
-
-      const formData = new FormData();
-      formData.append("files", compressed);
-      formData.append("folder", "site-images");
-
-      // 1. Upload le fichier
-      const uploadResponse = await fetch("/api/upload", {
-        method: "POST",
-        body: formData,
-      });
-
-      if (!uploadResponse.ok) {
-        const errData = await uploadResponse.json().catch(() => ({}));
-        throw new Error(errData.error || `Erreur upload (${uploadResponse.status})`);
-      }
-
-      const uploadData = await uploadResponse.json();
-      const imageUrl = uploadData.files[0]?.url;
-
-      if (!imageUrl) throw new Error("Pas d'URL retournée");
-
-      // 2. Sauvegarder la référence
-      const saveResponse = await fetch("/api/site-images", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ key, imageUrl }),
-      });
-
-      if (!saveResponse.ok) throw new Error("Erreur sauvegarde");
-
-      // 3. Recharger la liste
+      const fd = new FormData(); fd.append("files", compressed); fd.append("folder", "site-images");
+      const upRes = await fetch("/api/upload", { method: "POST", body: fd });
+      if (!upRes.ok) { const e = await upRes.json().catch(() => ({})); throw new Error(e.error || "Erreur upload"); }
+      const upData = await upRes.json();
+      const imageUrl = upData.files[0]?.url;
+      if (!imageUrl) throw new Error("Pas d'URL");
+      const saveRes = await fetch("/api/site-images", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ key, imageUrl }) });
+      if (!saveRes.ok) throw new Error("Erreur sauvegarde");
       await loadImages();
       toast.success("Image mise à jour !");
-    } catch (error) {
-      console.error("Erreur upload:", error);
-      const msg = error instanceof Error ? error.message : "Erreur lors de l'upload";
-      toast.error(msg);
-    } finally {
-      setUploading(null);
-    }
+    } catch (e) {
+      toast.error(e instanceof Error ? e.message : "Erreur");
+    } finally { setUploading(null); }
   };
 
   const handleRemove = async (key: string) => {
     try {
-      // Remettre à null pour revenir au fallback
-      await fetch("/api/site-images", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ key, imageUrl: null }),
-      });
-
+      await fetch("/api/site-images", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ key, imageUrl: null }) });
       await loadImages();
-      toast.success("Image réinitialisée (fallback)");
-    } catch (error) {
-      console.error("Erreur suppression:", error);
-      toast.error("Erreur lors de la suppression");
-    }
+      toast.success("Image réinitialisée");
+    } catch { toast.error("Erreur"); }
   };
 
-  const toggleCategory = (category: string) => {
-    setExpandedCategories((prev) =>
-      prev.includes(category)
-        ? prev.filter((c) => c !== category)
-        : [...prev, category]
-    );
+  // Upload branding (logo/favicon)
+  const handleBrandingUpload = async (field: keyof BrandingSettings, file: File) => {
+    setBrandingUploading(field);
+    try {
+      const fd = new FormData(); fd.append("files", file); fd.append("folder", "branding");
+      const upRes = await fetch("/api/upload", { method: "POST", body: fd });
+      if (!upRes.ok) throw new Error("Erreur upload");
+      const upData = await upRes.json();
+      const url = upData.files[0]?.url;
+      if (!url) throw new Error("Pas d'URL");
+      const newBranding = { ...branding, [field]: url };
+      await fetch("/api/settings", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(newBranding) });
+      setBranding(newBranding);
+      toast.success("Identité mise à jour !");
+    } catch (e) {
+      toast.error(e instanceof Error ? e.message : "Erreur");
+    } finally { setBrandingUploading(null); }
   };
+
+  const handleBrandingRemove = async (field: keyof BrandingSettings) => {
+    const newBranding = { ...branding, [field]: null };
+    await fetch("/api/settings", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(newBranding) });
+    setBranding(newBranding);
+    toast.success("Supprimé");
+  };
+
+  const updateB2bCard = (idx: number, field: keyof B2BCard, val: string) => {
+    setB2bCards((prev) => prev.map((c, i) => i === idx ? { ...c, [field]: val } : c));
+  };
+
+  const saveB2bCards = async () => {
+    setB2bSaving(true);
+    try {
+      await fetch("/api/b2b-cards", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ cards: b2bCards }) });
+      toast.success("Textes sauvegardés !");
+    } catch { toast.error("Erreur"); }
+    finally { setB2bSaving(false); }
+  };
+
+  const currentTab = PAGE_TABS.find((t) => t.id === activeTab);
+  const tabImages = currentTab?.keys.map((k) => allImages[k]).filter(Boolean) as SiteImage[];
+  const hasB2b = activeTab === "professionnels";
 
   if (loading) {
-    return (
-      <div className="flex items-center justify-center h-64">
-        <Loader2 className="w-8 h-8 animate-spin text-cyan-500" />
-      </div>
-    );
+    return <div className="flex items-center justify-center h-64"><Loader2 className="w-8 h-8 animate-spin text-cyan-500" /></div>;
   }
 
   return (
@@ -330,353 +423,152 @@ export default function ImagesSettingsPage() {
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-bold text-gray-900">Images du site</h1>
-          <p className="text-gray-500 mt-1">
-            Gérez toutes les images affichées sur le site (heros, produits, pages...)
-          </p>
+          <p className="text-gray-500 mt-1">Gérez les visuels de chaque page et votre identité de marque</p>
         </div>
-        <button
-          onClick={() => {
-            setLoading(true);
-            loadImages();
-          }}
-          className="inline-flex items-center gap-2 px-4 py-2 bg-gray-100 text-gray-700 rounded-lg text-sm font-medium hover:bg-gray-200 transition-colors"
-        >
-          <RefreshCw className="w-4 h-4" />
-          Actualiser
+        <button onClick={() => { setLoading(true); loadImages(); }}
+          className="inline-flex items-center gap-2 px-3 py-2 bg-white border border-gray-200 rounded-lg text-sm text-gray-600 hover:bg-gray-50 transition-colors">
+          <RefreshCw className="w-4 h-4" /> Actualiser
         </button>
       </div>
 
-      <div className="grid lg:grid-cols-4 gap-6">
-        {/* Navigation */}
-        <div className="lg:col-span-1">
-          <nav className="bg-white rounded-xl border border-gray-200 overflow-hidden sticky top-24">
-            {settingsSections.map((section) => {
-              const isActive = section.id === "images";
-              return (
-                <Link
-                  key={section.id}
-                  href={section.href}
-                  className={`flex items-center gap-3 px-4 py-3 border-b border-gray-100 last:border-0 transition-colors ${
-                    isActive
-                      ? "bg-cyan-50 text-cyan-700"
-                      : "text-gray-600 hover:bg-gray-50"
-                  }`}
-                >
-                  <section.icon className="w-5 h-5" />
-                  <span className="font-medium">{section.label}</span>
-                </Link>
-              );
-            })}
-          </nav>
+      {/* Page tabs */}
+      <div className="flex flex-wrap gap-2">
+        {PAGE_TABS.map((tab) => {
+          const Icon = tab.icon;
+          const customCount = tab.keys.filter((k) => allImages[k]?.imageUrl).length;
+          const isIdentite = tab.id === "identite";
+          const identiteCount = [branding.logoUrl, branding.logoLightUrl, branding.faviconUrl].filter(Boolean).length;
+          return (
+            <button
+              key={tab.id}
+              onClick={() => setActiveTab(tab.id)}
+              className={cn(
+                "inline-flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-medium transition-all border",
+                activeTab === tab.id
+                  ? "bg-navy-dark text-white border-navy-dark shadow-md"
+                  : "bg-white text-gray-600 border-gray-200 hover:border-gray-300 hover:bg-gray-50"
+              )}
+            >
+              <Icon className="w-4 h-4" />
+              {tab.label}
+              {(isIdentite ? identiteCount : customCount) > 0 && (
+                <span className={cn("text-xs px-1.5 py-0.5 rounded-full font-semibold",
+                  activeTab === tab.id ? "bg-white/20 text-white" : "bg-cyan-100 text-cyan-700"
+                )}>
+                  {isIdentite ? identiteCount : customCount}/{isIdentite ? 3 : tab.keys.length}
+                </span>
+              )}
+            </button>
+          );
+        })}
+      </div>
 
-          {/* Légende */}
-          <div className="mt-4 bg-white rounded-xl border border-gray-200 p-4">
-            <h3 className="text-sm font-semibold text-gray-700 mb-3">Légende</h3>
-            <div className="space-y-2 text-xs">
-              <div className="flex items-center gap-2">
-                <div className="w-3 h-3 rounded-full bg-green-500" />
-                <span className="text-gray-600">Image personnalisée</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <div className="w-3 h-3 rounded-full bg-orange-400" />
-                <span className="text-gray-600">Image par défaut (fallback)</span>
-              </div>
+      {/* Tab description */}
+      {currentTab && (
+        <p className="text-sm text-gray-500">{currentTab.description}</p>
+      )}
+
+      {/* ── IDENTITÉ tab ── */}
+      {activeTab === "identite" && (
+        <div className="space-y-6">
+          <div className="grid md:grid-cols-2 gap-4">
+            <BrandingCard
+              label="Logo principal"
+              description="Fond sombre — header du site. SVG ou PNG transparent recommandé."
+              url={branding.logoUrl}
+              uploading={brandingUploading === "logoUrl"}
+              darkBg
+              onUpload={(f) => handleBrandingUpload("logoUrl", f)}
+              onRemove={() => handleBrandingRemove("logoUrl")}
+            />
+            <BrandingCard
+              label="Logo fond clair"
+              description="Fond blanc — footer ou contextes clairs. Variante sombre du logo."
+              url={branding.logoLightUrl}
+              uploading={brandingUploading === "logoLightUrl"}
+              onUpload={(f) => handleBrandingUpload("logoLightUrl", f)}
+              onRemove={() => handleBrandingRemove("logoLightUrl")}
+            />
+            <BrandingCard
+              label="Favicon"
+              description="Icône onglet navigateur. PNG 512×512 recommandé — le navigateur génère les tailles."
+              url={branding.faviconUrl}
+              uploading={brandingUploading === "faviconUrl"}
+              aspectRatio="aspect-square max-w-[180px]"
+              onUpload={(f) => handleBrandingUpload("faviconUrl", f)}
+              onRemove={() => handleBrandingRemove("faviconUrl")}
+            />
+            <BrandingCard
+              label="Image de partage (OG)"
+              description="Aperçu sur Facebook, LinkedIn, WhatsApp... Format 1200×630px recommandé."
+              url={branding.ogImageUrl}
+              uploading={brandingUploading === "ogImageUrl"}
+              aspectRatio="aspect-[1200/630]"
+              onUpload={(f) => handleBrandingUpload("ogImageUrl", f)}
+              onRemove={() => handleBrandingRemove("ogImageUrl")}
+            />
+          </div>
+          <div className="flex items-start gap-3 p-4 bg-blue-50 rounded-xl border border-blue-100 text-sm text-blue-700">
+            <Share2 className="w-5 h-5 flex-shrink-0 mt-0.5 text-blue-500" />
+            <div>
+              <strong>Formats recommandés :</strong> Logo → SVG ou PNG transparent. Favicon → PNG 512×512. OG Image → JPG 1200×630px, max 200KB.
             </div>
           </div>
         </div>
+      )}
 
-        {/* Content */}
-        <div className="lg:col-span-3 space-y-6">
-          {/* ── Identité visuelle (branding) ───────────────── */}
-          <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
-            <div className="flex items-center justify-between p-4 border-b border-gray-100">
-              <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-violet-500/10 to-purple-500/10 flex items-center justify-center">
-                  <Brush className="w-5 h-5 text-violet-600" />
-                </div>
-                <div>
-                  <h2 className="text-lg font-semibold text-gray-900">Identité visuelle</h2>
-                  <p className="text-sm text-gray-500">Logo, logo clair, favicon</p>
-                </div>
-              </div>
-              <Link
-                href="/admin/parametres"
-                className="inline-flex items-center gap-2 px-3 py-2 bg-violet-50 text-violet-700 rounded-lg text-sm font-medium hover:bg-violet-100 transition-colors"
+      {/* ── Images tabs ── */}
+      {activeTab !== "identite" && tabImages && (
+        <div className="space-y-6">
+          {tabImages.length === 0 ? (
+            <div className="bg-white rounded-2xl border border-gray-200 p-12 text-center">
+              <ImageIcon className="w-10 h-10 text-gray-300 mx-auto mb-3" />
+              <p className="text-gray-500">Aucune image configurée pour cette section</p>
+            </div>
+          ) : (
+            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
+              {tabImages.map((img) => {
+                const b2bIdx = B2B_IMAGE_KEYS[img.key];
+                return (
+                  <ImageCard
+                    key={img.key}
+                    img={img}
+                    uploading={uploading === img.key}
+                    onUpload={(f) => handleUpload(img.key, f)}
+                    onRemove={() => handleRemove(img.key)}
+                    b2bCard={b2bIdx !== undefined ? b2bCards[b2bIdx] : undefined}
+                    b2bIndex={b2bIdx}
+                    onB2bUpdate={updateB2bCard}
+                  />
+                );
+              })}
+            </div>
+          )}
+
+          {/* Save B2B texts button */}
+          {hasB2b && (
+            <div className="flex justify-end">
+              <button
+                onClick={saveB2bCards}
+                disabled={b2bSaving}
+                className="inline-flex items-center gap-2 px-5 py-2.5 bg-blue-600 text-white rounded-xl text-sm font-semibold hover:bg-blue-700 transition-colors disabled:opacity-60"
               >
-                <ExternalLink className="w-4 h-4" />
-                Modifier dans Paramètres généraux
-              </Link>
+                {b2bSaving ? <Loader2 className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4" />}
+                Sauvegarder les textes
+              </button>
             </div>
-            <div className="p-4">
-              <div className="grid md:grid-cols-3 gap-4">
-                {/* Logo principal */}
-                <div className="bg-gray-50 rounded-xl p-4 border border-gray-100">
-                  <div className="relative aspect-video rounded-lg overflow-hidden bg-navy-dark flex items-center justify-center mb-3">
-                    {branding.logoUrl ? (
-                      <Image src={branding.logoUrl} alt="Logo principal" fill className="object-contain p-3" unoptimized />
-                    ) : (
-                      <span className="text-white/30 text-sm font-medium">Aucun logo</span>
-                    )}
-                  </div>
-                  <h3 className="font-semibold text-gray-900 text-sm mb-1">Logo principal</h3>
-                  <p className="text-xs text-gray-500">Affiché dans le header (fond sombre)</p>
-                  <div className={`mt-2 inline-flex items-center gap-1 px-2 py-1 rounded-full text-xs font-medium ${branding.logoUrl ? "bg-green-100 text-green-700" : "bg-orange-100 text-orange-700"}`}>
-                    {branding.logoUrl ? "✓ Configuré" : "↺ Non configuré"}
-                  </div>
-                </div>
+          )}
+        </div>
+      )}
 
-                {/* Logo clair */}
-                <div className="bg-gray-50 rounded-xl p-4 border border-gray-100">
-                  <div className="relative aspect-video rounded-lg overflow-hidden bg-white border border-gray-200 flex items-center justify-center mb-3">
-                    {branding.logoLightUrl ? (
-                      <Image src={branding.logoLightUrl} alt="Logo fond clair" fill className="object-contain p-3" unoptimized />
-                    ) : (
-                      <span className="text-gray-300 text-sm font-medium">Aucun logo clair</span>
-                    )}
-                  </div>
-                  <h3 className="font-semibold text-gray-900 text-sm mb-1">Logo fond clair</h3>
-                  <p className="text-xs text-gray-500">Version du logo sur fond blanc</p>
-                  <div className={`mt-2 inline-flex items-center gap-1 px-2 py-1 rounded-full text-xs font-medium ${branding.logoLightUrl ? "bg-green-100 text-green-700" : "bg-orange-100 text-orange-700"}`}>
-                    {branding.logoLightUrl ? "✓ Configuré" : "↺ Non configuré"}
-                  </div>
-                </div>
-
-                {/* Favicon */}
-                <div className="bg-gray-50 rounded-xl p-4 border border-gray-100">
-                  <div className="relative aspect-video rounded-lg overflow-hidden bg-white border border-gray-200 flex items-center justify-center mb-3">
-                    {branding.faviconUrl ? (
-                      <Image src={branding.faviconUrl} alt="Favicon" width={48} height={48} className="object-contain" unoptimized />
-                    ) : (
-                      <span className="text-gray-300 text-sm font-medium">Aucun favicon</span>
-                    )}
-                  </div>
-                  <h3 className="font-semibold text-gray-900 text-sm mb-1">Favicon</h3>
-                  <p className="text-xs text-gray-500">Icône onglet navigateur</p>
-                  <div className={`mt-2 inline-flex items-center gap-1 px-2 py-1 rounded-full text-xs font-medium ${branding.faviconUrl ? "bg-green-100 text-green-700" : "bg-orange-100 text-orange-700"}`}>
-                    {branding.faviconUrl ? "✓ Configuré" : "↺ Non configuré"}
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          {/* ── Images par catégorie ────────────────────────── */}
-          {Object.entries(grouped).map(([category, categoryImages]) => {
-            const isExpanded = expandedCategories.includes(category);
-
-            return (
-              <div
-                key={category}
-                className="bg-white rounded-xl border border-gray-200 overflow-hidden"
-              >
-                {/* Category Header */}
-                <button
-                  onClick={() => toggleCategory(category)}
-                  className="w-full flex items-center justify-between p-4 hover:bg-gray-50 transition-colors"
-                >
-                  <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-cyan-500/10 to-blue-500/10 flex items-center justify-center">
-                      {getCategoryIcon(category)}
-                    </div>
-                    <div className="text-left">
-                      <h2 className="text-lg font-semibold text-gray-900">
-                        {categoryLabels[category] || category}
-                      </h2>
-                      <p className="text-sm text-gray-500">
-                        {categoryImages.length} image{categoryImages.length > 1 ? "s" : ""}
-                      </p>
-                    </div>
-                  </div>
-                  <div
-                    className={`transform transition-transform ${
-                      isExpanded ? "rotate-180" : ""
-                    }`}
-                  >
-                    <svg className="w-5 h-5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                    </svg>
-                  </div>
-                </button>
-
-                {/* Category Images */}
-                {isExpanded && (
-                  <div className="border-t border-gray-100 p-4">
-                    <div className="grid md:grid-cols-2 gap-4">
-                      {categoryImages.map((img) => {
-                        const isCustom = !!img.imageUrl;
-                        const isUploading = uploading === img.key;
-                        const b2bIndex = B2B_IMAGE_KEYS[img.key];
-                        const b2bCard = b2bIndex !== undefined ? b2bCards[b2bIndex] : undefined;
-
-                        return (
-                          <div
-                            key={img.key}
-                            className="relative bg-gray-50 rounded-xl p-4 border border-gray-100"
-                          >
-                            {/* Status badge */}
-                            <div
-                              className={`absolute top-2 right-2 px-2 py-1 rounded-full text-xs font-medium ${
-                                isCustom
-                                  ? "bg-green-100 text-green-700"
-                                  : "bg-orange-100 text-orange-700"
-                              }`}
-                            >
-                              {isCustom ? "✓ Personnalisée" : "↺ Fallback"}
-                            </div>
-
-                            {/* Image Preview */}
-                            <div className="relative aspect-video rounded-lg overflow-hidden bg-gray-200 mb-3">
-                              <Image
-                                src={img.url}
-                                alt={img.label}
-                                fill
-                                className="object-cover"
-                                unoptimized={img.url.startsWith("data:")}
-                              />
-                              {isUploading && (
-                                <div className="absolute inset-0 bg-black/50 flex items-center justify-center">
-                                  <Loader2 className="w-8 h-8 animate-spin text-white" />
-                                </div>
-                              )}
-                            </div>
-
-                            {/* Info */}
-                            <h3 className="font-semibold text-gray-900 text-sm mb-1">
-                              {img.label}
-                            </h3>
-                            <p className="text-xs text-gray-500 mb-3">
-                              {img.description}
-                            </p>
-
-                            {/* ── Champs texte inline pour les cartes B2B ── */}
-                            {b2bCard !== undefined && (
-                              <div className="mb-3 space-y-2 border-t border-gray-100 pt-3">
-                                <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-2">Texte affiché sur la carte</p>
-                                <div>
-                                  <label className="flex items-center gap-1 text-xs text-gray-500 mb-1">
-                                    <FileText className="w-3 h-3" /> Titre du projet
-                                  </label>
-                                  <input
-                                    type="text"
-                                    value={b2bCard.title}
-                                    onChange={(e) => updateB2bCard(b2bIndex, "title", e.target.value)}
-                                    className="w-full px-2.5 py-1.5 text-xs border border-gray-200 rounded-lg focus:ring-1 focus:ring-cyan-500 focus:border-cyan-500 outline-none"
-                                    placeholder="Ex : Garde-corps collectif résidence"
-                                  />
-                                </div>
-                                <div>
-                                  <label className="flex items-center gap-1 text-xs text-gray-500 mb-1">
-                                    <User className="w-3 h-3" /> Client / Maître d&apos;ouvrage
-                                  </label>
-                                  <input
-                                    type="text"
-                                    value={b2bCard.client}
-                                    onChange={(e) => updateB2bCard(b2bIndex, "client", e.target.value)}
-                                    className="w-full px-2.5 py-1.5 text-xs border border-gray-200 rounded-lg focus:ring-1 focus:ring-cyan-500 focus:border-cyan-500 outline-none"
-                                    placeholder="Ex : Promoteur IDF"
-                                  />
-                                </div>
-                                <div>
-                                  <label className="flex items-center gap-1 text-xs text-gray-500 mb-1">
-                                    <MapPin className="w-3 h-3" /> Localisation
-                                  </label>
-                                  <input
-                                    type="text"
-                                    value={b2bCard.location}
-                                    onChange={(e) => updateB2bCard(b2bIndex, "location", e.target.value)}
-                                    className="w-full px-2.5 py-1.5 text-xs border border-gray-200 rounded-lg focus:ring-1 focus:ring-cyan-500 focus:border-cyan-500 outline-none"
-                                    placeholder="Ex : Seine-et-Marne (77)"
-                                  />
-                                </div>
-                              </div>
-                            )}
-
-                            {/* Actions */}
-                            <div className="flex gap-2">
-                              <button
-                                onClick={() => fileInputRefs.current[img.key]?.click()}
-                                disabled={isUploading}
-                                className="flex-1 inline-flex items-center justify-center gap-2 px-3 py-2 bg-cyan-500 text-white rounded-lg text-xs font-medium hover:bg-cyan-600 transition-colors disabled:opacity-50"
-                              >
-                                <Upload className="w-3 h-3" />
-                                {isCustom ? "Remplacer" : "Uploader"}
-                              </button>
-                              {isCustom && (
-                                <button
-                                  onClick={() => handleRemove(img.key)}
-                                  className="inline-flex items-center justify-center p-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors"
-                                  title="Revenir au fallback"
-                                >
-                                  <Trash2 className="w-4 h-4" />
-                                </button>
-                              )}
-                              <input
-                                ref={(el) => {
-                                  fileInputRefs.current[img.key] = el;
-                                }}
-                                type="file"
-                                accept="image/*"
-                                onChange={(e) => {
-                                  const file = e.target.files?.[0];
-                                  if (file) handleUpload(img.key, file);
-                                }}
-                                className="hidden"
-                              />
-                            </div>
-
-                            {/* Key for dev */}
-                            <p className="text-[10px] text-gray-400 mt-2 font-mono">
-                              key: {img.key}
-                            </p>
-                          </div>
-                        );
-                      })}
-                    </div>
-
-                    {/* Bouton sauvegarde texte B2B (affiché uniquement pour la catégorie realisations) */}
-                    {category === "realisations" && (
-                      <div className="mt-4 flex justify-end">
-                        <button
-                          onClick={saveB2bCards}
-                          disabled={b2bSaving}
-                          className="inline-flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg text-sm font-medium hover:bg-blue-700 transition-colors disabled:opacity-60"
-                        >
-                          {b2bSaving ? (
-                            <><Loader2 className="w-4 h-4 animate-spin" /> Sauvegarde...</>
-                          ) : (
-                            <><Save className="w-4 h-4" /> Sauvegarder les textes</>
-                          )}
-                        </button>
-                      </div>
-                    )}
-                  </div>
-                )}
-              </div>
-            );
-          })}
-
-          {/* ── Info box ────────────────────────────────────── */}
-          <div className="bg-gradient-to-br from-blue-50 to-cyan-50 rounded-xl p-6 border border-blue-100">
-            <div className="flex gap-4">
-              <div className="w-12 h-12 rounded-xl bg-blue-100 flex items-center justify-center flex-shrink-0">
-                <Check className="w-6 h-6 text-blue-600" />
-              </div>
-              <div>
-                <h3 className="font-semibold text-blue-900 mb-1">
-                  Comment ça marche ?
-                </h3>
-                <ul className="text-sm text-blue-700 space-y-1">
-                  <li>• Les images sont <strong>automatiquement compressées</strong> sous 1920px avant envoi</li>
-                  <li>• <strong>En local</strong> : stockage dans <code className="bg-blue-100 px-1 rounded">/public/uploads/</code> (format recommandé : JPG/WebP, max 10MB)</li>
-                  <li>• <strong>En production</strong> : configurez <strong>Cloudinary</strong> ou <strong>Vercel Blob</strong> dans les variables d'environnement</li>
-                  <li>• Cliquez sur 🗑️ pour revenir à l'image par défaut</li>
-                </ul>
-              </div>
-            </div>
-          </div>
+      {/* Tips */}
+      <div className="flex items-start gap-3 p-4 bg-gray-50 rounded-xl border border-gray-100 text-sm text-gray-600">
+        <Check className="w-5 h-5 flex-shrink-0 mt-0.5 text-emerald-500" />
+        <div>
+          Images compressées automatiquement (max 1920px, qualité 85%). Stockage local en développement,
+          Cloudinary ou Vercel Blob en production. Badge vert = image personnalisée, badge orange = image par défaut.
         </div>
       </div>
     </div>
   );
 }
-
