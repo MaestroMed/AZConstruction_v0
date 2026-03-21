@@ -199,16 +199,6 @@ function NavItem({ item, collapsed, pathname }: NavItemProps) {
       {!collapsed && (
         <span className="flex-1 text-sm font-medium">{item.title}</span>
       )}
-      {item.badge && (
-        <span
-          className={cn(
-            "bg-red-500 text-white text-xs font-bold rounded-full",
-            collapsed ? "absolute -top-1 -right-1 w-5 h-5 flex items-center justify-center" : "px-2 py-0.5"
-          )}
-        >
-          {item.badge}
-        </span>
-      )}
     </Link>
   );
 }
