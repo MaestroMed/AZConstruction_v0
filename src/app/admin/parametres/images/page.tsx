@@ -84,7 +84,7 @@ const PAGE_TABS = [
     label: "Thermolaquage",
     icon: Flame,
     description: "Page Thermolaquage",
-    keys: ["hero-thermolaquage", "thermolaquage-process"],
+    keys: ["hero-thermolaquage", "thermolaquage-process", "thermolaquage-applications"],
   },
   {
     id: "apropos",

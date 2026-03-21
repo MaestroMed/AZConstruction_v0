@@ -339,6 +339,13 @@ const DEFAULT_IMAGES: {
     description: "Image illustrant le processus de thermolaquage (four, cabine de projection...)",
     fallbackUrl: "https://images.unsplash.com/photo-1565793298595-6a879b1d9492?w=1200&q=80",
   },
+  {
+    key: "thermolaquage-applications",
+    category: "pages",
+    label: "Photo Domaines d'application",
+    description: "Image de la section Métaux ferreux / Domaines d'application (page Thermolaquage)",
+    fallbackUrl: "https://images.unsplash.com/photo-1504917595217-d4dc5ebe6122?w=1200&q=80",
+  },
 ];
 
 // GET: Récupérer toutes les images du site

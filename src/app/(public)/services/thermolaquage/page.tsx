@@ -993,13 +993,14 @@ export default function ThermolaquagePage() {
               viewport={{ once: true }}
               className="relative"
             >
-              {/* Image placeholder with glassmorphism overlay */}
-              <div className="aspect-[4/3] rounded-3xl bg-gradient-to-br from-gray-100 to-gray-200 flex items-center justify-center overflow-hidden shadow-2xl relative">
-                <div className="absolute inset-0 bg-gradient-to-br from-navy-dark/5 to-cyan-500/5" />
-                <div className="text-center text-gray-400 p-8 relative z-10">
-                  <Factory className="w-20 h-20 mx-auto mb-4 opacity-50" />
-                  <p className="text-lg">Image atelier thermolaquage</p>
-                </div>
+              {/* Image from admin */}
+              <div className="aspect-[4/3] rounded-3xl overflow-hidden shadow-2xl relative">
+                <Image
+                  src={getImage("thermolaquage-applications")}
+                  alt="Atelier thermolaquage — domaines d'application"
+                  fill
+                  className="object-cover"
+                />
               </div>
               
               {/* Floating card */}
