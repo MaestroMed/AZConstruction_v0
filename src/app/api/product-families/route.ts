@@ -23,8 +23,9 @@ export async function GET(request: NextRequest) {
     }
 
     // Get all families
+    const showAll = searchParams.get("all") === "true";
     const families = await prisma.productFamily.findMany({
-      where: { active: true },
+      where: showAll ? {} : { active: true },
       orderBy: { ordre: "asc" },
     });
 

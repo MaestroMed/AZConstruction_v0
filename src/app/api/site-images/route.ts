@@ -331,6 +331,36 @@ const DEFAULT_IMAGES: {
     fallbackUrl: "https://via.placeholder.com/200x80/7C3AED/FFFFFF?text=URBAINE+TRAVAUX",
   },
 
+  // === SECTEURS PROFESSIONNELS ===
+  {
+    key: "sector-btp",
+    category: "pages",
+    label: "Secteur BTP / Entreprises générales",
+    description: "Photo pour la card 'Entreprises générales' (page Professionnels)",
+    fallbackUrl: "https://images.unsplash.com/photo-1504307651254-35680f356dfd?w=600&q=80",
+  },
+  {
+    key: "sector-architecte",
+    category: "pages",
+    label: "Secteur Architectes & Bureaux d'études",
+    description: "Photo pour la card 'Architectes' (page Professionnels)",
+    fallbackUrl: "https://images.unsplash.com/photo-1503387762-592deb58ef4e?w=600&q=80",
+  },
+  {
+    key: "sector-artisan",
+    category: "pages",
+    label: "Secteur Artisans du bâtiment",
+    description: "Photo pour la card 'Artisans' (page Professionnels)",
+    fallbackUrl: "https://images.unsplash.com/photo-1581092162384-8987c1d64718?w=600&q=80",
+  },
+  {
+    key: "sector-industrie",
+    category: "pages",
+    label: "Secteur Industriels",
+    description: "Photo pour la card 'Industriels' (page Professionnels)",
+    fallbackUrl: "https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?w=600&q=80",
+  },
+
   // === THERMOLAQUAGE ===
   {
     key: "thermolaquage-process",

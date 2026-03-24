@@ -177,6 +177,13 @@ export default function ProductsPage() {
             Familles
           </Link>
           <Link
+            href="/admin/produits/images"
+            className="inline-flex items-center gap-2 px-4 py-2 bg-indigo-50 border border-indigo-200 rounded-lg text-sm font-medium text-indigo-700 hover:bg-indigo-100 transition-colors"
+          >
+            <Filter className="w-4 h-4" />
+            Images familles
+          </Link>
+          <Link
             href="/admin/produits/options"
             className="inline-flex items-center gap-2 px-4 py-2 bg-white border border-gray-200 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50 transition-colors"
           >

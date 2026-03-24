@@ -85,6 +85,12 @@ const FALLBACK_IMAGES: Record<string, string> = {
   "realisation-b2b-1": "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=600&q=80",
   "realisation-b2b-2": "https://images.unsplash.com/photo-1555041469-a586c61ea9bc?w=600&q=80",
   "realisation-b2b-3": "https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=600&q=80",
+
+  // Secteurs professionnels
+  "sector-btp": "https://images.unsplash.com/photo-1504307651254-35680f356dfd?w=600&q=80",
+  "sector-architecte": "https://images.unsplash.com/photo-1503387762-592deb58ef4e?w=600&q=80",
+  "sector-artisan": "https://images.unsplash.com/photo-1581092162384-8987c1d64718?w=600&q=80",
+  "sector-industrie": "https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?w=600&q=80",
 };
 
 interface FetchResult {

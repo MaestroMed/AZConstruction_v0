@@ -77,7 +77,11 @@ const PAGE_TABS = [
     label: "Professionnels",
     icon: Building2,
     description: "Page Professionnels",
-    keys: ["hero-professionnels", "realisation-b2b-1", "realisation-b2b-2", "realisation-b2b-3"],
+    keys: [
+      "hero-professionnels",
+      "realisation-b2b-1", "realisation-b2b-2", "realisation-b2b-3",
+      "sector-btp", "sector-architecte", "sector-artisan", "sector-industrie",
+    ],
   },
   {
     id: "thermolaquage",
