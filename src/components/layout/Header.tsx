@@ -5,7 +5,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { motion, AnimatePresence, useScroll, useTransform } from "framer-motion";
-import { Menu, X, User, ChevronDown, Fence, DoorClosed, Square, Grid2X2, ArrowRight, Layers, Move3D, Sparkles } from "lucide-react";
+import { Menu, X, User, ChevronDown, Fence, DoorClosed, Square, Grid2X2, ArrowRight, Layers, Move3D, Sparkles, Palette, FlaskConical, Droplets, Gem } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/Button";
 
@@ -22,11 +22,11 @@ const productCategories = [
 
 const navItems = [
   { label: "Accueil", href: "/" },
-  { label: "Produits", href: "/produits", hasDropdown: true },
+  { label: "Produits", href: "/produits", hasDropdown: true, dropdownType: "produits" },
   { label: "Réalisations", href: "/realisations" },
   { label: "Particuliers", href: "/particuliers" },
   { label: "Professionnels", href: "/professionnels" },
-  { label: "Thermolaquage", href: "/services/thermolaquage" },
+  { label: "Thermolaquage", href: "/services/thermolaquage", hasDropdown: true, dropdownType: "thermolaquage" },
   { label: "À propos", href: "/a-propos" },
   { label: "Contact", href: "/contact" },
 ];
@@ -121,6 +121,106 @@ function ProductsDropdown({ item, isScrolled }: { item: { label: string; href: s
                   Voir tous les produits
                   <ArrowRight className="w-4 h-4" />
                 </Link>
+              </div>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </div>
+  );
+}
+
+// Composant Dropdown Thermolaquage
+function ThermolaquageDropdown({ item, isScrolled }: { item: { label: string; href: string }; isScrolled: boolean }) {
+  const [isOpen, setIsOpen] = React.useState(false);
+  const timeoutRef = React.useRef<NodeJS.Timeout | null>(null);
+
+  const handleMouseEnter = () => {
+    if (timeoutRef.current) clearTimeout(timeoutRef.current);
+    setIsOpen(true);
+  };
+  const handleMouseLeave = () => {
+    timeoutRef.current = setTimeout(() => setIsOpen(false), 150);
+  };
+
+  const thermolaquageLinks = [
+    { label: "Thermolaquage", href: "/services/thermolaquage", icon: FlaskConical, description: "Service & présentation" },
+    { label: "Nuancier RAL Classique", href: "/couleurs-ral", icon: Palette, description: "200+ couleurs RAL standard" },
+  ];
+
+  const collections = [
+    { label: "Patina Collection", href: "/couleurs-ral/patina", icon: Droplets, description: "Effets oxyde & corten", color: "#A0522D" },
+    { label: "Polaris Collection", href: "/couleurs-ral/polaris", icon: Gem, description: "Design industriel", color: "#4A6FA5" },
+    { label: "Dichroic Collection", href: "/couleurs-ral/dichroic", icon: Sparkles, description: "Reflets dichroïques", color: "#7B2FBE" },
+    { label: "Sfera Collection", href: "/couleurs-ral/sfera", icon: Gem, description: "Effets anodisés", color: "#B87333" },
+  ];
+
+  return (
+    <div className="relative" onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave}>
+      <Link
+        href={item.href}
+        className={cn(
+          "relative px-4 py-2 transition-all duration-300 flex items-center gap-1 group text-sm font-medium",
+          isScrolled ? "text-white/90 hover:text-white" : "text-white/80 hover:text-white"
+        )}
+      >
+        {item.label}
+        <ChevronDown className={cn("w-3.5 h-3.5 opacity-60 transition-transform duration-200", isOpen && "rotate-180")} />
+        <span className="absolute bottom-0 left-4 right-4 h-px bg-white/40 scale-x-0 group-hover:scale-x-100 transition-transform origin-left" />
+      </Link>
+
+      <AnimatePresence>
+        {isOpen && (
+          <motion.div
+            initial={{ opacity: 0, y: 10, scale: 0.95 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, y: 10, scale: 0.95 }}
+            transition={{ duration: 0.2, ease: [0.4, 0, 0.2, 1] }}
+            className="absolute top-full left-0 mt-3 w-72 bg-navy-dark border border-white/10 rounded-2xl shadow-2xl shadow-black/40 overflow-hidden z-50"
+          >
+            <div className="p-2">
+              {/* Main links */}
+              {thermolaquageLinks.map((link) => (
+                <Link
+                  key={link.href}
+                  href={link.href}
+                  onClick={() => setIsOpen(false)}
+                  className="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-white/5 transition-all group"
+                >
+                  <div className="w-8 h-8 rounded-lg bg-cyan-glow/10 flex items-center justify-center ring-1 ring-white/10 group-hover:ring-cyan-glow/30">
+                    <link.icon className="w-4 h-4 text-cyan-glow" />
+                  </div>
+                  <div className="flex-1">
+                    <div className="text-white text-sm font-medium group-hover:text-cyan-glow transition-colors">{link.label}</div>
+                    <div className="text-white/40 text-xs">{link.description}</div>
+                  </div>
+                </Link>
+              ))}
+
+              {/* Collections separator */}
+              <div className="mx-3 my-2 pt-2 border-t border-white/10">
+                <div className="text-white/30 text-[10px] font-semibold uppercase tracking-widest mb-2 flex items-center gap-1.5">
+                  <Sparkles className="w-2.5 h-2.5 text-cyan-glow" />
+                  Collections spéciales
+                </div>
+                {collections.map((col) => (
+                  <Link
+                    key={col.href}
+                    href={col.href}
+                    onClick={() => setIsOpen(false)}
+                    className="flex items-center gap-3 px-1 py-2 rounded-xl hover:bg-white/5 transition-all group"
+                  >
+                    <div
+                      className="w-5 h-5 rounded-md flex-shrink-0 ring-1 ring-white/20"
+                      style={{ background: col.color }}
+                    />
+                    <div className="flex-1">
+                      <div className="text-white/80 text-xs font-medium group-hover:text-white transition-colors">{col.label}</div>
+                      <div className="text-white/30 text-[10px]">{col.description}</div>
+                    </div>
+                    <ArrowRight className="w-3 h-3 text-white/20 group-hover:text-cyan-glow/60 transition-colors" />
+                  </Link>
+                ))}
               </div>
             </div>
           </motion.div>
@@ -345,7 +445,11 @@ export default function Header() {
           <div className="hidden lg:flex items-center gap-1">
             {navItems.map((item) => (
               "hasDropdown" in item && item.hasDropdown ? (
-                <ProductsDropdown key={item.href} item={item} isScrolled={isScrolled} />
+                item.dropdownType === "thermolaquage" ? (
+                  <ThermolaquageDropdown key={item.href} item={item} isScrolled={isScrolled} />
+                ) : (
+                  <ProductsDropdown key={item.href} item={item} isScrolled={isScrolled} />
+                )
               ) : (
                 <Link
                   key={item.href}
@@ -456,6 +560,27 @@ export default function Header() {
                       >
                         {item.label}
                       </Link>
+                      {/* Thermolaquage sub-links on mobile */}
+                      {"dropdownType" in item && item.dropdownType === "thermolaquage" && (
+                        <div className="ml-4 border-l border-white/10 pl-3 mt-1 mb-2 space-y-0.5">
+                          {[
+                            { label: "Nuancier RAL Classique", href: "/couleurs-ral" },
+                            { label: "Patina Collection", href: "/couleurs-ral/patina" },
+                            { label: "Polaris Collection", href: "/couleurs-ral/polaris" },
+                            { label: "Dichroic Collection", href: "/couleurs-ral/dichroic" },
+                            { label: "Sfera Collection", href: "/couleurs-ral/sfera" },
+                          ].map((sub) => (
+                            <Link
+                              key={sub.href}
+                              href={sub.href}
+                              onClick={() => setIsMobileMenuOpen(false)}
+                              className="px-3 py-2 rounded-lg text-white/50 hover:text-cyan-glow text-sm block transition-colors"
+                            >
+                              {sub.label}
+                            </Link>
+                          ))}
+                        </div>
+                      )}
                     </motion.div>
                   ))}
                 </div>

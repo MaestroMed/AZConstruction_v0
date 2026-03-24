@@ -467,6 +467,126 @@ export default function ThermolaquageSection() {
           </motion.div>
         </div>
       </div>
+
+      {/* ── Gammes carousel ── */}
+      <GammesCarousel />
     </section>
+  );
+}
+
+// ── Gammes carousel ────────────────────────────────────────────────────────
+const gammes = [
+  {
+    id: "ral",
+    slug: "/couleurs-ral",
+    nom: "RAL Classique",
+    subtitle: "200+ teintes standard",
+    description: "Toute la palette RAL Classic disponible en thermolaquage poudre époxy.",
+    swatches: ["#383E42", "#0A0A0A", "#F7F7F7", "#D7D7D7", "#007CB0", "#0E4243"],
+    bg: "from-slate-900 via-slate-800 to-gray-900",
+    accent: "#00d4ff",
+  },
+  {
+    id: "patina",
+    slug: "/couleurs-ral/patina",
+    nom: "Patina Collection",
+    subtitle: "Oxide & Corten Effects",
+    description: "Effets oxyde et corten — patines naturelles pour un rendu authentique.",
+    swatches: ["#A0522D", "#8B6042", "#4A8B7A", "#C4A882", "#7A6E5C", "#5C4030"],
+    bg: "from-amber-950 via-orange-900 to-stone-900",
+    accent: "#D4823A",
+  },
+  {
+    id: "polaris",
+    slug: "/couleurs-ral/polaris",
+    nom: "Polaris Collection",
+    subtitle: "For Industrial Design",
+    description: "Finitions métalliques et structurées pour projets industriels exigeants.",
+    swatches: ["#5A6E82", "#B8B8B0", "#4A7280", "#808890", "#C0C0B8", "#686868"],
+    bg: "from-slate-900 via-blue-950 to-slate-800",
+    accent: "#6B9AC4",
+  },
+  {
+    id: "dichroic",
+    slug: "/couleurs-ral/dichroic",
+    nom: "Dichroic Collection",
+    subtitle: "Effets dichroïques",
+    description: "Reflets changeants selon la lumière — un effet irisé unique.",
+    swatches: ["#5050A0", "#808040", "#A04020", "#6080A0", "#607040", "#8040A0"],
+    bg: "from-violet-950 via-purple-900 to-indigo-950",
+    accent: "#A855F7",
+  },
+  {
+    id: "sfera",
+    slug: "/couleurs-ral/sfera",
+    nom: "Sfera Collection",
+    subtitle: "Effets anodisés",
+    description: "Cuivre, bronze, aluminium anodisé — finitions cosmos double couche.",
+    swatches: ["#B87333", "#D4A520", "#2A5A8A", "#2E8B57", "#8B6914", "#C0C0C8"],
+    bg: "from-amber-900 via-yellow-900 to-stone-900",
+    accent: "#E8A84A",
+  },
+];
+
+function GammesCarousel() {
+  const [idx, setIdx] = React.useState(0);
+
+  return (
+    <div className="mt-16 relative">
+      <div className="text-center mb-8">
+        <span className="inline-block text-cyan-glow font-semibold text-xs tracking-widest uppercase mb-3">
+          Nos gammes de finitions
+        </span>
+        <h3 className="text-2xl font-bold text-white">
+          Du RAL classique aux effets spéciaux
+        </h3>
+      </div>
+
+      {/* Horizontal scroll */}
+      <div className="flex gap-4 overflow-x-auto pb-4 snap-x snap-mandatory scrollbar-hide -mx-6 px-6">
+        {gammes.map((gamme, i) => (
+          <Link key={gamme.id} href={gamme.slug} className="flex-shrink-0 snap-start">
+            <motion.div
+              whileHover={{ y: -4 }}
+              className={`w-64 rounded-2xl overflow-hidden bg-gradient-to-br ${gamme.bg} border border-white/10 group cursor-pointer`}
+            >
+              {/* Color swatches strip */}
+              <div className="flex gap-1 p-3 pb-0">
+                {gamme.swatches.map((hex, si) => (
+                  <div
+                    key={si}
+                    className="w-8 h-8 rounded-lg ring-1 ring-white/10 flex-shrink-0"
+                    style={{ backgroundColor: hex }}
+                  />
+                ))}
+              </div>
+              <div className="p-4 pt-3">
+                <p className="text-white font-bold text-base mb-0.5 group-hover:text-cyan-glow transition-colors">
+                  {gamme.nom}
+                </p>
+                <p className="text-white/40 text-xs mb-2">{gamme.subtitle}</p>
+                <p className="text-white/50 text-xs leading-relaxed line-clamp-2">
+                  {gamme.description}
+                </p>
+                <div className="mt-3 flex items-center gap-1 text-xs font-medium" style={{ color: gamme.accent }}>
+                  Découvrir
+                  <ArrowRight className="w-3 h-3 group-hover:translate-x-1 transition-transform" />
+                </div>
+              </div>
+            </motion.div>
+          </Link>
+        ))}
+      </div>
+
+      {/* Dot nav */}
+      <div className="flex justify-center gap-2 mt-4">
+        {gammes.map((_, i) => (
+          <div
+            key={i}
+            className={`rounded-full transition-all ${i === 0 ? "w-6 h-1.5 bg-cyan-glow" : "w-1.5 h-1.5 bg-white/20"}`}
+          />
+        ))}
+      </div>
+    </div>
   );
 }

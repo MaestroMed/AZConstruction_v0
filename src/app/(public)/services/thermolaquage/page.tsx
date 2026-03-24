@@ -276,6 +276,13 @@ export default function ThermolaquagePage() {
   const { getImage } = useSiteImages();
   const heroImage = getImage("hero-thermolaquage");
 
+  // RAL color cycle for "Poudre Epoxy" title animation
+  const [ralTitleIdx, setRalTitleIdx] = React.useState(0);
+  React.useEffect(() => {
+    const t = setInterval(() => setRalTitleIdx((i) => (i + 1) % popularColors.length), 1800);
+    return () => clearInterval(t);
+  }, []);
+
   // Charger les vignettes "ce que demandent nos clients" depuis l'API
   React.useEffect(() => {
     fetch("/api/thermolaquage-demands")
@@ -339,8 +346,8 @@ export default function ThermolaquagePage() {
           HERO SECTION - Full Impact
           ============================================ */}
       <section className="relative min-h-screen flex items-center overflow-hidden">
-        {/* Mesh Gradient Background */}
-        <MeshGradient variant="animated" className="absolute inset-0" />
+        {/* Mesh Gradient Background — reduced opacity to let image show */}
+        <MeshGradient variant="animated" className="absolute inset-0 opacity-20" />
         
         {/* Gradient Orbs for depth */}
         <GradientOrb
@@ -348,7 +355,7 @@ export default function ThermolaquagePage() {
           size="xl"
           position={{ top: "10%", right: "-10%" }}
           blur="xl"
-          opacity={0.2}
+          opacity={0.07}
           animate
         />
         <GradientOrb
@@ -356,11 +363,11 @@ export default function ThermolaquagePage() {
           size="lg"
           position={{ bottom: "20%", left: "-5%" }}
           blur="lg"
-          opacity={0.15}
+          opacity={0.06}
         />
         
         {/* Particles */}
-        <ParticleBackground count={15} />
+        <ParticleBackground count={10} />
         
         {/* Background Image with Parallax */}
         <motion.div
@@ -372,9 +379,11 @@ export default function ThermolaquagePage() {
             alt="Thermolaquage Professionnel - AZ Construction"
             fill
             priority
-            className="object-cover object-center opacity-20"
+            className="object-cover object-center opacity-55"
             quality={85}
           />
+          {/* Overlay for text readability */}
+          <div className="absolute inset-0 bg-gradient-to-r from-navy-dark/80 via-navy-dark/55 to-navy-dark/30" />
         </motion.div>
 
         {/* Content */}
@@ -401,12 +410,24 @@ export default function ThermolaquagePage() {
               className="text-5xl md:text-6xl lg:text-7xl font-bold text-white mb-6 leading-[1.1]"
             >
               Thermolaquage{" "}
-              <span className="text-gradient-premium">
+              <span
+                style={{
+                  color: popularColors[ralTitleIdx].hex,
+                  transition: "color 0.7s ease",
+                  textShadow: `0 0 40px ${popularColors[ralTitleIdx].hex}60`,
+                }}
+              >
                 Poudre Epoxy
               </span>
             </motion.h1>
-
-            {/* Subheadline */}
+            {/* RAL label */}
+            <motion.p
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              className="text-white/25 text-xs tracking-widest uppercase mb-2 -mt-4"
+            >
+              RAL {popularColors[ralTitleIdx].code} — {popularColors[ralTitleIdx].label}
+            </motion.p>
             <motion.p
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
