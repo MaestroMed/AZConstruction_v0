@@ -69,7 +69,7 @@ const faqCategories = [
       {
         question: "Combien coûte le thermolaquage ?",
         answer:
-          "Le prix du thermolaquage varie selon la taille des pièces, leur complexité et la couleur choisie. Comptez en moyenne 15 à 40€/m² pour des pièces standards. Les couleurs métallisées ou texturées peuvent entraîner un supplément. Contactez-nous pour un devis gratuit personnalisé.",
+          "Le prix du thermolaquage varie selon la taille des pièces, leur complexité et la couleur choisie. Les couleurs métallisées ou texturées peuvent entraîner un supplément. Contactez-nous pour un devis gratuit personnalisé.",
       },
       {
         question: "Quelle est la durée de vie du thermolaquage ?",

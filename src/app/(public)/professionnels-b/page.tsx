@@ -39,7 +39,7 @@ interface B2BCard { title: string; client: string; location: string; imageKey: s
 /* ─── Data ─── */
 const advantages = [
   { icon: Clock, title: "Délai 24/48h", description: "Commandes traitées en priorité. Délais de fabrication optimisés pour les professionnels du bâtiment.", stat: "48h" },
-  { icon: FileText, title: "Devis rapide", description: "Plans techniques, descriptifs matériaux et délais inclus. Gratuitement, sous 48h.", stat: "0€" },
+  { icon: FileText, title: "Devis rapide", description: "Plans techniques, descriptifs matériaux et délais inclus. Gratuitement, sous 48h.", stat: "48h" },
   { icon: HeadphonesIcon, title: "Interlocuteur dédié", description: "Un chargé de compte unique, du devis à la livraison. Pas de standard, pas d'attente.", stat: "1:1" },
   { icon: Truck, title: "Livraison chantier", description: "Directement sur vos chantiers IDF et régions limitrophes, selon vos planning.", stat: "IDF" },
 ];

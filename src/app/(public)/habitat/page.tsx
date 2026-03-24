@@ -162,7 +162,7 @@ const faqs = [
   {
     question: "Proposez-vous des facilités de paiement ?",
     answer:
-      "Oui, nous proposons un paiement en 3 fois sans frais pour les commandes supérieures à 1 500€. D'autres solutions sont disponibles sur demande.",
+      "Oui, nous proposons des facilités de paiement pour vos projets. Contactez-nous pour connaître les solutions disponibles.",
   },
 ];
 
@@ -281,10 +281,10 @@ export default function HabitatPage() {
                       />
                       {/* Overlay gradient */}
                       <div className="absolute inset-0 bg-gradient-to-t from-navy-dark/60 to-transparent" />
-                      {/* Price badge */}
+                      {/* Sur devis badge */}
                       <div className="absolute bottom-4 left-4 right-4 flex justify-between items-end">
                         <span className="px-4 py-2 bg-cyan-glow text-navy-dark text-sm font-bold rounded-full shadow-lg">
-                          {service.price}
+                          Sur devis
                         </span>
                       </div>
                     </div>

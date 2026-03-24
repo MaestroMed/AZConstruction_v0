@@ -102,7 +102,7 @@ const faqs = [
   },
   {
     question: "Proposez-vous des facilités de paiement ?",
-    answer: "Oui, paiement en 3 fois sans frais pour les commandes supérieures à 1 500€.",
+    answer: "Oui, nous proposons des facilités de paiement pour vos projets. Contactez-nous pour connaître les solutions disponibles.",
   },
 ];
 
@@ -197,10 +197,10 @@ export default function ParticuliersBPage() {
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-white/10 to-transparent" />
               </div>
-              {/* Badge prix flottant */}
+              {/* Badge devis flottant */}
               <div className="absolute bottom-8 -left-12 bg-white border border-gray-100 shadow-2xl p-6">
-                <div className="text-3xl font-bold text-gray-900">290€</div>
-                <div className="text-sm text-gray-500">/ml à partir de</div>
+                <div className="text-xl font-bold text-gray-900">Sur devis</div>
+                <div className="text-sm text-gray-500">Devis gratuit en 48h</div>
               </div>
             </motion.div>
           </div>
@@ -289,8 +289,8 @@ export default function ParticuliersBPage() {
                       <p className="text-white/70 text-sm max-w-xs line-clamp-2">{service.description}</p>
                     </div>
                     <div className="flex-shrink-0 text-right">
-                      <div className="text-white/60 text-xs mb-1">à partir de</div>
-                      <div className="text-xl font-bold text-white">{service.price.replace("À partir de ", "")}</div>
+                      <div className="text-white/60 text-xs mb-1">Fabrication sur mesure</div>
+                      <div className="text-xl font-bold text-white">Sur devis</div>
                     </div>
                   </div>
 

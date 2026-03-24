@@ -22,6 +22,7 @@ export interface ProductVariant {
   description: string;
   features: string[];
   startingPrice: string;
+  imageUrl?: string;
 }
 
 export interface ProductFamily {

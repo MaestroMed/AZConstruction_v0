@@ -180,7 +180,7 @@ const faqItems = [
   {
     question: "Combien coûte le thermolaquage au m² ?",
     answer:
-      "Le prix du thermolaquage varie selon la complexité des pièces, la quantité et la couleur choisie. Comptez en moyenne 20 à 60€/m² selon les pièces. Pour un devis précis adapté à votre projet, contactez-nous gratuitement. Nous vous répondons sous 24h.",
+      "Le prix du thermolaquage varie selon la complexité des pièces, la quantité et la couleur choisie. Pour un devis précis adapté à votre projet, contactez-nous gratuitement. Nous vous répondons sous 24h.",
   },
   {
     question: "Quelle est la résistance du thermolaquage ?",
@@ -491,40 +491,52 @@ export default function ThermolaquagePage() {
           </motion.div>
 
           {/* Masonry Grid */}
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 auto-rows-[200px]">
-            {demandsItems.map((item, index) => (
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 auto-rows-[200px]" style={{ gridAutoFlow: "dense" }}>
+            {demandsItems.map((item, index) => {
+              const Wrapper = item.href ? Link : "div";
+              const wrapperProps = item.href ? { href: item.href } : {};
+              return (
               <motion.div
                 key={item.id}
                 initial={{ opacity: 0, scale: 0.9 }}
                 whileInView={{ opacity: 1, scale: 1 }}
                 viewport={{ once: true }}
                 transition={{ delay: index * 0.05 }}
-                className={`relative group overflow-hidden rounded-2xl cursor-pointer ${
+                className={`relative group overflow-hidden rounded-2xl ${item.href ? "cursor-pointer" : ""} ${
                   item.size === "large" ? "col-span-2 row-span-2" :
                   item.size === "wide" ? "col-span-2" :
                   item.size === "tall" ? "row-span-2" : ""
                 }`}
               >
-                <Image
-                  src={item.imageUrl}
-                  alt={item.label}
-                  fill
-                  className="object-cover transition-transform duration-500 group-hover:scale-110"
-                />
-                {/* Overlay */}
-                <div className="absolute inset-0 bg-gradient-to-t from-navy-dark/90 via-navy-dark/30 to-transparent opacity-60 group-hover:opacity-90 transition-opacity" />
-                
-                {/* Content */}
-                <div className="absolute inset-0 p-6 flex flex-col justify-end">
-                  <h3 className="text-white font-bold text-lg md:text-xl mb-1 transform translate-y-4 group-hover:translate-y-0 transition-transform">
-                    {item.label}
-                  </h3>
-                </div>
+                {/* @ts-ignore */}
+                <Wrapper {...wrapperProps} className="block w-full h-full">
+                  <Image
+                    src={item.imageUrl}
+                    alt={item.label}
+                    fill
+                    className="object-cover transition-transform duration-500 group-hover:scale-110"
+                  />
+                  {/* Overlay */}
+                  <div className="absolute inset-0 bg-gradient-to-t from-navy-dark/90 via-navy-dark/30 to-transparent opacity-60 group-hover:opacity-90 transition-opacity" />
 
-                {/* Hover border glow */}
-                <div className="absolute inset-0 rounded-2xl ring-2 ring-transparent group-hover:ring-cyan-glow/50 transition-all" />
+                  {/* Content */}
+                  <div className="absolute inset-0 p-6 flex flex-col justify-end">
+                    <h3 className="text-white font-bold text-lg md:text-xl mb-1 transform translate-y-4 group-hover:translate-y-0 transition-transform">
+                      {item.label}
+                    </h3>
+                    {item.href && (
+                      <span className="text-cyan-glow text-xs font-medium opacity-0 group-hover:opacity-100 transition-opacity flex items-center gap-1">
+                        Voir plus →
+                      </span>
+                    )}
+                  </div>
+
+                  {/* Hover border glow */}
+                  <div className="absolute inset-0 rounded-2xl ring-2 ring-transparent group-hover:ring-cyan-glow/50 transition-all" />
+                </Wrapper>
               </motion.div>
-            ))}
+            );
+            })}
           </div>
         </div>
       </section>

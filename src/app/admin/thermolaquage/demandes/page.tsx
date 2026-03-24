@@ -95,7 +95,39 @@ function ItemRow({ item, onSave, onDelete, onToggle }: {
       </div>
 
       <div>
-        <label className="block text-xs font-semibold text-gray-600 mb-1">URL de l&apos;image *</label>
+        <label className="block text-xs font-semibold text-gray-600 mb-1">Image *</label>
+        {/* Upload button */}
+        <div className="flex gap-2 mb-2">
+          <button
+            type="button"
+            onClick={() => {
+              const input = document.createElement("input");
+              input.type = "file";
+              input.accept = "image/*";
+              input.onchange = async (e) => {
+                const file = (e.target as HTMLInputElement).files?.[0];
+                if (!file) return;
+                const fd = new FormData();
+                fd.append("file", file);
+                try {
+                  const res = await fetch("/api/upload", { method: "POST", body: fd });
+                  if (!res.ok) throw new Error("Upload échoué");
+                  const data = await res.json();
+                  const url = data.url || data.imageUrl;
+                  if (url) setForm({ ...form, imageUrl: url });
+                } catch (err) {
+                  toast.error(err instanceof Error ? err.message : "Erreur upload");
+                }
+              };
+              input.click();
+            }}
+            className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-cyan-500 text-white rounded-lg text-xs font-semibold hover:bg-cyan-600 transition-colors"
+          >
+            <Save className="w-3.5 h-3.5" />
+            Choisir une image
+          </button>
+          <span className="text-gray-400 text-xs flex items-center">ou</span>
+        </div>
         <input type="url" value={form.imageUrl} onChange={e => setForm({ ...form, imageUrl: e.target.value })}
           className="w-full px-3 py-2 border border-gray-200 rounded-xl text-sm focus:ring-2 focus:ring-blue-300 outline-none"
           placeholder="https://images.unsplash.com/..." />

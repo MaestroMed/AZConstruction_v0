@@ -15,6 +15,8 @@ import {
   Clock,
   Truck,
   ChevronDown,
+  ChevronLeft,
+  ChevronRight,
   Sparkles,
   Eye,
   Layers,
@@ -32,7 +34,6 @@ const services = [
     description:
       "Protégez vos terrasses, balcons et escaliers avec des garde-corps alliant sécurité maximale et design contemporain. Profilés Jansen pour une finition architecturale irréprochable.",
     features: ["Verre feuilleté", "Câbles acier", "Barreaux design", "Sur mesure"],
-    price: "À partir de 290€/ml",
     imageKey: "product-garde-corps",
     configLink: "garde-corps",
     accent: "from-cyan-glow to-blue-400",
@@ -43,7 +44,6 @@ const services = [
     description:
       "Des escaliers droits aux hélicoïdaux, nous réalisons l'escalier de vos rêves. Chaque marche, chaque limon est fabriqué dans notre atelier de Bruyères-sur-Oise.",
     features: ["Droits", "Quart-tournant", "Hélicoïdaux", "Extérieurs"],
-    price: "À partir de 4 500€",
     imageKey: "product-escaliers",
     configLink: "escaliers",
     accent: "from-blue-400 to-blue-corporate",
@@ -54,7 +54,6 @@ const services = [
     description:
       "Portes d'entrée et fenêtres en profilés acier Jansen. Design élégant, performances thermiques de haut niveau, durabilité exceptionnelle sur le long terme.",
     features: ["Portes design", "Fenêtres atelier", "Oscillo-battantes", "Coupe-feu"],
-    price: "À partir de 890€",
     imageKey: "product-portes",
     configLink: "portes",
     accent: "from-blue-corporate to-navy-medium",
@@ -65,7 +64,6 @@ const services = [
     description:
       "Grilles de ventilation techniques et décoratives pour bâtiments résidentiels. Solutions sur mesure esthétiques incluant les grilles caillebotis pour intégrations architecturales.",
     features: ["Décoratives", "Techniques", "Caillebotis", "Sur mesure"],
-    price: "À partir de 180€",
     imageKey: "product-grilles",
     configLink: "grilles-ventilation",
     accent: "from-navy-medium to-cyan-glow",
@@ -76,7 +74,6 @@ const services = [
     description:
       "Pliage de tôles et profilés acier réalisé dans notre atelier de Bruyères-sur-Oise. Pièces unitaires ou petites séries, tolérances précises, finition thermolaquage disponible.",
     features: ["Tôle acier & alu", "Pliage CNC", "Finition thermolaquage", "Petites séries"],
-    price: "Sur devis",
     imageKey: "page-atelier",
     configLink: null,
     href: "/contact",
@@ -148,7 +145,7 @@ const faqs = [
   {
     question: "Proposez-vous des facilités de paiement ?",
     answer:
-      "Oui, nous proposons un paiement en 3 fois sans frais pour les commandes supérieures à 1 500€. D'autres solutions sont disponibles sur demande.",
+      "Oui, nous proposons des facilités de paiement pour vos projets. Contactez-nous pour connaître les solutions disponibles.",
   },
 ];
 
@@ -233,6 +230,19 @@ function ProcessStep({ item, index, total }: { item: typeof processSteps[0]; ind
 
 export default function ParticuliersPage() {
   const { getImage } = useSiteImages();
+
+  // Familles de produits pour le carrousel
+  const [families, setFamilies] = React.useState<{ id: string; nom: string; slug: string; imageUrl?: string }[]>([]);
+  const [carouselIdx, setCarouselIdx] = React.useState(0);
+
+  React.useEffect(() => {
+    fetch("/api/product-families")
+      .then((r) => r.json())
+      .then((data) => {
+        if (data.success && data.families?.length) setFamilies(data.families);
+      })
+      .catch(() => {});
+  }, []);
 
   return (
     <div className="min-h-screen bg-navy-dark">
@@ -349,6 +359,127 @@ export default function ParticuliersPage() {
       </section>
 
       {/* ═══════════════════════════════════════════════════════
+          CARROUSEL FAMILLES DE PRODUITS
+      ═══════════════════════════════════════════════════════ */}
+      {families.length > 0 && (
+        <section className="py-20 bg-white relative overflow-hidden">
+          <div className="container mx-auto px-6">
+            <motion.div
+              className="text-center mb-12"
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+            >
+              <span className="inline-block text-cyan-700 font-semibold text-sm tracking-wider uppercase mb-4">
+                Nos produits
+              </span>
+              <h2 className="text-3xl md:text-4xl font-bold text-navy-dark mb-4">
+                Toute la métallerie{" "}
+                <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-corporate to-cyan-600">
+                  sur mesure
+                </span>
+              </h2>
+              <p className="text-gray-600 max-w-xl mx-auto">
+                De la conception à la pose, nous fabriquons chaque pièce dans notre atelier en Île-de-France.
+              </p>
+            </motion.div>
+
+            {/* Carousel */}
+            <div className="relative">
+              {/* Cards container */}
+              <div className="overflow-hidden">
+                <motion.div
+                  className="flex gap-6"
+                  animate={{ x: `-${carouselIdx * (100 / Math.min(families.length, 3))}%` }}
+                  transition={{ type: "spring", stiffness: 300, damping: 30 }}
+                >
+                  {families.map((family) => (
+                    <Link
+                      key={family.id}
+                      href={`/produits/${family.slug}`}
+                      className="flex-shrink-0 w-full md:w-[calc(50%-12px)] lg:w-[calc(33.333%-16px)] group"
+                    >
+                      <motion.div
+                        whileHover={{ y: -4 }}
+                        className="relative overflow-hidden rounded-2xl shadow-md hover:shadow-xl transition-shadow duration-300"
+                      >
+                        {/* Image */}
+                        <div className="relative h-64 bg-gradient-to-br from-navy-dark to-blue-corporate">
+                          {family.imageUrl ? (
+                            <Image
+                              src={family.imageUrl}
+                              alt={family.nom}
+                              fill
+                              className="object-cover group-hover:scale-105 transition-transform duration-500"
+                            />
+                          ) : (
+                            <div className="absolute inset-0 flex items-center justify-center">
+                              <span className="text-6xl font-bold text-white/10">{family.nom.charAt(0)}</span>
+                            </div>
+                          )}
+                          <div className="absolute inset-0 bg-gradient-to-t from-navy-dark/80 via-navy-dark/20 to-transparent" />
+                        </div>
+                        {/* Content overlay */}
+                        <div className="absolute bottom-0 left-0 right-0 p-5">
+                          <h3 className="text-white font-bold text-lg mb-1">{family.nom}</h3>
+                          <span className="inline-flex items-center gap-1 text-cyan-glow text-xs font-medium">
+                            Découvrir <ArrowRight className="w-3 h-3" />
+                          </span>
+                        </div>
+                      </motion.div>
+                    </Link>
+                  ))}
+                </motion.div>
+              </div>
+
+              {/* Navigation arrows */}
+              {families.length > 3 && (
+                <>
+                  <button
+                    onClick={() => setCarouselIdx((i) => Math.max(0, i - 1))}
+                    disabled={carouselIdx === 0}
+                    className="absolute -left-5 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-white shadow-lg border border-gray-200 flex items-center justify-center text-gray-600 hover:text-cyan-600 disabled:opacity-30 transition-all z-10"
+                  >
+                    <ChevronLeft className="w-5 h-5" />
+                  </button>
+                  <button
+                    onClick={() => setCarouselIdx((i) => Math.min(families.length - 3, i + 1))}
+                    disabled={carouselIdx >= families.length - 3}
+                    className="absolute -right-5 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-white shadow-lg border border-gray-200 flex items-center justify-center text-gray-600 hover:text-cyan-600 disabled:opacity-30 transition-all z-10"
+                  >
+                    <ChevronRight className="w-5 h-5" />
+                  </button>
+                </>
+              )}
+
+              {/* Dots */}
+              {families.length > 1 && (
+                <div className="flex justify-center gap-2 mt-8">
+                  {Array.from({ length: Math.max(1, families.length - 2) }).map((_, i) => (
+                    <button
+                      key={i}
+                      onClick={() => setCarouselIdx(i)}
+                      className={`transition-all duration-300 rounded-full ${
+                        i === carouselIdx ? "w-8 h-2 bg-cyan-600" : "w-2 h-2 bg-gray-300 hover:bg-gray-400"
+                      }`}
+                    />
+                  ))}
+                </div>
+              )}
+            </div>
+
+            <div className="text-center mt-10">
+              <Link href="/produits">
+                <GlowButton icon={<ArrowRight className="w-4 h-4" />}>
+                  Voir tous nos produits
+                </GlowButton>
+              </Link>
+            </div>
+          </div>
+        </section>
+      )}
+
+      {/* ═══════════════════════════════════════════════════════
           SERVICES — Sections pleine largeur, fond blanc partout
       ═══════════════════════════════════════════════════════ */}
       {services.map((service, index) => (
@@ -366,10 +497,10 @@ export default function ParticuliersPage() {
                 className="object-cover"
               />
               <div className={`absolute inset-0 bg-gradient-to-${index % 2 === 1 ? "r" : "l"} from-transparent to-white/30`} />
-              {/* Price badge */}
+              {/* Sur devis badge */}
               <div className="absolute bottom-6 left-6">
                 <span className={`px-5 py-2.5 bg-gradient-to-r ${service.accent} text-white text-sm font-bold rounded-full shadow-xl`}>
-                  {service.price}
+                  Sur devis
                 </span>
               </div>
             </div>

@@ -227,7 +227,7 @@ export default function ProfessionnelsPage() {
         </div>
       </section>
 
-      {/* ═══ AVANTAGES — Fond gris clair, cartes blanches ═══ */}
+      {/* ═══ AVANTAGES — Bento grid avec compteurs animés ═══ */}
       <section className="py-24 bg-gray-50">
         <div className="container mx-auto px-6">
           <motion.div
@@ -248,24 +248,103 @@ export default function ProfessionnelsPage() {
             </p>
           </motion.div>
 
-          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {advantages.map((adv, i) => (
-              <motion.div
-                key={i}
-                className="bg-white rounded-2xl p-8 shadow-sm border border-gray-100 hover:shadow-md hover:-translate-y-1 transition-all duration-300 text-center"
-                initial={{ opacity: 0, y: 30 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: i * 0.1 }}
-              >
-                <div className={`text-3xl font-bold mb-4 ${adv.accent}`}>{adv.stat}</div>
-                <div className="w-12 h-12 rounded-xl bg-gray-50 border border-gray-100 flex items-center justify-center mx-auto mb-4">
-                  <adv.icon className={`w-6 h-6 ${adv.accent}`} />
+          {/* Bento grid */}
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-5">
+            {/* Grande carte — Délai */}
+            <motion.div
+              className="col-span-2 bg-white rounded-3xl p-8 shadow-sm border border-gray-100 hover:shadow-md transition-all duration-300 group relative overflow-hidden"
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ delay: 0 }}
+            >
+              <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-cyan-400 to-cyan-600 rounded-t-3xl" />
+              <div className="absolute -right-8 -bottom-8 text-[120px] font-bold text-cyan-50 leading-none select-none pointer-events-none">48h</div>
+              <div className="relative">
+                <div className="w-14 h-14 rounded-2xl bg-cyan-50 border border-cyan-100 flex items-center justify-center mb-5 group-hover:scale-110 group-hover:rotate-3 transition-transform duration-300">
+                  <Clock className="w-7 h-7 text-cyan-600" />
                 </div>
-                <h3 className="text-lg font-bold text-navy-dark mb-3">{adv.title}</h3>
-                <p className="text-gray-500 text-sm leading-relaxed">{adv.description}</p>
-              </motion.div>
-            ))}
+                <div className="text-4xl font-bold text-cyan-600 mb-2">24/48h</div>
+                <h3 className="text-xl font-bold text-navy-dark mb-3">Délai de traitement</h3>
+                <p className="text-gray-500 text-sm leading-relaxed">
+                  Commandes traitées en priorité avec délais de fabrication optimisés pour les professionnels du bâtiment.
+                </p>
+              </div>
+            </motion.div>
+
+            {/* Petite carte — Devis */}
+            <motion.div
+              className="bg-white rounded-3xl p-7 shadow-sm border border-gray-100 hover:shadow-md hover:-translate-y-1 transition-all duration-300 group relative overflow-hidden"
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ delay: 0.1 }}
+            >
+              <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-blue-400 to-blue-600 rounded-t-3xl" />
+              <div className="w-12 h-12 rounded-2xl bg-blue-50 border border-blue-100 flex items-center justify-center mb-4 group-hover:scale-110 group-hover:rotate-3 transition-transform duration-300">
+                <FileText className="w-6 h-6 text-blue-600" />
+              </div>
+              <div className="text-3xl font-bold text-blue-600 mb-1">Gratuit</div>
+              <h3 className="text-lg font-bold text-navy-dark mb-2">Devis rapide</h3>
+              <p className="text-gray-500 text-sm leading-relaxed">Plans techniques, descriptifs matériaux et délais inclus.</p>
+            </motion.div>
+
+            {/* Petite carte — Interlocuteur */}
+            <motion.div
+              className="bg-white rounded-3xl p-7 shadow-sm border border-gray-100 hover:shadow-md hover:-translate-y-1 transition-all duration-300 group relative overflow-hidden"
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ delay: 0.15 }}
+            >
+              <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-indigo-400 to-indigo-600 rounded-t-3xl" />
+              <div className="w-12 h-12 rounded-2xl bg-indigo-50 border border-indigo-100 flex items-center justify-center mb-4 group-hover:scale-110 group-hover:rotate-3 transition-transform duration-300">
+                <HeadphonesIcon className="w-6 h-6 text-indigo-600" />
+              </div>
+              <div className="text-3xl font-bold text-indigo-600 mb-1">1:1</div>
+              <h3 className="text-lg font-bold text-navy-dark mb-2">Interlocuteur dédié</h3>
+              <p className="text-gray-500 text-sm leading-relaxed">Un chargé de compte unique, du devis à la livraison.</p>
+            </motion.div>
+
+            {/* Petite carte — Livraison */}
+            <motion.div
+              className="bg-white rounded-3xl p-7 shadow-sm border border-gray-100 hover:shadow-md hover:-translate-y-1 transition-all duration-300 group relative overflow-hidden"
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ delay: 0.2 }}
+            >
+              <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-cyan-400 to-teal-500 rounded-t-3xl" />
+              <div className="w-12 h-12 rounded-2xl bg-teal-50 border border-teal-100 flex items-center justify-center mb-4 group-hover:scale-110 group-hover:rotate-3 transition-transform duration-300">
+                <Truck className="w-6 h-6 text-teal-600" />
+              </div>
+              <div className="text-3xl font-bold text-teal-600 mb-1">IDF+</div>
+              <h3 className="text-lg font-bold text-navy-dark mb-2">Livraison chantier</h3>
+              <p className="text-gray-500 text-sm leading-relaxed">Livraison en Île-de-France et régions limitrophes.</p>
+            </motion.div>
+
+            {/* Grande carte — Stats */}
+            <motion.div
+              className="col-span-2 lg:col-span-3 bg-gradient-to-br from-navy-dark to-blue-corporate rounded-3xl p-8 shadow-sm relative overflow-hidden"
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ delay: 0.25 }}
+            >
+              <div className="grid grid-cols-3 gap-6 relative z-10">
+                {[
+                  { value: "200+", label: "Partenaires actifs", color: "text-cyan-glow" },
+                  { value: "1 500+", label: "Projets réalisés", color: "text-white" },
+                  { value: "2018", label: "En activité depuis", color: "text-cyan-glow" },
+                ].map((stat, i) => (
+                  <div key={i} className="text-center">
+                    <div className={`text-2xl md:text-3xl font-bold ${stat.color} mb-1`}>{stat.value}</div>
+                    <div className="text-white/50 text-xs">{stat.label}</div>
+                  </div>
+                ))}
+              </div>
+              <div className="absolute -right-10 -bottom-10 w-48 h-48 rounded-full bg-cyan-glow/5 pointer-events-none" />
+            </motion.div>
           </div>
         </div>
       </section>
@@ -282,7 +361,7 @@ export default function ProfessionnelsPage() {
             Ils nous font confiance
           </motion.p>
           <motion.div
-            className="flex flex-wrap items-center justify-center gap-8 md:gap-12"
+            className="grid grid-cols-3 md:grid-cols-5 gap-6 items-center"
             initial={{ opacity: 0, y: 16 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
@@ -300,21 +379,23 @@ export default function ProfessionnelsPage() {
               { key: "partner-urbaine-travaux", name: "Urbaine de Travaux" },
             ].map(({ key, name }) => {
               const src = getImage(key);
-              const isPlaceholder = src.includes("via.placeholder.com");
+              const isReal = src && !src.includes("via.placeholder.com") && !src.includes("placeholder");
               return (
                 <div
                   key={key}
-                  className="flex items-center justify-center h-10 opacity-40 hover:opacity-80 transition-opacity duration-300"
+                  className="flex items-center justify-center h-12 opacity-60 hover:opacity-100 transition-opacity duration-300"
                   title={name}
                 >
-                  {isPlaceholder ? (
-                    <span className="text-white/60 text-sm font-semibold tracking-wide uppercase">{name}</span>
-                  ) : (
+                  {isReal ? (
                     <img
                       src={src}
                       alt={name}
-                      className="h-8 w-auto object-contain brightness-0 invert"
+                      className="h-8 w-auto max-w-[120px] object-contain"
                     />
+                  ) : (
+                    <span className="text-white/50 text-sm font-semibold tracking-wide uppercase border border-white/20 rounded-lg px-3 py-1.5 whitespace-nowrap">
+                      {name}
+                    </span>
                   )}
                 </div>
               );
@@ -323,7 +404,7 @@ export default function ProfessionnelsPage() {
         </div>
       </section>
 
-      {/* ═══ SECTEURS — Blanc, bordures légères ═══ */}
+      {/* ═══ SECTEURS — Cards image avec overlay ═══ */}
       <section className="py-20 bg-white">
         <div className="container mx-auto px-6">
           <motion.div
@@ -341,29 +422,84 @@ export default function ProfessionnelsPage() {
             </p>
           </motion.div>
 
-          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {sectors.map((sector, i) => (
-              <motion.div
-                key={i}
-                className="relative group border border-gray-200 rounded-2xl p-8 hover:border-cyan-300 hover:shadow-lg transition-all duration-300"
-                initial={{ opacity: 0, y: 30 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: i * 0.1 }}
-              >
-                <span className="absolute top-4 right-6 text-7xl font-bold text-gray-100 leading-none pointer-events-none select-none">
-                  {sector.step}
-                </span>
-                <div className="inline-block px-3 py-1 bg-cyan-50 rounded-full text-cyan-700 text-xs font-bold mb-5 tracking-widest border border-cyan-200">
-                  {sector.step}
-                </div>
-                <div className="w-12 h-12 rounded-xl bg-gray-50 border border-gray-100 flex items-center justify-center mb-5 group-hover:bg-cyan-50 group-hover:border-cyan-200 transition-colors">
-                  <sector.icon className="w-6 h-6 text-gray-400 group-hover:text-cyan-600 transition-colors" />
-                </div>
-                <h3 className="text-lg font-bold text-navy-dark mb-3">{sector.name}</h3>
-                <p className="text-gray-500 text-sm leading-relaxed">{sector.description}</p>
-              </motion.div>
-            ))}
+          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-5">
+            {[
+              {
+                step: "01",
+                name: "Entreprises générales",
+                description: "Constructions neuves ou rénovations, nous accompagnons tous vos projets de métallerie.",
+                icon: Building,
+                imageKey: "sector-btp",
+                fallback: "https://images.unsplash.com/photo-1504307651254-35680f356dfd?w=600&q=80",
+              },
+              {
+                step: "02",
+                name: "Architectes & Bureaux d'études",
+                description: "Collaborons sur vos projets ambitieux avec plans d'exécution sur mesure.",
+                icon: Ruler,
+                imageKey: "sector-architecte",
+                fallback: "https://images.unsplash.com/photo-1503387762-592deb58ef4e?w=600&q=80",
+              },
+              {
+                step: "03",
+                name: "Artisans du bâtiment",
+                description: "Sous-traitance métallerie avec délais adaptés à vos contraintes chantier.",
+                icon: Hammer,
+                imageKey: "sector-artisan",
+                fallback: "https://images.unsplash.com/photo-1581092162384-8987c1d64718?w=600&q=80",
+              },
+              {
+                step: "04",
+                name: "Industriels",
+                description: "Structures, passerelles et équipements industriels fabriqués en atelier.",
+                icon: Factory,
+                imageKey: "sector-industrie",
+                fallback: "https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?w=600&q=80",
+              },
+            ].map((sector, i) => {
+              const imgSrc = getImage(sector.imageKey);
+              const src = (imgSrc && !imgSrc.includes("via.placeholder.com") && !imgSrc.includes("placeholder"))
+                ? imgSrc
+                : sector.fallback;
+              return (
+                <motion.div
+                  key={i}
+                  className="relative h-64 rounded-2xl overflow-hidden group cursor-default"
+                  initial={{ opacity: 0, y: 30 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: i * 0.1 }}
+                >
+                  {/* Background image */}
+                  <Image
+                    src={src}
+                    alt={sector.name}
+                    fill
+                    className="object-cover group-hover:scale-105 transition-transform duration-700"
+                  />
+                  {/* Dark overlay */}
+                  <div className="absolute inset-0 bg-gradient-to-t from-navy-dark/95 via-navy-dark/50 to-navy-dark/20 group-hover:from-navy-dark/98 transition-colors duration-300" />
+                  {/* Content */}
+                  <div className="absolute inset-0 p-6 flex flex-col justify-end">
+                    <div className="mb-3">
+                      <span className="inline-flex items-center justify-center w-9 h-9 rounded-xl bg-cyan-glow/20 border border-cyan-glow/30 mb-3">
+                        <sector.icon className="w-4 h-4 text-cyan-glow" />
+                      </span>
+                    </div>
+                    <h3 className="text-white font-bold text-base mb-2 leading-snug">{sector.name}</h3>
+                    <p className="text-white/60 text-xs leading-relaxed line-clamp-2 group-hover:text-white/80 transition-colors">
+                      {sector.description}
+                    </p>
+                  </div>
+                  {/* Step badge */}
+                  <div className="absolute top-4 right-4 text-white/10 text-5xl font-bold leading-none select-none">
+                    {sector.step}
+                  </div>
+                  {/* Hover border */}
+                  <div className="absolute inset-0 rounded-2xl ring-2 ring-transparent group-hover:ring-cyan-glow/30 transition-all duration-300" />
+                </motion.div>
+              );
+            })}
           </div>
         </div>
       </section>

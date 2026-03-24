@@ -217,10 +217,6 @@ function ServiceSection({ service, index }: { service: typeof services[0]; index
             </div>
 
             <div className="flex items-center gap-6">
-              <div>
-                <div className="text-white/50 text-xs mb-1">À partir de</div>
-                <div className="text-2xl font-bold text-white">{service.price.replace("À partir de ", "")}</div>
-              </div>
               <Link href={`/produits/${service.configLink}`}>
                 <GlowButton icon={<ArrowRight className="w-4 h-4" />}>
                   Découvrir
