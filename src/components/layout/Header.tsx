@@ -499,7 +499,6 @@ export default function Header() {
                   </Button>
                 </motion.div>
               </Link>
-            </div>
             )}
           </div>
 
