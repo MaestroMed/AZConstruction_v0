@@ -38,7 +38,7 @@ const benefits = [
   { icon: Shield, text: "Garantie sur demande" },
 ];
 
-export default function ThermolaquageSection() {
+export default function ThermolaquageSection({ lite = false }: { lite?: boolean }) {
   const [colorIndex, setColorIndex] = React.useState(0);
   const [isAutoMode, setIsAutoMode] = React.useState(true);
   const autoResumeTimeoutRef = React.useRef<NodeJS.Timeout | null>(null);
@@ -104,96 +104,110 @@ export default function ThermolaquageSection() {
       />
       
       {/* SWEEPING REVEAL RAY - Big dramatic effect on color change */}
-      <motion.div
-        key={`ray-${colorIndex}`}
-        className="absolute inset-0 pointer-events-none"
-        style={{ 
-          background: `linear-gradient(105deg, transparent 0%, transparent 35%, ${selectedColor.hex}90 48%, ${selectedColor.hex} 50%, ${selectedColor.hex}90 52%, transparent 65%, transparent 100%)`,
-        }}
-        initial={{ x: "-150%", opacity: 1 }}
-        animate={{ x: "150%", opacity: 0.3 }}
-        transition={{ duration: 1.2, ease: [0.22, 1, 0.36, 1] }}
-      />
+      {!lite && (
+        <motion.div
+          key={`ray-${colorIndex}`}
+          className="absolute inset-0 pointer-events-none"
+          style={{ 
+            background: `linear-gradient(105deg, transparent 0%, transparent 35%, ${selectedColor.hex}90 48%, ${selectedColor.hex} 50%, ${selectedColor.hex}90 52%, transparent 65%, transparent 100%)`,
+          }}
+          initial={{ x: "-150%", opacity: 1 }}
+          animate={{ x: "150%", opacity: 0.3 }}
+          transition={{ duration: 1.2, ease: [0.22, 1, 0.36, 1] }}
+        />
+      )}
       
       {/* Secondary wave */}
-      <motion.div
-        key={`wave-${colorIndex}`}
-        className="absolute inset-0 pointer-events-none"
-        style={{ 
-          background: `linear-gradient(95deg, transparent 40%, ${selectedColor.hex}50 49%, ${selectedColor.hex}70 50%, ${selectedColor.hex}50 51%, transparent 60%)`,
-        }}
-        initial={{ x: "-120%", opacity: 0.8 }}
-        animate={{ x: "120%", opacity: 0 }}
-        transition={{ duration: 1.4, ease: "easeOut", delay: 0.15 }}
-      />
+      {!lite && (
+        <motion.div
+          key={`wave-${colorIndex}`}
+          className="absolute inset-0 pointer-events-none"
+          style={{ 
+            background: `linear-gradient(95deg, transparent 40%, ${selectedColor.hex}50 49%, ${selectedColor.hex}70 50%, ${selectedColor.hex}50 51%, transparent 60%)`,
+          }}
+          initial={{ x: "-120%", opacity: 0.8 }}
+          animate={{ x: "120%", opacity: 0 }}
+          transition={{ duration: 1.4, ease: "easeOut", delay: 0.15 }}
+        />
+      )}
       
       {/* Intense pulsing color wash */}
-      <motion.div
-        className="absolute inset-0 pointer-events-none"
-        animate={{
-          background: [
-            `radial-gradient(circle 800px at 85% 40%, ${selectedColor.hex}50 0%, transparent 70%)`,
-            `radial-gradient(circle 900px at 75% 55%, ${selectedColor.hex}65 0%, transparent 75%)`,
-            `radial-gradient(circle 800px at 85% 40%, ${selectedColor.hex}50 0%, transparent 70%)`,
-          ],
-        }}
-        transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
-      />
+      {!lite && (
+        <motion.div
+          className="absolute inset-0 pointer-events-none"
+          animate={{
+            background: [
+              `radial-gradient(circle 800px at 85% 40%, ${selectedColor.hex}50 0%, transparent 70%)`,
+              `radial-gradient(circle 900px at 75% 55%, ${selectedColor.hex}65 0%, transparent 75%)`,
+              `radial-gradient(circle 800px at 85% 40%, ${selectedColor.hex}50 0%, transparent 70%)`,
+            ],
+          }}
+          transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
+        />
+      )}
       
       {/* Particles */}
-      <ParticleBackground count={10} />
+      {!lite && <ParticleBackground count={10} />}
       
       {/* MEGA Gradient orbs - Intense RAL colors */}
-      <motion.div
-        className="absolute w-[800px] h-[800px] rounded-full pointer-events-none"
-        style={{ top: "-10%", right: "-20%", filter: "blur(80px)" }}
-        animate={{
-          backgroundColor: `${selectedColor.hex}`,
-          opacity: [0.5, 0.7, 0.5],
-          scale: [1, 1.1, 1],
-        }}
-        transition={{ 
-          backgroundColor: { duration: 0.6 },
-          opacity: { duration: 2.5, repeat: Infinity, ease: "easeInOut" },
-          scale: { duration: 3, repeat: Infinity, ease: "easeInOut" }
-        }}
-      />
-      <motion.div
-        className="absolute w-[500px] h-[500px] rounded-full pointer-events-none"
-        style={{ bottom: "-5%", left: "-10%", filter: "blur(60px)" }}
-        animate={{
-          backgroundColor: `${selectedColor.hex}`,
-          opacity: [0.3, 0.5, 0.3],
-          scale: [1, 1.15, 1],
-        }}
-        transition={{ 
-          backgroundColor: { duration: 0.6 },
-          opacity: { duration: 3, repeat: Infinity, ease: "easeInOut", delay: 0.5 },
-          scale: { duration: 4, repeat: Infinity, ease: "easeInOut", delay: 0.3 }
-        }}
-      />
+      {!lite && (
+        <>
+          <motion.div
+            className="absolute w-[800px] h-[800px] rounded-full pointer-events-none"
+            style={{ top: "-10%", right: "-20%", filter: "blur(80px)" }}
+            animate={{
+              backgroundColor: `${selectedColor.hex}`,
+              opacity: [0.5, 0.7, 0.5],
+              scale: [1, 1.1, 1],
+            }}
+            transition={{ 
+              backgroundColor: { duration: 0.6 },
+              opacity: { duration: 2.5, repeat: Infinity, ease: "easeInOut" },
+              scale: { duration: 3, repeat: Infinity, ease: "easeInOut" }
+            }}
+          />
+          <motion.div
+            className="absolute w-[500px] h-[500px] rounded-full pointer-events-none"
+            style={{ bottom: "-5%", left: "-10%", filter: "blur(60px)" }}
+            animate={{
+              backgroundColor: `${selectedColor.hex}`,
+              opacity: [0.3, 0.5, 0.3],
+              scale: [1, 1.15, 1],
+            }}
+            transition={{ 
+              backgroundColor: { duration: 0.6 },
+              opacity: { duration: 3, repeat: Infinity, ease: "easeInOut", delay: 0.5 },
+              scale: { duration: 4, repeat: Infinity, ease: "easeInOut", delay: 0.3 }
+            }}
+          />
+        </>
+      )}
       
       {/* Vertical light beam - prominent */}
-      <motion.div
-        className="absolute top-0 h-full pointer-events-none"
-        style={{ right: "30%", width: "300px", filter: "blur(50px)" }}
-        animate={{
-          background: `linear-gradient(180deg, ${selectedColor.hex}00 0%, ${selectedColor.hex}60 25%, ${selectedColor.hex}80 50%, ${selectedColor.hex}60 75%, ${selectedColor.hex}00 100%)`,
-          opacity: isAutoMode ? [0.4, 0.7, 0.4] : 0.5,
-        }}
-        transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
-      />
-      
-      {/* Horizontal accent beam */}
-      <motion.div
-        className="absolute left-0 w-full pointer-events-none"
-        style={{ top: "40%", height: "200px", filter: "blur(40px)" }}
-        animate={{
-          background: `linear-gradient(90deg, transparent 0%, ${selectedColor.hex}40 30%, ${selectedColor.hex}60 50%, ${selectedColor.hex}40 70%, transparent 100%)`,
-          opacity: [0.3, 0.5, 0.3],
-        }}
-        transition={{ duration: 3, repeat: Infinity, ease: "easeInOut", delay: 0.5 }}
-      />
+      {!lite && (
+        <>
+          <motion.div
+            className="absolute top-0 h-full pointer-events-none"
+            style={{ right: "30%", width: "300px", filter: "blur(50px)" }}
+            animate={{
+              background: `linear-gradient(180deg, ${selectedColor.hex}00 0%, ${selectedColor.hex}60 25%, ${selectedColor.hex}80 50%, ${selectedColor.hex}60 75%, ${selectedColor.hex}00 100%)`,
+              opacity: isAutoMode ? [0.4, 0.7, 0.4] : 0.5,
+            }}
+            transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
+          />
+          
+          {/* Horizontal accent beam */}
+          <motion.div
+            className="absolute left-0 w-full pointer-events-none"
+            style={{ top: "40%", height: "200px", filter: "blur(40px)" }}
+            animate={{
+              background: `linear-gradient(90deg, transparent 0%, ${selectedColor.hex}40 30%, ${selectedColor.hex}60 50%, ${selectedColor.hex}40 70%, transparent 100%)`,
+              opacity: [0.3, 0.5, 0.3],
+            }}
+            transition={{ duration: 3, repeat: Infinity, ease: "easeInOut", delay: 0.5 }}
+          />
+        </>
+      )}
 
       <div className="container mx-auto px-6 relative z-10">
         <div className="grid lg:grid-cols-2 gap-16 items-center">

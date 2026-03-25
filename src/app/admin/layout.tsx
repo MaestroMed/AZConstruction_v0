@@ -48,6 +48,7 @@ const navigationItems = [
     subItems: [
       { title: "Tous les produits", href: "/admin/produits" },
       { title: "Familles", href: "/admin/produits/familles" },
+      { title: "Images produits", href: "/admin/produits/images" },
       { title: "Options", href: "/admin/produits/options" },
     ],
   },

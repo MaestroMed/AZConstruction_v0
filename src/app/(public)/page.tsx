@@ -3,8 +3,8 @@ import {
   AdvantagesSection,
   PartnersCarousel,
   RealizationsSection,
-  ThermolaquageSection,
 } from "@/components/homepage";
+import ThermolaquageSectionAdaptive from "@/components/homepage/ThermolaquageSectionAdaptive";
 
 export default function HomePage() {
   return (
@@ -13,7 +13,7 @@ export default function HomePage() {
       <AdvantagesSection />
       <RealizationsSection />
       <PartnersCarousel />
-      <ThermolaquageSection />
+      <ThermolaquageSectionAdaptive />
     </>
   );
 }

@@ -29,6 +29,7 @@ import { GlowButton } from "@/components/ui/GlowButton";
 import { MeshGradient, ParticleBackground, GradientOrb } from "@/components/ui/MeshGradient";
 import { PhoneLink, usePhone } from "@/components/ui/PhoneLink";
 import { useSiteImages } from "@/lib/hooks/useSiteImages";
+import PartnersCarousel from "@/components/homepage/PartnersCarousel";
 import { toast } from "sonner";
 
 /* ─── Types ─── */
@@ -349,7 +350,7 @@ export default function ProfessionnelsPage() {
         </div>
       </section>
 
-      {/* ═══ ILS NOUS FONT CONFIANCE — Logos partenaires ═══ */}
+      {/* ═══ ILS NOUS FONT CONFIANCE — Logos partenaires (carousel) ═══ */}
       <section className="py-14 bg-navy-dark border-t border-white/5">
         <div className="container mx-auto px-6">
           <motion.p
@@ -360,47 +361,7 @@ export default function ProfessionnelsPage() {
           >
             Ils nous font confiance
           </motion.p>
-          <motion.div
-            className="grid grid-cols-3 md:grid-cols-5 gap-6 items-center"
-            initial={{ opacity: 0, y: 16 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ delay: 0.1 }}
-          >
-            {[
-              { key: "partner-jansen", name: "Jansen" },
-              { key: "partner-bouygues", name: "Bouygues" },
-              { key: "partner-vinci", name: "Vinci" },
-              { key: "partner-eiffage", name: "Eiffage" },
-              { key: "partner-saint-gobain", name: "Saint-Gobain" },
-              { key: "partner-demathieu-bard", name: "Demathieu & Bard" },
-              { key: "partner-spie-batignolles", name: "Spie Batignolles" },
-              { key: "partner-rabot-dutilleul", name: "Rabot Dutilleul" },
-              { key: "partner-urbaine-travaux", name: "Urbaine de Travaux" },
-            ].map(({ key, name }) => {
-              const src = getImage(key);
-              const isReal = src && !src.includes("via.placeholder.com") && !src.includes("placeholder");
-              return (
-                <div
-                  key={key}
-                  className="flex items-center justify-center h-12 opacity-60 hover:opacity-100 transition-opacity duration-300"
-                  title={name}
-                >
-                  {isReal ? (
-                    <img
-                      src={src}
-                      alt={name}
-                      className="h-8 w-auto max-w-[120px] object-contain"
-                    />
-                  ) : (
-                    <span className="text-white/50 text-sm font-semibold tracking-wide uppercase border border-white/20 rounded-lg px-3 py-1.5 whitespace-nowrap">
-                      {name}
-                    </span>
-                  )}
-                </div>
-              );
-            })}
-          </motion.div>
+          <PartnersCarousel />
         </div>
       </section>
 
