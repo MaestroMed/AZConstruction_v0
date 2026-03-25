@@ -1,6 +1,7 @@
 import { MetadataRoute } from 'next'
+import { prisma } from '@/lib/prisma'
 
-export default function sitemap(): MetadataRoute.Sitemap {
+export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const baseUrl = 'https://azconstruction.fr'
   const lastModified = new Date()
 
@@ -18,15 +19,41 @@ export default function sitemap(): MetadataRoute.Sitemap {
     'grilles-ventilation',
   ]
 
+  // Garde-corps local SEO departments
+  const gardecorpsDepts = [
+    'ile-de-france',
+    'paris-75',
+    'hauts-de-seine-92',
+    'seine-saint-denis-93',
+    'val-de-marne-94',
+    'val-doise-95',
+    'yvelines-78',
+    'essonne-91',
+    'seine-et-marne-77',
+  ]
+
+  // Blog posts from DB (published only)
+  let blogPosts: { slug: string; updatedAt: Date }[] = []
+  try {
+    blogPosts = await prisma.blogPost.findMany({
+      where: { published: true },
+      select: { slug: true, updatedAt: true },
+      orderBy: { publishedAt: 'desc' },
+    })
+  } catch {
+    // BlogPost model may not exist yet — safe to ignore
+  }
+
   return [
-    // Pages principales
+    // ── Pages principales ──────────────────────────────
     {
       url: baseUrl,
       lastModified,
       changeFrequency: 'weekly',
       priority: 1,
     },
-    // Thermolaquage - priorité maximale
+
+    // ── Thermolaquage ──────────────────────────────────
     {
       url: `${baseUrl}/services/thermolaquage`,
       lastModified,
@@ -35,12 +62,6 @@ export default function sitemap(): MetadataRoute.Sitemap {
     },
     {
       url: `${baseUrl}/services/thermolaquage/ile-de-france`,
-      lastModified,
-      changeFrequency: 'monthly',
-      priority: 0.9,
-    },
-    {
-      url: `${baseUrl}/services/thermolaquage/val-doise-95`,
       lastModified,
       changeFrequency: 'monthly',
       priority: 0.9,
@@ -65,6 +86,12 @@ export default function sitemap(): MetadataRoute.Sitemap {
     },
     {
       url: `${baseUrl}/services/thermolaquage/val-de-marne-94`,
+      lastModified,
+      changeFrequency: 'monthly',
+      priority: 0.9,
+    },
+    {
+      url: `${baseUrl}/services/thermolaquage/val-doise-95`,
       lastModified,
       changeFrequency: 'monthly',
       priority: 0.9,
@@ -105,28 +132,68 @@ export default function sitemap(): MetadataRoute.Sitemap {
       changeFrequency: 'monthly',
       priority: 0.85,
     },
-    // Nuancier RAL - fort potentiel SEO
+    {
+      url: `${baseUrl}/services/thermolaquage/pieces-metalliques`,
+      lastModified,
+      changeFrequency: 'monthly',
+      priority: 0.85,
+    },
+
+    // ── Garde-corps local SEO ──────────────────────────
+    ...gardecorpsDepts.map((dept) => ({
+      url: `${baseUrl}/garde-corps/${dept}`,
+      lastModified,
+      changeFrequency: 'monthly' as const,
+      priority: 0.88,
+    })),
+
+    // ── Nuancier RAL ───────────────────────────────────
     {
       url: `${baseUrl}/couleurs-ral`,
       lastModified,
       changeFrequency: 'monthly',
       priority: 0.85,
     },
-    // Produits - page catalogue
+    {
+      url: `${baseUrl}/couleurs-ral/dichroic`,
+      lastModified,
+      changeFrequency: 'monthly',
+      priority: 0.75,
+    },
+    {
+      url: `${baseUrl}/couleurs-ral/patina`,
+      lastModified,
+      changeFrequency: 'monthly',
+      priority: 0.75,
+    },
+    {
+      url: `${baseUrl}/couleurs-ral/polaris`,
+      lastModified,
+      changeFrequency: 'monthly',
+      priority: 0.75,
+    },
+    {
+      url: `${baseUrl}/couleurs-ral/sfera`,
+      lastModified,
+      changeFrequency: 'monthly',
+      priority: 0.75,
+    },
+
+    // ── Produits ───────────────────────────────────────
     {
       url: `${baseUrl}/produits`,
       lastModified,
       changeFrequency: 'weekly',
       priority: 0.9,
     },
-    // Pages produits individuelles
     ...productFamilies.map((family) => ({
       url: `${baseUrl}/produits/${family}`,
       lastModified,
       changeFrequency: 'monthly' as const,
       priority: 0.8,
     })),
-    // Pages cibles
+
+    // ── Pages cibles ───────────────────────────────────
     {
       url: `${baseUrl}/particuliers`,
       lastModified,
@@ -139,7 +206,22 @@ export default function sitemap(): MetadataRoute.Sitemap {
       changeFrequency: 'monthly',
       priority: 0.8,
     },
-    // Pages secondaires
+
+    // ── Blog ───────────────────────────────────────────
+    {
+      url: `${baseUrl}/blog`,
+      lastModified,
+      changeFrequency: 'daily',
+      priority: 0.85,
+    },
+    ...blogPosts.map((post) => ({
+      url: `${baseUrl}/blog/${post.slug}`,
+      lastModified: post.updatedAt,
+      changeFrequency: 'monthly' as const,
+      priority: 0.8,
+    })),
+
+    // ── Pages secondaires ──────────────────────────────
     {
       url: `${baseUrl}/realisations`,
       lastModified,
@@ -162,9 +244,18 @@ export default function sitemap(): MetadataRoute.Sitemap {
       url: `${baseUrl}/faq`,
       lastModified,
       changeFrequency: 'monthly',
-      priority: 0.6,
+      priority: 0.65,
     },
-    // Pages légales
+
+    // ── Outils ────────────────────────────────────────
+    {
+      url: `${baseUrl}/outils/calculateur-garde-corps`,
+      lastModified,
+      changeFrequency: 'monthly',
+      priority: 0.75,
+    },
+
+    // ── Pages légales ─────────────────────────────────
     {
       url: `${baseUrl}/mentions-legales`,
       lastModified,
@@ -185,5 +276,3 @@ export default function sitemap(): MetadataRoute.Sitemap {
     },
   ]
 }
-
-

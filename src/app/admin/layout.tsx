@@ -23,6 +23,7 @@ import {
   FolderOpen,
   ChevronDown,
   MessageSquare,
+  BookOpen,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Toaster } from "sonner";
@@ -77,6 +78,11 @@ const navigationItems = [
     title: "Messages",
     href: "/admin/contact",
     icon: MessageSquare,
+  },
+  {
+    title: "Blog",
+    href: "/admin/blog",
+    icon: BookOpen,
   },
   {
     title: "Réalisations",

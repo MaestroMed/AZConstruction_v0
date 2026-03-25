@@ -649,3 +649,30 @@ model ThermolaquageDemand {
 
   @@map("thermolaquage_demands")
 }
+
+// ============================================
+// BLOG
+// ============================================
+
+model BlogPost {
+  id              String    @id @default(cuid())
+  slug            String    @unique
+  title           String
+  excerpt         String?
+  content         String    @db.Text
+  category        String    @default("guide")
+  // garde-corps | normes | guide | local-seo | thermolaquage | inspirations | actualites
+  tags            String[]
+  featuredImage   String?
+  author          String    @default("L'équipe AZ Construction")
+  publishedAt     DateTime?
+  published       Boolean   @default(false)
+  seoTitle        String?
+  seoDescription  String?
+  readingTime     Int?      // minutes estimés
+
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+
+  @@map("blog_posts")
+}
