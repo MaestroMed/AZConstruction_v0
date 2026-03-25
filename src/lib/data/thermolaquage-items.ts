@@ -87,95 +87,6 @@ export const clientDemands: ClientDemandItem[] = [
   },
 ];
 
-// Ce que demandent nos clients - 10 items pour la mosaïque thermolaquage
-// Ces données seront éditables via le CMS (SiteSection) une fois implémenté
-
-export interface ClientDemandItem {
-  id: string;
-  title: string;
-  description: string;
-  imageUrl: string;
-  size: "default" | "large" | "wide" | "tall";
-}
-
-export const clientDemands: ClientDemandItem[] = [
-  {
-    // Grande image featured — Jantes en position dominante
-    id: "jantes-auto",
-    title: "Jantes Auto",
-    description: "Rénovation jantes alu, personnalisation couleur, finition brillante ou mate.",
-    imageUrl: "https://images.unsplash.com/photo-1611651338412-8403fa6e3599?w=600&q=80",
-    size: "large",
-  },
-  {
-    id: "cadres-velo",
-    title: "Cadres Vélo",
-    description: "Cadres VTT, route, fixie - toutes couleurs RAL disponibles.",
-    imageUrl: "https://images.unsplash.com/photo-1485965120184-e220f721d03e?w=600&q=80",
-    size: "default",
-  },
-  {
-    // Garde-corps en tall — railing vertical se lit parfaitement en portrait
-    id: "garde-corps",
-    title: "Garde-corps",
-    description: "Balcons, terrasses, escaliers - finition impeccable.",
-    imageUrl: "https://images.unsplash.com/photo-1762545444269-75ab7fc7cc0a?w=600&q=80",
-    size: "tall",
-  },
-  {
-    id: "mobilier-jardin",
-    title: "Mobilier Jardin",
-    description: "Tables, chaises, bancs métalliques pour extérieur résistant aux intempéries.",
-    imageUrl: "https://images.unsplash.com/photo-1772869262209-822a89892371?w=600&q=80",
-    size: "default",
-  },
-  {
-    // Portails en default — photo carrée du portail, plus de problème de crop
-    id: "portails",
-    title: "Portails",
-    description: "Portails coulissants et battants, protection longue durée.",
-    imageUrl: "https://images.unsplash.com/photo-1748843811152-2ecb9c207e36?w=600&q=80",
-    size: "default",
-  },
-  {
-    id: "radiateurs",
-    title: "Radiateurs",
-    description: "Rénovation radiateurs fonte et acier, nouvelle couleur.",
-    imageUrl: "https://images.unsplash.com/photo-1673038111329-d0fdc5eb5014?w=600&q=80",
-    size: "default",
-  },
-  {
-    // Pièces Industrielles en large — étincelles spectaculaires en 2x2
-    id: "pieces-industrielles",
-    title: "Pièces Industrielles",
-    description: "Charpentes, structures, équipements lourds - finition pro.",
-    imageUrl: "https://images.unsplash.com/photo-1504917595217-d4dc5ebe6122?w=600&q=80",
-    size: "large",
-  },
-  {
-    id: "luminaires",
-    title: "Luminaires",
-    description: "Lampadaires, appliques, suspensions métal.",
-    imageUrl: "https://images.unsplash.com/photo-1524484485831-a92ffc0de03f?w=600&q=80",
-    size: "default",
-  },
-  {
-    // Pièces Moto en wide — moto sur route se lit parfaitement en horizontal
-    id: "pieces-moto",
-    title: "Pièces Moto",
-    description: "Cadres, réservoirs, caches - personnalisation unique.",
-    imageUrl: "https://images.unsplash.com/photo-1558981806-ec527fa84c39?w=600&q=80",
-    size: "wide",
-  },
-  {
-    id: "grilles-clotures",
-    title: "Grilles & Clôtures",
-    description: "Clôtures, grilles de défense, barreaudage - protection durable.",
-    imageUrl: "https://images.unsplash.com/photo-1680538995038-4cf6424bdfd7?w=600&q=80",
-    size: "default",
-  },
-];
-
 // ═══════════════════════════════════════════════════════
 // RAL COLORS
 // ═══════════════════════════════════════════════════════
@@ -634,4 +545,3 @@ export function getModelColorImageUrl(modelId: string, ralCode: string): string 
   const model = ralModels.find((m) => m.id === modelId);
   return model?.defaultImage || "";
 }
-
