@@ -39,20 +39,23 @@ export default function MentionsLegalesPage() {
                   <strong className="text-navy-dark">Siège social :</strong> 23 Chemin du Bac des Aubins, 95820 Bruyères-sur-Oise, France
                 </p>
                 <p>
-                  <strong className="text-navy-dark">SIRET :</strong> 123 456 789 00012
+                  <strong className="text-navy-dark">SIRET :</strong> 84318993700017
                 </p>
                 <p>
-                  <strong className="text-navy-dark">N° TVA Intracommunautaire :</strong> FR12345678901
+                  <strong className="text-navy-dark">N° TVA Intracommunautaire :</strong> FR40843189937
                 </p>
                 <p>
-                  <strong className="text-navy-dark">Capital social :</strong> 50 000 €
+                  <strong className="text-navy-dark">RCS :</strong> 843 189 937 R.C.S. Pontoise
                 </p>
                 <p>
-                  <strong className="text-navy-dark">Directeur de la publication :</strong> Jean-Pierre Azoulay
+                  <strong className="text-navy-dark">Capital social :</strong> 30 000 €
+                </p>
+                <p>
+                  <strong className="text-navy-dark">Directeur de la publication :</strong> Alexandru Zastavnetchi
                 </p>
                 <p>
                   <strong className="text-navy-dark">Téléphone :</strong>{" "}
-                  <a href="tel:+33123456789" className="text-blue-corporate hover:underline">
+                  <a href="tel:+33971357496" className="text-blue-corporate hover:underline">
                     09 71 35 74 96
                   </a>
                 </p>

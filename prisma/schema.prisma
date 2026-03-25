@@ -454,6 +454,12 @@ model SiteSettings {
   showConfigurator Boolean @default(false)
   showEspaceClient Boolean @default(false)
   
+  // Founder / Team
+  founderName      String?
+  founderTitle     String?
+  founderBio       String?  @db.Text
+  founderPhotoUrl  String?
+  
   createdAt       DateTime @default(now())
   updatedAt       DateTime @updatedAt
   

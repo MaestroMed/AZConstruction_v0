@@ -467,8 +467,18 @@ export default function Header() {
           </div>
 
           {/* CTA Button with glassmorphism - conditionally shown */}
-          {settings.showEspaceClient && (
-            <div className="hidden lg:flex items-center gap-4">
+          <div className="hidden lg:flex items-center gap-3">
+            <Link
+              href="/devis/formulaire"
+              className={cn(
+                "inline-flex items-center gap-1.5 px-4 py-2 rounded-xl text-sm font-semibold transition-all duration-300",
+                "bg-cyan-glow text-navy-dark hover:bg-cyan-pale",
+                isScrolled ? "shadow-md" : ""
+              )}
+            >
+              Devis gratuit
+            </Link>
+            {settings.showEspaceClient && (
               <Link href="/login">
                 <motion.div
                   whileHover={{ scale: 1.02 }}
@@ -490,7 +500,8 @@ export default function Header() {
                 </motion.div>
               </Link>
             </div>
-          )}
+            )}
+          </div>
 
           {/* Mobile Menu Button */}
           <motion.button

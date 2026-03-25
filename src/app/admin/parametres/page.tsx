@@ -17,6 +17,7 @@ import {
   Trash2,
   Loader2,
   ImageIcon,
+  User,
 } from "lucide-react";
 import { Input, Switch } from "@/components/admin/ui/FormFields";
 import { toast } from "sonner";
@@ -51,6 +52,11 @@ interface SiteSettings {
   logoUrl: string;
   logoLightUrl: string; // Version claire pour fonds sombres (header/footer)
   faviconUrl: string;
+  // Founder
+  founderName: string;
+  founderTitle: string;
+  founderBio: string;
+  founderPhotoUrl: string;
 }
 
 const defaultSettings: SiteSettings = {
@@ -61,8 +67,8 @@ const defaultSettings: SiteSettings = {
   pays: "France",
   telephone: "09 71 35 74 96",
   email: "contact@azconstruction.fr",
-  siret: "123 456 789 00012",
-  tvaIntra: "FR12345678901",
+  siret: "84318993700017",
+  tvaIntra: "FR40843189937",
   facebook: "https://facebook.com/azconstruction",
   instagram: "https://instagram.com/azconstruction",
   linkedin: "https://linkedin.com/company/azconstruction",
@@ -75,6 +81,10 @@ const defaultSettings: SiteSettings = {
   logoUrl: "",
   logoLightUrl: "",
   faviconUrl: "",
+  founderName: "Alexandru Zastavnetchi",
+  founderTitle: "Fondateur & Gérant",
+  founderBio: "",
+  founderPhotoUrl: "",
 };
 
 export default function ParametresPage() {
@@ -112,6 +122,10 @@ export default function ParametresPage() {
               logoUrl: apiSettings.logoUrl || "",
               logoLightUrl: apiSettings.logoLightUrl || "",
               faviconUrl: apiSettings.faviconUrl || "",
+              founderName: apiSettings.founderName || defaultSettings.founderName,
+              founderTitle: apiSettings.founderTitle || defaultSettings.founderTitle,
+              founderBio: apiSettings.founderBio || defaultSettings.founderBio,
+              founderPhotoUrl: apiSettings.founderPhotoUrl || defaultSettings.founderPhotoUrl,
             });
           }
         }
@@ -223,6 +237,10 @@ export default function ParametresPage() {
         logoUrl: settings.logoUrl,
         logoLightUrl: settings.logoLightUrl,
         faviconUrl: settings.faviconUrl,
+        founderName: settings.founderName,
+        founderTitle: settings.founderTitle,
+        founderBio: settings.founderBio,
+        founderPhotoUrl: settings.founderPhotoUrl,
       };
       
       const response = await fetch("/api/settings", {
@@ -671,6 +689,84 @@ export default function ParametresPage() {
             </div>
           </div>
         </div>
+
+          {/* Fondateur */}
+          <div className="bg-white rounded-xl border border-gray-200 p-6">
+            <h2 className="text-lg font-semibold text-gray-900 mb-6 flex items-center gap-2">
+              <User className="w-5 h-5" />
+              Fondateur / Équipe
+            </h2>
+            <div className="space-y-4">
+              <Input
+                label="Nom complet"
+                value={settings.founderName}
+                onChange={(e) => setSettings({ ...settings, founderName: e.target.value })}
+                placeholder="Alexandru Zastavnetchi"
+              />
+              <Input
+                label="Titre / Fonction"
+                value={settings.founderTitle}
+                onChange={(e) => setSettings({ ...settings, founderTitle: e.target.value })}
+                placeholder="Fondateur & Gérant"
+              />
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Bio courte</label>
+                <textarea
+                  value={settings.founderBio}
+                  onChange={(e) => setSettings({ ...settings, founderBio: e.target.value })}
+                  placeholder="Présentation courte du fondateur (affiché sur la page À propos)..."
+                  rows={4}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-cyan-500 focus:border-transparent resize-none"
+                />
+              </div>
+              {/* Photo upload */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">Photo du fondateur</label>
+                {settings.founderPhotoUrl ? (
+                  <div className="flex items-center gap-4">
+                    <Image
+                      src={settings.founderPhotoUrl}
+                      alt="Photo fondateur"
+                      width={80}
+                      height={80}
+                      className="w-20 h-20 rounded-full object-cover border-2 border-gray-200"
+                      unoptimized={settings.founderPhotoUrl.startsWith("data:")}
+                    />
+                    <button
+                      onClick={() => setSettings({ ...settings, founderPhotoUrl: "" })}
+                      className="flex items-center gap-1 text-sm text-red-600 hover:text-red-700"
+                    >
+                      <Trash2 className="w-4 h-4" />
+                      Supprimer
+                    </button>
+                  </div>
+                ) : (
+                  <label className="flex flex-col items-center justify-center w-full h-32 border-2 border-dashed border-gray-300 rounded-xl cursor-pointer hover:bg-gray-50 transition-colors">
+                    <Upload className="w-6 h-6 text-gray-400 mb-1" />
+                    <span className="text-sm text-gray-500">Uploader une photo</span>
+                    <input
+                      type="file"
+                      accept="image/*"
+                      className="hidden"
+                      onChange={async (e) => {
+                        const file = e.target.files?.[0];
+                        if (!file) return;
+                        const fd = new FormData();
+                        fd.append("files", file);
+                        fd.append("folder", "team");
+                        const res = await fetch("/api/upload", { method: "POST", body: fd });
+                        const data = await res.json();
+                        if (data.files?.[0]?.url) {
+                          setSettings({ ...settings, founderPhotoUrl: data.files[0].url });
+                        }
+                      }}
+                    />
+                  </label>
+                )}
+              </div>
+            </div>
+          </div>
+
       </div>
     </div>
   );

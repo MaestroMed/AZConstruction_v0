@@ -81,6 +81,28 @@ const certifications = [
 export default function AProposPage() {
   const { getImage } = useSiteImages();
 
+  const [founder, setFounder] = React.useState({
+    name: "Alexandru Zastavnetchi",
+    title: "Fondateur & Gérant — AZ Construction",
+    bio: "",
+    photoUrl: "",
+  });
+
+  React.useEffect(() => {
+    fetch("/api/settings")
+      .then((r) => r.json())
+      .then((data) => {
+        const s = data.settings || data;
+        if (s.founderName) setFounder({
+          name: s.founderName,
+          title: s.founderTitle || "Fondateur & Gérant — AZ Construction",
+          bio: s.founderBio || "",
+          photoUrl: s.founderPhotoUrl || "",
+        });
+      })
+      .catch(() => {});
+  }, []);
+
   return (
     <div className="min-h-screen bg-navy-dark">
 
@@ -161,8 +183,8 @@ export default function AProposPage() {
           {/* Photo fondateur — pleine hauteur */}
           <div className="relative min-h-[400px] lg:min-h-[600px] overflow-hidden">
             <Image
-              src={getImage("team-member-1")}
-              alt="Le fondateur d'AZ Construction"
+              src={founder.photoUrl || getImage("team-member-1")}
+              alt={`${founder.name} — Fondateur AZ Construction`}
               fill
               className="object-cover object-top"
             />
@@ -198,9 +220,12 @@ export default function AProposPage() {
 
             <div className="mb-8">
               <div className="text-lg font-bold text-white mb-1">
-                Le Fondateur {/* Remplacer par le vrai prénom/nom */}
+                {founder.name}
               </div>
-              <div className="text-cyan-glow text-sm font-medium">Fondateur & Directeur — AZ Construction</div>
+              <div className="text-cyan-glow text-sm font-medium">{founder.title}</div>
+              {founder.bio && (
+                <p className="text-white/60 text-sm mt-3 leading-relaxed">{founder.bio}</p>
+              )}
             </div>
 
             <div className="space-y-3">

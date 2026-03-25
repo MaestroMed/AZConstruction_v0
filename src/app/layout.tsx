@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from "next";
 import { Inter, Space_Grotesk } from "next/font/google";
 import { Analytics } from "@/components/analytics/Analytics";
 import { Toaster } from "sonner";
+import CookieBanner from "@/components/gdpr/CookieBanner";
 import "./globals.css";
 
 const inter = Inter({
@@ -129,6 +130,7 @@ export default function RootLayout({
     <html lang="fr" className={`${inter.variable} ${spaceGrotesk.variable}`} suppressHydrationWarning>
       <body className="antialiased min-h-screen bg-white dark:bg-navy-dark text-gray-900 dark:text-white">
         {children}
+        <CookieBanner />
         <Toaster 
           position="top-right"
           richColors
