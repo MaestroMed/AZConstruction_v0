@@ -2,7 +2,7 @@ import type { Metadata, Viewport } from "next";
 import { Inter, Space_Grotesk } from "next/font/google";
 import { Analytics } from "@/components/analytics/Analytics";
 import { Toaster } from "sonner";
-import CookieBanner from "@/components/gdpr/CookieBanner";
+import { CookieBanner } from "@/components/gdpr/CookieBanner";
 import "./globals.css";
 
 const inter = Inter({
