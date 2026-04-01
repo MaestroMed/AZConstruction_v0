@@ -2,11 +2,12 @@
 
 import * as React from "react";
 import Link from "next/link";
-import { Plus, Package, Filter, MoreVertical, Eye, Edit, Trash2, Copy } from "lucide-react";
-import { DataTable, StatusBadge, ActionButtons } from "@/components/admin/ui/DataTable";
+import { Plus, Package, Filter, Edit, Trash2, Copy } from "lucide-react";
+import { DataTable, StatusBadge } from "@/components/admin/ui/DataTable";
 import { type ColumnDef } from "@tanstack/react-table";
 import { format } from "date-fns";
 import { fr } from "date-fns/locale";
+import { toast } from "sonner";
 
 interface Product {
   id: string;
@@ -66,6 +67,16 @@ export default function ProductsPage() {
     };
     loadProducts();
   }, []);
+
+  const handleDeleteProduct = (id: string, nom: string) => {
+    if (!confirm(`Supprimer "${nom}" ? Cette action est irréversible.`)) return;
+    const updated = products.filter((p) => p.id !== id);
+    setProducts(updated);
+    try {
+      localStorage.setItem("az_products", JSON.stringify(updated));
+    } catch { /* ignore */ }
+    toast.success("Produit supprimé");
+  };
 
   const filteredProducts = selectedFamily === "all"
     ? products
@@ -148,6 +159,7 @@ export default function ProductsPage() {
             <Copy className="w-4 h-4" />
           </button>
           <button
+            onClick={() => handleDeleteProduct(row.original.id, row.original.nom)}
             className="p-1.5 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors"
             title="Supprimer"
           >

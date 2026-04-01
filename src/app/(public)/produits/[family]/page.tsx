@@ -401,15 +401,22 @@ export default function ProductFamilyPage() {
                         </span>
                       ))}
                     </div>
-                    <Link href="/contact">
-                      <Button
-                        variant="secondary"
-                        className="w-full group-hover:bg-blue-corporate group-hover:text-white transition-colors"
-                        icon={<ArrowRight className="w-4 h-4" />}
-                      >
-                        Demander un devis
-                      </Button>
-                    </Link>
+                    <div className="flex gap-3">
+                      <Link href={`/produits/${slug}/${variant.id}`} className="flex-1">
+                        <Button
+                          variant="secondary"
+                          className="w-full group-hover:bg-blue-corporate group-hover:text-white transition-colors"
+                          icon={<ArrowRight className="w-4 h-4" />}
+                        >
+                          Découvrir
+                        </Button>
+                      </Link>
+                      <Link href="/contact">
+                        <Button variant="outline" className="px-4">
+                          Devis
+                        </Button>
+                      </Link>
+                    </div>
                   </CardContent>
                 </Card>
               </motion.div>
