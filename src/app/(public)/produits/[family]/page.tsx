@@ -61,6 +61,13 @@ export default function ProductFamilyPage() {
   // DB variants (may have imageUrl)
   const [dbVariants, setDbVariants] = React.useState(product.variants);
 
+  // DB specs and benefits (fallback to static)
+  const [dbSpecs, setDbSpecs] = React.useState(product.specifications);
+  const [dbBenefits, setDbBenefits] = React.useState(product.benefits);
+
+  // Other families for "Découvrez aussi" carousel
+  const [otherFamilies, setOtherFamilies] = React.useState<{ id: string; nom: string; slug: string; imageUrl?: string }[]>([]);
+
   React.useEffect(() => {
     // Load hero images from DB
     fetch(`/api/product-families/images?familySlug=${slug}`)
@@ -72,19 +79,43 @@ export default function ProductFamilyPage() {
       })
       .catch(() => {});
 
-    // Load DB family (for variant images)
+    // Load DB family (for variant images, specs, benefits)
     fetch(`/api/product-families?slug=${slug}`)
       .then((r) => r.json())
       .then((data) => {
-        if (data.success && data.family?.variants?.length) {
-          // Merge DB variants (may have imageUrl) with static data
-          const dbVars = data.family.variants as typeof product.variants;
-          setDbVariants(
-            product.variants.map((sv) => {
-              const dbV = dbVars.find((d) => d.id === sv.id);
-              return dbV ? { ...sv, ...dbV } : sv;
-            })
-          );
+        if (data.success && data.family) {
+          const fam = data.family;
+
+          // Merge DB variants with static data
+          if (fam.variants?.length) {
+            const dbVars = fam.variants as typeof product.variants;
+            setDbVariants(
+              product.variants.map((sv) => {
+                const dbV = dbVars.find((d: { id: string }) => d.id === sv.id);
+                return dbV ? { ...sv, ...dbV } : sv;
+              })
+            );
+          }
+
+          // Use DB specs if available
+          if (fam.specifications?.length) {
+            setDbSpecs(fam.specifications as typeof product.specifications);
+          }
+
+          // Use DB benefits if available
+          if (fam.benefits?.length) {
+            setDbBenefits(fam.benefits as typeof product.benefits);
+          }
+        }
+      })
+      .catch(() => {});
+
+    // Load other families for carousel
+    fetch("/api/product-families")
+      .then((r) => r.json())
+      .then((data) => {
+        if (data.success && data.families) {
+          setOtherFamilies(data.families.filter((f: { slug: string }) => f.slug !== slug));
         }
       })
       .catch(() => {});
@@ -298,7 +329,7 @@ export default function ProductFamilyPage() {
           </motion.div>
 
           <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {product.benefits.map((benefit, index) => {
+            {dbBenefits.map((benefit, index) => {
               const IconComponent = iconMap[benefit.icon] || Shield;
               return (
                 <motion.div
@@ -451,7 +482,7 @@ export default function ProductFamilyPage() {
               </p>
 
               <div className="space-y-4">
-                {product.specifications.map((spec, index) => (
+                {dbSpecs.map((spec, index) => (
                   <motion.div
                     key={spec.label}
                     initial={{ opacity: 0, x: -20 }}
@@ -493,11 +524,10 @@ export default function ProductFamilyPage() {
                       <p className="text-white/60 text-sm">Satisfaction client</p>
                     </div>
                   </div>
-                  <Link href="/contact">
-                    <GlowButton icon={<ArrowRight className="w-4 h-4" />} className="w-full">
-                      Demander un devis gratuit
-                    </GlowButton>
-                  </Link>
+                  <div className="glass-card p-4 text-center">
+                    <p className="text-white/60 text-sm mb-1">Garantie décennale incluse</p>
+                    <p className="text-white font-semibold">Fabrication atelier 1800m² — Île-de-France</p>
+                  </div>
                 </div>
               </GlassCard>
             </motion.div>
@@ -545,34 +575,65 @@ export default function ProductFamilyPage() {
       </section>
 
       {/* ============================================
-          OTHER PRODUCTS
+          OTHER PRODUCTS — Carrousel familles
           ============================================ */}
-      <section className="py-20 bg-gray-50">
-        <div className="container mx-auto px-6">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            className="text-center mb-12"
-          >
-            <h2 className="text-3xl font-bold text-navy-dark mb-4">Découvrez aussi</h2>
-            <p className="text-gray-600">Nos autres familles de produits sur mesure.</p>
-          </motion.div>
+      {otherFamilies.length > 0 && (
+        <section className="py-20 bg-gray-50">
+          <div className="container mx-auto px-6">
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              className="text-center mb-10"
+            >
+              <h2 className="text-3xl font-bold text-navy-dark mb-3">Découvrez aussi</h2>
+              <p className="text-gray-600">Nos autres familles de produits sur mesure.</p>
+            </motion.div>
 
-          <div className="flex justify-center">
-            <Link href="/produits">
-              <Button
-                variant="outline"
-                size="lg"
-                icon={<ArrowLeft className="w-5 h-5" />}
-                iconPosition="left"
-              >
-                Voir tous nos produits
-              </Button>
-            </Link>
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-5">
+              {otherFamilies.slice(0, 8).map((fam, index) => (
+                <motion.div
+                  key={fam.id}
+                  initial={{ opacity: 0, y: 20 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: index * 0.05 }}
+                >
+                  <Link href={`/produits/${fam.slug}`}>
+                    <div className="group relative h-40 rounded-2xl overflow-hidden cursor-pointer">
+                      {fam.imageUrl ? (
+                        <Image
+                          src={fam.imageUrl}
+                          alt={fam.nom}
+                          fill
+                          className="object-cover group-hover:scale-105 transition-transform duration-500"
+                        />
+                      ) : (
+                        <div className="w-full h-full bg-gradient-to-br from-navy-dark via-blue-corporate to-cyan-800" />
+                      )}
+                      <div className="absolute inset-0 bg-gradient-to-t from-navy-dark/80 via-navy-dark/20 to-transparent" />
+                      <div className="absolute bottom-3 left-3 right-3">
+                        <p className="text-white font-bold text-sm">{fam.nom}</p>
+                        <p className="text-cyan-glow text-xs flex items-center gap-1 mt-0.5 opacity-0 group-hover:opacity-100 transition-opacity">
+                          Découvrir <ArrowRight className="w-3 h-3" />
+                        </p>
+                      </div>
+                    </div>
+                  </Link>
+                </motion.div>
+              ))}
+            </div>
+
+            <div className="text-center mt-8">
+              <Link href="/produits">
+                <Button variant="outline" size="lg" icon={<ArrowLeft className="w-5 h-5" />} iconPosition="left">
+                  Voir tous nos produits
+                </Button>
+              </Link>
+            </div>
           </div>
-        </div>
-      </section>
+        </section>
+      )}
     </div>
   );
 }

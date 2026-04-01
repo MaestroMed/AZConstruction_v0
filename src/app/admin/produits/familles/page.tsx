@@ -35,6 +35,9 @@ interface VariantItem {
   startingPrice?: string;
 }
 
+interface SpecItem { label: string; value: string; }
+interface BenefitItem { icon: string; title: string; description: string; }
+
 interface Family {
   id: string;
   nom: string;
@@ -45,6 +48,11 @@ interface Family {
   active: boolean;
   productsCount?: number;
   variants?: VariantItem[];
+  tagline?: string;
+  longDescription?: string;
+  unit?: string;
+  specifications?: SpecItem[];
+  benefits?: BenefitItem[];
 }
 
 function SortableFamily({
@@ -392,7 +400,9 @@ export default function FamiliesPage() {
   );
 }
 
-// ─── Simplified Modal — Info only ───────────────────────────
+// ─── Modal with tabs: Info + Contenu ──────────────────────
+
+type ModalTab = "info" | "contenu";
 
 function FamilyModal({
   isOpen,
@@ -405,14 +415,31 @@ function FamilyModal({
   family: Family | null;
   onSave: (data: Partial<Family>) => void;
 }) {
+  const [tab, setTab] = React.useState<ModalTab>("info");
   const [formData, setFormData] = React.useState<Partial<Family>>({ nom: "", slug: "", description: "" });
+  const [tagline, setTagline] = React.useState("");
+  const [longDescription, setLongDescription] = React.useState("");
+  const [unit, setUnit] = React.useState("pièce");
+  const [specs, setSpecs] = React.useState<SpecItem[]>([]);
+  const [benefits, setBenefits] = React.useState<BenefitItem[]>([]);
   const [saving, setSaving] = React.useState(false);
+
+  React.useEffect(() => {
+    if (isOpen) setTab("info");
+  }, [isOpen]);
 
   React.useEffect(() => {
     if (family) {
       setFormData({ nom: family.nom, slug: family.slug, description: family.description });
+      setTagline(family.tagline ?? "");
+      setLongDescription(family.longDescription ?? "");
+      setUnit(family.unit ?? "pièce");
+      setSpecs(family.specifications ?? []);
+      setBenefits(family.benefits ?? []);
     } else {
       setFormData({ nom: "", slug: "", description: "" });
+      setTagline(""); setLongDescription(""); setUnit("pièce");
+      setSpecs([]); setBenefits([]);
     }
   }, [family, isOpen]);
 
@@ -428,6 +455,11 @@ function FamilyModal({
         nom: formData.nom,
         slug: formData.slug,
         description: formData.description,
+        tagline,
+        longDescription,
+        unit,
+        specifications: specs,
+        benefits,
         active: family?.active ?? true,
         ordre: family?.ordre ?? 0,
         variants: family?.variants ?? [],
@@ -446,6 +478,16 @@ function FamilyModal({
       setSaving(false);
     }
   };
+
+  const addSpec = () => setSpecs([...specs, { label: "", value: "" }]);
+  const removeSpec = (i: number) => setSpecs(specs.filter((_, idx) => idx !== i));
+  const updateSpec = (i: number, field: keyof SpecItem, val: string) =>
+    setSpecs(specs.map((s, idx) => idx === i ? { ...s, [field]: val } : s));
+
+  const TABS: { id: ModalTab; label: string }[] = [
+    { id: "info", label: "Informations" },
+    { id: "contenu", label: "Contenu & Specs" },
+  ];
 
   return (
     <Modal
@@ -468,56 +510,136 @@ function FamilyModal({
         </>
       }
     >
-      <div className="space-y-4">
-        <Input
-          label="Nom de la famille"
-          value={formData.nom || ""}
-          onChange={(e) => {
-            const nom = e.target.value;
-            setFormData({ ...formData, nom, slug: family ? formData.slug : generateSlug(nom) });
-          }}
-          placeholder="Ex: Garde-corps"
-          required
-        />
-        <Input
-          label="Slug (URL)"
-          value={formData.slug || ""}
-          onChange={(e) => setFormData({ ...formData, slug: e.target.value })}
-          placeholder="garde-corps"
-          hint="Utilisé dans l'URL : /produits/garde-corps"
-          required
-        />
-        <Textarea
-          label="Description"
-          value={formData.description || ""}
-          onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-          placeholder="Description de la famille..."
-          rows={3}
-        />
-
-        {/* Link to images page */}
-        {family && (
-          <div className="flex items-center gap-3 p-3 bg-indigo-50 border border-indigo-100 rounded-xl">
-            <ImageIcon className="w-4 h-4 text-indigo-500 flex-shrink-0" />
-            <p className="text-sm text-indigo-700">
-              Pour gérer les photos du carrousel et des modèles :{" "}
-              <Link
-                href={`/admin/produits/images#${family.slug}`}
-                onClick={onClose}
-                className="font-semibold underline hover:text-indigo-900"
-              >
-                Gérer les images de {family.nom} →
-              </Link>
-            </p>
-          </div>
-        )}
-
-        {!family && (
-          <p className="text-xs text-blue-700 bg-blue-50 border border-blue-100 rounded-lg p-3">
-            Créez d&apos;abord la famille, puis gérez ses images et modèles depuis la page dédiée.
-          </p>
-        )}
+      {/* Tab bar */}
+      <div className="flex border-b border-gray-200 mb-5 -mt-1">
+        {TABS.map((t) => (
+          <button
+            key={t.id}
+            onClick={() => setTab(t.id)}
+            className={`px-4 py-2.5 text-sm font-medium border-b-2 transition-colors ${
+              tab === t.id ? "border-cyan-500 text-cyan-600" : "border-transparent text-gray-500 hover:text-gray-700"
+            }`}
+          >
+            {t.label}
+          </button>
+        ))}
       </div>
+
+      {/* ── Tab: Info ── */}
+      {tab === "info" && (
+        <div className="space-y-4">
+          <Input
+            label="Nom de la famille"
+            value={formData.nom || ""}
+            onChange={(e) => {
+              const nom = e.target.value;
+              setFormData({ ...formData, nom, slug: family ? formData.slug : generateSlug(nom) });
+            }}
+            placeholder="Ex: Garde-corps"
+            required
+          />
+          <Input
+            label="Slug (URL)"
+            value={formData.slug || ""}
+            onChange={(e) => setFormData({ ...formData, slug: e.target.value })}
+            placeholder="garde-corps"
+            hint="Utilisé dans l'URL : /produits/garde-corps"
+            required
+          />
+          <Textarea
+            label="Description courte"
+            value={formData.description || ""}
+            onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+            placeholder="Description de la famille..."
+            rows={3}
+          />
+
+          {/* Link to images page */}
+          {family && (
+            <div className="flex items-center gap-3 p-3 bg-indigo-50 border border-indigo-100 rounded-xl">
+              <ImageIcon className="w-4 h-4 text-indigo-500 flex-shrink-0" />
+              <p className="text-sm text-indigo-700">
+                Pour gérer les photos du carrousel et des modèles :{" "}
+                <Link
+                  href={`/admin/produits/images#${family.slug}`}
+                  onClick={onClose}
+                  className="font-semibold underline hover:text-indigo-900"
+                >
+                  Gérer les images de {family.nom} →
+                </Link>
+              </p>
+            </div>
+          )}
+
+          {!family && (
+            <p className="text-xs text-blue-700 bg-blue-50 border border-blue-100 rounded-lg p-3">
+              Créez d&apos;abord la famille, puis gérez ses images et modèles depuis la page dédiée.
+            </p>
+          )}
+        </div>
+      )}
+
+      {/* ── Tab: Contenu & Specs ── */}
+      {tab === "contenu" && (
+        <div className="space-y-5">
+          <Input
+            label="Accroche (tagline)"
+            value={tagline}
+            onChange={(e) => setTagline(e.target.value)}
+            placeholder="Ex: Sécurité & Design"
+            hint="Affiché sous le titre hero de la page"
+          />
+          <Textarea
+            label="Description longue"
+            value={longDescription}
+            onChange={(e) => setLongDescription(e.target.value)}
+            placeholder="Description détaillée pour la page produit..."
+            rows={4}
+          />
+          <Input
+            label="Unité"
+            value={unit}
+            onChange={(e) => setUnit(e.target.value)}
+            placeholder="pièce"
+            hint="Ex: pièce, ml (mètre linéaire)"
+          />
+
+          {/* Specifications */}
+          <div>
+            <div className="flex items-center justify-between mb-2">
+              <label className="block text-sm font-medium text-gray-700">Spécifications techniques</label>
+              <button onClick={addSpec}
+                className="inline-flex items-center gap-1 px-2.5 py-1 bg-cyan-50 text-cyan-700 rounded-lg text-xs font-medium hover:bg-cyan-100 transition-colors">
+                <Plus className="w-3 h-3" /> Ajouter
+              </button>
+            </div>
+            <div className="space-y-2">
+              {specs.map((spec, i) => (
+                <div key={i} className="flex gap-2 items-center">
+                  <input
+                    type="text" value={spec.label} onChange={(e) => updateSpec(i, "label", e.target.value)}
+                    placeholder="Label (ex: Hauteur standard)"
+                    className="flex-1 px-3 py-2 border border-gray-200 rounded-lg text-sm focus:ring-2 focus:ring-cyan-300 outline-none"
+                  />
+                  <input
+                    type="text" value={spec.value} onChange={(e) => updateSpec(i, "value", e.target.value)}
+                    placeholder="Valeur (ex: 100 cm)"
+                    className="flex-1 px-3 py-2 border border-gray-200 rounded-lg text-sm focus:ring-2 focus:ring-cyan-300 outline-none"
+                  />
+                  <button onClick={() => removeSpec(i)} className="p-2 text-red-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors">
+                    <Trash2 className="w-4 h-4" />
+                  </button>
+                </div>
+              ))}
+              {specs.length === 0 && (
+                <p className="text-xs text-gray-400 text-center py-3 border-2 border-dashed border-gray-200 rounded-lg">
+                  Aucune spécification. Cliquez sur &quot;Ajouter&quot; pour en créer.
+                </p>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
     </Modal>
   );
 }

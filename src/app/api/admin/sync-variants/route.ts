@@ -59,8 +59,12 @@ export async function POST() {
           tagline: dbFamily.tagline ?? staticFamily.tagline,
           longDescription: dbFamily.longDescription ?? staticFamily.longDescription,
           features: dbFamily.features.length > 0 ? dbFamily.features : staticFamily.features,
-          benefits: (dbFamily.benefits as unknown[] | null)?.length ? dbFamily.benefits : staticFamily.benefits,
-          specifications: (dbFamily.specifications as unknown[] | null)?.length ? dbFamily.specifications : staticFamily.specifications,
+          benefits: (dbFamily.benefits as unknown[] | null)?.length
+            ? (dbFamily.benefits as object[])
+            : (staticFamily.benefits as object[]),
+          specifications: (dbFamily.specifications as unknown[] | null)?.length
+            ? (dbFamily.specifications as object[])
+            : (staticFamily.specifications as object[]),
           unit: dbFamily.unit ?? staticFamily.unit,
         },
       });

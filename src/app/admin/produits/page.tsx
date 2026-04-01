@@ -2,7 +2,7 @@
 
 import * as React from "react";
 import Link from "next/link";
-import { Plus, Package, Filter, Edit, Trash2, Copy } from "lucide-react";
+import { Plus, Package, Filter, Edit, Trash2, Copy, Star } from "lucide-react";
 import { DataTable, StatusBadge } from "@/components/admin/ui/DataTable";
 import { type ColumnDef } from "@tanstack/react-table";
 import { format } from "date-fns";
@@ -187,6 +187,13 @@ export default function ProductsPage() {
           >
             <Package className="w-4 h-4" />
             Familles
+          </Link>
+          <Link
+            href="/admin/produits/vedettes"
+            className="inline-flex items-center gap-2 px-4 py-2 bg-amber-50 border border-amber-200 rounded-lg text-sm font-medium text-amber-700 hover:bg-amber-100 transition-colors"
+          >
+            <Star className="w-4 h-4" />
+            Produits vedettes
           </Link>
           <Link
             href="/admin/produits/images"

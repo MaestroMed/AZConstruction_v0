@@ -287,6 +287,16 @@ const cardVariants = {
 
 export default function ProduitsPage() {
   const { getImage, isPlaceholder } = useSiteImages();
+  const [vedettes, setVedettes] = React.useState<{ id: string; titre: string; description: string; imageUrl?: string; href: string; badge?: string }[]>([]);
+
+  React.useEffect(() => {
+    fetch("/api/produits-vedettes")
+      .then((r) => r.json())
+      .then((data) => {
+        if (data.success && data.items?.length) setVedettes(data.items);
+      })
+      .catch(() => {});
+  }, []);
 
   return (
     <div className="min-h-screen bg-white">
@@ -581,6 +591,73 @@ export default function ProduitsPage() {
           </div>
         </div>
       </section>
+
+      {/* Bottom CTA */}
+      {vedettes.length > 0 && (
+        <section className="py-20 bg-white">
+          <div className="container mx-auto px-6">
+            <motion.div
+              className="text-center mb-12"
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+            >
+              <span className="inline-block text-cyan-700 font-semibold text-sm tracking-wider uppercase mb-4">
+                À découvrir
+              </span>
+              <h2 className="text-3xl md:text-4xl font-bold text-navy-dark mb-4">
+                Produits en vedette
+              </h2>
+              <p className="text-gray-600 max-w-xl mx-auto">
+                Nos réalisations et produits phares sélectionnés par nos équipes.
+              </p>
+            </motion.div>
+            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {vedettes.map((item, index) => (
+                <motion.div
+                  key={item.id}
+                  initial={{ opacity: 0, y: 30 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: index * 0.1 }}
+                >
+                  <Link href={item.href || "/produits"}>
+                    <div className="group relative h-64 rounded-2xl overflow-hidden cursor-pointer">
+                      {item.imageUrl ? (
+                        <Image
+                          src={item.imageUrl}
+                          alt={item.titre}
+                          fill
+                          className="object-cover group-hover:scale-105 transition-transform duration-500"
+                        />
+                      ) : (
+                        <div className="w-full h-full bg-gradient-to-br from-navy-dark via-blue-corporate to-cyan-800" />
+                      )}
+                      <div className="absolute inset-0 bg-gradient-to-t from-navy-dark/90 via-navy-dark/30 to-transparent" />
+                      {item.badge && (
+                        <div className="absolute top-4 left-4">
+                          <span className="px-3 py-1 bg-cyan-glow/90 text-navy-dark text-xs font-bold rounded-full">
+                            {item.badge}
+                          </span>
+                        </div>
+                      )}
+                      <div className="absolute bottom-0 left-0 right-0 p-5">
+                        <h3 className="text-white font-bold text-lg mb-1">{item.titre}</h3>
+                        {item.description && (
+                          <p className="text-white/60 text-sm line-clamp-2">{item.description}</p>
+                        )}
+                        <span className="inline-flex items-center gap-1 text-cyan-glow text-xs font-medium mt-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                          Découvrir <ArrowRight className="w-3 h-3" />
+                        </span>
+                      </div>
+                    </div>
+                  </Link>
+                </motion.div>
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
 
       {/* Bottom CTA */}
       <section className="py-20 bg-white">
