@@ -13,8 +13,15 @@ const DEFAULT_ITEMS = clientDemands.map((d, i) => ({
   active: true,
 }));
 
-export async function GET() {
+export async function GET(request: NextRequest) {
   try {
+    const { searchParams } = new URL(request.url);
+    const forceDefault = searchParams.get("forceDefault") === "true";
+
+    if (forceDefault) {
+      return NextResponse.json({ success: true, items: DEFAULT_ITEMS, isDefault: true });
+    }
+
     const items = await prisma.thermolaquageDemand.findMany({
       where: { active: true },
       orderBy: { ordre: "asc" },

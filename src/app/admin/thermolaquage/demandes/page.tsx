@@ -3,7 +3,7 @@
 import * as React from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { ArrowLeft, Plus, Save, Trash2, Loader2, Eye, EyeOff, Edit2, X } from "lucide-react";
+import { ArrowLeft, Plus, Save, Trash2, Loader2, Eye, EyeOff, Edit2, X, Database } from "lucide-react";
 import { toast } from "sonner";
 
 interface DemandItem {
@@ -211,6 +211,42 @@ export default function ThermolaquageDemandesAdminPage() {
     setItems(prev => [...prev, newItem]);
   };
 
+  const seedItems = async () => {
+    if (!confirm("Importer toutes les vignettes par défaut en base de données ? Elles seront ensuite modifiables librement.")) return;
+    try {
+      // Récupérer les défauts statiques depuis l'API (quand DB est vide)
+      const res = await fetch("/api/thermolaquage-demands?forceDefault=true");
+      const data = await res.json();
+      if (!data.success || !data.items?.length) {
+        toast.error("Impossible de récupérer les données par défaut");
+        return;
+      }
+      const defaultItems: DemandItem[] = data.items.filter((i: DemandItem) => i.id.startsWith("static-"));
+      if (defaultItems.length === 0) {
+        toast.info("Toutes les vignettes par défaut sont déjà importées");
+        return;
+      }
+      const created: DemandItem[] = [];
+      for (const item of defaultItems) {
+        const { id: _, ...body } = item;
+        const r = await fetch("/api/thermolaquage-demands", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(body),
+        });
+        if (r.ok) { const d = await r.json(); created.push(d.item); }
+      }
+      // Remplacer les items statiques par les items DB créés + les items DB existants non-statiques
+      setItems(prev => {
+        const dbItems = prev.filter(i => !i.id.startsWith("static-") && !i.id.startsWith("new-"));
+        return [...dbItems, ...created];
+      });
+      toast.success(`${created.length} vignette(s) importée(s) en base de données !`);
+    } catch {
+      toast.error("Erreur lors de l'importation");
+    }
+  };
+
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
@@ -223,13 +259,18 @@ export default function ThermolaquageDemandesAdminPage() {
             <p className="text-gray-500 text-sm mt-1">Section &quot;Ce que demandent nos clients&quot; — page Thermolaquage</p>
           </div>
         </div>
-        <button onClick={addItem} className="inline-flex items-center gap-2 px-4 py-2.5 bg-cyan-500 text-white rounded-xl text-sm font-semibold hover:bg-cyan-600 transition-colors">
-          <Plus className="w-4 h-4" /> Ajouter une vignette
-        </button>
+        <div className="flex items-center gap-2">
+          <button onClick={seedItems} className="inline-flex items-center gap-2 px-4 py-2.5 bg-blue-600 text-white rounded-xl text-sm font-semibold hover:bg-blue-700 transition-colors">
+            <Database className="w-4 h-4" /> Importer les défauts
+          </button>
+          <button onClick={addItem} className="inline-flex items-center gap-2 px-4 py-2.5 bg-cyan-500 text-white rounded-xl text-sm font-semibold hover:bg-cyan-600 transition-colors">
+            <Plus className="w-4 h-4" /> Ajouter une vignette
+          </button>
+        </div>
       </div>
 
       <div className="bg-amber-50 border border-amber-200 rounded-xl p-4 text-sm text-amber-700">
-        <strong>Note :</strong> Si aucune vignette n&apos;est créée ici, les vignettes statiques par défaut sont affichées. Créez vos propres vignettes pour les personnaliser.
+        <strong>Important :</strong> Si aucune vignette n&apos;est en base de données, les vignettes statiques par défaut sont affichées. Dès que vous créez une vignette, <strong>seules les vignettes en base sont affichées</strong>. Cliquez sur <strong>Importer les défauts</strong> pour d&apos;abord enregistrer toutes les vignettes par défaut en base, puis ajoutez les vôtres.
       </div>
 
       {loading ? (
