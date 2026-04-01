@@ -108,12 +108,12 @@ function ItemRow({ item, onSave, onDelete, onToggle }: {
                 const file = (e.target as HTMLInputElement).files?.[0];
                 if (!file) return;
                 const fd = new FormData();
-                fd.append("file", file);
+                fd.append("files", file);
                 try {
                   const res = await fetch("/api/upload", { method: "POST", body: fd });
                   if (!res.ok) throw new Error("Upload échoué");
                   const data = await res.json();
-                  const url = data.url || data.imageUrl;
+                  const url = data.files?.[0]?.url || data.url || data.imageUrl;
                   if (url) setForm({ ...form, imageUrl: url });
                 } catch (err) {
                   toast.error(err instanceof Error ? err.message : "Erreur upload");

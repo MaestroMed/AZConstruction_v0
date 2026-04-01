@@ -15,184 +15,24 @@ import {
   Clock,
   CheckCircle2,
   Star,
+  Layers,
 } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 import { Card, CardContent } from "@/components/ui/Card";
-import { useSiteImages } from "@/lib/hooks/useSiteImages";
 
-const productFamilies = [
-  {
-    id: "garde-corps",
-    imageKey: "product-garde-corps",
-    name: "Garde-corps",
-    description:
-      "Garde-corps et balustrades pour terrasses, balcons et escaliers. Verre feuilleté, câbles tendus ou barreaux design.",
-    icon: (
-      <svg className="w-12 h-12" viewBox="0 0 48 48" fill="none" stroke="currentColor" strokeWidth="2">
-        <line x1="4" y1="16" x2="44" y2="16" />
-        <line x1="8" y1="16" x2="8" y2="40" />
-        <line x1="20" y1="16" x2="20" y2="40" />
-        <line x1="32" y1="16" x2="32" y2="40" />
-        <line x1="44" y1="16" x2="44" y2="40" />
-        <circle cx="8" cy="12" r="3" />
-        <circle cx="20" cy="12" r="3" />
-        <circle cx="32" cy="12" r="3" />
-        <circle cx="44" cy="12" r="3" />
-      </svg>
-    ),
-    products: ["Garde-corps Verre & Acier", "Garde-corps Câbles", "Garde-corps Barreaudé", "Garde-corps Tôles Perforées"],
-    startingPrice: "290",
-    features: ["Norme NF P01-012", "8 modèles"],
-  },
-  {
-    id: "escaliers",
-    imageKey: "product-escaliers",
-    name: "Escaliers",
-    description:
-      "Escaliers droits, quart-tournant, double quart-tournant et hélicoïdaux. Structures acier ou mixte bois-métal.",
-    icon: (
-      <svg className="w-12 h-12" viewBox="0 0 48 48" fill="none" stroke="currentColor" strokeWidth="2">
-        <path d="M4 44 L4 36 L12 36 L12 28 L20 28 L20 20 L28 20 L28 12 L36 12 L36 4 L44 4" />
-      </svg>
-    ),
-    products: ["Escalier Hélicoïdal", "Escalier Droit", "Escalier Quart-tournant", "Escalier Suspendu"],
-    startingPrice: "4 500",
-    features: ["8 modèles", "Marches bois/métal"],
-  },
-  {
-    id: "portails",
-    imageKey: "product-portails",
-    name: "Portails",
-    description:
-      "Portails battants et coulissants en acier. Design moderne ou classique, motorisation disponible.",
-    icon: (
-      <svg className="w-12 h-12" viewBox="0 0 48 48" fill="none" stroke="currentColor" strokeWidth="2">
-        <rect x="4" y="8" width="18" height="32" rx="2" />
-        <rect x="26" y="8" width="18" height="32" rx="2" />
-        <circle cx="13" cy="24" r="2" fill="currentColor" />
-        <circle cx="35" cy="24" r="2" fill="currentColor" />
-      </svg>
-    ),
-    products: ["Portail Battant 2 Vantaux", "Portail Coulissant", "Portail Autoportant", "Portillon Piéton"],
-    startingPrice: "1 890",
-    features: ["Motorisable", "7 modèles", "200+ couleurs RAL"],
-  },
-  {
-    id: "clotures",
-    imageKey: "product-clotures",
-    name: "Clôtures",
-    description:
-      "Clôtures barreaudées, à lames, panneaux rigides et décoratives. Solutions esthétiques et sécuritaires pour votre propriété.",
-    icon: (
-      <svg className="w-12 h-12" viewBox="0 0 48 48" fill="none" stroke="currentColor" strokeWidth="2">
-        <line x1="4" y1="12" x2="44" y2="12" />
-        <line x1="4" y1="24" x2="44" y2="24" />
-        <line x1="4" y1="36" x2="44" y2="36" />
-        <line x1="8" y1="8" x2="8" y2="40" />
-        <line x1="24" y1="8" x2="24" y2="40" />
-        <line x1="40" y1="8" x2="40" y2="40" />
-      </svg>
-    ),
-    products: ["Clôture Barreaudée", "Clôture à Lames", "Clôture Décorative"],
-    startingPrice: "85",
-    features: ["Prix au mètre", "8 modèles", "Anti-corrosion"],
-  },
-  {
-    id: "marquises",
-    imageKey: "product-marquises",
-    name: "Marquises & Auvents",
-    description:
-      "Marquises pour portes d'entrée, auvents terrasse et casquettes architecturales. Protection pluie et soleil design.",
-    icon: (
-      <svg className="w-12 h-12" viewBox="0 0 48 48" fill="none" stroke="currentColor" strokeWidth="2">
-        <path d="M6 20 L24 8 L42 20" />
-        <line x1="6" y1="20" x2="6" y2="24" />
-        <line x1="42" y1="20" x2="42" y2="24" />
-        <rect x="6" y="24" width="36" height="4" rx="1" />
-        <rect x="16" y="28" width="16" height="16" rx="1" />
-        <line x1="24" y1="28" x2="24" y2="44" />
-      </svg>
-    ),
-    products: ["Marquise Porte d'Entrée", "Auvent Terrasse", "Marquise Verre", "Auvent Casquette"],
-    startingPrice: "890",
-    features: ["6 modèles", "Verre ou polycarb.", "Gouttière incluse"],
-  },
-  {
-    id: "portes",
-    imageKey: "product-portes",
-    name: "Portes",
-    description:
-      "Portes en acier et profilés Jansen : portes d'entrée design, techniques, coupe-feu EI30 à EI120, taulées et vitrées.",
-    icon: (
-      <svg className="w-12 h-12" viewBox="0 0 48 48" fill="none" stroke="currentColor" strokeWidth="2">
-        <rect x="8" y="4" width="32" height="40" rx="2" />
-        <line x1="8" y1="4" x2="8" y2="44" strokeWidth="3" />
-        <circle cx="34" cy="24" r="2" fill="currentColor" />
-        <line x1="32" y1="24" x2="28" y2="24" />
-      </svg>
-    ),
-    products: ["Porte d'Entrée Acier", "Porte Atelier", "Porte Coupe-feu", "Porte Vitrée"],
-    startingPrice: "1 200",
-    features: ["Profilés Jansen", "8 modèles", "Coupe-feu EI120"],
-  },
-  {
-    id: "fenetres",
-    imageKey: "product-fenetres",
-    name: "Fenêtres & Châssis",
-    description:
-      "Fenêtres et châssis en profilés acier Jansen. Fixes, oscillo-battantes, coulissantes. Style atelier ou contemporain.",
-    icon: (
-      <svg className="w-12 h-12" viewBox="0 0 48 48" fill="none" stroke="currentColor" strokeWidth="2">
-        <rect x="6" y="6" width="36" height="36" rx="2" />
-        <line x1="24" y1="6" x2="24" y2="42" />
-        <line x1="6" y1="24" x2="42" y2="24" />
-        <rect x="10" y="10" width="10" height="10" fill="none" strokeWidth="1" />
-        <rect x="28" y="10" width="10" height="10" fill="none" strokeWidth="1" />
-      </svg>
-    ),
-    products: ["Fenêtre Fixe Acier", "Fenêtre Oscillo-battante", "Châssis Atelier", "Baie Panoramique"],
-    startingPrice: "750",
-    features: ["Profilés Jansen", "8 modèles", "Double/Triple vitrage"],
-  },
-  {
-    id: "verrieres",
-    imageKey: "product-verrieres",
-    name: "Verrières",
-    description:
-      "Verrières intérieures style atelier. Cloisons vitrées avec ou sans porte. Du sol au plafond ou en imposte. Sur mesure.",
-    icon: (
-      <svg className="w-12 h-12" viewBox="0 0 48 48" fill="none" stroke="currentColor" strokeWidth="2">
-        <rect x="4" y="4" width="40" height="40" rx="2" />
-        <line x1="4" y1="24" x2="44" y2="24" />
-        <line x1="16" y1="4" x2="16" y2="44" />
-        <line x1="28" y1="4" x2="28" y2="44" />
-        <line x1="40" y1="4" x2="40" y2="44" />
-      </svg>
-    ),
-    products: ["Verrière Atelier Fixe", "Verrière avec Porte", "Verrière Toute Hauteur", "Verrière Cuisine"],
-    startingPrice: "480",
-    features: ["Style industriel", "7 modèles", "Porte intégrée"],
-  },
-  {
-    id: "grilles-ventilation",
-    imageKey: "product-grilles",
-    name: "Grilles de ventilation",
-    description:
-      "Grilles de ventilation techniques et décoratives. Fixes, orientables, acoustiques ou coupe-feu. Sur mesure pour tous bâtiments.",
-    icon: (
-      <svg className="w-12 h-12" viewBox="0 0 48 48" fill="none" stroke="currentColor" strokeWidth="2">
-        <rect x="6" y="6" width="36" height="36" rx="2" />
-        <line x1="10" y1="14" x2="38" y2="14" />
-        <line x1="10" y1="22" x2="38" y2="22" />
-        <line x1="10" y1="30" x2="38" y2="30" />
-        <line x1="10" y1="38" x2="38" y2="38" />
-      </svg>
-    ),
-    products: ["Grille Décorative", "Grille Technique", "Grille Caillebotis"],
-    startingPrice: "180",
-    features: ["7 modèles", "Anti-corrosion", "Sur mesure"],
-  },
-];
+// ── Type DB ──────────────────────────────────────────────────────
+interface DBFamily {
+  id: string;
+  nom: string;
+  slug: string;
+  description?: string | null;
+  imageUrl?: string | null;
+  tagline?: string | null;
+  features: string[];
+  variants?: Array<{ id: string; name: string }> | null;
+  active: boolean;
+  ordre: number;
+}
 
 const guarantees = [
   {
@@ -286,10 +126,23 @@ const cardVariants = {
 };
 
 export default function ProduitsPage() {
-  const { getImage, isPlaceholder } = useSiteImages();
+  const [families, setFamilies] = React.useState<DBFamily[]>([]);
+  const [loadingFamilies, setLoadingFamilies] = React.useState(true);
   const [vedettes, setVedettes] = React.useState<{ id: string; titre: string; description: string; imageUrl?: string; href: string; badge?: string }[]>([]);
 
   React.useEffect(() => {
+    // Charger les familles depuis la DB
+    fetch("/api/product-families")
+      .then((r) => r.json())
+      .then((data) => {
+        if (data.success && data.families?.length) {
+          setFamilies(data.families);
+        }
+      })
+      .catch(() => {})
+      .finally(() => setLoadingFamilies(false));
+
+    // Charger les produits vedettes
     fetch("/api/produits-vedettes")
       .then((r) => r.json())
       .then((data) => {
@@ -316,27 +169,29 @@ export default function ProduitsPage() {
             transition={{ duration: 0.6 }}
           >
             <span className="inline-block px-4 py-2 bg-cyan-glow/20 text-cyan-glow rounded-full text-sm font-medium mb-6">
-              10 familles de produits • 66 produits • 1800m² d&apos;atelier
+              {families.length > 0 ? `${families.length} familles de produits` : "Nos familles de produits"} • 1800m² d&apos;atelier
             </span>
             <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-6 leading-tight">
               Nos Produits{" "}
               <span className="font-serif italic text-cyan-pale">sur mesure</span>
             </h1>
             <p className="text-xl text-white/80 mb-8 leading-relaxed">
-              Découvrez notre gamme complète d'ouvrages métalliques sur mesure. 
+              Découvrez notre gamme complète d'ouvrages métalliques sur mesure.
               Fabrication française, qualité premium, devis gratuit sous 48h.
             </p>
-            <div className="flex flex-wrap justify-center gap-4">
-              {productFamilies.map((family) => (
-                <a
-                  key={family.id}
-                  href={`#${family.id}`}
-                  className="px-4 py-2 bg-white/10 backdrop-blur-sm rounded-full text-white/80 hover:bg-white/20 hover:text-white transition-all text-sm"
-                >
-                  {family.name}
-                </a>
-              ))}
-            </div>
+            {families.length > 0 && (
+              <div className="flex flex-wrap justify-center gap-4">
+                {families.map((family) => (
+                  <a
+                    key={family.id}
+                    href={`#${family.slug}`}
+                    className="px-4 py-2 bg-white/10 backdrop-blur-sm rounded-full text-white/80 hover:bg-white/20 hover:text-white transition-all text-sm"
+                  >
+                    {family.nom}
+                  </a>
+                ))}
+              </div>
+            )}
           </motion.div>
         </div>
       </section>
@@ -365,89 +220,113 @@ export default function ProduitsPage() {
       {/* Product Families */}
       <section className="py-20">
         <div className="container mx-auto px-6">
-          <motion.div
-            className="grid md:grid-cols-2 lg:grid-cols-3 gap-8"
-            variants={containerVariants}
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true }}
-          >
-            {productFamilies.map((family) => (
-              <motion.div key={family.id} id={family.id} variants={cardVariants}>
-                <Card variant="elevated" hover className="h-full group overflow-hidden">
-                  {/* Image / Icon area */}
-                  <div className="relative h-48 bg-gradient-to-br from-blue-corporate/10 to-navy-dark/20 overflow-hidden">
-                    {!isPlaceholder(family.imageKey) ? (
-                      <Image
-                        src={getImage(family.imageKey)}
-                        alt={family.name}
-                        fill
-                        className="object-cover group-hover:scale-105 transition-transform duration-500"
-                        sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-                      />
-                    ) : (
-                      <div className="absolute inset-0 flex items-center justify-center text-blue-corporate/40 group-hover:scale-110 transition-transform duration-300">
-                        {family.icon}
-                      </div>
-                    )}
-                    {/* Gradient overlay for readability */}
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent" />
+          {loadingFamilies ? (
+            /* Skeleton loading */
+            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+              {Array.from({ length: 6 }).map((_, i) => (
+                <div key={i} className="rounded-2xl overflow-hidden border border-gray-100 animate-pulse">
+                  <div className="h-48 bg-gray-200" />
+                  <div className="p-6 space-y-3">
+                    <div className="h-5 bg-gray-200 rounded w-2/3" />
+                    <div className="h-4 bg-gray-100 rounded w-full" />
+                    <div className="h-4 bg-gray-100 rounded w-5/6" />
+                    <div className="h-10 bg-gray-200 rounded-xl mt-4" />
                   </div>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <motion.div
+              className="grid md:grid-cols-2 lg:grid-cols-3 gap-8"
+              variants={containerVariants}
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: true }}
+            >
+              {families.map((family) => {
+                // Extraire les noms de variants pour la liste "Modèles populaires"
+                const variantNames: string[] = Array.isArray(family.variants)
+                  ? (family.variants as Array<{ name?: string }>).map((v) => v.name ?? "").filter(Boolean).slice(0, 4)
+                  : [];
 
-                  <CardContent className="p-6">
-                    {/* Header */}
-                    <div className="flex justify-between items-start mb-3">
-                      <h2 className="text-xl font-bold text-navy-dark">
-                        {family.name}
-                      </h2>
-                      <span className="inline-flex items-center px-2 py-1 bg-green-100 text-green-700 rounded-full text-xs font-medium flex-shrink-0 ml-2">
-                        Décennale
-                      </span>
-                    </div>
-                    <p className="text-gray-500 mb-4 leading-relaxed text-sm">
-                      {family.description}
-                    </p>
+                return (
+                  <motion.div key={family.id} id={family.slug} variants={cardVariants}>
+                    <Card variant="elevated" hover className="h-full group overflow-hidden">
+                      {/* Image area */}
+                      <div className="relative h-48 bg-gradient-to-br from-blue-corporate/10 to-navy-dark/20 overflow-hidden">
+                        {family.imageUrl ? (
+                          <Image
+                            src={family.imageUrl}
+                            alt={family.nom}
+                            fill
+                            className="object-cover group-hover:scale-105 transition-transform duration-500"
+                            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                          />
+                        ) : (
+                          <div className="absolute inset-0 flex items-center justify-center text-blue-corporate/40 group-hover:scale-110 transition-transform duration-300">
+                            <Layers className="w-12 h-12" />
+                          </div>
+                        )}
+                        <div className="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent" />
+                      </div>
 
-                    {/* Features */}
-                    <div className="flex flex-wrap gap-2 mb-4">
-                      {family.features.map((feature, idx) => (
-                        <span
-                          key={idx}
-                          className="inline-flex items-center gap-1 px-2 py-1 bg-cyan-glow/10 text-cyan-600 rounded-full text-xs font-medium"
-                        >
-                          <CheckCircle2 className="w-3 h-3" />
-                          {feature}
-                        </span>
-                      ))}
-                    </div>
+                      <CardContent className="p-6">
+                        <div className="flex justify-between items-start mb-3">
+                          <h2 className="text-xl font-bold text-navy-dark">{family.nom}</h2>
+                          <span className="inline-flex items-center px-2 py-1 bg-green-100 text-green-700 rounded-full text-xs font-medium flex-shrink-0 ml-2">
+                            Décennale
+                          </span>
+                        </div>
 
-                    {/* Products list */}
-                    <div className="mb-4 pb-4 border-b border-gray-100">
-                      <p className="text-xs text-gray-400 mb-2">Modèles populaires :</p>
-                      <ul className="space-y-1">
-                        {family.products.map((product, idx) => (
-                          <li key={idx} className="text-sm text-gray-600 flex items-center gap-2">
-                            <span className="w-1.5 h-1.5 rounded-full bg-cyan-glow flex-shrink-0" />
-                            {product}
-                          </li>
-                        ))}
-                      </ul>
-                    </div>
+                        {family.description && (
+                          <p className="text-gray-500 mb-4 leading-relaxed text-sm">{family.description}</p>
+                        )}
 
-                    {/* CTA */}
-                    <Link href={`/produits/${family.id}`}>
-                      <Button
-                        className="w-full group-hover:bg-cyan-glow group-hover:text-navy-dark transition-colors"
-                        icon={<ArrowRight className="w-4 h-4" />}
-                      >
-                        Découvrir les {family.name.toLowerCase()}
-                      </Button>
-                    </Link>
-                  </CardContent>
-                </Card>
-              </motion.div>
-            ))}
-          </motion.div>
+                        {/* Features */}
+                        {family.features?.length > 0 && (
+                          <div className="flex flex-wrap gap-2 mb-4">
+                            {family.features.slice(0, 3).map((feature, idx) => (
+                              <span
+                                key={idx}
+                                className="inline-flex items-center gap-1 px-2 py-1 bg-cyan-glow/10 text-cyan-600 rounded-full text-xs font-medium"
+                              >
+                                <CheckCircle2 className="w-3 h-3" />
+                                {feature}
+                              </span>
+                            ))}
+                          </div>
+                        )}
+
+                        {/* Variants / Modèles populaires */}
+                        {variantNames.length > 0 && (
+                          <div className="mb-4 pb-4 border-b border-gray-100">
+                            <p className="text-xs text-gray-400 mb-2">Modèles populaires :</p>
+                            <ul className="space-y-1">
+                              {variantNames.map((name, idx) => (
+                                <li key={idx} className="text-sm text-gray-600 flex items-center gap-2">
+                                  <span className="w-1.5 h-1.5 rounded-full bg-cyan-glow flex-shrink-0" />
+                                  {name}
+                                </li>
+                              ))}
+                            </ul>
+                          </div>
+                        )}
+
+                        <Link href={`/produits/${family.slug}`}>
+                          <Button
+                            className="w-full group-hover:bg-cyan-glow group-hover:text-navy-dark transition-colors"
+                            icon={<ArrowRight className="w-4 h-4" />}
+                          >
+                            Découvrir les {family.nom.toLowerCase()}
+                          </Button>
+                        </Link>
+                      </CardContent>
+                    </Card>
+                  </motion.div>
+                );
+              })}
+            </motion.div>
+          )}
         </div>
       </section>
 
@@ -488,9 +367,7 @@ export default function ProduitsPage() {
                   <span className="absolute -top-2 -right-2 w-8 h-8 bg-cyan-glow text-navy-dark text-sm font-bold rounded-full flex items-center justify-center">
                     {step.step}
                   </span>
-                  <h3 className="text-lg font-semibold text-navy-dark mb-2">
-                    {step.title}
-                  </h3>
+                  <h3 className="text-lg font-semibold text-navy-dark mb-2">{step.title}</h3>
                   <p className="text-sm text-gray-500">{step.description}</p>
                 </div>
               </motion.div>
@@ -533,7 +410,7 @@ export default function ProduitsPage() {
                       ))}
                     </div>
                     <p className="text-gray-600 mb-6 leading-relaxed italic">
-                      "{testimonial.text}"
+                      &ldquo;{testimonial.text}&rdquo;
                     </p>
                     <div className="flex items-center justify-between">
                       <div>
@@ -582,9 +459,7 @@ export default function ProduitsPage() {
                 <div className="w-14 h-14 rounded-xl bg-cyan-glow/20 flex items-center justify-center mx-auto mb-4">
                   <guarantee.icon className="w-7 h-7 text-cyan-glow" />
                 </div>
-                <h3 className="text-lg font-semibold text-white mb-2">
-                  {guarantee.title}
-                </h3>
+                <h3 className="text-lg font-semibold text-white mb-2">{guarantee.title}</h3>
                 <p className="text-sm text-white/60">{guarantee.description}</p>
               </motion.div>
             ))}
@@ -592,7 +467,7 @@ export default function ProduitsPage() {
         </div>
       </section>
 
-      {/* Bottom CTA */}
+      {/* Produits vedettes */}
       {vedettes.length > 0 && (
         <section className="py-20 bg-white">
           <div className="container mx-auto px-6">

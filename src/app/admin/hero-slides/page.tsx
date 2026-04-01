@@ -181,7 +181,10 @@ export default function HeroSlidesAdminPage() {
   }, []);
 
   const seedSlides = async () => {
-    if (!confirm("Initialiser les 3 slides par défaut ? Cela créera 3 entrées en base de données.")) return;
+    const msg = slides.length > 0
+      ? `Il y a déjà ${slides.length} slide(s). Ajouter les 3 slides par défaut en plus ?`
+      : "Initialiser les 3 slides par défaut ? Cela créera 3 entrées en base de données.";
+    if (!confirm(msg)) return;
     setSeeding(true);
     try {
       const created: HeroSlide[] = [];
@@ -189,7 +192,7 @@ export default function HeroSlidesAdminPage() {
         const res = await fetch("/api/hero-slides", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(s) });
         if (res.ok) { const data = await res.json(); created.push(data.slide); }
       }
-      setSlides(created);
+      setSlides(prev => [...prev, ...created]);
       toast.success("3 slides créés avec succès !");
     } catch {
       toast.error("Erreur lors de l'initialisation");
@@ -250,14 +253,25 @@ export default function HeroSlidesAdminPage() {
             <p className="text-gray-500 text-sm mt-1">Gérez le carousel de la page d&apos;accueil — jusqu&apos;à 6 slides</p>
           </div>
         </div>
-        <button
-          onClick={addSlide}
-          disabled={slides.length >= 6}
-          className="inline-flex items-center gap-2 px-4 py-2.5 bg-cyan-500 text-white rounded-xl text-sm font-semibold hover:bg-cyan-600 transition-colors disabled:opacity-40"
-        >
-          <Plus className="w-4 h-4" />
-          Ajouter un slide
-        </button>
+        <div className="flex items-center gap-2">
+          <button
+            onClick={seedSlides}
+            disabled={seeding}
+            title="Initialise (ou complète) les 3 slides par défaut depuis les données statiques"
+            className="inline-flex items-center gap-2 px-4 py-2.5 bg-blue-600 text-white rounded-xl text-sm font-semibold hover:bg-blue-700 transition-colors disabled:opacity-50"
+          >
+            {seeding ? <Loader2 className="w-4 h-4 animate-spin" /> : <Database className="w-4 h-4" />}
+            Initialiser les données
+          </button>
+          <button
+            onClick={addSlide}
+            disabled={slides.length >= 6}
+            className="inline-flex items-center gap-2 px-4 py-2.5 bg-cyan-500 text-white rounded-xl text-sm font-semibold hover:bg-cyan-600 transition-colors disabled:opacity-40"
+          >
+            <Plus className="w-4 h-4" />
+            Ajouter un slide
+          </button>
+        </div>
       </div>
 
       {/* Info */}

@@ -114,18 +114,22 @@ export async function POST(request: NextRequest) {
             uploadedAt: new Date().toISOString(),
           };
           
-          await prisma.media.create({
-            data: {
-              id: fileData.id,
-              fileName: fileData.fileName,
-              originalName: fileData.originalName,
-              url: fileData.url,
-              type: fileData.type,
-              mimeType: fileData.mimeType,
-              size: fileData.size,
-              provider: fileData.provider,
-            },
-          });
+          try {
+            await prisma.media.create({
+              data: {
+                id: fileData.id,
+                fileName: fileData.fileName,
+                originalName: fileData.originalName,
+                url: fileData.url,
+                type: fileData.type,
+                mimeType: fileData.mimeType,
+                size: fileData.size,
+                provider: fileData.provider,
+              },
+            });
+          } catch (dbErr) {
+            console.warn("Media DB record skipped:", dbErr);
+          }
           
           uploadedFiles.push(fileData);
           continue;
@@ -153,21 +157,25 @@ export async function POST(request: NextRequest) {
             uploadedAt: new Date().toISOString(),
           };
           
-          await prisma.media.create({
-            data: {
-              id: fileData.id,
-              fileName: fileData.fileName,
-              originalName: fileData.originalName,
-              url: fileData.url,
-              type: fileData.type,
-              mimeType: fileData.mimeType,
-              size: fileData.size,
-              width: fileData.width,
-              height: fileData.height,
-              provider: fileData.provider,
-              publicId: fileData.publicId,
-            },
-          });
+          try {
+            await prisma.media.create({
+              data: {
+                id: fileData.id,
+                fileName: fileData.fileName,
+                originalName: fileData.originalName,
+                url: fileData.url,
+                type: fileData.type,
+                mimeType: fileData.mimeType,
+                size: fileData.size,
+                width: fileData.width,
+                height: fileData.height,
+                provider: fileData.provider,
+                publicId: fileData.publicId,
+              },
+            });
+          } catch (dbErr) {
+            console.warn("Media DB record skipped:", dbErr);
+          }
           
           uploadedFiles.push(fileData);
           continue;
@@ -192,18 +200,22 @@ export async function POST(request: NextRequest) {
             uploadedAt: new Date().toISOString(),
           };
 
-          await prisma.media.create({
-            data: {
-              id: fileData.id,
-              fileName: fileData.fileName,
-              originalName: fileData.originalName,
-              url: fileData.url,
-              type: fileData.type,
-              mimeType: fileData.mimeType,
-              size: fileData.size,
-              provider: fileData.provider,
-            },
-          });
+          try {
+            await prisma.media.create({
+              data: {
+                id: fileData.id,
+                fileName: fileData.fileName,
+                originalName: fileData.originalName,
+                url: fileData.url,
+                type: fileData.type,
+                mimeType: fileData.mimeType,
+                size: fileData.size,
+                provider: fileData.provider,
+              },
+            });
+          } catch (dbErr) {
+            console.warn("Media DB record skipped:", dbErr);
+          }
 
           uploadedFiles.push(fileData);
           continue;
