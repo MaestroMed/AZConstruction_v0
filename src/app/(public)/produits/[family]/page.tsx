@@ -79,7 +79,7 @@ function VariantCardImage({
   // Auto-advance if multiple images
   React.useEffect(() => {
     if (imgs.length <= 1) return;
-    const t = setInterval(() => setIdx((i) => (i + 1) % imgs.length), 3000);
+    const t = setInterval(() => setIdx((i) => (i + 1) % imgs.length), 5000);
     return () => clearInterval(t);
   }, [imgs.length]);
 
