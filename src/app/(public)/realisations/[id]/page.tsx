@@ -32,6 +32,8 @@ interface RealizationDetail {
   imageUrl?: string;
   images: string[];
   published: boolean;
+  clientName?: string | null;
+  clientLogoUrl?: string | null;
 }
 
 export default function RealisationDetailPage() {
@@ -254,6 +256,21 @@ export default function RealisationDetailPage() {
                   </div>
                 )}
               </div>
+
+              {/* Client logo */}
+              {(realization.clientLogoUrl || realization.clientName) && (
+                <div className="mt-8 flex items-center gap-4 p-5 bg-gray-50 rounded-2xl">
+                  {realization.clientLogoUrl && (
+                    <div className="relative w-[120px] h-12 flex-shrink-0">
+                      <Image src={realization.clientLogoUrl} alt={realization.clientName || "Logo client"} fill className="object-contain" />
+                    </div>
+                  )}
+                  <div>
+                    <p className="text-xs text-gray-400 mb-0.5">Client</p>
+                    <p className="font-semibold text-navy-dark">{realization.clientName || "Client confidentiel"}</p>
+                  </div>
+                </div>
+              )}
             </div>
 
             {/* Sidebar CTA */}

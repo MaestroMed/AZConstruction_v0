@@ -39,6 +39,8 @@ export async function GET(request: NextRequest) {
       images: r.images.map((img) => img.url),
       latitude: r.latitude,
       longitude: r.longitude,
+      clientName: r.clientName,
+      clientLogoUrl: r.clientLogoUrl,
     }));
 
     return NextResponse.json({
@@ -59,7 +61,7 @@ export async function GET(request: NextRequest) {
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-    const { titre, description, categorie, ville, dateRealisation, images, published, maitreOuvrage, adresse } = body;
+    const { titre, description, categorie, ville, dateRealisation, images, published, maitreOuvrage, adresse, clientName, clientLogoUrl } = body;
 
     if (!titre || !categorie) {
       return NextResponse.json(
@@ -83,6 +85,8 @@ export async function POST(request: NextRequest) {
         dateRealisation: dateRealisation ? new Date(dateRealisation) : null,
         published: published ?? false,
         ordre: (maxOrdre?.ordre ?? 0) + 1,
+        clientName: clientName || null,
+        clientLogoUrl: clientLogoUrl || null,
         images: {
           create: (images || []).map((url: string, index: number) => ({
             url,
@@ -110,7 +114,7 @@ export async function POST(request: NextRequest) {
 export async function PUT(request: NextRequest) {
   try {
     const body = await request.json();
-    const { id, titre, description, categorie, ville, dateRealisation, images, published, ordre } = body;
+    const { id, titre, description, categorie, ville, dateRealisation, images, published, ordre, clientName, clientLogoUrl } = body;
 
     if (!id) {
       return NextResponse.json({ error: "ID requis" }, { status: 400 });
@@ -135,6 +139,8 @@ export async function PUT(request: NextRequest) {
         }),
         ...(published !== undefined && { published }),
         ...(ordre !== undefined && { ordre }),
+        ...(clientName !== undefined && { clientName: clientName || null }),
+        ...(clientLogoUrl !== undefined && { clientLogoUrl: clientLogoUrl || null }),
         ...(images && {
           images: {
             create: images.map((url: string, index: number) => ({

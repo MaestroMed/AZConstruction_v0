@@ -11,7 +11,10 @@ interface Realization {
   title: string;
   location: string;
   imageUrl: string | null;
+  images: string[];
   category: string;
+  clientName?: string | null;
+  clientLogoUrl?: string | null;
 }
 
 export default function RealizationsSection() {
@@ -20,6 +23,10 @@ export default function RealizationsSection() {
   const [direction, setDirection] = React.useState(0);
   const [loading, setLoading] = React.useState(true);
   const [lightbox, setLightbox] = React.useState<Realization | null>(null);
+  const [lightboxImgIdx, setLightboxImgIdx] = React.useState(0);
+
+  // Per-card image index for carousel
+  const [cardImageIdx, setCardImageIdx] = React.useState<Record<string, number>>({});
 
   React.useEffect(() => {
     const fetchRealizations = async () => {
@@ -28,20 +35,21 @@ export default function RealizationsSection() {
         if (response.ok) {
           const data = await response.json();
           if (data.success && Array.isArray(data.realizations)) {
-            // Priorité aux réalisations avec image, maintien de l'ordre original ensuite
             const sorted = [...data.realizations].sort((a, b) => {
               if (a.imageUrl && !b.imageUrl) return -1;
               if (!a.imageUrl && b.imageUrl) return 1;
               return 0;
             });
-            // Adapter les champs API (titre/ville/categorie) vers les champs du composant
             setRealizations(
               sorted.map((r) => ({
                 id: r.id,
                 title: r.titre,
                 location: r.ville ?? "",
                 imageUrl: r.imageUrl ?? null,
+                images: r.images ?? [],
                 category: r.categorie,
+                clientName: r.clientName ?? null,
+                clientLogoUrl: r.clientLogoUrl ?? null,
               }))
             );
           }
@@ -52,24 +60,46 @@ export default function RealizationsSection() {
         setLoading(false);
       }
     };
-
     fetchRealizations();
   }, []);
+
+  // Auto-advance card carousels (staggered by index to avoid sync)
+  React.useEffect(() => {
+    if (realizations.length === 0) return;
+    const intervals: ReturnType<typeof setInterval>[] = [];
+    realizations.forEach((r, i) => {
+      if (r.images.length <= 1) return;
+      const delay = i * 800; // stagger
+      const t = setTimeout(() => {
+        const interval = setInterval(() => {
+          setCardImageIdx(prev => ({
+            ...prev,
+            [r.id]: ((prev[r.id] ?? 0) + 1) % r.images.length,
+          }));
+        }, 4000);
+        intervals.push(interval);
+      }, delay);
+      return () => clearTimeout(t);
+    });
+    return () => intervals.forEach(clearInterval);
+  }, [realizations]);
 
   const slidesPerView = 3;
   const maxIndex = Math.max(0, realizations.length - slidesPerView);
 
-  const handlePrev = () => {
-    setDirection(-1);
-    setCurrentIndex((prev) => Math.max(0, prev - 1));
-  };
-
-  const handleNext = () => {
-    setDirection(1);
-    setCurrentIndex((prev) => Math.min(maxIndex, prev + 1));
-  };
+  const handlePrev = () => { setDirection(-1); setCurrentIndex(prev => Math.max(0, prev - 1)); };
+  const handleNext = () => { setDirection(1); setCurrentIndex(prev => Math.min(maxIndex, prev + 1)); };
 
   const visibleRealizations = realizations.slice(currentIndex, currentIndex + slidesPerView);
+
+  const openLightbox = (r: Realization) => {
+    setLightbox(r);
+    setLightboxImgIdx(0);
+  };
+
+  const lightboxImages = lightbox
+    ? lightbox.images.length > 0 ? lightbox.images : lightbox.imageUrl ? [lightbox.imageUrl] : []
+    : [];
 
   if (loading) {
     return (
@@ -100,30 +130,24 @@ export default function RealizationsSection() {
           transition={{ duration: 0.6 }}
         >
           <div>
-            <span className="text-cyan-glow font-medium text-sm uppercase tracking-wider mb-2 block">
-              Portfolio
-            </span>
-            <h2 className="text-4xl md:text-5xl font-display font-bold text-navy-dark">
-              Nos réalisations
-            </h2>
+            <span className="text-cyan-glow font-medium text-sm uppercase tracking-wider mb-2 block">Portfolio</span>
+            <h2 className="text-4xl md:text-5xl font-display font-bold text-navy-dark">Nos réalisations</h2>
             <p className="text-gray-500 mt-3 max-w-lg">
               Découvrez nos derniers projets et laissez-vous inspirer pour votre future création.
             </p>
           </div>
-
-          {/* Navigation Arrows */}
           <div className="flex items-center gap-3">
             <button
               onClick={handlePrev}
               disabled={currentIndex === 0}
-              className="w-12 h-12 rounded-full border border-gray-200 flex items-center justify-center text-gray-600 hover:bg-navy-dark hover:text-white hover:border-navy-dark transition-all disabled:opacity-30 disabled:cursor-not-allowed disabled:hover:bg-transparent disabled:hover:text-gray-600 disabled:hover:border-gray-200"
+              className="w-12 h-12 rounded-full border border-gray-200 flex items-center justify-center text-gray-600 hover:bg-navy-dark hover:text-white hover:border-navy-dark transition-all disabled:opacity-30 disabled:cursor-not-allowed"
             >
               <ChevronLeft className="w-5 h-5" />
             </button>
             <button
               onClick={handleNext}
               disabled={currentIndex >= maxIndex}
-              className="w-12 h-12 rounded-full border border-gray-200 flex items-center justify-center text-gray-600 hover:bg-navy-dark hover:text-white hover:border-navy-dark transition-all disabled:opacity-30 disabled:cursor-not-allowed disabled:hover:bg-transparent disabled:hover:text-gray-600 disabled:hover:border-gray-200"
+              className="w-12 h-12 rounded-full border border-gray-200 flex items-center justify-center text-gray-600 hover:bg-navy-dark hover:text-white hover:border-navy-dark transition-all disabled:opacity-30 disabled:cursor-not-allowed"
             >
               <ChevronRight className="w-5 h-5" />
             </button>
@@ -139,31 +163,47 @@ export default function RealizationsSection() {
             viewport={{ once: true }}
           >
             <AnimatePresence mode="popLayout" initial={false}>
-              {visibleRealizations.map((realization, index) => (
+              {visibleRealizations.map((realization) => {
+                const imgs = realization.images.length > 0 ? realization.images : realization.imageUrl ? [realization.imageUrl] : [];
+                const imgIdx = cardImageIdx[realization.id] ?? 0;
+                const currentImg = imgs[imgIdx] ?? null;
+
+                return (
                   <motion.div
-                  key={realization.id}
-                  initial={{ opacity: 0, x: direction > 0 ? 100 : -100 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  exit={{ opacity: 0, x: direction > 0 ? -100 : 100 }}
-                  transition={{ duration: 0.5, ease: [0.25, 0.46, 0.45, 0.94] }}
-                  layout
-                >
-                  <div
-                    className="group relative h-[400px] rounded-2xl overflow-hidden cursor-pointer"
-                    onClick={() => setLightbox(realization)}
+                    key={realization.id}
+                    initial={{ opacity: 0, x: direction > 0 ? 100 : -100 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    exit={{ opacity: 0, x: direction > 0 ? -100 : 100 }}
+                    transition={{ duration: 0.5, ease: [0.25, 0.46, 0.45, 0.94] }}
+                    layout
                   >
-                      {/* Image */}
+                    <div
+                      className="group relative h-[400px] rounded-2xl overflow-hidden cursor-pointer"
+                      onClick={() => openLightbox(realization)}
+                    >
+                      {/* Image with carousel */}
                       <div className="absolute inset-0 bg-navy-dark">
-                        {realization.imageUrl ? (
-                          <Image
-                            src={realization.imageUrl}
-                            alt={realization.title || "Réalisation AZ Construction"}
-                            fill
-                            className="object-cover transition-transform duration-700 group-hover:scale-110"
-                          />
-                        ) : (
-                          <div className="w-full h-full bg-gradient-to-br from-blue-corporate to-navy-dark" />
-                        )}
+                        <AnimatePresence mode="wait">
+                          {currentImg ? (
+                            <motion.div
+                              key={`${realization.id}-${imgIdx}`}
+                              initial={{ opacity: 0 }}
+                              animate={{ opacity: 1 }}
+                              exit={{ opacity: 0 }}
+                              transition={{ duration: 0.7 }}
+                              className="absolute inset-0"
+                            >
+                              <Image
+                                src={currentImg}
+                                alt={realization.title || "Réalisation AZ Construction"}
+                                fill
+                                className="object-cover transition-transform duration-700 group-hover:scale-110"
+                              />
+                            </motion.div>
+                          ) : (
+                            <div className="w-full h-full bg-gradient-to-br from-blue-corporate to-navy-dark" />
+                          )}
+                        </AnimatePresence>
                       </div>
 
                       {/* Overlay gradient */}
@@ -176,20 +216,44 @@ export default function RealizationsSection() {
                         </span>
                       </div>
 
+                      {/* Image dots (if multiple) */}
+                      {imgs.length > 1 && (
+                        <div className="absolute top-4 right-4 flex gap-1">
+                          {imgs.map((_, i) => (
+                            <span
+                              key={i}
+                              className={`rounded-full transition-all ${i === imgIdx ? "w-4 h-1.5 bg-white" : "w-1.5 h-1.5 bg-white/40"}`}
+                            />
+                          ))}
+                        </div>
+                      )}
+
+                      {/* Client logo overlay */}
+                      {realization.clientLogoUrl && (
+                        <div className="absolute bottom-20 right-4 pointer-events-none">
+                          <div className="w-[80px] h-8 relative">
+                            <Image
+                              src={realization.clientLogoUrl}
+                              alt={realization.clientName || "Logo client"}
+                              fill
+                              className="object-contain brightness-0 invert"
+                            />
+                          </div>
+                        </div>
+                      )}
+
                       {/* Content */}
                       <div className="absolute bottom-0 left-0 right-0 p-6 transform translate-y-2 group-hover:translate-y-0 transition-transform duration-500">
-                        <h3 className="text-2xl font-bold text-white mb-1">
-                          {realization.title}
-                        </h3>
-                        <p className="text-white/60 text-sm flex items-center gap-1">
-                          <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
-                          </svg>
-                          {realization.location}
-                        </p>
-
-                        {/* View button - hidden by default, shows on hover */}
+                        <h3 className="text-2xl font-bold text-white mb-1">{realization.title}</h3>
+                        {realization.location && (
+                          <p className="text-white/60 text-sm flex items-center gap-1">
+                            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                            </svg>
+                            {realization.location}
+                          </p>
+                        )}
                         <div className="mt-4 opacity-0 group-hover:opacity-100 transform translate-y-4 group-hover:translate-y-0 transition-all duration-500">
                           <span className="inline-flex items-center gap-2 text-cyan-400 text-sm font-medium">
                             Agrandir
@@ -198,8 +262,9 @@ export default function RealizationsSection() {
                         </div>
                       </div>
                     </div>
-                </motion.div>
-              ))}
+                  </motion.div>
+                );
+              })}
             </AnimatePresence>
           </motion.div>
 
@@ -213,9 +278,7 @@ export default function RealizationsSection() {
                   setCurrentIndex(i * slidesPerView);
                 }}
                 className={`h-1 rounded-full transition-all duration-300 ${
-                  Math.floor(currentIndex / slidesPerView) === i
-                    ? "w-8 bg-cyan-glow"
-                    : "w-2 bg-gray-300 hover:bg-gray-400"
+                  Math.floor(currentIndex / slidesPerView) === i ? "w-8 bg-cyan-glow" : "w-2 bg-gray-300 hover:bg-gray-400"
                 }`}
               />
             ))}
@@ -259,36 +322,87 @@ export default function RealizationsSection() {
             className="relative max-w-4xl w-full max-h-[90vh] rounded-2xl overflow-hidden shadow-2xl"
             onClick={(e) => e.stopPropagation()}
           >
-            {/* Image */}
+            {/* Main image */}
             <div className="relative aspect-[4/3] w-full bg-navy-dark">
-              {lightbox.imageUrl ? (
-                <Image
-                  src={lightbox.imageUrl}
-                  alt={lightbox.title}
-                  fill
-                  className="object-cover"
-                  sizes="(max-width: 1024px) 100vw, 896px"
-                />
-              ) : (
-                <div className="w-full h-full bg-gradient-to-br from-blue-corporate to-navy-dark" />
-              )}
+              <AnimatePresence mode="wait">
+                {lightboxImages[lightboxImgIdx] ? (
+                  <motion.div key={lightboxImgIdx} initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.4 }} className="absolute inset-0">
+                    <Image
+                      src={lightboxImages[lightboxImgIdx]}
+                      alt={lightbox.title}
+                      fill
+                      className="object-cover"
+                      sizes="(max-width: 1024px) 100vw, 896px"
+                    />
+                  </motion.div>
+                ) : (
+                  <div className="w-full h-full bg-gradient-to-br from-blue-corporate to-navy-dark" />
+                )}
+              </AnimatePresence>
               {/* Gradient overlay */}
               <div className="absolute inset-0 bg-gradient-to-t from-navy-dark/90 via-transparent to-transparent" />
+
+              {/* Lightbox navigation */}
+              {lightboxImages.length > 1 && (
+                <>
+                  <button
+                    onClick={() => setLightboxImgIdx(i => (i - 1 + lightboxImages.length) % lightboxImages.length)}
+                    className="absolute left-3 top-1/2 -translate-y-1/2 w-9 h-9 rounded-full bg-black/40 backdrop-blur-sm flex items-center justify-center text-white hover:bg-black/60 transition-colors border border-white/20"
+                  >
+                    <ChevronLeft className="w-4 h-4" />
+                  </button>
+                  <button
+                    onClick={() => setLightboxImgIdx(i => (i + 1) % lightboxImages.length)}
+                    className="absolute right-3 top-1/2 -translate-y-1/2 w-9 h-9 rounded-full bg-black/40 backdrop-blur-sm flex items-center justify-center text-white hover:bg-black/60 transition-colors border border-white/20"
+                  >
+                    <ChevronRight className="w-4 h-4" />
+                  </button>
+                  {/* Dots */}
+                  <div className="absolute bottom-20 left-1/2 -translate-x-1/2 flex gap-1.5">
+                    {lightboxImages.map((_, i) => (
+                      <button
+                        key={i}
+                        onClick={() => setLightboxImgIdx(i)}
+                        className={`rounded-full transition-all ${i === lightboxImgIdx ? "w-5 h-1.5 bg-white" : "w-1.5 h-1.5 bg-white/40 hover:bg-white/70"}`}
+                      />
+                    ))}
+                  </div>
+                  {/* Counter */}
+                  <div className="absolute top-4 left-4 px-2.5 py-1 bg-black/50 rounded-full text-white text-xs">
+                    {lightboxImgIdx + 1} / {lightboxImages.length}
+                  </div>
+                </>
+              )}
             </div>
 
             {/* Info bar */}
             <div className="absolute bottom-0 left-0 right-0 p-6 flex items-end justify-between">
-              <div>
+              <div className="flex-1 min-w-0 mr-4">
                 <span className="inline-block px-3 py-1 bg-cyan-glow/20 backdrop-blur-md text-cyan-glow text-xs font-medium rounded-full border border-cyan-glow/30 mb-3">
                   {lightbox.category}
                 </span>
-                <h3 className="text-2xl font-bold text-white mb-1">{lightbox.title}</h3>
-                {lightbox.location && (
-                  <p className="text-white/60 text-sm flex items-center gap-1.5">
-                    <MapPin className="w-3.5 h-3.5" />
-                    {lightbox.location}
-                  </p>
-                )}
+                <div className="flex items-center gap-3">
+                  <div>
+                    <h3 className="text-2xl font-bold text-white mb-1">{lightbox.title}</h3>
+                    {lightbox.location && (
+                      <p className="text-white/60 text-sm flex items-center gap-1.5">
+                        <MapPin className="w-3.5 h-3.5" />
+                        {lightbox.location}
+                      </p>
+                    )}
+                  </div>
+                  {/* Client logo in lightbox */}
+                  {lightbox.clientLogoUrl && (
+                    <div className="relative w-[120px] h-10 flex-shrink-0 ml-2">
+                      <Image
+                        src={lightbox.clientLogoUrl}
+                        alt={lightbox.clientName || "Logo client"}
+                        fill
+                        className="object-contain brightness-0 invert"
+                      />
+                    </div>
+                  )}
+                </div>
               </div>
               <Link
                 href={`/realisations/${lightbox.id}`}

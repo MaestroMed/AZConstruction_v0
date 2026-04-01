@@ -3,7 +3,7 @@
 import * as React from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { ArrowLeft, Plus, Save, Trash2, Eye, EyeOff, Loader2, GripVertical, ChevronDown, ChevronUp } from "lucide-react";
+import { ArrowLeft, Plus, Save, Trash2, Eye, EyeOff, Loader2, GripVertical, ChevronDown, ChevronUp, Database } from "lucide-react";
 import { toast } from "sonner";
 import { useSiteImages } from "@/lib/hooks/useSiteImages";
 
@@ -154,21 +154,49 @@ function SlideEditor({ slide, index, onSave, onDelete, onToggle, getImage }: {
   );
 }
 
+const DEFAULT_SLIDES_DATA = [
+  { ordre: 0, active: true, imageKey: "hero-carousel-1", headline: "Garde-corps", headlineAccent: "sur mesure.", subheadline: "Verre feuilleté, câbles acier, barreaux design — fabriqués dans notre atelier de 1 800m² à Bruyères-sur-Oise.", ctaText: "Découvrir les garde-corps", ctaLink: "/produits/garde-corps" },
+  { ordre: 1, active: true, imageKey: "hero-carousel-2", headline: "Escaliers", headlineAccent: "d'exception.", subheadline: "Droits, hélicoïdaux, quart-tournant — chaque escalier est une pièce unique conçue sur mesure.", ctaText: "Voir nos escaliers", ctaLink: "/produits/escaliers" },
+  { ordre: 2, active: true, imageKey: "hero-carousel-3", headline: "L'acier", headlineAccent: "à votre image.", subheadline: "Portails, clôtures, portes Jansen, verrières — tout fabriqué sur mesure depuis 2018.", ctaText: "Explorer nos produits", ctaLink: "/produits" },
+];
+
 export default function HeroSlidesAdminPage() {
   const { getImage } = useSiteImages();
   const [slides, setSlides] = React.useState<HeroSlide[]>([]);
   const [loading, setLoading] = React.useState(true);
-  const [adding, setAdding] = React.useState(false);
+  const [seeding, setSeeding] = React.useState(false);
 
   React.useEffect(() => {
     fetch("/api/hero-slides")
       .then(r => r.json())
       .then(data => {
-        if (data.success) setSlides(data.slides.filter((s: HeroSlide) => !s.id?.startsWith("d")));
+        if (data.success) {
+          // Ne montrer que les slides en DB (pas les défauts statiques)
+          const dbSlides = data.slides.filter((s: HeroSlide) => !s.id?.startsWith("default-"));
+          setSlides(dbSlides);
+        }
       })
       .catch(() => {})
       .finally(() => setLoading(false));
   }, []);
+
+  const seedSlides = async () => {
+    if (!confirm("Initialiser les 3 slides par défaut ? Cela créera 3 entrées en base de données.")) return;
+    setSeeding(true);
+    try {
+      const created: HeroSlide[] = [];
+      for (const s of DEFAULT_SLIDES_DATA) {
+        const res = await fetch("/api/hero-slides", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(s) });
+        if (res.ok) { const data = await res.json(); created.push(data.slide); }
+      }
+      setSlides(created);
+      toast.success("3 slides créés avec succès !");
+    } catch {
+      toast.error("Erreur lors de l'initialisation");
+    } finally {
+      setSeeding(false);
+    }
+  };
 
   const saveSlide = async (slide: HeroSlide) => {
     const isNew = slide.id.startsWith("new-");
@@ -243,10 +271,19 @@ export default function HeroSlidesAdminPage() {
         </div>
       ) : slides.length === 0 ? (
         <div className="text-center py-16 text-gray-400">
-          <p className="mb-4">Aucun slide configuré — les slides par défaut sont utilisés.</p>
-          <button onClick={addSlide} className="inline-flex items-center gap-2 px-4 py-2 bg-cyan-500 text-white rounded-xl text-sm font-semibold hover:bg-cyan-600">
-            <Plus className="w-4 h-4" /> Créer mon premier slide
-          </button>
+          <Database className="w-12 h-12 mx-auto mb-4 text-gray-300" />
+          <p className="mb-2 text-gray-600 font-medium">Aucun slide en base de données</p>
+          <p className="mb-6 text-sm">Les slides par défaut sont actuellement utilisés sur le site.</p>
+          <div className="flex flex-col sm:flex-row gap-3 justify-center">
+            <button onClick={seedSlides} disabled={seeding}
+              className="inline-flex items-center gap-2 px-5 py-2.5 bg-blue-600 text-white rounded-xl text-sm font-semibold hover:bg-blue-700 transition-colors disabled:opacity-50">
+              {seeding ? <Loader2 className="w-4 h-4 animate-spin" /> : <Database className="w-4 h-4" />}
+              Initialiser depuis les données par défaut
+            </button>
+            <button onClick={addSlide} className="inline-flex items-center gap-2 px-4 py-2 bg-cyan-500 text-white rounded-xl text-sm font-semibold hover:bg-cyan-600">
+              <Plus className="w-4 h-4" /> Créer un nouveau slide
+            </button>
+          </div>
         </div>
       ) : (
         <div className="space-y-3">

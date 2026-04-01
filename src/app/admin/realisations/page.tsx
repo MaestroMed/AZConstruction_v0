@@ -38,6 +38,8 @@ interface Realization {
   images: string[];
   published: boolean;
   ordre: number;
+  clientName?: string | null;
+  clientLogoUrl?: string | null;
 }
 
 const categories = [
@@ -532,9 +534,13 @@ function RealizationModal({
     categorie: "Garde-corps",
     ville: "",
     images: [] as string[],
+    clientName: "",
+    clientLogoUrl: "",
   });
   const [uploading, setUploading] = React.useState(false);
+  const [uploadingLogo, setUploadingLogo] = React.useState(false);
   const fileInputRef = React.useRef<HTMLInputElement>(null);
+  const logoInputRef = React.useRef<HTMLInputElement>(null);
 
   React.useEffect(() => {
     if (realization) {
@@ -544,9 +550,11 @@ function RealizationModal({
         categorie: realization.categorie,
         ville: realization.ville || "",
         images: realization.images || [],
+        clientName: realization.clientName || "",
+        clientLogoUrl: realization.clientLogoUrl || "",
       });
     } else {
-      setFormData({ titre: "", description: "", categorie: "Garde-corps", ville: "", images: [] });
+      setFormData({ titre: "", description: "", categorie: "Garde-corps", ville: "", images: [], clientName: "", clientLogoUrl: "" });
     }
   }, [realization]);
 
@@ -588,6 +596,23 @@ function RealizationModal({
       ...prev,
       images: prev.images.filter((_, i) => i !== index),
     }));
+  };
+
+  const handleLogoUpload = async (file: File) => {
+    setUploadingLogo(true);
+    const uploadData = new FormData();
+    uploadData.append("files", file);
+    try {
+      const response = await fetch("/api/upload", { method: "POST", body: uploadData });
+      if (!response.ok) throw new Error();
+      const data = await response.json();
+      setFormData(prev => ({ ...prev, clientLogoUrl: data.files[0]?.url || "" }));
+      toast.success("Logo uploadé");
+    } catch {
+      toast.error("Erreur lors de l'upload du logo");
+    } finally {
+      setUploadingLogo(false);
+    }
   };
 
   return (
@@ -707,6 +732,47 @@ function RealizationModal({
               ))}
             </div>
           )}
+        </div>
+
+        {/* Client logo */}
+        <div className="border-t border-gray-100 pt-4">
+          <p className="text-sm font-semibold text-gray-700 mb-3">Logo client (optionnel)</p>
+          <div className="grid md:grid-cols-2 gap-4">
+            <Input
+              label="Nom du client"
+              value={formData.clientName}
+              onChange={(e) => setFormData({ ...formData, clientName: e.target.value })}
+              placeholder="Ex: Groupe ABC, Mairie de Paris..."
+            />
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Logo du client</label>
+              <input ref={logoInputRef} type="file" accept="image/*" className="hidden"
+                onChange={(e) => { const f = e.target.files?.[0]; if (f) handleLogoUpload(f); e.target.value = ""; }} />
+              {formData.clientLogoUrl ? (
+                <div className="flex items-center gap-3">
+                  <div className="relative w-24 h-12 rounded-lg overflow-hidden bg-gray-100 border border-gray-200 flex items-center justify-center">
+                    <Image src={formData.clientLogoUrl} alt="Logo client" fill className="object-contain p-1" />
+                  </div>
+                  <div className="flex flex-col gap-1">
+                    <button type="button" onClick={() => logoInputRef.current?.click()} disabled={uploadingLogo}
+                      className="text-xs text-cyan-600 hover:text-cyan-700 font-medium">
+                      {uploadingLogo ? "Upload..." : "Changer"}
+                    </button>
+                    <button type="button" onClick={() => setFormData(prev => ({ ...prev, clientLogoUrl: "" }))}
+                      className="text-xs text-red-500 hover:text-red-600">
+                      Supprimer
+                    </button>
+                  </div>
+                </div>
+              ) : (
+                <button type="button" onClick={() => logoInputRef.current?.click()} disabled={uploadingLogo}
+                  className="flex items-center gap-2 px-3 py-2 border border-dashed border-gray-300 rounded-lg text-sm text-gray-500 hover:border-cyan-400 hover:text-cyan-600 transition-colors w-full justify-center">
+                  {uploadingLogo ? <Loader2 className="w-4 h-4 animate-spin" /> : <Upload className="w-4 h-4" />}
+                  {uploadingLogo ? "Upload en cours..." : "Uploader le logo"}
+                </button>
+              )}
+            </div>
+          </div>
         </div>
       </div>
     </Modal>

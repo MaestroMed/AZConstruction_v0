@@ -33,6 +33,8 @@ interface Realization {
   images: string[];
   published: boolean;
   ordre: number;
+  clientName?: string | null;
+  clientLogoUrl?: string | null;
 }
 
 const stats = [
@@ -593,6 +595,20 @@ export default function RealisationsPage() {
                     </span>
                   )}
                 </div>
+
+                {/* Client logo */}
+                {(activeRealization.clientLogoUrl || activeRealization.clientName) && (
+                  <div className="flex items-center gap-3 mt-4 pt-4 border-t border-gray-100">
+                    {activeRealization.clientLogoUrl && (
+                      <div className="relative w-[100px] h-10">
+                        <Image src={activeRealization.clientLogoUrl} alt={activeRealization.clientName || "Logo client"} fill className="object-contain" />
+                      </div>
+                    )}
+                    {activeRealization.clientName && (
+                      <span className="text-sm text-gray-500">Client : <span className="font-medium text-navy-dark">{activeRealization.clientName}</span></span>
+                    )}
+                  </div>
+                )}
               </div>
             </motion.div>
           </motion.div>
