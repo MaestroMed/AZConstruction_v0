@@ -424,7 +424,8 @@ export default function ThermolaquagePage() {
             <motion.p
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
-              className="text-white/25 text-xs tracking-widest uppercase mb-2 -mt-4"
+              className="text-xs tracking-widest uppercase mb-2 -mt-4"
+              style={{ color: popularColors[ralTitleIdx].hex, transition: "color 0.7s ease", opacity: 0.7 }}
             >
               RAL {popularColors[ralTitleIdx].code} — {popularColors[ralTitleIdx].label}
             </motion.p>

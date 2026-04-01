@@ -24,6 +24,7 @@ import {
   ChevronDown,
   MessageSquare,
   BookOpen,
+  Flame,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Toaster } from "sonner";
@@ -41,6 +42,10 @@ const navigationItems = [
     title: "Hero / Accueil",
     href: "/admin/hero",
     icon: Image,
+    subItems: [
+      { title: "Slides Hero", href: "/admin/hero-slides" },
+      { title: "Paramètres Hero", href: "/admin/hero" },
+    ],
   },
   {
     title: "Produits",
@@ -50,6 +55,7 @@ const navigationItems = [
       { title: "Tous les produits", href: "/admin/produits" },
       { title: "Familles", href: "/admin/produits/familles" },
       { title: "Images produits", href: "/admin/produits/images" },
+      { title: "Produits vedettes", href: "/admin/produits/vedettes" },
       { title: "Options", href: "/admin/produits/options" },
     ],
   },
@@ -88,6 +94,14 @@ const navigationItems = [
     title: "Réalisations",
     href: "/admin/realisations",
     icon: Image,
+  },
+  {
+    title: "Thermolaquage",
+    href: "/admin/thermolaquage/demandes",
+    icon: Flame,
+    subItems: [
+      { title: "Vignettes mosaïque", href: "/admin/thermolaquage/demandes" },
+    ],
   },
   {
     title: "Médiathèque",

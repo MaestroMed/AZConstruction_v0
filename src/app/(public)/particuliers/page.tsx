@@ -235,14 +235,47 @@ export default function ParticuliersPage() {
   const [families, setFamilies] = React.useState<{ id: string; nom: string; slug: string; imageUrl?: string }[]>([]);
   const [carouselIdx, setCarouselIdx] = React.useState(0);
 
+  // Images de hero par famille pour les sections services (carrousel)
+  const [familyHeroImages, setFamilyHeroImages] = React.useState<Record<string, string[]>>({});
+  const [svcImgIdx, setSvcImgIdx] = React.useState<Record<string, number>>({});
+
   React.useEffect(() => {
+    // Load families for the top carousel
     fetch("/api/product-families")
       .then((r) => r.json())
       .then((data) => {
-        if (data.success && data.families?.length) setFamilies(data.families);
+        if (data.success && data.families?.length) {
+          setFamilies(data.families);
+        }
       })
       .catch(() => {});
+
+    // Load hero images for each service's configLink
+    const slugs = services
+      .map((s) => s.configLink)
+      .filter((slug): slug is string => !!slug);
+
+    slugs.forEach((slug) => {
+      fetch(`/api/product-families/images?familySlug=${slug}`)
+        .then((r) => r.json())
+        .then((data) => {
+          if (data.success && data.images?.length) {
+            setFamilyHeroImages((prev) => ({
+              ...prev,
+              [slug]: data.images.map((img: { imageUrl: string }) => img.imageUrl),
+            }));
+          }
+        })
+        .catch(() => {});
+    });
   }, []);
+
+  const advanceSvcImg = (slug: string, total: number) => {
+    setSvcImgIdx((prev) => ({ ...prev, [slug]: ((prev[slug] ?? 0) + 1) % total }));
+  };
+  const prevSvcImg = (slug: string, total: number) => {
+    setSvcImgIdx((prev) => ({ ...prev, [slug]: ((prev[slug] ?? 0) - 1 + total) % total }));
+  };
 
   return (
     <div className="min-h-screen bg-navy-dark">
@@ -488,21 +521,58 @@ export default function ParticuliersPage() {
           className="relative overflow-hidden bg-white"
         >
           <div className={`grid lg:grid-cols-2 min-h-[520px] ${index % 2 === 1 ? "lg:[&>*:first-child]:order-last" : ""}`}>
-            {/* Image full-height */}
-            <div className="relative h-72 lg:h-auto min-h-[320px]">
-              <Image
-                src={getImage(service.imageKey)}
-                alt={service.title}
-                fill
-                className="object-cover"
-              />
-              <div className={`absolute inset-0 bg-gradient-to-${index % 2 === 1 ? "r" : "l"} from-transparent to-white/30`} />
-              {/* Sur devis badge */}
-              <div className="absolute bottom-6 left-6">
-                <span className={`px-5 py-2.5 bg-gradient-to-r ${service.accent} text-white text-sm font-bold rounded-full shadow-xl`}>
-                  Sur devis
-                </span>
-              </div>
+            {/* Image full-height — carousel si images DB disponibles */}
+            <div className="relative h-72 lg:h-auto min-h-[320px] group">
+              {(() => {
+                const slug = service.configLink;
+                const heroImgs = (slug && familyHeroImages[slug]) || [];
+                const allImgs = heroImgs.length > 0 ? heroImgs : [getImage(service.imageKey)];
+                const idx = slug ? (svcImgIdx[slug] ?? 0) : 0;
+                const currentImg = allImgs[idx % allImgs.length];
+                return (
+                  <>
+                    <Image
+                      src={currentImg}
+                      alt={service.title}
+                      fill
+                      className="object-cover transition-all duration-700"
+                    />
+                    <div className={`absolute inset-0 bg-gradient-to-${index % 2 === 1 ? "r" : "l"} from-transparent to-white/30`} />
+                    {/* Sur devis badge */}
+                    <div className="absolute bottom-6 left-6">
+                      <span className={`px-5 py-2.5 bg-gradient-to-r ${service.accent} text-white text-sm font-bold rounded-full shadow-xl`}>
+                        Sur devis
+                      </span>
+                    </div>
+                    {/* Carousel controls — shown only when multiple images */}
+                    {allImgs.length > 1 && slug && (
+                      <>
+                        <button
+                          onClick={() => prevSvcImg(slug, allImgs.length)}
+                          className="absolute left-3 top-1/2 -translate-y-1/2 w-9 h-9 rounded-full bg-black/40 backdrop-blur-sm border border-white/20 flex items-center justify-center text-white opacity-0 group-hover:opacity-100 transition-opacity hover:bg-black/60"
+                        >
+                          <ChevronLeft className="w-4 h-4" />
+                        </button>
+                        <button
+                          onClick={() => advanceSvcImg(slug, allImgs.length)}
+                          className="absolute right-3 top-1/2 -translate-y-1/2 w-9 h-9 rounded-full bg-black/40 backdrop-blur-sm border border-white/20 flex items-center justify-center text-white opacity-0 group-hover:opacity-100 transition-opacity hover:bg-black/60"
+                        >
+                          <ChevronRight className="w-4 h-4" />
+                        </button>
+                        <div className="absolute bottom-16 left-1/2 -translate-x-1/2 flex gap-1.5">
+                          {allImgs.map((_, i) => (
+                            <button
+                              key={i}
+                              onClick={() => setSvcImgIdx((prev) => ({ ...prev, [slug]: i }))}
+                              className={`rounded-full transition-all ${i === idx % allImgs.length ? "w-5 h-1.5 bg-white" : "w-1.5 h-1.5 bg-white/50"}`}
+                            />
+                          ))}
+                        </div>
+                      </>
+                    )}
+                  </>
+                );
+              })()}
             </div>
 
             {/* Content — toujours fond blanc */}
