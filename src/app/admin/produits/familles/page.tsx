@@ -3,7 +3,7 @@
 import * as React from "react";
 import Link from "next/link";
 import {
-  ArrowLeft, Plus, GripVertical, Edit, Trash2, Eye, EyeOff, Save, Loader2, ImageIcon,
+  ArrowLeft, Plus, GripVertical, Edit, Trash2, Eye, EyeOff, Save, Loader2, ImageIcon, RefreshCw,
 } from "lucide-react";
 import {
   DndContext,
@@ -146,6 +146,31 @@ export default function FamiliesPage() {
   const [isModalOpen, setIsModalOpen] = React.useState(false);
   const [hasChanges, setHasChanges] = React.useState(false);
   const [saving, setSaving] = React.useState(false);
+  const [syncing, setSyncing] = React.useState(false);
+
+  const handleSyncVariants = async () => {
+    if (!confirm("Synchroniser les variants statiques vers la base de données ? Les variants existants ne seront pas écrasés.")) return;
+    setSyncing(true);
+    try {
+      const res = await fetch("/api/admin/sync-variants", { method: "POST" });
+      const data = await res.json();
+      if (data.success) {
+        toast.success(data.message);
+        // Reload families to show updated variants
+        const r2 = await fetch("/api/product-families?all=true");
+        const d2 = await r2.json();
+        if (d2.success && d2.families) {
+          setFamilies(d2.families.map((f: Family) => ({ ...f, productsCount: 0, variants: f.variants ?? [] })));
+        }
+      } else {
+        toast.error(data.error || "Erreur");
+      }
+    } catch {
+      toast.error("Erreur lors de la synchronisation");
+    } finally {
+      setSyncing(false);
+    }
+  };
 
   const sensors = useSensors(
     useSensor(PointerSensor),
@@ -289,6 +314,15 @@ export default function FamiliesPage() {
             <ImageIcon className="w-4 h-4" />
             Gérer les images
           </Link>
+          <button
+            onClick={handleSyncVariants}
+            disabled={syncing}
+            className="inline-flex items-center gap-2 px-4 py-2 bg-amber-50 border border-amber-200 text-amber-700 rounded-lg text-sm font-medium hover:bg-amber-100 transition-colors disabled:opacity-50"
+            title="Importe les modèles (variants) depuis les données statiques vers la DB"
+          >
+            {syncing ? <Loader2 className="w-4 h-4 animate-spin" /> : <RefreshCw className="w-4 h-4" />}
+            Sync variants
+          </button>
           {hasChanges && (
             <button
               onClick={handleSaveOrder}

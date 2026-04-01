@@ -4,7 +4,7 @@ import * as React from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import Link from "next/link";
 import Image from "next/image";
-import { ChevronLeft, ChevronRight, ArrowRight } from "lucide-react";
+import { ChevronLeft, ChevronRight, ArrowRight, X, MapPin, ExternalLink } from "lucide-react";
 
 interface Realization {
   id: string;
@@ -19,6 +19,7 @@ export default function RealizationsSection() {
   const [currentIndex, setCurrentIndex] = React.useState(0);
   const [direction, setDirection] = React.useState(0);
   const [loading, setLoading] = React.useState(true);
+  const [lightbox, setLightbox] = React.useState<Realization | null>(null);
 
   React.useEffect(() => {
     const fetchRealizations = async () => {
@@ -87,6 +88,7 @@ export default function RealizationsSection() {
   if (realizations.length === 0) return null;
 
   return (
+    <>
     <section className="py-24 bg-gradient-to-b from-gray-50 to-white overflow-hidden">
       <div className="container mx-auto px-6 lg:px-12">
         {/* Section Header */}
@@ -138,7 +140,7 @@ export default function RealizationsSection() {
           >
             <AnimatePresence mode="popLayout" initial={false}>
               {visibleRealizations.map((realization, index) => (
-                <motion.div
+                  <motion.div
                   key={realization.id}
                   initial={{ opacity: 0, x: direction > 0 ? 100 : -100 }}
                   animate={{ opacity: 1, x: 0 }}
@@ -146,8 +148,10 @@ export default function RealizationsSection() {
                   transition={{ duration: 0.5, ease: [0.25, 0.46, 0.45, 0.94] }}
                   layout
                 >
-                  <Link href={`/realisations/${realization.id}`}>
-                    <div className="group relative h-[400px] rounded-2xl overflow-hidden cursor-pointer">
+                  <div
+                    className="group relative h-[400px] rounded-2xl overflow-hidden cursor-pointer"
+                    onClick={() => setLightbox(realization)}
+                  >
                       {/* Image */}
                       <div className="absolute inset-0 bg-navy-dark">
                         {realization.imageUrl ? (
@@ -188,13 +192,12 @@ export default function RealizationsSection() {
                         {/* View button - hidden by default, shows on hover */}
                         <div className="mt-4 opacity-0 group-hover:opacity-100 transform translate-y-4 group-hover:translate-y-0 transition-all duration-500">
                           <span className="inline-flex items-center gap-2 text-cyan-400 text-sm font-medium">
-                            Voir le projet
+                            Agrandir
                             <ArrowRight className="w-4 h-4" />
                           </span>
                         </div>
                       </div>
                     </div>
-                  </Link>
                 </motion.div>
               ))}
             </AnimatePresence>
@@ -237,5 +240,77 @@ export default function RealizationsSection() {
         </motion.div>
       </div>
     </section>
+
+    {/* ── Lightbox Modal ── */}
+    <AnimatePresence>
+      {lightbox && (
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/90 backdrop-blur-sm"
+          onClick={() => setLightbox(null)}
+        >
+          <motion.div
+            initial={{ scale: 0.9, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            exit={{ scale: 0.9, opacity: 0 }}
+            transition={{ type: "spring", stiffness: 300, damping: 30 }}
+            className="relative max-w-4xl w-full max-h-[90vh] rounded-2xl overflow-hidden shadow-2xl"
+            onClick={(e) => e.stopPropagation()}
+          >
+            {/* Image */}
+            <div className="relative aspect-[4/3] w-full bg-navy-dark">
+              {lightbox.imageUrl ? (
+                <Image
+                  src={lightbox.imageUrl}
+                  alt={lightbox.title}
+                  fill
+                  className="object-cover"
+                  sizes="(max-width: 1024px) 100vw, 896px"
+                />
+              ) : (
+                <div className="w-full h-full bg-gradient-to-br from-blue-corporate to-navy-dark" />
+              )}
+              {/* Gradient overlay */}
+              <div className="absolute inset-0 bg-gradient-to-t from-navy-dark/90 via-transparent to-transparent" />
+            </div>
+
+            {/* Info bar */}
+            <div className="absolute bottom-0 left-0 right-0 p-6 flex items-end justify-between">
+              <div>
+                <span className="inline-block px-3 py-1 bg-cyan-glow/20 backdrop-blur-md text-cyan-glow text-xs font-medium rounded-full border border-cyan-glow/30 mb-3">
+                  {lightbox.category}
+                </span>
+                <h3 className="text-2xl font-bold text-white mb-1">{lightbox.title}</h3>
+                {lightbox.location && (
+                  <p className="text-white/60 text-sm flex items-center gap-1.5">
+                    <MapPin className="w-3.5 h-3.5" />
+                    {lightbox.location}
+                  </p>
+                )}
+              </div>
+              <Link
+                href={`/realisations/${lightbox.id}`}
+                className="flex-shrink-0 inline-flex items-center gap-2 px-5 py-2.5 bg-white text-navy-dark text-sm font-semibold rounded-xl hover:bg-cyan-glow hover:text-navy-dark transition-colors"
+                onClick={() => setLightbox(null)}
+              >
+                Voir la fiche
+                <ExternalLink className="w-4 h-4" />
+              </Link>
+            </div>
+
+            {/* Close button */}
+            <button
+              onClick={() => setLightbox(null)}
+              className="absolute top-4 right-4 w-10 h-10 rounded-full bg-black/40 backdrop-blur-sm flex items-center justify-center text-white hover:bg-black/60 transition-colors border border-white/20"
+            >
+              <X className="w-5 h-5" />
+            </button>
+          </motion.div>
+        </motion.div>
+      )}
+    </AnimatePresence>
+  </>
   );
 }

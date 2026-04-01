@@ -124,13 +124,15 @@ export default function PartnersCarousel() {
                   >
                     <div className="flex items-center justify-center h-12 w-full">
                       {hasCustomImage ? (
-                        /* Image logo from back-office */
-                        <div className="relative h-full w-full">
+                        /* Image logo from back-office — taille normalisée */
+                        <div className="relative flex items-center justify-center h-10 w-full">
                           <Image
                             src={imageUrl}
                             alt={partner.name}
-                            fill
-                            className="object-contain"
+                            width={130}
+                            height={40}
+                            className="object-contain max-h-10 w-auto"
+                            style={{ maxWidth: "130px", maxHeight: "40px" }}
                           />
                         </div>
                       ) : (

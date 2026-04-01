@@ -60,6 +60,36 @@ export default function ContactPage() {
   const [isSubmitting, setIsSubmitting] = React.useState(false);
   const [submitted, setSubmitted] = React.useState(false);
   const [error, setError] = React.useState<string | null>(null);
+  const [attachmentUrls, setAttachmentUrls] = React.useState<string[]>([]);
+  const [attachmentNames, setAttachmentNames] = React.useState<string[]>([]);
+  const [uploadingFiles, setUploadingFiles] = React.useState(false);
+
+  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = Array.from(e.target.files || []);
+    if (!files.length) return;
+    setUploadingFiles(true);
+    try {
+      const fd = new FormData();
+      files.forEach((f) => fd.append("files", f));
+      fd.append("folder", "contact-attachments");
+      const res = await fetch("/api/upload", { method: "POST", body: fd });
+      const data = await res.json();
+      if (data.files?.length) {
+        setAttachmentUrls((prev) => [...prev, ...data.files.map((f: { url: string }) => f.url)]);
+        setAttachmentNames((prev) => [...prev, ...files.map((f) => f.name)]);
+      }
+    } catch {
+      setError("Erreur lors de l'upload des fichiers");
+    } finally {
+      setUploadingFiles(false);
+      e.target.value = "";
+    }
+  };
+
+  const removeAttachment = (idx: number) => {
+    setAttachmentUrls((prev) => prev.filter((_, i) => i !== idx));
+    setAttachmentNames((prev) => prev.filter((_, i) => i !== idx));
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -83,6 +113,7 @@ export default function ContactPage() {
           type: formData.type,
           entreprise: formData.entreprise,
           website: formData.website, // honeypot
+          attachments: attachmentUrls,
         }),
       });
 
@@ -527,6 +558,43 @@ export default function ContactPage() {
                             className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-cyan-glow focus:ring-2 focus:ring-cyan-glow/20 outline-none transition-all resize-none"
                             placeholder="Décrivez votre projet ou votre demande en détail..."
                           />
+                        </div>
+
+                        {/* Pièces jointes */}
+                        <div>
+                          <label className="block text-sm font-medium text-gray-700 mb-2">
+                            Pièces jointes (plans, photos — optionnel)
+                          </label>
+                          <input
+                            type="file"
+                            multiple
+                            accept=".pdf,.doc,.docx,.jpg,.jpeg,.png,.dwg"
+                            onChange={handleFileChange}
+                            disabled={uploadingFiles}
+                            className="w-full px-4 py-3 border border-gray-200 bg-white rounded-xl focus:ring-2 focus:ring-cyan-glow/20 transition-all file:mr-4 file:py-1.5 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-medium file:bg-cyan-glow/10 file:text-cyan-700 hover:file:bg-cyan-glow/20 disabled:opacity-60"
+                          />
+                          {uploadingFiles && (
+                            <p className="text-xs text-cyan-600 mt-1">Upload en cours...</p>
+                          )}
+                          {attachmentNames.length > 0 && (
+                            <div className="mt-2 flex flex-wrap gap-2">
+                              {attachmentNames.map((name, i) => (
+                                <span
+                                  key={i}
+                                  className="inline-flex items-center gap-1.5 px-3 py-1 bg-gray-100 text-gray-700 text-xs rounded-full"
+                                >
+                                  {name}
+                                  <button
+                                    type="button"
+                                    onClick={() => removeAttachment(i)}
+                                    className="text-gray-400 hover:text-red-500 ml-1"
+                                  >
+                                    ×
+                                  </button>
+                                </span>
+                              ))}
+                            </div>
+                          )}
                         </div>
 
                         <div className="flex items-start gap-3">
