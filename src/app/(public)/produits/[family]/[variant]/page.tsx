@@ -27,6 +27,7 @@ interface VariantData {
   description?: string;
   features?: string[];
   imageUrl?: string;
+  images?: string[];
 }
 
 export default function VariantPage() {
@@ -73,19 +74,21 @@ export default function VariantPage() {
 
   // Auto-advance gallery
   React.useEffect(() => {
-    const images = variant?.imageUrl ? [variant.imageUrl, ...familyHeroImages] : familyHeroImages;
+    const variantImgs = (variant?.images?.length ? variant.images : variant?.imageUrl ? [variant.imageUrl] : []);
+    const images = variantImgs.length > 0 ? [...variantImgs, ...familyHeroImages.filter(u => !variantImgs.includes(u))] : familyHeroImages;
     if (images.length <= 1) return;
     const t = setInterval(() => setHeroIndex((i) => (i + 1) % images.length), 5000);
     return () => clearInterval(t);
-  }, [variant?.imageUrl, familyHeroImages.length]);
+  }, [variant?.imageUrl, variant?.images?.length, familyHeroImages.length]);
 
   if (!family || (!variant && !staticVariant)) {
     notFound();
   }
 
   const currentVariant = variant ?? staticVariant!;
-  const galleryImages = currentVariant.imageUrl
-    ? [currentVariant.imageUrl, ...familyHeroImages]
+  const variantImgs = (currentVariant.images?.length ? currentVariant.images : currentVariant.imageUrl ? [currentVariant.imageUrl] : []);
+  const galleryImages = variantImgs.length > 0
+    ? [...variantImgs, ...familyHeroImages.filter(u => !variantImgs.includes(u))]
     : familyHeroImages;
   const otherVariants = allVariants.filter((v) => v.id !== variantId);
 

@@ -54,7 +54,7 @@ async function compressImage(file: File, maxWidth = 1920, quality = 0.85): Promi
 interface HeroImage { id: string; imageUrl: string; alt?: string | null; ordre: number; }
 interface VariantItem {
   id: string; name: string; description?: string;
-  features?: string[]; imageUrl?: string; startingPrice?: string;
+  features?: string[]; imageUrl?: string; images?: string[]; startingPrice?: string;
 }
 interface Family { id: string; nom: string; slug: string; imageUrl?: string; active: boolean; variants?: VariantItem[]; }
 interface SiteImageEntry {
@@ -191,6 +191,7 @@ function VariantEditorCard({
   saving,
   onUpload,
   onRemoveImage,
+  onRemoveImageByIndex,
   onSave,
   onDelete,
 }: {
@@ -199,15 +200,18 @@ function VariantEditorCard({
   saving: boolean;
   onUpload: (file: File) => void;
   onRemoveImage: () => void;
+  onRemoveImageByIndex: (index: number) => void;
   onSave: (updated: VariantItem) => void;
   onDelete: () => void;
 }) {
-  const fileRef = React.useRef<HTMLInputElement>(null);
+  const addFileRef = React.useRef<HTMLInputElement>(null);
   const [editing, setEditing] = React.useState(false);
   const [name, setName] = React.useState(variant.name || "");
   const [description, setDescription] = React.useState(variant.description || "");
   const [features, setFeatures] = React.useState((variant.features ?? []).join("\n"));
-  const hasImage = !!variant.imageUrl;
+
+  // Compute all images (prefer images[] array, fallback imageUrl)
+  const allImages = variant.images?.length ? variant.images : (variant.imageUrl ? [variant.imageUrl] : []);
 
   // Keep form in sync when variant changes
   React.useEffect(() => {
@@ -223,32 +227,55 @@ function VariantEditorCard({
 
   return (
     <div className="bg-white rounded-2xl border border-gray-200 overflow-hidden shadow-sm hover:shadow-md transition-shadow">
-      {/* Image zone */}
-      <div className="relative aspect-video bg-gray-100 overflow-hidden group">
-        {hasImage ? (
-          <Image src={variant.imageUrl!} alt={variant.name} fill className="object-cover" onError={() => {}} />
+      {/* Multi-image grid */}
+      <div className="p-3 bg-gray-50 border-b border-gray-100">
+        <div className="flex items-center justify-between mb-2">
+          <span className="text-xs font-semibold text-gray-500 uppercase tracking-wide">Photos ({allImages.length})</span>
+          <button
+            onClick={() => addFileRef.current?.click()}
+            disabled={uploading}
+            className="inline-flex items-center gap-1 px-2.5 py-1 bg-cyan-500 text-white rounded-lg text-xs font-medium hover:bg-cyan-600 disabled:opacity-50 transition-colors"
+          >
+            {uploading ? <Loader2 className="w-3 h-3 animate-spin" /> : <Plus className="w-3 h-3" />}
+            Ajouter
+          </button>
+        </div>
+
+        {allImages.length === 0 ? (
+          <div
+            className="border-2 border-dashed border-gray-200 rounded-xl h-20 flex flex-col items-center justify-center gap-1 cursor-pointer hover:border-cyan-400 hover:bg-cyan-50/30 transition-all"
+            onClick={() => addFileRef.current?.click()}
+          >
+            <ImageIcon className="w-5 h-5 text-gray-300" />
+            <span className="text-xs text-gray-400">Cliquer pour ajouter une photo</span>
+          </div>
         ) : (
-          <div className="absolute inset-0 bg-gradient-to-br from-navy-dark/80 to-blue-corporate/60 flex items-center justify-center">
-            <span className="text-5xl font-bold text-white/10 select-none">{name?.charAt(0) || "?"}</span>
+          <div className="flex gap-2 overflow-x-auto pb-1">
+            {allImages.map((img, i) => (
+              <div key={i} className="relative flex-shrink-0 w-20 h-16 rounded-lg overflow-hidden group border border-gray-200 bg-gray-100">
+                <Image src={img} alt="" fill className="object-contain" sizes="80px" />
+                {i === 0 && (
+                  <span className="absolute top-0.5 left-0.5 text-[9px] bg-cyan-500 text-white px-1.5 rounded-full font-semibold">Principale</span>
+                )}
+                <button
+                  onClick={() => onRemoveImageByIndex(i)}
+                  className="absolute top-0.5 right-0.5 w-5 h-5 bg-red-500 text-white rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
+                >
+                  <X className="w-3 h-3" />
+                </button>
+              </div>
+            ))}
+            {/* Add more */}
+            <button
+              onClick={() => addFileRef.current?.click()}
+              disabled={uploading}
+              className="flex-shrink-0 w-20 h-16 rounded-lg border-2 border-dashed border-gray-200 hover:border-cyan-400 flex items-center justify-center text-gray-300 hover:text-cyan-400 transition-all disabled:opacity-50"
+            >
+              <Plus className="w-5 h-5" />
+            </button>
           </div>
         )}
-        {uploading && <div className="absolute inset-0 bg-black/50 flex items-center justify-center"><Loader2 className="w-6 h-6 animate-spin text-white" /></div>}
-        <span className={cn("absolute top-2 right-2 text-xs px-2 py-0.5 rounded-full font-semibold", hasImage ? "bg-green-500/90 text-white" : "bg-orange-400/90 text-white")}>
-          {hasImage ? "✓ Photo" : "Sans photo"}
-        </span>
-        {/* Image action overlay */}
-        <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-all flex items-center justify-center gap-2 opacity-0 group-hover:opacity-100">
-          <button onClick={() => fileRef.current?.click()} disabled={uploading}
-            className="px-3 py-1.5 bg-white text-gray-800 rounded-lg text-xs font-semibold hover:bg-cyan-50 transition-colors">
-            {hasImage ? "Changer" : "+ Photo"}
-          </button>
-          {hasImage && (
-            <button onClick={onRemoveImage} className="px-3 py-1.5 bg-red-500 text-white rounded-lg text-xs font-semibold hover:bg-red-600 transition-colors">
-              Retirer
-            </button>
-          )}
-        </div>
-        <input ref={fileRef} type="file" accept="image/*" className="hidden"
+        <input ref={addFileRef} type="file" accept="image/*" className="hidden"
           onChange={(e) => { const f = e.target.files?.[0]; if (f) onUpload(f); e.target.value = ""; }} />
       </div>
 
@@ -491,14 +518,24 @@ export default function ProduitsImagesPage() {
       const upData = await upRes.json();
       const imageUrl = upData.files?.[0]?.url || upData.url || upData.imageUrl;
       if (!imageUrl) throw new Error("URL manquante");
-      await saveVariants(variants.map((v) => v.id === variant.id ? { ...v, imageUrl } : v));
-      toast.success("Photo mise à jour");
+      // Add to images array (multi-image support)
+      const existingImages = variant.images ?? (variant.imageUrl ? [variant.imageUrl] : []);
+      const newImages = [...existingImages, imageUrl];
+      await saveVariants(variants.map((v) => v.id === variant.id ? { ...v, images: newImages, imageUrl: newImages[0] } : v));
+      toast.success("Photo ajoutée");
     } catch (err) { toast.error(err instanceof Error ? err.message : "Erreur upload"); }
     finally { setUploadingVariant(null); }
   };
 
+  const handleVariantImageRemoveByIndex = async (variant: VariantItem, index: number) => {
+    const existingImages = variant.images ?? (variant.imageUrl ? [variant.imageUrl] : []);
+    const newImages = existingImages.filter((_, i) => i !== index);
+    await saveVariants(variants.map((v) => v.id === variant.id ? { ...v, images: newImages, imageUrl: newImages[0] ?? undefined } : v));
+    toast.success("Image supprimée");
+  };
+
   const handleVariantImageRemove = async (variant: VariantItem) => {
-    await saveVariants(variants.map((v) => v.id === variant.id ? { ...v, imageUrl: undefined } : v));
+    await saveVariants(variants.map((v) => v.id === variant.id ? { ...v, imageUrl: undefined, images: [] } : v));
     toast.success("Image supprimée");
   };
 
@@ -696,6 +733,7 @@ export default function ProduitsImagesPage() {
                             saving={savingVariant}
                             onUpload={(f) => handleVariantImageUpload(variant, f)}
                             onRemoveImage={() => handleVariantImageRemove(variant)}
+                            onRemoveImageByIndex={(idx) => handleVariantImageRemoveByIndex(variant, idx)}
                             onSave={handleVariantSave}
                             onDelete={() => handleVariantDelete(variant.id)}
                           />

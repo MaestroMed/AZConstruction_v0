@@ -23,6 +23,7 @@ export interface ProductVariant {
   features: string[];
   startingPrice: string;
   imageUrl?: string;
+  images?: string[];
 }
 
 export interface ProductFamily {
