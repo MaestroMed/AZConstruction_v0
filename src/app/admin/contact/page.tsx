@@ -17,6 +17,8 @@ import {
   RefreshCw,
   X,
   Trash2,
+  Paperclip,
+  ExternalLink,
 } from "lucide-react";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
@@ -32,6 +34,7 @@ interface ContactMessage {
   entreprise?: string;
   status: string;
   notes?: string;
+  attachments?: string[];
   createdAt: string;
   updatedAt: string;
 }
@@ -356,6 +359,34 @@ export default function AdminContactPage() {
                 </button>
               </div>
             </div>
+
+            {/* Pièces jointes */}
+            {selectedMessage.attachments && selectedMessage.attachments.length > 0 && (
+              <div className="mt-4 pt-4 border-t border-gray-100">
+                <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-2 flex items-center gap-1">
+                  <Paperclip className="w-3.5 h-3.5" />
+                  Pièces jointes ({selectedMessage.attachments.length})
+                </p>
+                <ul className="space-y-1.5">
+                  {selectedMessage.attachments.map((url, i) => {
+                    const filename = url.split("/").pop() || `fichier-${i + 1}`;
+                    return (
+                      <li key={i}>
+                        <a
+                          href={url}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="inline-flex items-center gap-2 text-sm text-blue-600 hover:text-blue-800 hover:underline break-all"
+                        >
+                          <ExternalLink className="w-3.5 h-3.5 flex-shrink-0" />
+                          {filename}
+                        </a>
+                      </li>
+                    );
+                  })}
+                </ul>
+              </div>
+            )}
 
             {/* Quick reply + Delete */}
             <div className="mt-4 pt-4 border-t border-gray-100 flex items-center justify-between gap-3">

@@ -403,6 +403,7 @@ model ContactMessage {
   
   status      String   @default("nouveau") // nouveau, lu, traite, archive
   notes       String?  // Notes internes de l'admin
+  attachments String[] // URLs des pièces jointes uploadées
   
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt

@@ -105,6 +105,9 @@ export default function ProfessionnelsPage() {
     message: "",
   });
   const [isSubmitting, setIsSubmitting] = React.useState(false);
+  const [attachmentUrls, setAttachmentUrls] = React.useState<string[]>([]);
+  const [attachmentNames, setAttachmentNames] = React.useState<string[]>([]);
+  const [uploadingFiles, setUploadingFiles] = React.useState(false);
 
   React.useEffect(() => {
     fetch("/api/b2b-cards")
@@ -122,6 +125,27 @@ export default function ProfessionnelsPage() {
       .catch(() => {});
   }, []);
 
+  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = Array.from(e.target.files || []);
+    if (!files.length) return;
+    setUploadingFiles(true);
+    try {
+      const fd = new FormData();
+      files.forEach((f) => fd.append("files", f));
+      fd.append("folder", "contact-pro");
+      const res = await fetch("/api/upload", { method: "POST", body: fd });
+      const data = await res.json();
+      if (data.files?.length) {
+        setAttachmentUrls((prev) => [...prev, ...data.files.map((f: { url: string }) => f.url)]);
+        setAttachmentNames((prev) => [...prev, ...files.map((f) => f.name)]);
+      }
+    } catch {
+      toast.error("Erreur lors de l'upload des fichiers");
+    } finally {
+      setUploadingFiles(false);
+    }
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
@@ -137,11 +161,14 @@ export default function ProfessionnelsPage() {
           message: formData.message || `Demande de contact professionnel.\nSecteur: ${formData.secteur}`,
           type: "professionnel",
           entreprise: formData.entreprise,
+          attachments: attachmentUrls,
         }),
       });
       if (!response.ok) throw new Error((await response.json()).error || "Erreur");
       toast.success("Demande envoyée ! Nous vous recontactons sous 24h.");
       setFormData({ entreprise: "", nom: "", email: "", telephone: "", secteur: "", message: "" });
+      setAttachmentUrls([]);
+      setAttachmentNames([]);
     } catch (err) {
       toast.error(err instanceof Error ? err.message : "Erreur lors de l'envoi");
     } finally {
@@ -622,13 +649,29 @@ export default function ProfessionnelsPage() {
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">Pièces jointes (plans, photos, dossier)</label>
                   <input type="file" multiple accept=".pdf,.doc,.docx,.xls,.xlsx,.jpg,.jpeg,.png,.dwg"
-                    className="w-full px-4 py-3 border border-gray-200 bg-white rounded-xl focus:ring-2 focus:ring-cyan-500 transition-all file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-medium file:bg-cyan-50 file:text-cyan-700 hover:file:bg-cyan-100" />
+                    onChange={handleFileChange}
+                    disabled={uploadingFiles}
+                    className="w-full px-4 py-3 border border-gray-200 bg-white rounded-xl focus:ring-2 focus:ring-cyan-500 transition-all file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-medium file:bg-cyan-50 file:text-cyan-700 hover:file:bg-cyan-100 disabled:opacity-60" />
                   <p className="text-xs text-gray-400 mt-1">PDF, DOC, XLS, JPG, PNG, DWG (max 10 Mo)</p>
+                  {uploadingFiles && (
+                    <p className="text-xs text-cyan-600 mt-1 flex items-center gap-1">
+                      <Loader2 className="w-3 h-3 animate-spin" /> Upload en cours...
+                    </p>
+                  )}
+                  {attachmentNames.length > 0 && (
+                    <ul className="mt-2 space-y-1">
+                      {attachmentNames.map((name, i) => (
+                        <li key={i} className="text-xs text-green-600 flex items-center gap-1">
+                          <CheckCircle2 className="w-3 h-3" /> {name}
+                        </li>
+                      ))}
+                    </ul>
+                  )}
                 </div>
 
                 <div className="flex flex-col sm:flex-row gap-4 items-center justify-between pt-4">
                   <p className="text-sm text-gray-500">* Champs obligatoires. Réponse garantie sous 24h ouvrées.</p>
-                  <button type="submit" disabled={isSubmitting}
+                  <button type="submit" disabled={isSubmitting || uploadingFiles}
                     className="inline-flex items-center gap-2 px-8 py-4 bg-navy-dark text-white text-sm font-semibold hover:bg-navy-medium transition-colors disabled:opacity-50 rounded-xl w-full sm:w-auto justify-center">
                     {isSubmitting ? <><Loader2 className="w-5 h-5 animate-spin" /> Envoi...</> : <><Send className="w-5 h-5" /> Envoyer ma demande</>}
                   </button>

@@ -6,7 +6,7 @@ import { sendContactConfirmation, sendContactNotificationToAdmin } from "@/lib/e
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-    const { nom, email, telephone, sujet, message, type = "particulier", entreprise, website } = body;
+    const { nom, email, telephone, sujet, message, type = "particulier", entreprise, website, attachments = [] } = body;
 
     // Honeypot anti-spam : si le champ website est rempli, c'est un bot
     if (website) {
@@ -41,6 +41,7 @@ export async function POST(request: NextRequest) {
         type,
         entreprise,
         status: "nouveau",
+        attachments: Array.isArray(attachments) ? attachments : [],
       },
     });
 
@@ -58,6 +59,7 @@ export async function POST(request: NextRequest) {
       subject: sujet,
       message,
       type,
+      attachments: Array.isArray(attachments) ? attachments : [],
     });
     if (!notificationResult.success) {
       console.warn("Échec envoi notification admin:", notificationResult.error);

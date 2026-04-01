@@ -152,6 +152,7 @@ export const emailTemplates = {
     subject: string;
     message: string;
     type: string;
+    attachments?: string[];
   }) => ({
     subject: `🔔 Nouvelle demande de contact - ${data.subject}`,
     html: `
@@ -203,6 +204,18 @@ export const emailTemplates = {
             <p style="color: #6b7280; margin: 0 0 10px 0; font-size: 14px;">Message :</p>
             <p style="color: #1f2937; margin: 0; white-space: pre-wrap; line-height: 1.6;">${data.message}</p>
           </div>
+          
+          ${data.attachments && data.attachments.length > 0 ? `
+          <div style="margin-top: 20px; padding: 20px; background-color: #eff6ff; border-radius: 8px; border: 1px solid #bfdbfe;">
+            <p style="color: #1e40af; margin: 0 0 10px 0; font-size: 14px; font-weight: 600;">📎 Pièces jointes (${data.attachments.length}) :</p>
+            <ul style="margin: 0; padding-left: 20px;">
+              ${data.attachments.map((url, i) => {
+                const filename = url.split("/").pop() || `fichier-${i + 1}`;
+                return `<li style="margin-bottom: 6px;"><a href="${url}" style="color: #0ea5e9; word-break: break-all;" target="_blank">${filename}</a></li>`;
+              }).join("")}
+            </ul>
+          </div>
+          ` : ""}
           
           <div style="margin-top: 30px; text-align: center;">
             <a href="https://azconstruction.fr/admin" style="display: inline-block; background-color: #1e3a5f; color: #ffffff; text-decoration: none; padding: 12px 24px; border-radius: 6px; font-weight: 500;">
@@ -279,6 +292,7 @@ export async function sendContactNotificationToAdmin(data: {
   subject: string;
   message: string;
   type: string;
+  attachments?: string[];
 }): Promise<EmailResult> {
   const template = emailTemplates.newContactNotification(data);
   const adminEmail = process.env.ADMIN_EMAIL || "contact@azconstruction.fr";
