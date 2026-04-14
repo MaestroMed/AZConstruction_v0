@@ -424,7 +424,7 @@ export default function AdminBlogPage() {
         <div className="text-center py-20 bg-white rounded-2xl border border-gray-200">
           <BookOpen className="w-12 h-12 text-gray-200 mx-auto mb-3" />
           <p className="text-gray-500">Aucun article. Créez le premier !</p>
-          <button onClick={handleNew} className="mt-4 inline-flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-xl text-sm font-semibold hover:bg-blue-700">
+          <button onClick={() => handleNew()} className="mt-4 inline-flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-xl text-sm font-semibold hover:bg-blue-700">
             <Plus className="w-4 h-4" /> Créer un article
           </button>
         </div>

@@ -14,6 +14,7 @@ import {
   ChevronDown,
 } from "lucide-react";
 import { navigationItems, breadcrumbLabels } from "./navigation";
+import { CommandPalette } from "@/components/admin/ui/CommandPalette";
 import { cn } from "@/lib/utils";
 import { Toaster } from "sonner";
 import { AuthGuard, useAdminLogout } from "@/components/admin/AuthGuard";
