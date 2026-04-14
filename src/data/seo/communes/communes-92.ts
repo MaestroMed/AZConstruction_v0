@@ -36,5 +36,5 @@ export const communes92: Commune[] = [
   { name: 'Marnes-la-Coquette', slug: 'marnes-la-coquette', codePostal: '92430', departement: '92' },
   { name: 'Vaucresson', slug: 'vaucresson', codePostal: '92420', departement: '92' },
   { name: 'Bourg-la-Reine', slug: 'bourg-la-reine', codePostal: '92340', departement: '92' },
-  { name: 'Le Plessis-Clamart', slug: 'le-plessis-clamart', codePostal: '92140', departement: '92' },
+  { name: 'Sèvres', slug: 'sevres', codePostal: '92310', departement: '92' },
 ]
