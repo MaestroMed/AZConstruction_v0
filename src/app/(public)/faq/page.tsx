@@ -310,7 +310,7 @@ export default function FAQPage() {
                     Nous contacter
                   </Button>
                 </Link>
-                <a href="tel:+33123456789">
+                <a href="tel:+33971357496">
                   <Button variant="outline" size="lg" className="border-blue-corporate text-blue-corporate">
                     <Phone className="w-5 h-5 mr-2" />
                     09 71 35 74 96

@@ -3,7 +3,7 @@ import Link from 'next/link'
 import { ArrowRight, Phone, Compass, CheckCircle2, Ruler, Palette, FileText, Eye } from 'lucide-react'
 
 export const metadata: Metadata = {
-  title: 'Métallerie pour architectes & bureaux d\'études | AZ Construction',
+  title: 'Métallerie pour architectes & bureaux d\'études ',
   description: 'Fabricant de métallerie sur mesure pour architectes en Île-de-France. Profilés Jansen, verrières, escaliers design. Plans d\'exécution, prototypage, coordination technique.',
   alternates: { canonical: 'https://azconstruction.fr/professionnels/architectes' },
 }

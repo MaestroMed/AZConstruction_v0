@@ -576,7 +576,7 @@ export default function SolutionsProPage() {
             {/* Contact rapide */}
             <div className="mt-10 grid md:grid-cols-2 gap-6">
               <a
-                href="tel:+33123456789"
+                href="tel:+33971357496"
                 className="flex items-center gap-4 bg-white/10 backdrop-blur-sm rounded-2xl p-6 border border-white/10 hover:bg-white/20 transition-colors"
               >
                 <div className="w-12 h-12 rounded-xl bg-cyan-glow/20 flex items-center justify-center">

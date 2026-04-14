@@ -72,7 +72,7 @@ const jsonLd = {
       description:
         "Expert en métallerie sur mesure et thermolaquage professionnel en Île-de-France",
       url: "https://azconstruction.fr",
-      telephone: "+33123456789",
+      telephone: "+33971357496",
       email: "contact@azconstruction.fr",
       address: {
         "@type": "PostalAddress",
@@ -255,7 +255,7 @@ export default function ThermolaquageLayout({
       />
       {children}
       <ClickToCallBanner 
-        phoneNumber="+33123456789"
+        phoneNumber="+33971357496"
         displayNumber="09 71 35 74 96"
         message="Thermolaquage - Devis gratuit sous 24h"
       />

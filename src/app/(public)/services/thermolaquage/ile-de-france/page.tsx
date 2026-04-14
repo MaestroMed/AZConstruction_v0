@@ -16,7 +16,7 @@ import { Button } from "@/components/ui/Button";
 import { Card, CardContent } from "@/components/ui/Card";
 
 export const metadata: Metadata = {
-  title: "Thermolaquage Île-de-France | Paris, 75, 77, 78, 91, 92, 93, 94, 95 - AZ Construction",
+  title: "Thermolaquage Île-de-France | Paris, 75, 77, 78, 91, 92, 93, 94, 95 ",
   description:
     "Service de thermolaquage professionnel en Île-de-France. Enlèvement et livraison Paris et tous départements (75, 77, 78, 91, 92, 93, 94, 95). Devis gratuit ☎️ 09 71 35 74 96",
   keywords: [
@@ -37,7 +37,7 @@ export const metadata: Metadata = {
     canonical: "https://azconstruction.fr/services/thermolaquage/ile-de-france",
   },
   openGraph: {
-    title: "Thermolaquage Île-de-France | AZ Construction",
+    title: "Thermolaquage Île-de-France ",
     description:
       "Service de thermolaquage professionnel en Île-de-France. Enlèvement et livraison gratuits.",
     url: "https://azconstruction.fr/services/thermolaquage/ile-de-france",
@@ -139,7 +139,7 @@ export default function ThermolaquageIleDeFrancePage() {
                   Demander un devis gratuit
                 </Button>
               </Link>
-              <a href="tel:+33123456789">
+              <a href="tel:+33971357496">
                 <Button
                   variant="outline"
                   size="lg"
@@ -262,7 +262,7 @@ export default function ThermolaquageIleDeFrancePage() {
                   Demander un devis gratuit
                 </Button>
               </Link>
-              <a href="tel:+33123456789">
+              <a href="tel:+33971357496">
                 <Button
                   variant="outline"
                   size="lg"

@@ -35,7 +35,7 @@ const contactSchema = {
   description:
     "Expert en métallerie sur mesure et thermolaquage professionnel en Île-de-France",
   url: "https://azconstruction.fr",
-  telephone: "+33123456789",
+  telephone: "+33971357496",
   email: "contact@azconstruction.fr",
   address: {
     "@type": "PostalAddress",

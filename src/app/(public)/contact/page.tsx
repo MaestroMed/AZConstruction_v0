@@ -232,7 +232,7 @@ export default function ContactPage() {
                         Téléphone
                       </h3>
                       <a
-                        href="tel:+33123456789"
+                        href="tel:+33971357496"
                         className="text-gray-600 hover:text-cyan-glow transition-colors block text-lg font-medium"
                       >
                         09 71 35 74 96

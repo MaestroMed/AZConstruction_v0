@@ -11,7 +11,7 @@ interface ClickToCallBannerProps {
 }
 
 export default function ClickToCallBanner({
-  phoneNumber = "+33123456789",
+  phoneNumber = "+33971357496",
   displayNumber = "09 71 35 74 96",
   message = "Devis gratuit - Réponse sous 24h",
 }: ClickToCallBannerProps) {

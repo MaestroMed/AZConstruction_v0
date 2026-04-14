@@ -52,7 +52,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const canonicalUrl = `https://azconstruction.fr/blog/${post.slug}`;
 
   return {
-    title: `${title} | Blog AZ Construction`,
+    title: `${title} | Blog`,
     description,
     alternates: { canonical: canonicalUrl },
     openGraph: {

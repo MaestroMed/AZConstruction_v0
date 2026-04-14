@@ -25,10 +25,6 @@
   ],
   "rewrites": [
     {
-      "source": "/sitemap.xml",
-      "destination": "/sitemap"
-    },
-    {
       "source": "/robots.txt",
       "destination": "/robots"
     }

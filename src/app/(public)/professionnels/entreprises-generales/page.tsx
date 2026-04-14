@@ -3,7 +3,7 @@ import Link from 'next/link'
 import { ArrowRight, Phone, HardHat, Shield, Clock, Wrench, Truck } from 'lucide-react'
 
 export const metadata: Metadata = {
-  title: 'Sous-traitance métallerie BTP | Entreprises générales | AZ Construction',
+  title: 'Sous-traitance métallerie BTP | Entreprises générales ',
   description: 'Sous-traitant métallerie pour entreprises générales du BTP en Île-de-France. Garde-corps, escaliers, portails. Atelier 1800m², capacité lot complet, délais chantier.',
   alternates: { canonical: 'https://azconstruction.fr/professionnels/entreprises-generales' },
 }

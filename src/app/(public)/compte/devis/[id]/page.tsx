@@ -499,7 +499,7 @@ export default function DevisDetailPage() {
                   <h3 className="font-bold text-navy-dark mb-4">Besoin d'aide ?</h3>
                   <div className="space-y-3 text-sm">
                     <a
-                      href="tel:+33123456789"
+                      href="tel:+33971357496"
                       className="flex items-center gap-3 text-gray-600 hover:text-cyan-600 transition-colors"
                     >
                       <Phone className="w-4 h-4" />

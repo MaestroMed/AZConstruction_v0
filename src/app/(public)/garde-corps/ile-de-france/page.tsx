@@ -8,7 +8,7 @@ export const metadata: Metadata = {
     "Fabricant de garde-corps sur mesure en Île-de-France. Acier thermolaqué, verre feuilleté, câbles. Norme NF P01-012. Devis gratuit sous 48h pour Paris et tous les départements IDF.",
   alternates: { canonical: "https://azconstruction.fr/garde-corps/ile-de-france" },
   openGraph: {
-    title: "Garde-corps sur mesure Île-de-France | AZ Construction",
+    title: "Garde-corps sur mesure Île-de-France ",
     description: "Fabricant artisanal de garde-corps en IDF depuis 2018. Acier, verre, câbles. Devis gratuit sous 48h.",
     url: "https://azconstruction.fr/garde-corps/ile-de-france",
     type: "website",

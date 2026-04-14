@@ -3,7 +3,7 @@ import Link from 'next/link'
 import { ArrowRight, Phone, Landmark, Shield, FileText, CheckCircle2 } from 'lucide-react'
 
 export const metadata: Metadata = {
-  title: 'Métallerie pour collectivités & ERP | AZ Construction',
+  title: 'Métallerie pour collectivités & ERP ',
   description: 'Fabricant de métallerie pour collectivités, bâtiments publics et ERP en Île-de-France. Garde-corps, escaliers, grilles. Normes ERP, accessibilité PMR, marchés publics.',
   alternates: { canonical: 'https://azconstruction.fr/professionnels/collectivites' },
 }
