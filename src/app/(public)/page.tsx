@@ -17,6 +17,10 @@ const ThermolaquageSectionAdaptive = dynamic(
   () => import("@/components/homepage/ThermolaquageSectionAdaptive"),
   { ssr: true }
 );
+const GoogleReviewsSection = dynamic(
+  () => import("@/components/homepage/GoogleReviewsSection"),
+  { ssr: true }
+);
 
 export default function HomePage() {
   return (
@@ -24,6 +28,7 @@ export default function HomePage() {
       <HeroSection />
       <AdvantagesSection />
       <RealizationsSection />
+      <GoogleReviewsSection />
       <PartnersCarousel />
       <ThermolaquageSectionAdaptive />
     </>

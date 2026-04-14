@@ -9,6 +9,7 @@ import { format, differenceInDays } from "date-fns";
 import { fr } from "date-fns/locale";
 import { toast } from "sonner";
 import { PageHeader } from "@/components/admin/ui/PageHeader";
+import { PageSkeleton } from "@/components/admin/ui/PageSkeleton";
 
 interface Quote {
   id: string;
@@ -282,10 +283,7 @@ export default function QuotesPage() {
 
       {/* Table ou état vide */}
       {loading ? (
-        <div className="bg-white rounded-xl border border-gray-200 p-12 text-center">
-          <div className="w-8 h-8 border-2 border-cyan-500 border-t-transparent rounded-full animate-spin mx-auto mb-4" />
-          <p className="text-gray-500">Chargement...</p>
-        </div>
+        <PageSkeleton variant="table" />
       ) : filteredQuotes.length === 0 ? (
         <div className="bg-white rounded-xl border border-gray-200 p-12 text-center">
           <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
