@@ -33,6 +33,33 @@ export async function GET() {
       }).catch(() => []),
     ]);
 
+    // Weekly message counts (last 4 weeks) for chart
+    const fourWeeksAgo = new Date();
+    fourWeeksAgo.setDate(fourWeeksAgo.getDate() - 28);
+    let weeklyMessages: { week: string; count: number }[] = [];
+    try {
+      const recent = await prisma.contactMessage.findMany({
+        where: { createdAt: { gte: fourWeeksAgo } },
+        select: { createdAt: true },
+      });
+      const weeks: Record<string, number> = {};
+      recent.forEach(m => {
+        const d = new Date(m.createdAt);
+        const weekNum = `S${Math.ceil((d.getDate()) / 7)}`;
+        const key = `${d.toLocaleString('fr-FR', { month: 'short' })} ${weekNum}`;
+        weeks[key] = (weeks[key] || 0) + 1;
+      });
+      weeklyMessages = Object.entries(weeks).map(([week, count]) => ({ week, count }));
+    } catch { /* ignore */ }
+
+    // Blog stats
+    let blogTotal = 0;
+    let blogPublished = 0;
+    try {
+      blogTotal = await prisma.blogPost.count();
+      blogPublished = await prisma.blogPost.count({ where: { published: true } });
+    } catch { /* BlogPost may not exist */ }
+
     return NextResponse.json({
       success: true,
       data: {
@@ -42,9 +69,12 @@ export async function GET() {
           quotesTotal,
           realizationsCount,
           thermolaquageDemands,
+          blogTotal,
+          blogPublished,
         },
         recentContacts,
         recentQuotes,
+        weeklyMessages,
       },
     });
   } catch (error) {
