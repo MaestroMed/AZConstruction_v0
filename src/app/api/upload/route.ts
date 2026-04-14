@@ -225,6 +225,14 @@ export async function POST(request: NextRequest) {
       }
 
       // 4. Dernier recours : base64 (images compressées uniquement)
+      if (!useVercelBlob && !useCloudinary && !isLocal) {
+        return NextResponse.json(
+          {
+            error: `Upload impossible : aucun service de stockage configuré (Vercel Blob ou Cloudinary). Contactez l'administrateur pour configurer BLOB_READ_WRITE_TOKEN ou les clés Cloudinary.`,
+          },
+          { status: 500 }
+        );
+      }
       if (file.size > 2 * 1024 * 1024) {
         return NextResponse.json(
           {

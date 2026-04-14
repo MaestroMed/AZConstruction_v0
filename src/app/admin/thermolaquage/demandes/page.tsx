@@ -103,18 +103,34 @@ function ItemRow({ item, onSave, onDelete, onToggle }: {
             onClick={() => {
               const input = document.createElement("input");
               input.type = "file";
-              input.accept = "image/*";
+              input.accept = "image/jpeg,image/png,image/webp,image/gif,image/svg+xml";
               input.onchange = async (e) => {
                 const file = (e.target as HTMLInputElement).files?.[0];
                 if (!file) return;
+                // Validate client-side before upload
+                const allowedTypes = ["image/jpeg", "image/png", "image/webp", "image/gif", "image/svg+xml"];
+                if (!allowedTypes.includes(file.type)) {
+                  toast.error(`Format non supporté : ${file.type}. Utilisez JPG, PNG, WebP, GIF ou SVG.`);
+                  return;
+                }
+                if (file.size > 50 * 1024 * 1024) {
+                  toast.error("Fichier trop volumineux (max 50MB).");
+                  return;
+                }
                 const fd = new FormData();
                 fd.append("files", file);
+                fd.append("folder", "thermolaquage");
                 try {
                   const res = await fetch("/api/upload", { method: "POST", body: fd });
-                  if (!res.ok) throw new Error("Upload échoué");
                   const data = await res.json();
+                  if (!res.ok) throw new Error(data.error || "Upload échoué");
                   const url = data.files?.[0]?.url || data.url || data.imageUrl;
-                  if (url) setForm({ ...form, imageUrl: url });
+                  if (url) {
+                    setForm({ ...form, imageUrl: url });
+                    toast.success("Image uploadée !");
+                  } else {
+                    throw new Error("Aucune URL retournée par le serveur");
+                  }
                 } catch (err) {
                   toast.error(err instanceof Error ? err.message : "Erreur upload");
                 }

@@ -132,7 +132,7 @@ const DEFAULT_B2B_CARDS = [
 
 interface SiteImage {
   key: string; category: string; label: string; description: string;
-  imageUrl: string | null; fallbackUrl: string; url: string; updatedAt?: string;
+  imageUrl: string | null; fallbackUrl: string; url: string; zoom?: number; updatedAt?: string;
 }
 interface B2BCard { title: string; client: string; location: string; imageKey: string; }
 interface BrandingSettings {
@@ -146,6 +146,7 @@ function ImageCard({
   uploading,
   onUpload,
   onRemove,
+  onZoomChange,
   b2bCard,
   b2bIndex,
   onB2bUpdate,
@@ -154,6 +155,7 @@ function ImageCard({
   uploading: boolean;
   onUpload: (file: File) => void;
   onRemove: () => void;
+  onZoomChange?: (zoom: number) => void;
   b2bCard?: B2BCard;
   b2bIndex?: number;
   onB2bUpdate?: (idx: number, field: keyof B2BCard, val: string) => void;
@@ -188,6 +190,31 @@ function ImageCard({
       <div className="p-4">
         <p className="font-semibold text-gray-900 text-sm">{img.label}</p>
         <p className="text-xs text-gray-500 mt-0.5 mb-3">{img.description}</p>
+
+        {/* Zoom slider — shown for partner logos */}
+        {onZoomChange && img.key.startsWith("partner-") && (
+          <div className="mb-3 pt-2 border-t border-gray-100">
+            <div className="flex items-center justify-between mb-1">
+              <label className="text-xs font-semibold text-gray-500">Zoom</label>
+              <span className="text-xs font-mono text-cyan-600">{((img.zoom ?? 1.0) * 100).toFixed(0)}%</span>
+            </div>
+            <input
+              type="range"
+              min="0.5"
+              max="3"
+              step="0.1"
+              value={img.zoom ?? 1.0}
+              onChange={(e) => onZoomChange(parseFloat(e.target.value))}
+              className="w-full h-1.5 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-cyan-600"
+            />
+            <div className="flex justify-between text-[9px] text-gray-400 mt-0.5">
+              <span>50%</span>
+              <span>100%</span>
+              <span>200%</span>
+              <span>300%</span>
+            </div>
+          </div>
+        )}
 
         {/* B2B text fields */}
         {b2bCard !== undefined && b2bIndex !== undefined && onB2bUpdate && (
@@ -374,6 +401,18 @@ export default function ImagesSettingsPage() {
     } catch { toast.error("Erreur"); }
   };
 
+  const handleZoomChange = async (key: string, zoom: number) => {
+    // Optimistic update
+    setImages(prev => prev.map(img => img.key === key ? { ...img, zoom } : img));
+    try {
+      await fetch("/api/site-images", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ key, zoom }),
+      });
+    } catch { toast.error("Erreur sauvegarde zoom"); }
+  };
+
   // Upload branding (logo/favicon)
   const handleBrandingUpload = async (field: keyof BrandingSettings, file: File) => {
     setBrandingUploading(field);
@@ -540,6 +579,7 @@ export default function ImagesSettingsPage() {
                     uploading={uploading === img.key}
                     onUpload={(f) => handleUpload(img.key, f)}
                     onRemove={() => handleRemove(img.key)}
+                    onZoomChange={(z) => handleZoomChange(img.key, z)}
                     b2bCard={b2bIdx !== undefined ? b2bCards[b2bIdx] : undefined}
                     b2bIndex={b2bIdx}
                     onB2bUpdate={updateB2bCard}

@@ -455,12 +455,12 @@ export async function GET(request: NextRequest) {
     }
 
     // Récupérer toutes les images de la DB
-    let dbImages: { key: string; imageUrl: string | null; updatedAt: Date }[] = [];
+    let dbImages: { key: string; imageUrl: string | null; zoom: number; updatedAt: Date }[] = [];
     try {
       dbImages = await prisma.siteImage.findMany({
         where: category ? { category } : undefined,
         orderBy: { key: "asc" },
-        select: { key: true, imageUrl: true, updatedAt: true },
+        select: { key: true, imageUrl: true, zoom: true, updatedAt: true },
       });
     } catch (dbError) {
       console.error("DB error fetching images, using defaults:", dbError);
@@ -480,6 +480,7 @@ export async function GET(request: NextRequest) {
         imageUrl: dbImage?.imageUrl || null,
         fallbackUrl: def.fallbackUrl,
         url: dbImage?.imageUrl || def.fallbackUrl,
+        zoom: dbImage?.zoom ?? 1.0,
         updatedAt: dbImage?.updatedAt || null,
       };
     });
@@ -518,7 +519,7 @@ export async function GET(request: NextRequest) {
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-    const { key, imageUrl } = body;
+    const { key, imageUrl, zoom } = body;
 
     if (!key) {
       return NextResponse.json({ error: "Key is required" }, { status: 400 });
@@ -530,13 +531,17 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "Invalid image key" }, { status: 400 });
     }
 
+    // Build update data
+    const updateData: Record<string, unknown> = {
+      updatedAt: new Date(),
+    };
+    if (imageUrl !== undefined) updateData.imageUrl = imageUrl || null;
+    if (zoom !== undefined) updateData.zoom = Math.max(0.5, Math.min(3.0, Number(zoom) || 1.0));
+
     // Upsert l'image
     const image = await prisma.siteImage.upsert({
       where: { key },
-      update: {
-        imageUrl: imageUrl || null,
-        updatedAt: new Date(),
-      },
+      update: updateData,
       create: {
         key,
         category: defaultImage.category,
@@ -544,6 +549,7 @@ export async function POST(request: NextRequest) {
         description: defaultImage.description,
         fallbackUrl: defaultImage.fallbackUrl,
         imageUrl: imageUrl || null,
+        zoom: zoom !== undefined ? Math.max(0.5, Math.min(3.0, Number(zoom) || 1.0)) : 1.0,
       },
     });
 

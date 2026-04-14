@@ -14,6 +14,7 @@ interface SiteImage {
 
 interface SiteImagesState {
   images: Record<string, string>; // key -> url
+  zooms: Record<string, number>; // key -> zoom factor (1.0 = normal)
   customImages: Set<string>; // keys of images that have custom URLs (not fallbacks)
   loading: boolean;
   error: Error | null;
@@ -95,6 +96,7 @@ const FALLBACK_IMAGES: Record<string, string> = {
 
 interface FetchResult {
   images: Record<string, string>;
+  zooms: Record<string, number>;
   customImages: Set<string>;
 }
 
@@ -105,18 +107,20 @@ async function fetchSiteImages(): Promise<FetchResult> {
     
     const data = await response.json();
     const imageMap: Record<string, string> = {};
+    const zoomMap: Record<string, number> = {};
     const customImages = new Set<string>();
-    
-    (data.images || []).forEach((img: SiteImage) => {
+
+    (data.images || []).forEach((img: SiteImage & { zoom?: number }) => {
       imageMap[img.key] = img.url;
-      // Track images that have custom URLs (not using fallback)
+      if (img.zoom && img.zoom !== 1.0) zoomMap[img.key] = img.zoom;
       if (img.imageUrl) {
         customImages.add(img.key);
       }
     });
-    
-    return { 
+
+    return {
       images: { ...FALLBACK_IMAGES, ...imageMap },
+      zooms: zoomMap,
       customImages
     };
   } catch (error) {
@@ -132,12 +136,14 @@ let cachedResult: FetchResult | null = null;
  * Hook pour récupérer toutes les images du site
  * Utilise un cache global pour éviter les requêtes multiples
  */
-export function useSiteImages(): SiteImagesState & { 
+export function useSiteImages(): SiteImagesState & {
   getImage: (key: string) => string;
+  getZoom: (key: string) => number;
   isPlaceholder: (key: string) => boolean;
 } {
   const [state, setState] = useState<SiteImagesState>({
     images: cachedResult?.images || cachedImages || FALLBACK_IMAGES,
+    zooms: cachedResult?.zooms || {},
     customImages: cachedResult?.customImages || new Set(),
     loading: !cachedResult && !cachedImages,
     error: null,
@@ -145,11 +151,12 @@ export function useSiteImages(): SiteImagesState & {
 
   useEffect(() => {
     if (cachedResult) {
-      setState({ 
-        images: cachedResult.images, 
+      setState({
+        images: cachedResult.images,
+        zooms: cachedResult.zooms,
         customImages: cachedResult.customImages,
-        loading: false, 
-        error: null 
+        loading: false,
+        error: null
       });
       return;
     }
@@ -162,19 +169,21 @@ export function useSiteImages(): SiteImagesState & {
       .then((result) => {
         cachedImages = result.images;
         cachedResult = result;
-        setState({ 
-          images: result.images, 
+        setState({
+          images: result.images,
+          zooms: result.zooms,
           customImages: result.customImages,
-          loading: false, 
-          error: null 
+          loading: false,
+          error: null
         });
       })
       .catch((error) => {
-        setState({ 
-          images: FALLBACK_IMAGES, 
+        setState({
+          images: FALLBACK_IMAGES,
+          zooms: {},
           customImages: new Set(),
-          loading: false, 
-          error 
+          loading: false,
+          error
         });
       });
   }, []);
@@ -186,6 +195,13 @@ export function useSiteImages(): SiteImagesState & {
     [state.images]
   );
 
+  const getZoom = useCallback(
+    (key: string): number => {
+      return state.zooms[key] ?? 1.0;
+    },
+    [state.zooms]
+  );
+
   const isPlaceholder = useCallback(
     (key: string): boolean => {
       return !state.customImages.has(key);
@@ -193,7 +209,7 @@ export function useSiteImages(): SiteImagesState & {
     [state.customImages]
   );
 
-  return { ...state, getImage, isPlaceholder };
+  return { ...state, getImage, getZoom, isPlaceholder };
 }
 
 /**

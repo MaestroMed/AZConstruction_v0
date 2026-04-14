@@ -23,7 +23,7 @@ const partners = [
 ];
 
 export default function PartnersCarousel() {
-  const { getImage, isPlaceholder } = useSiteImages();
+  const { getImage, getZoom, isPlaceholder } = useSiteImages();
   const [currentIndex, setCurrentIndex] = React.useState(0);
   const [isAutoPlaying, setIsAutoPlaying] = React.useState(true);
   
@@ -112,6 +112,7 @@ export default function PartnersCarousel() {
               {visiblePartners.map((partner) => {
                 const imageUrl = getImage(partner.imageKey);
                 const hasCustomImage = !isPlaceholder(partner.imageKey);
+                const zoom = getZoom(partner.imageKey);
 
                 return (
                   <motion.div
@@ -124,15 +125,18 @@ export default function PartnersCarousel() {
                   >
                     <div className="flex items-center justify-center h-12 w-full">
                       {hasCustomImage ? (
-                        /* Image logo from back-office — taille normalisée */
-                        <div className="relative flex items-center justify-center h-10 w-full">
+                        /* Image logo from back-office — zoom-controlled */
+                        <div className="relative flex items-center justify-center h-12 w-full overflow-hidden">
                           <Image
                             src={imageUrl}
                             alt={partner.name}
-                            width={130}
-                            height={40}
-                            className="object-contain max-h-10 w-auto"
-                            style={{ maxWidth: "130px", maxHeight: "40px" }}
+                            width={Math.round(130 * zoom)}
+                            height={Math.round(40 * zoom)}
+                            className="object-contain w-auto"
+                            style={{
+                              maxWidth: `${Math.round(160 * zoom)}px`,
+                              maxHeight: `${Math.round(48 * zoom)}px`,
+                            }}
                           />
                         </div>
                       ) : (

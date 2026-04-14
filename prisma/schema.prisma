@@ -537,10 +537,11 @@ model SiteImage {
   description String?            // Helper text for admin
   imageUrl    String?            // Uploaded image URL (Cloudinary/Vercel Blob)
   fallbackUrl String             // Default fallback image (Unsplash/static)
-  
+  zoom        Float    @default(1.0) // Zoom/scale factor for display (1.0 = normal, 1.5 = 150%, 2.0 = 200%)
+
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
-  
+
   @@map("site_images")
 }
 
