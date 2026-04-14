@@ -4,6 +4,7 @@ import * as React from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { ArrowLeft, Plus, Trash2, Save, Loader2, Upload, GripVertical, Eye, EyeOff } from "lucide-react";
+import { ConfirmDialog } from "@/components/admin/ui/Modal";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 
@@ -47,6 +48,7 @@ export default function VedettesAdminPage() {
   const [loading, setLoading] = React.useState(true);
   const [saving, setSaving] = React.useState(false);
   const [uploadingId, setUploadingId] = React.useState<string | null>(null);
+  const [confirmDeleteId, setConfirmDeleteId] = React.useState<string | null>(null);
 
   React.useEffect(() => {
     fetch("/api/produits-vedettes")
@@ -66,7 +68,6 @@ export default function VedettesAdminPage() {
   };
 
   const removeItem = (id: string) => {
-    if (!confirm("Supprimer cet item ?")) return;
     setItems(items.filter((i) => i.id !== id));
   };
 
@@ -249,7 +250,7 @@ export default function VedettesAdminPage() {
 
                   {/* Actions */}
                   <div className="flex flex-col gap-1 flex-shrink-0">
-                    <button onClick={() => removeItem(item.id)}
+                    <button onClick={() => setConfirmDeleteId(item.id)}
                       className="p-2 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors">
                       <Trash2 className="w-4 h-4" />
                     </button>
@@ -260,6 +261,19 @@ export default function VedettesAdminPage() {
           })}
         </div>
       )}
+
+      <ConfirmDialog
+        isOpen={!!confirmDeleteId}
+        onClose={() => setConfirmDeleteId(null)}
+        onConfirm={() => {
+          if (confirmDeleteId) removeItem(confirmDeleteId);
+          setConfirmDeleteId(null);
+        }}
+        title="Supprimer"
+        message="Cette action est irréversible."
+        confirmText="Supprimer"
+        variant="danger"
+      />
     </div>
   );
 }

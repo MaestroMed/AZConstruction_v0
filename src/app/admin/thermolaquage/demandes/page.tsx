@@ -4,6 +4,7 @@ import * as React from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { ArrowLeft, Plus, Save, Trash2, Loader2, Eye, EyeOff, Edit2, X, Database } from "lucide-react";
+import { ConfirmDialog } from "@/components/admin/ui/Modal";
 import { toast } from "sonner";
 
 interface DemandItem {
@@ -179,6 +180,8 @@ function ItemRow({ item, onSave, onDelete, onToggle }: {
 export default function ThermolaquageDemandesAdminPage() {
   const [items, setItems] = React.useState<DemandItem[]>([]);
   const [loading, setLoading] = React.useState(true);
+  const [confirmDeleteId, setConfirmDeleteId] = React.useState<string | null>(null);
+  const [confirmSeed, setConfirmSeed] = React.useState(false);
 
   React.useEffect(() => {
     fetch("/api/thermolaquage-demands")
@@ -207,7 +210,6 @@ export default function ThermolaquageDemandesAdminPage() {
   };
 
   const deleteItem = async (id: string) => {
-    if (!confirm("Supprimer cette vignette ?")) return;
     if (!id.startsWith("new-") && !id.startsWith("static-")) {
       await fetch(`/api/thermolaquage-demands?id=${id}`, { method: "DELETE" });
     }
@@ -228,7 +230,6 @@ export default function ThermolaquageDemandesAdminPage() {
   };
 
   const seedItems = async () => {
-    if (!confirm("Importer toutes les vignettes par défaut en base de données ? Elles seront ensuite modifiables librement.")) return;
     try {
       // Récupérer les défauts statiques depuis l'API (quand DB est vide)
       const res = await fetch("/api/thermolaquage-demands?forceDefault=true");
@@ -276,7 +277,7 @@ export default function ThermolaquageDemandesAdminPage() {
           </div>
         </div>
         <div className="flex items-center gap-2">
-          <button onClick={seedItems} className="inline-flex items-center gap-2 px-4 py-2.5 bg-blue-600 text-white rounded-xl text-sm font-semibold hover:bg-blue-700 transition-colors">
+          <button onClick={() => setConfirmSeed(true)} className="inline-flex items-center gap-2 px-4 py-2.5 bg-blue-600 text-white rounded-xl text-sm font-semibold hover:bg-blue-700 transition-colors">
             <Database className="w-4 h-4" /> Importer les défauts
           </button>
           <button onClick={addItem} className="inline-flex items-center gap-2 px-4 py-2.5 bg-cyan-500 text-white rounded-xl text-sm font-semibold hover:bg-cyan-600 transition-colors">
@@ -296,7 +297,7 @@ export default function ThermolaquageDemandesAdminPage() {
       ) : (
         <div className="space-y-3">
           {items.map(item => (
-            <ItemRow key={item.id} item={item} onSave={saveItem} onDelete={deleteItem} onToggle={toggleItem} />
+            <ItemRow key={item.id} item={item} onSave={saveItem} onDelete={(id) => setConfirmDeleteId(id)} onToggle={toggleItem} />
           ))}
           {items.length === 0 && (
             <div className="text-center py-12 text-gray-400">
@@ -308,6 +309,26 @@ export default function ThermolaquageDemandesAdminPage() {
           )}
         </div>
       )}
+
+      <ConfirmDialog
+        isOpen={!!confirmDeleteId}
+        onClose={() => setConfirmDeleteId(null)}
+        onConfirm={() => { if (confirmDeleteId) deleteItem(confirmDeleteId); setConfirmDeleteId(null); }}
+        title="Supprimer la vignette"
+        message="Supprimer cette vignette ? Cette action est irréversible."
+        confirmText="Supprimer"
+        variant="danger"
+      />
+
+      <ConfirmDialog
+        isOpen={confirmSeed}
+        onClose={() => setConfirmSeed(false)}
+        onConfirm={() => { setConfirmSeed(false); seedItems(); }}
+        title="Importer les vignettes par défaut"
+        message="Importer toutes les vignettes par défaut en base de données ? Elles seront ensuite modifiables librement."
+        confirmText="Importer"
+        variant="info"
+      />
     </div>
   );
 }

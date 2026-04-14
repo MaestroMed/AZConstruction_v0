@@ -4,6 +4,7 @@ import * as React from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { ArrowLeft, Plus, Save, Trash2, Eye, EyeOff, Loader2, GripVertical, ChevronDown, ChevronUp, Database } from "lucide-react";
+import { ConfirmDialog } from "@/components/admin/ui/Modal";
 import { toast } from "sonner";
 import { useSiteImages } from "@/lib/hooks/useSiteImages";
 

@@ -4,6 +4,7 @@ import * as React from "react";
 import Link from "next/link";
 import { Plus, Package, Filter, Edit, Trash2, Copy, Star } from "lucide-react";
 import { DataTable, StatusBadge } from "@/components/admin/ui/DataTable";
+import { ConfirmDialog } from "@/components/admin/ui/Modal";
 import { type ColumnDef } from "@tanstack/react-table";
 import { format } from "date-fns";
 import { fr } from "date-fns/locale";
@@ -36,6 +37,7 @@ export default function ProductsPage() {
   const [products, setProducts] = React.useState<Product[]>([]);
   const [selectedFamily, setSelectedFamily] = React.useState("all");
   const [loading, setLoading] = React.useState(true);
+  const [confirmDeleteId, setConfirmDeleteId] = React.useState<string | null>(null);
 
   // Charger les produits depuis localStorage
   React.useEffect(() => {
@@ -68,8 +70,7 @@ export default function ProductsPage() {
     loadProducts();
   }, []);
 
-  const handleDeleteProduct = (id: string, nom: string) => {
-    if (!confirm(`Supprimer "${nom}" ? Cette action est irréversible.`)) return;
+  const handleDeleteProduct = (id: string) => {
     const updated = products.filter((p) => p.id !== id);
     setProducts(updated);
     try {
@@ -159,7 +160,7 @@ export default function ProductsPage() {
             <Copy className="w-4 h-4" />
           </button>
           <button
-            onClick={() => handleDeleteProduct(row.original.id, row.original.nom)}
+            onClick={() => setConfirmDeleteId(row.original.id)}
             className="p-1.5 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors"
             title="Supprimer"
           >
@@ -271,6 +272,19 @@ export default function ProductsPage() {
           onExport={() => console.log("Export products")}
         />
       )}
+
+      <ConfirmDialog
+        isOpen={!!confirmDeleteId}
+        onClose={() => setConfirmDeleteId(null)}
+        onConfirm={() => {
+          if (confirmDeleteId) handleDeleteProduct(confirmDeleteId);
+          setConfirmDeleteId(null);
+        }}
+        title="Supprimer"
+        message="Cette action est irréversible."
+        confirmText="Supprimer"
+        variant="danger"
+      />
     </div>
   );
 }

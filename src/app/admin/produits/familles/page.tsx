@@ -22,7 +22,7 @@ import {
   verticalListSortingStrategy,
 } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
-import { Modal } from "@/components/admin/ui/Modal";
+import { Modal, ConfirmDialog } from "@/components/admin/ui/Modal";
 import { Input, Textarea } from "@/components/admin/ui/FormFields";
 import { toast } from "sonner";
 
@@ -155,9 +155,10 @@ export default function FamiliesPage() {
   const [hasChanges, setHasChanges] = React.useState(false);
   const [saving, setSaving] = React.useState(false);
   const [syncing, setSyncing] = React.useState(false);
+  const [confirmDeleteId, setConfirmDeleteId] = React.useState<string | null>(null);
+  const [confirmSync, setConfirmSync] = React.useState(false);
 
   const handleSyncVariants = async () => {
-    if (!confirm("Synchroniser les variants statiques vers la base de données ? Les variants existants ne seront pas écrasés.")) return;
     setSyncing(true);
     try {
       const res = await fetch("/api/admin/sync-variants", { method: "POST" });
@@ -239,7 +240,6 @@ export default function FamiliesPage() {
   };
 
   const handleDelete = async (id: string) => {
-    if (!confirm("Supprimer cette famille ?")) return;
     try {
       await fetch(`/api/product-families?id=${id}`, { method: "DELETE" });
       setFamilies((items) => items.filter((f) => f.id !== id));
@@ -323,7 +323,7 @@ export default function FamiliesPage() {
             Gérer les images
           </Link>
           <button
-            onClick={handleSyncVariants}
+            onClick={() => setConfirmSync(true)}
             disabled={syncing}
             className="inline-flex items-center gap-2 px-4 py-2 bg-amber-50 border border-amber-200 text-amber-700 rounded-lg text-sm font-medium hover:bg-amber-100 transition-colors disabled:opacity-50"
             title="Importe les modèles (variants) depuis les données statiques vers la DB"
@@ -372,7 +372,7 @@ export default function FamiliesPage() {
         <SortableContext items={families} strategy={verticalListSortingStrategy}>
           <div className="space-y-3">
             {families.map((family) => (
-              <SortableFamily key={family.id} family={family} onEdit={handleEdit} onToggle={handleToggle} onDelete={handleDelete} />
+              <SortableFamily key={family.id} family={family} onEdit={handleEdit} onToggle={handleToggle} onDelete={(id) => setConfirmDeleteId(id)} />
             ))}
           </div>
         </SortableContext>
@@ -395,6 +395,32 @@ export default function FamiliesPage() {
         onClose={() => { setIsModalOpen(false); setEditingFamily(null); }}
         family={editingFamily}
         onSave={handleModalSave}
+      />
+
+      <ConfirmDialog
+        isOpen={!!confirmDeleteId}
+        onClose={() => setConfirmDeleteId(null)}
+        onConfirm={() => {
+          if (confirmDeleteId) handleDelete(confirmDeleteId);
+          setConfirmDeleteId(null);
+        }}
+        title="Supprimer"
+        message="Cette action est irréversible."
+        confirmText="Supprimer"
+        variant="danger"
+      />
+
+      <ConfirmDialog
+        isOpen={confirmSync}
+        onClose={() => setConfirmSync(false)}
+        onConfirm={() => {
+          setConfirmSync(false);
+          handleSyncVariants();
+        }}
+        title="Synchroniser les variants"
+        message="Synchroniser les variants statiques vers la base de données ? Les variants existants ne seront pas écrasés."
+        confirmText="Synchroniser"
+        variant="warning"
       />
     </div>
   );
