@@ -1,15 +1,18 @@
 import { NextRequest, NextResponse } from "next/server";
 import { handleUpload, type HandleUploadBody } from "@vercel/blob/client";
 
+// Increase body size limit for this route (Vercel Pro: up to 50MB)
+export const runtime = "nodejs";
+
 /**
  * Vercel Blob Client Upload for videos.
- * This bypasses the 4.5MB serverless body limit by uploading
- * directly from the browser to Vercel Blob storage.
+ * This bypasses the 4.5MB default serverless body limit by using
+ * Vercel Blob's client upload protocol (browser → Blob directly).
  */
 export async function POST(request: NextRequest) {
-  const body = (await request.json()) as HandleUploadBody;
-
   try {
+    const body = (await request.json()) as HandleUploadBody;
+
     const jsonResponse = await handleUpload({
       body,
       request,
@@ -34,13 +37,13 @@ export async function POST(request: NextRequest) {
         };
       },
       onUploadCompleted: async ({ blob }) => {
-        // Could log or process the upload here
-        console.log("Video uploaded:", blob.url);
+        console.log("[video-upload] completed:", blob.url, blob.size, "bytes");
       },
     });
 
     return NextResponse.json(jsonResponse);
   } catch (error) {
+    console.error("[video-upload] error:", error);
     return NextResponse.json(
       { error: error instanceof Error ? error.message : "Erreur lors de l'upload vidéo" },
       { status: 400 }
