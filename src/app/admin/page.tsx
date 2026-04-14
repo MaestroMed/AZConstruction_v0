@@ -161,12 +161,12 @@ export default function AdminDashboard() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">Tableau de bord</h1>
-          <p className="text-gray-500 mt-1">Vue d&apos;ensemble de votre activité</p>
+          <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Tableau de bord</h1>
+          <p className="text-gray-500 dark:text-gray-400 mt-1">Vue d&apos;ensemble de votre activité</p>
         </div>
         <button
           onClick={loadData}
-          className="inline-flex items-center gap-2 px-3 py-2 bg-white border border-gray-200 rounded-lg text-sm text-gray-600 hover:bg-gray-50 transition-colors"
+          className="inline-flex items-center gap-2 px-3 py-2 bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-lg text-sm text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-slate-700 transition-colors"
         >
           <RefreshCw className="w-4 h-4" />
           Actualiser
@@ -179,8 +179,8 @@ export default function AdminDashboard() {
           <Link
             key={kpi.label}
             href={kpi.href}
-            className={`relative bg-white rounded-xl border p-5 hover:shadow-md transition-all ${
-              kpi.urgent ? "border-blue-300 ring-1 ring-blue-200" : "border-gray-200"
+            className={`relative bg-white dark:bg-slate-900 rounded-xl border p-5 hover:shadow-md transition-all ${
+              kpi.urgent ? "border-blue-300 ring-1 ring-blue-200" : "border-gray-200 dark:border-slate-700"
             }`}
           >
             {kpi.urgent && (
@@ -189,9 +189,9 @@ export default function AdminDashboard() {
             <div className={`inline-flex p-2.5 rounded-xl ${kpi.bg} mb-3`}>
               <kpi.icon className={`w-5 h-5 ${kpi.color}`} />
             </div>
-            <p className="text-3xl font-bold text-gray-900">{kpi.value}</p>
-            <p className="text-sm font-medium text-gray-700 mt-1">{kpi.label}</p>
-            <p className="text-xs text-gray-400 mt-0.5">{kpi.total}</p>
+            <p className="text-3xl font-bold text-gray-900 dark:text-white">{kpi.value}</p>
+            <p className="text-sm font-medium text-gray-700 dark:text-gray-300 mt-1">{kpi.label}</p>
+            <p className="text-xs text-gray-400 dark:text-gray-500 mt-0.5">{kpi.total}</p>
           </Link>
         ))}
       </div>
@@ -199,7 +199,7 @@ export default function AdminDashboard() {
       {/* Main content */}
       <div className="grid lg:grid-cols-3 gap-6">
         {/* Recent contacts */}
-        <div className="lg:col-span-2 bg-white rounded-xl border border-gray-200 overflow-hidden">
+        <div className="lg:col-span-2 bg-white dark:bg-slate-900 rounded-xl border border-gray-200 dark:border-slate-700 overflow-hidden">
           <div className="flex items-center justify-between p-5 border-b border-gray-100">
             <div>
               <h3 className="text-base font-semibold text-gray-900">Messages récents</h3>
@@ -278,7 +278,7 @@ export default function AdminDashboard() {
       </div>
 
       {/* Recent quotes */}
-      <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
+      <div className="bg-white dark:bg-slate-900 rounded-xl border border-gray-200 dark:border-slate-700 overflow-hidden">
         <div className="flex items-center justify-between p-5 border-b border-gray-100">
           <div>
             <h3 className="text-base font-semibold text-gray-900">Demandes de devis récentes</h3>
