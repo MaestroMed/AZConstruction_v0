@@ -4,12 +4,18 @@
  * Fallback: logs en dev si pas de clé API
  */
 
+interface EmailAttachment {
+  filename: string;
+  path: string; // URL to fetch the file from
+}
+
 interface EmailOptions {
   to: string | string[];
   subject: string;
   html: string;
   from?: string;
   replyTo?: string;
+  attachments?: EmailAttachment[];
 }
 
 interface EmailResult {
@@ -26,7 +32,7 @@ const DEFAULT_REPLY_TO = "contact@azconstruction.fr";
  * Envoie un email via Resend
  */
 export async function sendEmail(options: EmailOptions): Promise<EmailResult> {
-  const { to, subject, html, from = DEFAULT_FROM, replyTo = DEFAULT_REPLY_TO } = options;
+  const { to, subject, html, from = DEFAULT_FROM, replyTo = DEFAULT_REPLY_TO, attachments } = options;
 
   // Vérifier la clé API Resend
   const resendApiKey = process.env.RESEND_API_KEY;
@@ -59,6 +65,7 @@ export async function sendEmail(options: EmailOptions): Promise<EmailResult> {
         subject,
         html,
         reply_to: replyTo,
+        ...(attachments && attachments.length > 0 ? { attachments } : {}),
       }),
     });
 
@@ -296,9 +303,18 @@ export async function sendContactNotificationToAdmin(data: {
 }): Promise<EmailResult> {
   const template = emailTemplates.newContactNotification(data);
   const adminEmail = process.env.ADMIN_EMAIL || "contact@azconstruction.fr";
-  
+
+  // Build Resend attachments from URLs
+  const emailAttachments: EmailAttachment[] = (data.attachments || [])
+    .filter(url => url && !url.startsWith("data:"))
+    .map((url, i) => ({
+      filename: url.split("/").pop() || `piece-jointe-${i + 1}`,
+      path: url,
+    }));
+
   return sendEmail({
     to: adminEmail,
     ...template,
+    attachments: emailAttachments.length > 0 ? emailAttachments : undefined,
   });
 }

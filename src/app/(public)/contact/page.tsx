@@ -68,15 +68,28 @@ export default function ContactPage() {
     const files = Array.from(e.target.files || []);
     if (!files.length) return;
     setUploadingFiles(true);
+    setError("");
     try {
       const fd = new FormData();
       files.forEach((f) => fd.append("files", f));
       fd.append("folder", "contact-attachments");
       const res = await fetch("/api/upload", { method: "POST", body: fd });
       const data = await res.json();
+      if (!res.ok) {
+        setError(data.error || "Erreur lors de l'upload des fichiers");
+        return;
+      }
       if (data.files?.length) {
-        setAttachmentUrls((prev) => [...prev, ...data.files.map((f: { url: string }) => f.url)]);
-        setAttachmentNames((prev) => [...prev, ...files.map((f) => f.name)]);
+        // Filter out base64 URLs — they won't work in emails
+        const validFiles = data.files.filter((f: { url: string; provider?: string }) =>
+          f.url && !f.url.startsWith("data:") && f.provider !== "base64"
+        );
+        if (validFiles.length === 0) {
+          setError("Upload impossible — le stockage fichiers n'est pas configuré. Envoyez vos fichiers par email à contact@azconstruction.fr.");
+          return;
+        }
+        setAttachmentUrls((prev) => [...prev, ...validFiles.map((f: { url: string }) => f.url)]);
+        setAttachmentNames((prev) => [...prev, ...files.slice(0, validFiles.length).map((f) => f.name)]);
       }
     } catch {
       setError("Erreur lors de l'upload des fichiers");
