@@ -22,7 +22,7 @@ import {
   ChevronLeft,
   ChevronRight,
 } from "lucide-react";
-import { GlowButton, GlassCard, MeshGradient, GradientOrb } from "@/components/ui";
+import { GlowButton, GlassCard, MeshGradient, ParticleBackground, GradientOrb } from "@/components/ui";
 import { Button } from "@/components/ui/Button";
 import { Card, CardContent } from "@/components/ui/Card";
 import { PhoneLink } from "@/components/ui/PhoneLink";
