@@ -1,52 +1,54 @@
 import { NextRequest, NextResponse } from "next/server";
-import { handleUpload, type HandleUploadBody } from "@vercel/blob/client";
+import { put } from "@vercel/blob";
 
-// Increase body size limit for this route (Vercel Pro: up to 50MB)
-export const runtime = "nodejs";
+// Allow larger body for video uploads (up to 50MB on Vercel Pro)
+export const maxDuration = 60; // seconds
 
 /**
- * Vercel Blob Client Upload for videos.
- * This bypasses the 4.5MB default serverless body limit by using
- * Vercel Blob's client upload protocol (browser → Blob directly).
+ * Server-side video upload to Vercel Blob.
+ * Uses put() directly instead of client upload to avoid CORS issues.
  */
 export async function POST(request: NextRequest) {
   try {
-    const body = (await request.json()) as HandleUploadBody;
+    const formData = await request.formData();
+    const file = formData.get("file") as File | null;
 
-    const jsonResponse = await handleUpload({
-      body,
-      request,
-      onBeforeGenerateToken: async (pathname) => {
-        // Validate it's a video file
-        const ext = pathname.split(".").pop()?.toLowerCase();
-        const allowedExts = ["mp4", "webm", "mov", "avi", "mkv"];
-        if (!ext || !allowedExts.includes(ext)) {
-          throw new Error("Type de fichier non autorisé. Formats acceptés : MP4, WebM, MOV");
-        }
+    if (!file) {
+      return NextResponse.json({ error: "Aucun fichier fourni" }, { status: 400 });
+    }
 
-        return {
-          allowedContentTypes: [
-            "video/mp4",
-            "video/webm",
-            "video/quicktime",
-            "video/x-msvideo",
-            "video/x-matroska",
-          ],
-          maximumSizeInBytes: 100 * 1024 * 1024, // 100MB
-          tokenPayload: JSON.stringify({ purpose: "hero-video" }),
-        };
-      },
-      onUploadCompleted: async ({ blob }) => {
-        console.log("[video-upload] completed:", blob.url, blob.size, "bytes");
-      },
+    // Validate file type
+    const allowedTypes = ["video/mp4", "video/webm", "video/quicktime"];
+    const allowedExts = /\.(mp4|webm|mov)$/i;
+    if (!allowedTypes.includes(file.type) && !allowedExts.test(file.name)) {
+      return NextResponse.json(
+        { error: "Format non autorisé. Acceptés : MP4, WebM, MOV" },
+        { status: 400 }
+      );
+    }
+
+    // 50MB limit (Vercel Pro serverless body limit)
+    if (file.size > 50 * 1024 * 1024) {
+      return NextResponse.json(
+        { error: `Fichier trop volumineux (${(file.size / 1024 / 1024).toFixed(1)} Mo). Max : 50 Mo.` },
+        { status: 400 }
+      );
+    }
+
+    const ext = file.name.split(".").pop()?.toLowerCase() || "mp4";
+    const filename = `hero-videos/${Date.now()}.${ext}`;
+
+    const blob = await put(filename, file, {
+      access: "public",
+      contentType: file.type,
     });
 
-    return NextResponse.json(jsonResponse);
+    return NextResponse.json({ url: blob.url, size: file.size });
   } catch (error) {
     console.error("[video-upload] error:", error);
     return NextResponse.json(
-      { error: error instanceof Error ? error.message : "Erreur lors de l'upload vidéo" },
-      { status: 400 }
+      { error: error instanceof Error ? error.message : "Erreur upload vidéo" },
+      { status: 500 }
     );
   }
 }
