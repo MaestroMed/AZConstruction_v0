@@ -6,12 +6,9 @@ import { ChevronLeft, ChevronRight } from "lucide-react";
 import Image from "next/image";
 import { useSiteImages } from "@/lib/hooks/useSiteImages";
 
-// Partner logos - Jansen en priorité comme fournisseur principal de profilés acier
-// Puis les maîtres d'ouvrage partenaires
-const partners = [
-  // Fournisseur principal
+// Default partner logos (hardcoded)
+const DEFAULT_PARTNERS = [
   { id: "jansen", name: "JANSEN", color: "#C41E3A", highlight: true, imageKey: "partner-jansen" },
-  // Maîtres d'ouvrage partenaires
   { id: "demathieu-bard", name: "Demathieu Bard", color: "#1E3A8A", imageKey: "partner-demathieu-bard" },
   { id: "spie-batignolles", name: "Spie Batignolles", color: "#DC2626", imageKey: "partner-spie-batignolles" },
   { id: "rabot-dutilleul", name: "Rabot Dutilleul", color: "#059669", imageKey: "partner-rabot-dutilleul" },
@@ -21,13 +18,26 @@ const partners = [
   { id: "urbaine-travaux", name: "Urbaine de Travaux", color: "#7C3AED", imageKey: "partner-urbaine-travaux" },
   { id: "saint-gobain", name: "SAINT-GOBAIN", color: "#004990", imageKey: "partner-saint-gobain" },
 ];
+const defaultPartnerKeys = new Set(DEFAULT_PARTNERS.map(p => p.imageKey));
 
 export default function PartnersCarousel() {
-  const { getImage, getZoom, isPlaceholder } = useSiteImages();
+  const { getImage, getZoom, isPlaceholder, images: allImages } = useSiteImages();
   const [currentIndex, setCurrentIndex] = React.useState(0);
   const [isAutoPlaying, setIsAutoPlaying] = React.useState(true);
-  
-  // Nombre de logos visibles selon la taille d'écran (géré par CSS)
+
+  // Build partners list: defaults + any custom partner logos from DB
+  const partners = React.useMemo(() => {
+    const list = [...DEFAULT_PARTNERS];
+    // Find custom partner keys in allImages that aren't in defaults
+    Object.keys(allImages).forEach(key => {
+      if (key.startsWith("partner-") && !defaultPartnerKeys.has(key)) {
+        const name = key.replace("partner-", "").split("-").map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(" ");
+        list.push({ id: key.replace("partner-", ""), name, color: "#374151", imageKey: key });
+      }
+    });
+    return list;
+  }, [allImages]);
+
   const visibleCount = 5;
   const totalPartners = partners.length;
 

@@ -467,7 +467,10 @@ export async function GET(request: NextRequest) {
       // Continue avec les defaults
     }
 
-    // Merger avec les defaults pour avoir la liste complète
+    // Merger defaults + DB pour avoir la liste complète
+    const defaultKeys = new Set(DEFAULT_IMAGES.map(d => d.key));
+
+    // 1) Images from defaults, enriched with DB data
     const allImages = DEFAULT_IMAGES.filter(
       (def) => !category || def.category === category
     ).map((def) => {
@@ -484,6 +487,32 @@ export async function GET(request: NextRequest) {
         updatedAt: dbImage?.updatedAt || null,
       };
     });
+
+    // 2) Custom DB-only images (e.g. user-created partner logos)
+    let customDbImages: { key: string; category: string; label: string; description: string | null; imageUrl: string | null; fallbackUrl: string; zoom: number; updatedAt: Date }[] = [];
+    try {
+      customDbImages = await prisma.siteImage.findMany({
+        where: {
+          key: { notIn: Array.from(defaultKeys) },
+          ...(category ? { category } : {}),
+        },
+        orderBy: { key: "asc" },
+      });
+    } catch { /* ignore */ }
+
+    for (const db of customDbImages) {
+      allImages.push({
+        key: db.key,
+        category: db.category,
+        label: db.label,
+        description: db.description || "",
+        imageUrl: db.imageUrl,
+        fallbackUrl: db.fallbackUrl,
+        url: db.imageUrl || db.fallbackUrl,
+        zoom: db.zoom ?? 1.0,
+        updatedAt: db.updatedAt,
+      });
+    }
 
     // Grouper par catégorie
     const grouped = allImages.reduce((acc, img) => {
@@ -525,11 +554,20 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "Key is required" }, { status: 400 });
     }
 
-    // Trouver les infos par défaut
+    // Trouver les infos par défaut ou existant en DB (pour les custom logos)
     const defaultImage = DEFAULT_IMAGES.find((img) => img.key === key);
+    let existingImage: { key: string; category: string; label: string; description: string | null; fallbackUrl: string } | null = null;
     if (!defaultImage) {
-      return NextResponse.json({ error: "Invalid image key" }, { status: 400 });
+      existingImage = await prisma.siteImage.findUnique({
+        where: { key },
+        select: { key: true, category: true, label: true, description: true, fallbackUrl: true },
+      });
+      if (!existingImage) {
+        return NextResponse.json({ error: "Image non trouvée" }, { status: 400 });
+      }
     }
+
+    const ref = defaultImage || existingImage!;
 
     // Build update data
     const updateData: Record<string, unknown> = {
@@ -544,10 +582,10 @@ export async function POST(request: NextRequest) {
       update: updateData,
       create: {
         key,
-        category: defaultImage.category,
-        label: defaultImage.label,
-        description: defaultImage.description,
-        fallbackUrl: defaultImage.fallbackUrl,
+        category: ref.category,
+        label: ref.label,
+        description: ref.description,
+        fallbackUrl: ref.fallbackUrl,
         imageUrl: imageUrl || null,
         zoom: zoom !== undefined ? Math.max(0.5, Math.min(3.0, Number(zoom) || 1.0)) : 1.0,
       },

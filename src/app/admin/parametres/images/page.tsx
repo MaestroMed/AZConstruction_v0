@@ -21,6 +21,7 @@ import {
   Phone,
   Globe,
   Share2,
+  Plus,
 } from "lucide-react";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
@@ -108,14 +109,22 @@ const PAGE_TABS = [
     id: "global",
     label: "Global",
     icon: ImageIcon,
-    description: "Produits, partenaires, processus",
+    description: "Produits, processus",
     keys: [
       "product-portails", "product-clotures", "product-pergolas", "product-marquises",
       "product-fenetres", "product-verrieres", "product-grilles",
+      "process-consultation", "process-devis", "process-fabrication", "process-installation",
+    ],
+  },
+  {
+    id: "partenaires",
+    label: "Logos Partenaires",
+    icon: Share2,
+    description: "Logos des partenaires et fournisseurs",
+    keys: [
       "partner-jansen", "partner-bouygues", "partner-vinci", "partner-eiffage",
       "partner-saint-gobain", "partner-demathieu-bard", "partner-spie-batignolles",
       "partner-rabot-dutilleul", "partner-urbaine-travaux",
-      "process-consultation", "process-devis", "process-fabrication", "process-installation",
     ],
   },
 ];
@@ -138,6 +147,44 @@ interface B2BCard { title: string; client: string; location: string; imageKey: s
 interface BrandingSettings {
   logoUrl?: string | null; logoLightUrl?: string | null;
   faviconUrl?: string | null; ogImageUrl?: string | null;
+}
+
+// ── Zoom slider with local state + debounced save ──────────
+function ZoomSlider({ initialZoom, onZoomChange }: { initialZoom: number; onZoomChange: (z: number) => void }) {
+  const [localZoom, setLocalZoom] = React.useState(initialZoom);
+  const debounceRef = React.useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  // Sync if parent updates
+  React.useEffect(() => { setLocalZoom(initialZoom); }, [initialZoom]);
+
+  const handleChange = (val: number) => {
+    setLocalZoom(val);
+    if (debounceRef.current) clearTimeout(debounceRef.current);
+    debounceRef.current = setTimeout(() => onZoomChange(val), 400);
+  };
+
+  return (
+    <div className="mb-3 pt-2 border-t border-gray-100">
+      <div className="flex items-center justify-between mb-1.5">
+        <label className="text-xs font-semibold text-gray-500">Zoom affichage</label>
+        <span className="text-xs font-mono text-cyan-600 bg-cyan-50 px-1.5 py-0.5 rounded">{(localZoom * 100).toFixed(0)}%</span>
+      </div>
+      <input
+        type="range"
+        min={50}
+        max={300}
+        step={10}
+        value={Math.round(localZoom * 100)}
+        onChange={(e) => handleChange(parseInt(e.target.value) / 100)}
+        className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-cyan-600"
+      />
+      <div className="flex justify-between text-[9px] text-gray-400 mt-1">
+        <span>50%</span>
+        <span>150%</span>
+        <span>300%</span>
+      </div>
+    </div>
+  );
 }
 
 // ── Image card component ───────────────────────────────────
@@ -193,27 +240,7 @@ function ImageCard({
 
         {/* Zoom slider — shown for partner logos */}
         {onZoomChange && img.key.startsWith("partner-") && (
-          <div className="mb-3 pt-2 border-t border-gray-100">
-            <div className="flex items-center justify-between mb-1">
-              <label className="text-xs font-semibold text-gray-500">Zoom</label>
-              <span className="text-xs font-mono text-cyan-600">{((img.zoom ?? 1.0) * 100).toFixed(0)}%</span>
-            </div>
-            <input
-              type="range"
-              min="0.5"
-              max="3"
-              step="0.1"
-              value={img.zoom ?? 1.0}
-              onChange={(e) => onZoomChange(parseFloat(e.target.value))}
-              className="w-full h-1.5 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-cyan-600"
-            />
-            <div className="flex justify-between text-[9px] text-gray-400 mt-0.5">
-              <span>50%</span>
-              <span>100%</span>
-              <span>200%</span>
-              <span>300%</span>
-            </div>
-          </div>
+          <ZoomSlider initialZoom={img.zoom ?? 1.0} onZoomChange={onZoomChange} />
         )}
 
         {/* B2B text fields */}
@@ -355,6 +382,14 @@ export default function ImagesSettingsPage() {
         setImages(imgs);
         const map: Record<string, SiteImage> = {};
         imgs.forEach((i) => { map[i.key] = i; });
+        // Add custom partner logos to the partenaires tab dynamically
+        const partnersTab = PAGE_TABS.find(t => t.id === "partenaires");
+        if (partnersTab) {
+          const customPartnerKeys = imgs
+            .filter(i => i.category === "partners" && !partnersTab.keys.includes(i.key))
+            .map(i => i.key);
+          partnersTab.keys.push(...customPartnerKeys);
+        }
         setAllImages(map);
       }
       if (settingsRes.ok) {
@@ -411,6 +446,43 @@ export default function ImagesSettingsPage() {
         body: JSON.stringify({ key, zoom }),
       });
     } catch { toast.error("Erreur sauvegarde zoom"); }
+  };
+
+  const handleAddPartnerLogo = async () => {
+    const name = prompt("Nom du partenaire (ex: Bouygues, Vinci...) :");
+    if (!name || !name.trim()) return;
+    const slug = name.trim().toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
+    const key = `partner-${slug}`;
+
+    // Check if already exists
+    if (images.find(i => i.key === key)) {
+      toast.error(`Le logo "${name}" existe déjà.`);
+      return;
+    }
+
+    try {
+      // Create via API — will be added to DB with default placeholder
+      await fetch("/api/site-images/custom", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          key,
+          category: "partners",
+          label: `Logo ${name.trim()}`,
+          description: `Logo du partenaire ${name.trim()}`,
+          fallbackUrl: `https://via.placeholder.com/200x80/333333/FFFFFF?text=${encodeURIComponent(name.trim().toUpperCase())}`,
+        }),
+      });
+      // Also add to the partners tab keys so it shows up
+      const partnersTab = PAGE_TABS.find(t => t.id === "partenaires");
+      if (partnersTab && !partnersTab.keys.includes(key)) {
+        partnersTab.keys.push(key);
+      }
+      await loadImages();
+      toast.success(`Logo "${name}" ajouté ! Uploadez maintenant l'image.`);
+    } catch {
+      toast.error("Erreur lors de l'ajout");
+    }
   };
 
   // Upload branding (logo/favicon)
@@ -586,6 +658,20 @@ export default function ImagesSettingsPage() {
                   />
                 );
               })}
+            </div>
+          )}
+
+          {/* Add new partner logo button */}
+          {activeTab === "partenaires" && (
+            <div className="flex items-center gap-4">
+              <button
+                onClick={handleAddPartnerLogo}
+                className="inline-flex items-center gap-2 px-4 py-2.5 bg-cyan-600 text-white rounded-xl text-sm font-semibold hover:bg-cyan-700 transition-colors"
+              >
+                <Plus className="w-4 h-4" />
+                Ajouter un logo partenaire
+              </button>
+              <p className="text-xs text-gray-400">Les nouveaux logos apparaîtront automatiquement sur le site.</p>
             </div>
           )}
 
