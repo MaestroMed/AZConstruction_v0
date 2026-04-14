@@ -39,4 +39,6 @@ export const communes93: Commune[] = [
   { name: 'Coubron', slug: 'coubron', codePostal: '93470', departement: '93' },
   { name: 'L\'Île-Saint-Denis', slug: 'ile-saint-denis', codePostal: '93450', departement: '93' },
   { name: 'Gournay-sur-Marne', slug: 'gournay-sur-marne', codePostal: '93460', departement: '93' },
+  { name: 'Le Bourget', slug: 'le-bourget', codePostal: '93350', departement: '93' },
+  { name: 'Villetaneuse', slug: 'villetaneuse', codePostal: '93430', departement: '93' },
 ]

@@ -45,4 +45,6 @@ export const communes94: Commune[] = [
   { name: 'Noiseau', slug: 'noiseau', codePostal: '94880', departement: '94' },
   { name: 'Saint-Mandé', slug: 'saint-mande', codePostal: '94160', departement: '94' },
   { name: 'Saint-Maurice', slug: 'saint-maurice', codePostal: '94410', departement: '94' },
+  { name: 'Le Plessis-Trévise', slug: 'le-plessis-trevise', codePostal: '94420', departement: '94' },
+  { name: 'Villeneuve-le-Roi', slug: 'villeneuve-le-roi', codePostal: '94290', departement: '94' },
 ]
