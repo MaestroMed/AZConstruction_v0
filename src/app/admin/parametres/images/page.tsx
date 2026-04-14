@@ -22,6 +22,9 @@ import {
   Globe,
   Share2,
   Plus,
+  Video,
+  Play,
+  X,
 } from "lucide-react";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
@@ -141,7 +144,7 @@ const DEFAULT_B2B_CARDS = [
 
 interface SiteImage {
   key: string; category: string; label: string; description: string;
-  imageUrl: string | null; fallbackUrl: string; url: string; zoom?: number; updatedAt?: string;
+  imageUrl: string | null; videoUrl?: string | null; fallbackUrl: string; url: string; zoom?: number; updatedAt?: string;
 }
 interface B2BCard { title: string; client: string; location: string; imageKey: string; }
 interface BrandingSettings {
@@ -288,6 +291,240 @@ function ImageCard({
             className="hidden" />
         </div>
         <p className="text-[9px] text-gray-300 mt-1.5 font-mono">{img.key}</p>
+      </div>
+    </div>
+  );
+}
+
+// ── Video upload card for hero sections ────────────────────
+function VideoUploadCard({
+  siteImageKey,
+  videoUrl,
+  posterUrl,
+  uploading,
+  onUpload,
+  onRemove,
+}: {
+  siteImageKey: string;
+  videoUrl: string | null;
+  posterUrl: string;
+  uploading: boolean;
+  onUpload: (file: File) => void;
+  onRemove: () => void;
+}) {
+  const fileRef = React.useRef<HTMLInputElement>(null);
+  const videoPreviewRef = React.useRef<HTMLVideoElement>(null);
+  const [converting, setConverting] = React.useState(false);
+  const [progress, setProgress] = React.useState("");
+  const [dragOver, setDragOver] = React.useState(false);
+
+  // Client-side video optimization: compress & convert to MP4 using Canvas + MediaRecorder
+  const optimizeVideo = async (file: File): Promise<File> => {
+    // If already MP4 and < 15MB, skip conversion
+    if (file.type === "video/mp4" && file.size < 15 * 1024 * 1024) {
+      return file;
+    }
+
+    // For larger or non-MP4 files, attempt client-side re-encoding via MediaRecorder
+    // This converts to WebM (VP8/VP9) which is well-supported
+    if (typeof MediaRecorder === "undefined" || !MediaRecorder.isTypeSupported("video/webm")) {
+      // Browser doesn't support MediaRecorder, upload as-is
+      return file;
+    }
+
+    setConverting(true);
+    setProgress("Optimisation en cours...");
+
+    try {
+      const videoEl = document.createElement("video");
+      videoEl.muted = true;
+      videoEl.playsInline = true;
+      const url = URL.createObjectURL(file);
+      videoEl.src = url;
+
+      await new Promise<void>((resolve, reject) => {
+        videoEl.onloadedmetadata = () => resolve();
+        videoEl.onerror = () => reject(new Error("Impossible de lire cette vidéo"));
+      });
+
+      // Limit resolution to 1080p for web
+      const maxH = 1080;
+      let { videoWidth: w, videoHeight: h } = videoEl;
+      if (h > maxH) {
+        w = Math.round((w * maxH) / h);
+        h = maxH;
+      }
+
+      const canvas = document.createElement("canvas");
+      canvas.width = w;
+      canvas.height = h;
+      const ctx = canvas.getContext("2d")!;
+
+      const stream = canvas.captureStream(30);
+      const recorder = new MediaRecorder(stream, {
+        mimeType: "video/webm",
+        videoBitsPerSecond: 2_500_000, // 2.5 Mbps — good quality, reasonable size
+      });
+
+      const chunks: BlobPart[] = [];
+      recorder.ondataavailable = (e) => { if (e.data.size > 0) chunks.push(e.data); };
+
+      const done = new Promise<Blob>((resolve) => {
+        recorder.onstop = () => resolve(new Blob(chunks, { type: "video/webm" }));
+      });
+
+      recorder.start();
+      videoEl.currentTime = 0;
+      await videoEl.play();
+
+      setProgress("Ré-encodage vidéo...");
+
+      // Draw frames to canvas
+      const drawFrame = () => {
+        if (videoEl.ended || videoEl.paused) {
+          recorder.stop();
+          return;
+        }
+        ctx.drawImage(videoEl, 0, 0, w, h);
+        const pct = Math.round((videoEl.currentTime / videoEl.duration) * 100);
+        setProgress(`Ré-encodage... ${pct}%`);
+        requestAnimationFrame(drawFrame);
+      };
+      requestAnimationFrame(drawFrame);
+
+      const blob = await done;
+      URL.revokeObjectURL(url);
+
+      const optimizedName = file.name.replace(/\.[^.]+$/, ".webm");
+      const optimized = new File([blob], optimizedName, { type: "video/webm", lastModified: Date.now() });
+
+      setProgress(`Terminé ! ${(file.size / 1024 / 1024).toFixed(1)}MB → ${(optimized.size / 1024 / 1024).toFixed(1)}MB`);
+
+      // Use optimized if smaller, otherwise original
+      return optimized.size < file.size ? optimized : file;
+    } catch (err) {
+      console.warn("Video optimization failed, using original:", err);
+      return file;
+    } finally {
+      setConverting(false);
+    }
+  };
+
+  const handleFile = async (file: File) => {
+    const optimized = await optimizeVideo(file);
+    onUpload(optimized);
+  };
+
+  return (
+    <div
+      className={cn(
+        "bg-white rounded-2xl border-2 overflow-hidden shadow-sm hover:shadow-md transition-all col-span-full",
+        dragOver ? "border-cyan-400 bg-cyan-50/30" : "border-gray-200"
+      )}
+      onDragOver={(e) => { e.preventDefault(); setDragOver(true); }}
+      onDragLeave={() => setDragOver(false)}
+      onDrop={(e) => {
+        e.preventDefault();
+        setDragOver(false);
+        const f = e.dataTransfer.files?.[0];
+        if (f && (f.type.startsWith("video/") || /\.(mp4|webm|mov)$/i.test(f.name))) handleFile(f);
+      }}
+    >
+      <div className="p-5">
+        <div className="flex items-center gap-3 mb-4">
+          <div className="w-10 h-10 rounded-xl bg-purple-100 flex items-center justify-center">
+            <Video className="w-5 h-5 text-purple-600" />
+          </div>
+          <div>
+            <p className="font-semibold text-gray-900 text-sm">Vidéo Hero</p>
+            <p className="text-xs text-gray-500">Vidéo d'arrière-plan pour la section hero. Optimisée automatiquement pour le web.</p>
+          </div>
+          {videoUrl && (
+            <span className="ml-auto text-xs px-2 py-0.5 rounded-full font-medium bg-green-500/90 text-white">
+              ✓ Active
+            </span>
+          )}
+        </div>
+
+        {/* Video preview */}
+        {videoUrl ? (
+          <div className="relative rounded-xl overflow-hidden bg-gray-900 mb-4">
+            <video
+              ref={videoPreviewRef}
+              src={videoUrl}
+              muted
+              loop
+              playsInline
+              className="w-full aspect-video object-cover"
+              onMouseEnter={(e) => (e.target as HTMLVideoElement).play()}
+              onMouseLeave={(e) => { const v = e.target as HTMLVideoElement; v.pause(); v.currentTime = 0; }}
+            />
+            <div className="absolute inset-0 flex items-center justify-center pointer-events-none opacity-60">
+              <Play className="w-12 h-12 text-white drop-shadow-lg" />
+            </div>
+            <p className="absolute bottom-2 left-3 text-xs text-white/70 bg-black/40 px-2 py-0.5 rounded">
+              Survolez pour prévisualiser
+            </p>
+          </div>
+        ) : (
+          <div className="rounded-xl border-2 border-dashed border-gray-200 bg-gray-50 p-8 text-center mb-4">
+            <Video className="w-10 h-10 text-gray-300 mx-auto mb-2" />
+            <p className="text-sm text-gray-400">Aucune vidéo configurée</p>
+            <p className="text-xs text-gray-300 mt-1">Glissez-déposez un fichier ou cliquez pour uploader</p>
+          </div>
+        )}
+
+        {/* Progress */}
+        {(converting || uploading) && (
+          <div className="flex items-center gap-3 mb-4 p-3 bg-cyan-50 rounded-xl border border-cyan-100">
+            <Loader2 className="w-5 h-5 animate-spin text-cyan-600 flex-shrink-0" />
+            <div className="text-sm text-cyan-700 font-medium">
+              {converting ? progress : "Upload en cours..."}
+            </div>
+          </div>
+        )}
+
+        {/* Actions */}
+        <div className="flex gap-2">
+          <button
+            onClick={() => fileRef.current?.click()}
+            disabled={uploading || converting}
+            className="flex-1 inline-flex items-center justify-center gap-1.5 px-4 py-2.5 bg-purple-600 text-white rounded-xl text-sm font-medium hover:bg-purple-700 transition-colors disabled:opacity-50"
+          >
+            <Upload className="w-4 h-4" />
+            {videoUrl ? "Remplacer la vidéo" : "Uploader une vidéo"}
+          </button>
+          {videoUrl && (
+            <button
+              onClick={onRemove}
+              disabled={uploading || converting}
+              className="p-2.5 text-red-500 hover:bg-red-50 rounded-xl transition-colors"
+              title="Supprimer la vidéo"
+            >
+              <Trash2 className="w-4 h-4" />
+            </button>
+          )}
+          <input
+            ref={fileRef}
+            type="file"
+            accept="video/mp4,video/webm,video/quicktime,.mp4,.webm,.mov"
+            onChange={(e) => {
+              const f = e.target.files?.[0];
+              if (f) handleFile(f);
+              e.target.value = "";
+            }}
+            className="hidden"
+          />
+        </div>
+
+        {/* Info */}
+        <div className="mt-3 flex items-start gap-2 text-[11px] text-gray-400">
+          <span className="leading-relaxed">
+            Formats acceptés : MP4, WebM, MOV. Taille max : 100 MB.
+            La vidéo sera automatiquement ré-encodée et optimisée pour le web (1080p, 2.5 Mbps).
+          </span>
+        </div>
+        <p className="text-[9px] text-gray-300 mt-1.5 font-mono">{siteImageKey}</p>
       </div>
     </div>
   );
@@ -446,6 +683,52 @@ export default function ImagesSettingsPage() {
         body: JSON.stringify({ key, zoom }),
       });
     } catch { toast.error("Erreur sauvegarde zoom"); }
+  };
+
+  // Upload vidéo hero
+  const [videoUploading, setVideoUploading] = React.useState<string | null>(null);
+
+  const handleVideoUpload = async (key: string, file: File) => {
+    setVideoUploading(key);
+    try {
+      const fd = new FormData();
+      fd.append("files", file);
+      fd.append("folder", "hero-videos");
+      const upRes = await fetch("/api/upload", { method: "POST", body: fd });
+      if (!upRes.ok) {
+        const e = await upRes.json().catch(() => ({}));
+        throw new Error(e.error || "Erreur upload vidéo");
+      }
+      const upData = await upRes.json();
+      const videoUrl = upData.files[0]?.url;
+      if (!videoUrl) throw new Error("Pas d'URL vidéo");
+      const saveRes = await fetch("/api/site-images", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ key, videoUrl }),
+      });
+      if (!saveRes.ok) throw new Error("Erreur sauvegarde");
+      await loadImages();
+      toast.success("Vidéo hero mise à jour !");
+    } catch (e) {
+      toast.error(e instanceof Error ? e.message : "Erreur upload vidéo");
+    } finally {
+      setVideoUploading(null);
+    }
+  };
+
+  const handleVideoRemove = async (key: string) => {
+    try {
+      await fetch("/api/site-images", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ key, videoUrl: null }),
+      });
+      await loadImages();
+      toast.success("Vidéo supprimée");
+    } catch {
+      toast.error("Erreur suppression vidéo");
+    }
   };
 
   const handleAddPartnerLogo = async () => {
@@ -642,6 +925,19 @@ export default function ImagesSettingsPage() {
             </div>
           ) : (
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
+              {/* Video upload cards for hero images */}
+              {tabImages.filter((img) => img.key.startsWith("hero-") && img.category === "hero").map((img) => (
+                <VideoUploadCard
+                  key={`video-${img.key}`}
+                  siteImageKey={img.key}
+                  videoUrl={img.videoUrl || null}
+                  posterUrl={img.url}
+                  uploading={videoUploading === img.key}
+                  onUpload={(f) => handleVideoUpload(img.key, f)}
+                  onRemove={() => handleVideoRemove(img.key)}
+                />
+              ))}
+              {/* Image cards */}
               {tabImages.map((img) => {
                 const b2bIdx = B2B_IMAGE_KEYS[img.key];
                 return (

@@ -273,8 +273,11 @@ export default function ThermolaquagePage() {
   const [modelImages, setModelImages] = React.useState<ModelColorImages>({});
   const [isImageLoading, setIsImageLoading] = React.useState(false);
   const [demandsItems, setDemandsItems] = React.useState<{ id: string; label: string; imageUrl: string; href?: string | null; size: string }[]>([]);
-  const { getImage } = useSiteImages();
+  const [isVideoLoaded, setIsVideoLoaded] = React.useState(false);
+  const videoRef = React.useRef<HTMLVideoElement>(null);
+  const { getImage, getVideo } = useSiteImages();
   const heroImage = getImage("hero-thermolaquage");
+  const heroVideoUrl = getVideo("hero-thermolaquage");
 
   // RAL color cycle for "Poudre Epoxy" title animation
   const [ralTitleIdx, setRalTitleIdx] = React.useState(0);
@@ -369,17 +372,38 @@ export default function ThermolaquagePage() {
         {/* Particles */}
         <ParticleBackground count={10} />
         
-        {/* Background Image with Parallax */}
+        {/* Background Video with Parallax (falls back to image if no video) */}
         <motion.div
           className="absolute inset-0"
           style={{ y: heroY, opacity: heroOpacity }}
         >
+          {/* Video Background — only rendered if a video URL is configured in admin */}
+          {heroVideoUrl && (
+            <video
+              ref={videoRef}
+              autoPlay
+              muted
+              loop
+              playsInline
+              poster={heroImage}
+              onCanPlay={() => setIsVideoLoaded(true)}
+              onError={() => setIsVideoLoaded(false)}
+              className={`absolute inset-0 w-full h-full object-cover object-center transition-opacity duration-1000 ${
+                isVideoLoaded ? "opacity-55" : "opacity-0"
+              }`}
+            >
+              <source src={heroVideoUrl} />
+            </video>
+          )}
+          {/* Fallback Image (shown while video loads, or always if no video configured) */}
           <Image
             src={heroImage}
             alt="Thermolaquage Professionnel - AZ Construction"
             fill
             priority
-            className="object-cover object-center opacity-55"
+            className={`object-cover object-center transition-opacity duration-1000 ${
+              heroVideoUrl && isVideoLoaded ? "opacity-0" : "opacity-55"
+            }`}
             quality={85}
           />
           {/* Overlay for text readability */}
