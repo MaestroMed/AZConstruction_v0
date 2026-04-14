@@ -557,7 +557,7 @@ function GammesCarousel() {
       </div>
 
       {/* Horizontal scroll */}
-      <div className="flex gap-4 overflow-x-auto pb-4 snap-x snap-mandatory scrollbar-hide -mx-6 px-6">
+      <div className="flex gap-4 overflow-x-auto pb-4 snap-x snap-mandatory scrollbar-hide -mx-6 px-6 lg:justify-center">
         {gammes.map((gamme, i) => (
           <Link key={gamme.id} href={gamme.slug} className="flex-shrink-0 snap-start">
             <motion.div

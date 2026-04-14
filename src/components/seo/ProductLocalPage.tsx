@@ -132,7 +132,7 @@ export function ProductLocalPage({ product, dept, commune, segment }: ProductLoc
               </p>
               <div className="flex flex-wrap gap-4">
                 <Link
-                  href="/devis/formulaire"
+                  href="/contact"
                   className="inline-flex items-center gap-2 px-6 py-3 bg-cyan-glow text-navy-dark font-bold rounded-xl hover:bg-cyan-pale transition-colors"
                 >
                   {product.ctaLabel} <ArrowRight className="w-4 h-4" />
@@ -283,7 +283,7 @@ export function ProductLocalPage({ product, dept, commune, segment }: ProductLoc
             </p>
             <div className="flex flex-wrap gap-4 justify-center">
               <Link
-                href="/devis/formulaire"
+                href="/contact"
                 className="inline-flex items-center gap-2 px-8 py-4 bg-cyan-glow text-navy-dark font-bold rounded-2xl hover:bg-cyan-pale transition-colors text-lg"
               >
                 Demander un devis gratuit <ArrowRight className="w-5 h-5" />

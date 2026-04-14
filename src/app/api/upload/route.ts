@@ -16,26 +16,8 @@ const MAX_FILE_SIZE = 50 * 1024 * 1024; // 50MB
 // Vérifier si Vercel Blob est configuré
 const useVercelBlob = !!process.env.BLOB_READ_WRITE_TOKEN;
 
-// Vérifier si Cloudinary est configuré
-const useCloudinary = !!(
-  process.env.CLOUDINARY_CLOUD_NAME &&
-  process.env.CLOUDINARY_API_KEY &&
-  process.env.CLOUDINARY_API_SECRET
-);
-
 // Vérifier si on est en local (pas sur Vercel)
 const isLocal = !process.env.VERCEL;
-
-async function uploadToCloudinary(buffer: Buffer, fileName: string, mimeType: string, folder: string = "az-construction") {
-  try {
-    const { uploadImage } = await import("@/lib/cloudinary");
-    const base64 = `data:${mimeType};base64,${buffer.toString("base64")}`;
-    return uploadImage(base64, { folder });
-  } catch (error) {
-    console.error("Cloudinary import/upload error:", error);
-    throw error;
-  }
-}
 
 async function uploadToVercelBlob(buffer: Buffer, fileName: string, contentType: string) {
   const { put } = await import("@vercel/blob");
@@ -98,7 +80,7 @@ export async function POST(request: NextRequest) {
       const buffer = Buffer.from(bytes);
       const uniqueName = `${folder}/${uuidv4()}-${file.name}`;
 
-      // 1. Essayer Vercel Blob (recommandé pour Vercel)
+      // 1. Essayer Vercel Blob (provider principal)
       if (useVercelBlob) {
         try {
           const blob = await uploadToVercelBlob(buffer, uniqueName, file.type);
@@ -113,7 +95,7 @@ export async function POST(request: NextRequest) {
             provider: "vercel-blob",
             uploadedAt: new Date().toISOString(),
           };
-          
+
           try {
             await prisma.media.create({
               data: {
@@ -130,7 +112,7 @@ export async function POST(request: NextRequest) {
           } catch (dbErr) {
             console.warn("Media DB record skipped:", dbErr);
           }
-          
+
           uploadedFiles.push(fileData);
           continue;
         } catch (blobError) {
@@ -138,54 +120,8 @@ export async function POST(request: NextRequest) {
         }
       }
 
-      // 2. Essayer Cloudinary
-      if (useCloudinary && fileType === "image") {
-        try {
-          const result = await uploadToCloudinary(buffer, file.name, file.type, folder);
-          const fileData = {
-            id: uuidv4(),
-            originalName: file.name,
-            fileName: result.publicId,
-            url: result.url,
-            type: fileType,
-            size: file.size,
-            mimeType: file.type,
-            width: result.width,
-            height: result.height,
-            provider: "cloudinary",
-            publicId: result.publicId,
-            uploadedAt: new Date().toISOString(),
-          };
-          
-          try {
-            await prisma.media.create({
-              data: {
-                id: fileData.id,
-                fileName: fileData.fileName,
-                originalName: fileData.originalName,
-                url: fileData.url,
-                type: fileData.type,
-                mimeType: fileData.mimeType,
-                size: fileData.size,
-                width: fileData.width,
-                height: fileData.height,
-                provider: fileData.provider,
-                publicId: fileData.publicId,
-              },
-            });
-          } catch (dbErr) {
-            console.warn("Media DB record skipped:", dbErr);
-          }
-          
-          uploadedFiles.push(fileData);
-          continue;
-        } catch (cloudinaryError) {
-          console.error("Cloudinary upload failed:", cloudinaryError);
-        }
-      }
-
-      // 3. Stockage local sur disque (uniquement en développement local)
-      if (isLocal && fileType === "image") {
+      // 2. Stockage local sur disque (uniquement en développement local)
+      if (isLocal) {
         try {
           const url = await saveToLocalDisk(buffer, file.name, folder);
           const fileData = {
@@ -224,19 +160,21 @@ export async function POST(request: NextRequest) {
         }
       }
 
-      // 4. Dernier recours : base64 (images compressées uniquement)
-      if (!useVercelBlob && !useCloudinary && !isLocal) {
+      // 3. Aucun provider disponible
+      if (!useVercelBlob && !isLocal) {
         return NextResponse.json(
           {
-            error: `Upload impossible : aucun service de stockage configuré (Vercel Blob ou Cloudinary). Contactez l'administrateur pour configurer BLOB_READ_WRITE_TOKEN ou les clés Cloudinary.`,
+            error: "Upload impossible : aucun service de stockage configuré. Configurez BLOB_READ_WRITE_TOKEN dans les variables d'environnement Vercel.",
           },
           { status: 500 }
         );
       }
+
+      // 4. Dernier recours : base64 (images compressées uniquement)
       if (file.size > 2 * 1024 * 1024) {
         return NextResponse.json(
           {
-            error: `Image trop grande (${Math.round(file.size / 1024)}KB). Compressez-la sous 2MB ou configurez Cloudinary/Vercel Blob dans les variables d'environnement.`,
+            error: `Image trop grande (${Math.round(file.size / 1024)}KB). Compressez-la sous 2MB ou configurez BLOB_READ_WRITE_TOKEN.`,
           },
           { status: 413 }
         );
@@ -271,11 +209,10 @@ export async function POST(request: NextRequest) {
 
 export async function GET() {
   try {
-    // Lister les fichiers depuis la base de données
     const medias = await prisma.media.findMany({
       orderBy: { createdAt: "desc" },
     });
-    
+
     const fileList = medias.map((media) => ({
       id: media.id,
       fileName: media.fileName,
@@ -289,7 +226,7 @@ export async function GET() {
       provider: media.provider,
       uploadedAt: media.createdAt.toISOString(),
     }));
-    
+
     return NextResponse.json({ files: fileList });
   } catch (error) {
     console.error("Error listing files:", error);
@@ -303,7 +240,6 @@ export async function DELETE(request: NextRequest) {
     const id = searchParams.get("id");
     const url = searchParams.get("url");
 
-    // Trouver le fichier par ID ou URL
     let media = null;
     if (id) {
       media = await prisma.media.findUnique({ where: { id } });
@@ -323,16 +259,8 @@ export async function DELETE(request: NextRequest) {
       } catch (e) {
         console.error("Error deleting from Vercel Blob:", e);
       }
-    } else if (media.provider === "cloudinary" && media.publicId && useCloudinary) {
-      try {
-        const { deleteImage } = await import("@/lib/cloudinary");
-        await deleteImage(media.publicId);
-      } catch (e) {
-        console.error("Error deleting from Cloudinary:", e);
-      }
     }
 
-    // Supprimer de la base de données
     await prisma.media.delete({ where: { id: media.id } });
 
     return NextResponse.json({ success: true });
