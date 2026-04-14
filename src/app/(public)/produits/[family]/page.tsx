@@ -468,45 +468,6 @@ export default function ProductFamilyPage() {
       </section>
 
       {/* ============================================
-          CTA SECTION
-          ============================================ */}
-      <section className="py-20 bg-white">
-        <div className="container mx-auto px-6">
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            className="bg-gradient-to-r from-blue-corporate to-navy-dark rounded-3xl p-12 text-center relative overflow-hidden"
-          >
-            <div className="absolute inset-0 opacity-10">
-              <div
-                className="absolute inset-0"
-                style={{
-                  backgroundImage: `url("data:image/svg+xml,%3Csvg width='40' height='40' viewBox='0 0 40 40' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M0 20h40M20 0v40' fill='none' stroke='%2300d4ff' stroke-width='0.5'/%3E%3C/svg%3E")`,
-                }}
-              />
-            </div>
-            <div className="relative z-10">
-              <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">
-                Prêt à concrétiser votre projet ?
-              </h2>
-              <p className="text-white/70 mb-8 max-w-xl mx-auto">
-                Contactez-nous pour un devis gratuit et personnalisé. Réponse sous 48h garantie.
-              </p>
-              <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                <Link href="/contact">
-                  <GlowButton size="lg" icon={<ArrowRight className="w-5 h-5" />}>
-                    Demander un devis
-                  </GlowButton>
-                </Link>
-                <PhoneLink variant="button" />
-              </div>
-            </div>
-          </motion.div>
-        </div>
-      </section>
-
-      {/* ============================================
           SEO — Disponible par département
           ============================================ */}
       <section className="py-16 bg-white border-t border-gray-100">
