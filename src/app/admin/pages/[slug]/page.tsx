@@ -236,6 +236,9 @@ const pageConfigs: Record<string, PageConfig> = {
         fields: [
           { name: "title", label: "Titre principal", type: "text" },
           { name: "subtitle", label: "Sous-titre", type: "textarea" },
+          { name: "badge", label: "Badge", type: "text" },
+          { name: "ctaText", label: "Texte bouton principal", type: "text" },
+          { name: "ctaLink", label: "Lien bouton principal", type: "text" },
         ],
       },
       {
@@ -245,9 +248,71 @@ const pageConfigs: Record<string, PageConfig> = {
           name: "items",
           label: "Stats",
           itemFields: [
-            { name: "value", label: "Valeur", type: "number" },
+            { name: "value", label: "Valeur", type: "text" },
             { name: "suffix", label: "Suffixe", type: "text" },
             { name: "label", label: "Label", type: "text" },
+          ],
+        },
+      },
+      {
+        key: "sectors",
+        label: "Secteurs d'activité",
+        fields: [
+          { name: "sectionTitle", label: "Titre de section", type: "text" },
+          { name: "sectionSubtitle", label: "Sous-titre", type: "text" },
+        ],
+        listField: {
+          name: "items",
+          label: "Secteurs",
+          itemFields: [
+            { name: "title", label: "Titre", type: "text" },
+            { name: "description", label: "Description", type: "textarea" },
+            { name: "icon", label: "Icône (nom Lucide)", type: "text" },
+            { name: "imageKey", label: "Clé image (ex: sector-btp)", type: "text" },
+          ],
+        },
+      },
+      {
+        key: "services",
+        label: "Services professionnels",
+        fields: [
+          { name: "sectionTitle", label: "Titre de section", type: "text" },
+        ],
+        listField: {
+          name: "items",
+          label: "Services",
+          itemFields: [
+            { name: "title", label: "Titre", type: "text" },
+            { name: "description", label: "Description", type: "textarea" },
+            { name: "href", label: "Lien", type: "text" },
+          ],
+        },
+      },
+      {
+        key: "guarantees",
+        label: "Engagements professionnels",
+        listField: {
+          name: "items",
+          label: "Engagements",
+          itemFields: [
+            { name: "title", label: "Titre", type: "text" },
+            { name: "description", label: "Description", type: "textarea" },
+            { name: "icon", label: "Icône", type: "text" },
+          ],
+        },
+      },
+      {
+        key: "faq",
+        label: "FAQ Professionnels",
+        fields: [
+          { name: "sectionTitle", label: "Titre de section", type: "text" },
+        ],
+        listField: {
+          name: "items",
+          label: "Questions",
+          itemFields: [
+            { name: "question", label: "Question", type: "text" },
+            { name: "answer", label: "Réponse", type: "textarea" },
           ],
         },
       },
