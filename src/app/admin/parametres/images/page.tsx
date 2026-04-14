@@ -691,23 +691,64 @@ export default function ImagesSettingsPage() {
   const handleVideoUpload = async (key: string, file: File) => {
     setVideoUploading(key);
     try {
-      // Upload directly to Vercel Blob (bypasses 4.5MB serverless body limit)
-      const { upload } = await import("@vercel/blob/client");
-      const blob = await upload(`hero-videos/${key}-${Date.now()}.${file.name.split('.').pop()}`, file, {
-        access: "public",
-        handleUploadUrl: "/api/upload/video",
-      });
-      const videoUrl = blob.url;
-      if (!videoUrl) throw new Error("Pas d'URL vidéo");
+      let videoUrl: string;
+
+      // Try Vercel Blob client upload first (bypasses 4.5MB serverless limit)
+      if (process.env.NEXT_PUBLIC_BLOB_READ_WRITE_TOKEN || typeof window !== "undefined") {
+        try {
+          toast.loading("Upload vidéo en cours...", { id: "video-upload" });
+          const { upload } = await import("@vercel/blob/client");
+          const blob = await upload(
+            `hero-videos/${key}-${Date.now()}.${file.name.split(".").pop()}`,
+            file,
+            { access: "public", handleUploadUrl: "/api/upload/video" }
+          );
+          videoUrl = blob.url;
+          toast.dismiss("video-upload");
+        } catch (blobErr) {
+          toast.dismiss("video-upload");
+          console.warn("Blob client upload failed, trying FormData fallback:", blobErr);
+          // Fallback: standard FormData upload (works if file < 4.5MB or on Pro plan)
+          const fd = new FormData();
+          fd.append("files", file);
+          fd.append("folder", "hero-videos");
+          toast.loading("Upload vidéo (fallback)...", { id: "video-upload" });
+          const upRes = await fetch("/api/upload", { method: "POST", body: fd });
+          toast.dismiss("video-upload");
+          if (!upRes.ok) {
+            const e = await upRes.json().catch(() => ({}));
+            throw new Error(e.error || "Erreur upload vidéo — fichier trop volumineux ? (max ~4.5 MB via API classique)");
+          }
+          const upData = await upRes.json();
+          videoUrl = upData.files?.[0]?.url;
+        }
+      } else {
+        // No blob config — direct FormData
+        const fd = new FormData();
+        fd.append("files", file);
+        fd.append("folder", "hero-videos");
+        const upRes = await fetch("/api/upload", { method: "POST", body: fd });
+        if (!upRes.ok) throw new Error("Erreur upload vidéo");
+        const upData = await upRes.json();
+        videoUrl = upData.files?.[0]?.url;
+      }
+
+      if (!videoUrl) throw new Error("Pas d'URL vidéo retournée");
+
+      toast.loading("Enregistrement...", { id: "video-save" });
       const saveRes = await fetch("/api/site-images", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ key, videoUrl }),
       });
       if (!saveRes.ok) throw new Error("Erreur sauvegarde");
+      toast.dismiss("video-save");
       await loadImages();
       toast.success("Vidéo hero mise à jour !");
     } catch (e) {
+      toast.dismiss("video-upload");
+      toast.dismiss("video-save");
+      console.error("[video-upload] error:", e);
       toast.error(e instanceof Error ? e.message : "Erreur upload vidéo");
     } finally {
       setVideoUploading(null);
