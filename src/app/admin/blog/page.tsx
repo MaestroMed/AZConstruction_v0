@@ -70,7 +70,26 @@ export default function AdminBlogPage() {
     finally { setLoading(false); }
   };
 
-  React.useEffect(() => { loadPosts(); }, []);
+  React.useEffect(() => {
+    loadPosts().then(() => {
+      // Handle deep-link triggers from /admin/blog/nouveau and /admin/blog/[id]
+      const newFlag = sessionStorage.getItem("blog_new_article");
+      if (newFlag) {
+        sessionStorage.removeItem("blog_new_article");
+        handleNew();
+      }
+      const editId = sessionStorage.getItem("blog_edit_id");
+      if (editId) {
+        sessionStorage.removeItem("blog_edit_id");
+        // Will be resolved after posts load
+        setPosts(prev => {
+          const post = prev.find(p => p.id === editId);
+          if (post) setEditing({ ...post });
+          return prev;
+        });
+      }
+    });
+  }, []);
 
   const filtered = posts.filter((p) =>
     !search ||
