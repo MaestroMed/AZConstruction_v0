@@ -80,8 +80,8 @@ export function GardeCorpsModel({ config }: GardeCorpsModelProps) {
       {fillType === "cables" && Array.from({ length: 6 }).map((_, i) => {
         const y = 0.1 + (i * (hauteur - 0.15)) / 5;
         return (
-          <mesh key={`cable-${i}`} position={[0, y, 0]}>
-            <cylinderGeometry args={[0.002, 0.002, longueur, 8]} rotation={[0, 0, Math.PI / 2]} />
+          <mesh key={`cable-${i}`} position={[0, y, 0]} rotation={[0, 0, Math.PI / 2]}>
+            <cylinderGeometry args={[0.002, 0.002, longueur, 8]} />
             <meshStandardMaterial color="#C0C0C0" roughness={0.3} metalness={0.9} />
           </mesh>
         );
