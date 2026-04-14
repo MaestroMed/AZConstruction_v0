@@ -33,7 +33,7 @@ export function AnimatedCounter({
     Math.round(current * Math.pow(10, decimals)) / Math.pow(10, decimals)
   );
 
-  const [displayValue, setDisplayValue] = React.useState(0);
+  const [displayValue, setDisplayValue] = React.useState(value);
 
   React.useEffect(() => {
     if (isInView) {
