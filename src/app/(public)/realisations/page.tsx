@@ -132,7 +132,7 @@ export default function RealisationsPage() {
         if (response.ok) {
           const data = await response.json();
           if (data.success && data.realizations) {
-            setRealizations(data.realizations);
+            setRealizations(data.realizations.filter((r: Realization) => r.imageUrl));
           }
         }
       } catch (error) {
