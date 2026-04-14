@@ -27,48 +27,48 @@ let cachePromise: Promise<FetchResult> | null = null;
 // Images fallback locales (utilisées si l'API échoue)
 const FALLBACK_IMAGES: Record<string, string> = {
   // Hero
-  "hero-homepage": "https://images.unsplash.com/photo-1504307651254-35680f356dfd?w=1920&q=80",
-  "hero-thermolaquage": "https://images.unsplash.com/photo-1565793298595-6a879b1d9492?w=1920&q=80",
-  "hero-particuliers": "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=1920&q=80",
-  "hero-professionnels": "https://images.unsplash.com/photo-1504307651254-35680f356dfd?w=1920&q=80",
-  "hero-a-propos": "https://images.unsplash.com/photo-1600880292203-757bb62b4baf?w=1920&q=80",
-  "hero-contact": "https://images.unsplash.com/photo-1423666639041-f56000c27a9a?w=1920&q=80",
-  "hero-carousel-1": "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=1920&q=80",
-  "hero-carousel-2": "https://images.unsplash.com/photo-1587293852726-70cdb56c2866?w=1920&q=80",
-  "hero-carousel-3": "https://images.unsplash.com/photo-1530124566582-a618bc2615dc?w=1920&q=80",
-  "hero-carousel-4": "https://images.unsplash.com/photo-1504307651254-35680f356dfd?w=1920&q=80",
-  "hero-carousel-5": "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=1920&q=80",
-  "hero-carousel-6": "https://images.unsplash.com/photo-1555041469-a586c61ea9bc?w=1920&q=80",
+  "hero-homepage": "/placeholder.svg",
+  "hero-thermolaquage": "/placeholder.svg",
+  "hero-particuliers": "/placeholder.svg",
+  "hero-professionnels": "/placeholder.svg",
+  "hero-a-propos": "/placeholder.svg",
+  "hero-contact": "/placeholder.svg",
+  "hero-carousel-1": "/placeholder.svg",
+  "hero-carousel-2": "/placeholder.svg",
+  "hero-carousel-3": "/placeholder.svg",
+  "hero-carousel-4": "/placeholder.svg",
+  "hero-carousel-5": "/placeholder.svg",
+  "hero-carousel-6": "/placeholder.svg",
   
   // Products
-  "product-garde-corps": "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=800&q=80",
-  "product-escaliers": "https://images.unsplash.com/photo-1555041469-a586c61ea9bc?w=800&q=80",
-  "product-portails": "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=800&q=80",
-  "product-clotures": "https://images.unsplash.com/photo-1584622650111-993a426fbf0a?w=800&q=80",
-  "product-pergolas": "https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=800&q=80",
-  "product-marquises": "https://images.unsplash.com/photo-1600585154526-990dced4db0d?w=800&q=80",
-  "product-portes": "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=800&q=80",
-  "product-fenetres": "https://images.unsplash.com/photo-1600573472550-8090b5e0745e?w=800&q=80",
-  "product-verrieres": "https://images.unsplash.com/photo-1600210492486-724fe5c67fb0?w=800&q=80",
-  "product-grilles": "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=800&q=80",
+  "product-garde-corps": "/placeholder.svg",
+  "product-escaliers": "/placeholder.svg",
+  "product-portails": "/placeholder.svg",
+  "product-clotures": "/placeholder.svg",
+  "product-pergolas": "/placeholder.svg",
+  "product-marquises": "/placeholder.svg",
+  "product-portes": "/placeholder.svg",
+  "product-fenetres": "/placeholder.svg",
+  "product-verrieres": "/placeholder.svg",
+  "product-grilles": "/placeholder.svg",
   
   // Pages
-  "page-atelier": "https://images.unsplash.com/photo-1504307651254-35680f356dfd?w=1200&q=80",
-  "page-equipe": "https://images.unsplash.com/photo-1600880292203-757bb62b4baf?w=1200&q=80",
-  "thermolaquage-process": "https://images.unsplash.com/photo-1565793298595-6a879b1d9492?w=1200&q=80",
-  "thermolaquage-applications": "https://images.unsplash.com/photo-1504917595217-d4dc5ebe6122?w=1200&q=80",
+  "page-atelier": "/placeholder.svg",
+  "page-equipe": "/placeholder.svg",
+  "thermolaquage-process": "/placeholder.svg",
+  "thermolaquage-applications": "/placeholder.svg",
   
   // Process
-  "process-consultation": "https://images.unsplash.com/photo-1560439514-4e9645039924?w=800&q=80",
-  "process-devis": "https://images.unsplash.com/photo-1554224155-6726b3ff858f?w=800&q=80",
-  "process-fabrication": "https://images.unsplash.com/photo-1504917595217-d4dc5ebe6122?w=800&q=80",
-  "process-installation": "https://images.unsplash.com/photo-1581094794329-c8112a89af12?w=800&q=80",
+  "process-consultation": "/placeholder.svg",
+  "process-devis": "/placeholder.svg",
+  "process-fabrication": "/placeholder.svg",
+  "process-installation": "/placeholder.svg",
   
   // Team
-  "team-member-1": "https://images.unsplash.com/photo-1560250097-0b93528c311a?w=400&q=80",
-  "team-member-2": "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=400&q=80",
-  "team-member-3": "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=400&q=80",
-  "team-member-4": "https://images.unsplash.com/photo-1580489944761-15a19d654956?w=400&q=80",
+  "team-member-1": "/placeholder.svg",
+  "team-member-2": "/placeholder.svg",
+  "team-member-3": "/placeholder.svg",
+  "team-member-4": "/placeholder.svg",
   
   // Partners - Fournisseur
   "partner-jansen": "https://via.placeholder.com/200x80/C41E3A/FFFFFF?text=JANSEN",
@@ -83,15 +83,15 @@ const FALLBACK_IMAGES: Record<string, string> = {
   "partner-saint-gobain": "https://via.placeholder.com/200x80/004990/FFFFFF?text=SAINT-GOBAIN",
   
   // Réalisations B2B
-  "realisation-b2b-1": "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=600&q=80",
-  "realisation-b2b-2": "https://images.unsplash.com/photo-1555041469-a586c61ea9bc?w=600&q=80",
-  "realisation-b2b-3": "https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=600&q=80",
+  "realisation-b2b-1": "/placeholder.svg",
+  "realisation-b2b-2": "/placeholder.svg",
+  "realisation-b2b-3": "/placeholder.svg",
 
   // Secteurs professionnels
-  "sector-btp": "https://images.unsplash.com/photo-1504307651254-35680f356dfd?w=600&q=80",
-  "sector-architecte": "https://images.unsplash.com/photo-1503387762-592deb58ef4e?w=600&q=80",
-  "sector-artisan": "https://images.unsplash.com/photo-1581092162384-8987c1d64718?w=600&q=80",
-  "sector-industrie": "https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?w=600&q=80",
+  "sector-btp": "/placeholder.svg",
+  "sector-architecte": "/placeholder.svg",
+  "sector-artisan": "/placeholder.svg",
+  "sector-industrie": "/placeholder.svg",
 };
 
 interface FetchResult {

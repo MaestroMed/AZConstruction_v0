@@ -54,7 +54,7 @@ export default function IndustrielsPage() {
       {/* ── Hero ─────────────────────────────────────── */}
       <section className="relative bg-gradient-to-br from-navy-dark via-navy-medium to-blue-corporate pt-32 pb-20 overflow-hidden">
         <Image
-          src="https://images.unsplash.com/photo-1504307651254-35680f356dfd?w=1920&q=80"
+          src="/placeholder.svg"
           alt="Site industriel — métallerie sur mesure AZ Construction"
           fill
           className="object-cover opacity-10"

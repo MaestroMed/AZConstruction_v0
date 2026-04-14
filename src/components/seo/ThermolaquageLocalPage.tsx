@@ -20,7 +20,7 @@ const AVANTAGES = [
   { icon: ShieldCheck, title: 'Garantie 10 ans', desc: 'Résistance anti-corrosion, UV et chocs. Finition durable garantie.' },
 ]
 
-const THERMO_HERO_IMAGE = 'https://images.unsplash.com/photo-1565793298595-6a879b1d9492?w=1200&q=80'
+const THERMO_HERO_IMAGE = '/placeholder.svg'
 
 export function ThermolaquageLocalPage({ dept, commune, segment }: ThermolaquageLocalPageProps) {
   const product = getSeoProductBySlug('thermolaquage')!

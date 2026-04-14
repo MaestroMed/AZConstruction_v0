@@ -84,17 +84,17 @@ const realisationsB2B = [
   {
     title: "Garde-corps collectif",
     client: "Promoteur IDF",
-    image: "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=600&q=80",
+    image: "/placeholder.svg",
   },
   {
     title: "Escalier industriel",
     client: "Usine automobile",
-    image: "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=600&q=80",
+    image: "/placeholder.svg",
   },
   {
     title: "Portails résidence",
     client: "Collectivité locale",
-    image: "https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=600&q=80",
+    image: "/placeholder.svg",
   },
 ];
 

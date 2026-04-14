@@ -55,9 +55,9 @@ export interface ProductFamily {
 
 // Default hero images (placeholders - will be replaced by back-office)
 const defaultHeroImages = [
-  "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=1920&q=80",
-  "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?w=1920&q=80",
-  "https://images.unsplash.com/photo-1487958449943-2429e8be8625?w=1920&q=80",
+  "/placeholder.svg",
+  "/placeholder.svg",
+  "/placeholder.svg",
 ];
 
 export const productFamilies: ProductFamily[] = [
@@ -70,9 +70,9 @@ export const productFamilies: ProductFamily[] = [
     description: "Garde-corps escalier, main courante, balustrades verre et acier.",
     longDescription: "Nos garde-corps et mains courantes allient sécurité maximale et esthétique raffinée. Fabriqués en acier thermolaqué ou verre, ils s'adaptent à tous les styles architecturaux. Du contemporain au classique, chaque réalisation est unique et sur mesure.",
     heroImages: [
-      "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=1920&q=80",
-      "https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?w=1920&q=80",
-      "https://images.unsplash.com/photo-1600566753190-17f0baa2a6c3?w=1920&q=80",
+      "/placeholder.svg",
+      "/placeholder.svg",
+      "/placeholder.svg",
     ],
     startingPrice: "",
     unit: "ml",
@@ -110,9 +110,9 @@ export const productFamilies: ProductFamily[] = [
     description: "Escaliers droits, quart-tournant, double quart-tournant et hélicoïdaux.",
     longDescription: "Nos escaliers sont de véritables œuvres d'art fonctionnelles. Qu'il s'agisse d'un escalier droit épuré, d'un quart-tournant élégant ou d'un hélicoïdal spectaculaire, nous créons des pièces uniques qui magnifient votre intérieur.",
     heroImages: [
-      "https://images.unsplash.com/photo-1555041469-a586c61ea9bc?w=1920&q=80",
-      "https://images.unsplash.com/photo-1600566753086-00f18fb6b3ea?w=1920&q=80",
-      "https://images.unsplash.com/photo-1600573472550-8090b5e0745e?w=1920&q=80",
+      "/placeholder.svg",
+      "/placeholder.svg",
+      "/placeholder.svg",
     ],
     startingPrice: "",
     unit: "pièce",

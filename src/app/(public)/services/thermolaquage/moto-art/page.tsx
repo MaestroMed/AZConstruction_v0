@@ -47,7 +47,7 @@ export default function MotoArtPage() {
       title="Moto &"
       titleAccent="Art Métal"
       description="Carcasses de moto, réservoirs, cadres et sculptures métalliques artistiques. Transformez le métal en œuvre d'art avec des finitions exceptionnelles."
-      heroImage="https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=800&q=80"
+      heroImage="/placeholder.svg"
       stats={[
         { value: 50, suffix: "+", label: "Projets art" },
         { value: 200, suffix: "+", label: "Effets dispo" },

@@ -48,7 +48,7 @@ export default function JantesPage() {
       title="Rénovation"
       titleAccent="Jantes"
       description="Transformez l'apparence de votre véhicule avec des jantes thermolaquées. Finition professionnelle, durabilité exceptionnelle, personnalisation infinie."
-      heroImage="https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=800&q=80"
+      heroImage="/placeholder.svg"
       stats={[
         { value: 15, suffix: "+", label: "Ans durabilité" },
         { value: 200, suffix: "+", label: "Teintes RAL" },

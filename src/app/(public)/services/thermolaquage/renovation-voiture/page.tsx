@@ -47,7 +47,7 @@ export default function RenovationVoiturePage() {
       title="Pièces"
       titleAccent="Automobiles"
       description="Redonnez une nouvelle vie à vos pièces de voiture avec une finition durable et esthétique. Capots, ailes, pare-chocs, châssis et plus encore."
-      heroImage="https://images.unsplash.com/photo-1492144534655-ae79c964c9d7?w=800&q=80"
+      heroImage="/placeholder.svg"
       stats={[
         { value: 25, suffix: "+", label: "Ans durabilité" },
         { value: 200, suffix: "+", label: "Teintes RAL" },

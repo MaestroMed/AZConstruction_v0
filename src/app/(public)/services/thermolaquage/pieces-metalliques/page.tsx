@@ -47,7 +47,7 @@ export default function PiecesMetalliquesPage() {
       title="Portails, Garde-corps &"
       titleAccent="Structures"
       description="Thermolaquage professionnel pour tous vos ouvrages métalliques : portails, garde-corps, escaliers, mobilier, grilles et structures industrielles."
-      heroImage="https://images.unsplash.com/photo-1504328345606-18bbc8c9d7d1?w=800&q=80"
+      heroImage="/placeholder.svg"
       stats={[
         { value: 7, suffix: "m", label: "Cabine max" },
         { value: 200, suffix: "+", label: "Teintes RAL" },
