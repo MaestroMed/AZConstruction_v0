@@ -26,11 +26,9 @@ export function ProductLocalPage({ product, dept, commune, segment }: ProductLoc
   const isCity = !!commune
   const prepLoc = isCity ? 'à' : 'en'
 
-  // Product catalog data for images
   const productFamily = getProductFamilyBySlug(product.slug)
   const heroImage = productFamily?.heroImages?.[0]
 
-  // URL building
   const productPath = `/${product.slug}`
   const canonicalUrl = isCity
     ? `https://azconstruction.fr${productPath}/${dept.slug}/${commune.slug}`
@@ -46,13 +44,7 @@ export function ProductLocalPage({ product, dept, commune, segment }: ProductLoc
     url: canonicalUrl,
     telephone: '09 71 35 74 96',
     email: 'contact@azconstruction.fr',
-    address: {
-      '@type': 'PostalAddress',
-      streetAddress: '23 Chemin du Bac des Aubins',
-      addressLocality: 'Bruyères-sur-Oise',
-      postalCode: '95820',
-      addressCountry: 'FR',
-    },
+    address: { '@type': 'PostalAddress', streetAddress: '23 Chemin du Bac des Aubins', addressLocality: 'Bruyères-sur-Oise', postalCode: '95820', addressCountry: 'FR' },
     areaServed: { '@type': isCity ? 'City' : 'AdministrativeArea', name: locationName },
     priceRange: '€€',
     aggregateRating: { '@type': 'AggregateRating', ratingValue: '4.9', reviewCount: '47' },
@@ -92,26 +84,32 @@ export function ProductLocalPage({ product, dept, commune, segment }: ProductLoc
       {faqSchema && <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }} />}
 
       <div className="min-h-screen bg-white">
-        {/* ── Hero ─────────────────────────────────────── */}
-        <section className="relative bg-gradient-to-br from-navy-dark via-navy-medium to-blue-corporate pt-32 pb-16 overflow-hidden">
+        {/* ── Hero — Premium style ────────────────────── */}
+        <section className="relative min-h-[70vh] flex items-end overflow-hidden">
+          {/* Background image */}
           {heroImage && (
             <Image
               src={heroImage}
               alt={`${product.name} sur mesure ${prepLoc} ${locationName} — AZ Construction`}
               fill
-              className="object-cover opacity-15"
+              className="object-cover"
               priority
             />
           )}
-          <div className="container mx-auto px-6 relative z-10">
-            <nav className="flex items-center gap-2 text-white/50 text-sm mb-8 flex-wrap" aria-label="Fil d'Ariane">
-              <Link href="/" className="hover:text-white">Accueil</Link>
+          {/* Overlay gradient */}
+          <div className="absolute inset-0 bg-gradient-to-t from-navy-dark via-navy-dark/80 to-navy-dark/30" />
+          {/* Radial glow */}
+          <div className="absolute top-1/4 left-1/4 w-[600px] h-[600px] rounded-full opacity-20" style={{ background: 'radial-gradient(circle, rgba(0,212,255,0.15) 0%, transparent 70%)' }} />
+
+          <div className="container mx-auto px-6 pb-16 pt-32 relative z-10">
+            <nav className="flex items-center gap-2 text-white/40 text-sm mb-8 flex-wrap" aria-label="Fil d'Ariane">
+              <Link href="/" className="hover:text-white transition-colors">Accueil</Link>
               <span aria-hidden="true">›</span>
-              <Link href={productCatalogUrl} className="hover:text-white">{product.name}</Link>
+              <Link href={productCatalogUrl} className="hover:text-white transition-colors">{product.name}</Link>
               <span aria-hidden="true">›</span>
               {isCity ? (
                 <>
-                  <Link href={`${productPath}/${dept.slug}`} className="hover:text-white">{dept.fullName}</Link>
+                  <Link href={`${productPath}/${dept.slug}`} className="hover:text-white transition-colors">{dept.fullName}</Link>
                   <span aria-hidden="true">›</span>
                   <span className="text-white">{commune.name}</span>
                 </>
@@ -121,36 +119,53 @@ export function ProductLocalPage({ product, dept, commune, segment }: ProductLoc
             </nav>
 
             <div className="max-w-3xl">
-              <div className="inline-flex items-center gap-2 px-3 py-1.5 bg-cyan-glow/20 text-cyan-glow rounded-full text-sm font-medium mb-6">
-                <MapPin className="w-4 h-4" />
-                {locationName} — {dept.region}
-                {segment && <span className="ml-1">• {segment.name}</span>}
+              {/* Glass badge */}
+              <div className="inline-flex items-center gap-2 px-4 py-2 glass-card-glow mb-6">
+                <MapPin className="w-4 h-4 text-cyan-glow" />
+                <span className="text-cyan-glow text-sm font-medium">{locationName} — {dept.region}</span>
+                {segment && <span className="text-white/50 ml-1">• {segment.name}</span>}
               </div>
-              <h1 className="text-4xl md:text-5xl font-bold text-white mb-6 leading-tight">
+
+              <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-6 leading-tight">
                 {product.heroTitle(dept, commune)}{' '}
-                {segment && <span className="text-cyan-glow">{segment.nameWithPrep}</span>}
+                {segment && <span className="text-gradient-premium">{segment.nameWithPrep}</span>}
               </h1>
-              <p className="text-xl text-white/70 mb-8">
+              <p className="text-xl text-white/60 mb-8 max-w-2xl">
                 {product.heroSubtitle(dept, commune)}
               </p>
-              <div className="flex flex-wrap gap-4">
-                <Link href="/contact" className="inline-flex items-center gap-2 px-6 py-3 bg-cyan-glow text-navy-dark font-bold rounded-xl hover:bg-cyan-pale transition-colors">
+
+              {/* CTA buttons */}
+              <div className="flex flex-wrap gap-4 mb-8">
+                <Link href="/contact" className="btn-glow inline-flex items-center gap-2 px-7 py-3.5 bg-gradient-to-r from-cyan-glow to-cyan-400 text-navy-dark font-bold rounded-xl hover:shadow-lg hover:shadow-cyan-glow/25 transition-all">
                   {product.ctaLabel} <ArrowRight className="w-4 h-4" />
                 </Link>
-                <a href="tel:0971357496" className="inline-flex items-center gap-2 px-6 py-3 bg-white/10 text-white rounded-xl hover:bg-white/20 transition-colors">
+                <a href="tel:0971357496" className="inline-flex items-center gap-2 px-6 py-3.5 glass-card text-white rounded-xl hover:bg-white/10 transition-all">
                   <Phone className="w-4 h-4" /> 09 71 35 74 96
                 </a>
               </div>
+
+              {/* Trust badges */}
+              <div className="flex flex-wrap gap-3">
+                {product.features.map(f => (
+                  <div key={f} className="flex items-center gap-2 px-3 py-1.5 glass-card rounded-full">
+                    <CheckCircle2 className="w-3.5 h-3.5 text-cyan-glow" />
+                    <span className="text-white/70 text-xs font-medium">{f}</span>
+                  </div>
+                ))}
+              </div>
             </div>
           </div>
+
+          {/* Bottom fade */}
+          <div className="absolute bottom-0 left-0 right-0 h-24 bg-gradient-to-t from-white to-transparent" />
         </section>
 
         {/* ── Intro + Product image ────────────────────── */}
-        <section className="py-16">
+        <section className="py-20">
           <div className="container mx-auto px-6">
-            <div className="grid lg:grid-cols-2 gap-12 items-center">
+            <div className="grid lg:grid-cols-2 gap-16 items-center">
               <div>
-                <h2 className="text-3xl font-bold text-navy-dark mb-6">
+                <h2 className="text-3xl md:text-4xl font-bold text-navy-dark mb-6">
                   {segment
                     ? `${product.name} ${segment.nameWithPrep} ${prepLoc} ${locationName}`
                     : `Votre fabricant ${product.nameWithArticle} ${prepLoc} ${locationName}`}
@@ -163,25 +178,24 @@ export function ProductLocalPage({ product, dept, commune, segment }: ProductLoc
                     et la pose dans l&apos;ensemble du département {dept.fullName}.
                   </p>
                 </div>
-                {/* Prominent link to product catalog */}
                 <Link
                   href={productCatalogUrl}
-                  className="mt-6 inline-flex items-center gap-2 px-5 py-3 bg-blue-50 text-blue-corporate font-semibold rounded-xl hover:bg-blue-100 transition-colors group"
+                  className="mt-8 inline-flex items-center gap-2 px-6 py-3 bg-navy-dark/5 text-navy-dark font-semibold rounded-xl hover:bg-navy-dark/10 transition-colors group"
                 >
                   Voir tous nos modèles de {product.namePlural}
                   <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
                 </Link>
               </div>
               {heroImage && (
-                <div className="relative aspect-[4/3] rounded-2xl overflow-hidden shadow-lg">
+                <div className="relative aspect-[4/3] rounded-3xl overflow-hidden shadow-2xl shadow-navy-dark/10">
                   <Image
                     src={heroImage}
                     alt={`${product.name} fabriqué par AZ Construction — installation ${prepLoc} ${locationName}`}
                     fill
                     className="object-cover"
                   />
-                  <div className="absolute inset-0 bg-gradient-to-t from-navy-dark/40 via-transparent to-transparent" />
-                  <div className="absolute bottom-4 left-4 right-4">
+                  <div className="absolute inset-0 bg-gradient-to-t from-navy-dark/50 via-transparent to-transparent" />
+                  <div className="absolute bottom-5 left-5 right-5">
                     <p className="text-white text-sm font-medium drop-shadow-lg">
                       {product.name} sur mesure — Atelier AZ Construction, Bruyères-sur-Oise
                     </p>
@@ -192,24 +206,29 @@ export function ProductLocalPage({ product, dept, commune, segment }: ProductLoc
           </div>
         </section>
 
-        {/* ── Variants ─────────────────────────────────── */}
+        {/* ── Variants — Glass cards ──────────────────── */}
         {product.variants.length > 0 && (
-          <section className="py-16 bg-gray-50">
+          <section className="py-20 bg-gray-50">
             <div className="container mx-auto px-6">
-              <h2 className="text-3xl font-bold text-navy-dark mb-3 text-center">
-                Nos {product.namePlural} disponibles {prepLoc} {locationName}
-              </h2>
-              <p className="text-gray-500 text-center mb-10 max-w-2xl mx-auto">
-                Chaque modèle est personnalisable : dimensions, couleur RAL, finitions. Fabrication artisanale française.
-              </p>
+              <div className="text-center mb-12">
+                <h2 className="text-3xl md:text-4xl font-bold text-navy-dark mb-3">
+                  Nos {product.namePlural} disponibles {prepLoc} {locationName}
+                </h2>
+                <p className="text-gray-500 max-w-2xl mx-auto">
+                  Chaque modèle est personnalisable : dimensions, couleur RAL, finitions. Fabrication artisanale française.
+                </p>
+              </div>
               <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
                 {product.variants.map(v => (
                   <Link key={v.name} href={v.href}
-                    className="bg-white rounded-2xl border border-gray-100 shadow-sm p-6 hover:shadow-md hover:border-blue-200 transition-all group">
+                    className="bg-white rounded-2xl border border-gray-100 p-6 hover:shadow-xl hover:shadow-blue-corporate/5 hover:border-blue-200 hover:-translate-y-1 transition-all duration-300 group">
+                    <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-corporate/10 to-cyan-glow/10 flex items-center justify-center mb-4">
+                      <CheckCircle2 className="w-5 h-5 text-blue-corporate" />
+                    </div>
                     <h3 className="font-bold text-navy-dark mb-2 group-hover:text-blue-corporate transition-colors">{v.name}</h3>
-                    <p className="text-gray-500 text-sm">{v.description}</p>
+                    <p className="text-gray-500 text-sm leading-relaxed">{v.description}</p>
                     <span className="inline-flex items-center gap-1 text-blue-corporate text-sm mt-4 font-medium">
-                      Voir les modèles <ArrowRight className="w-3 h-3" />
+                      Découvrir <ArrowRight className="w-3 h-3 group-hover:translate-x-1 transition-transform" />
                     </span>
                   </Link>
                 ))}
@@ -218,24 +237,25 @@ export function ProductLocalPage({ product, dept, commune, segment }: ProductLoc
           </section>
         )}
 
-        {/* ── Process ──────────────────────────────────── */}
-        <section className="py-16">
-          <div className="container mx-auto px-6">
-            <h2 className="text-3xl font-bold text-navy-dark mb-3 text-center">
-              Comment ça marche ?
-            </h2>
-            <p className="text-gray-500 text-center mb-10 max-w-2xl mx-auto">
-              De votre idée à la réalisation, nous vous accompagnons à chaque étape.
-            </p>
+        {/* ── Process — Dark section ──────────────────── */}
+        <section className="relative py-20 bg-navy-dark overflow-hidden">
+          <div className="absolute inset-0 mesh-gradient opacity-30" />
+          <div className="absolute top-0 right-0 w-[500px] h-[500px] rounded-full opacity-10" style={{ background: 'radial-gradient(circle, rgba(0,212,255,0.2) 0%, transparent 70%)' }} />
+          <div className="container mx-auto px-6 relative z-10">
+            <div className="text-center mb-12">
+              <span className="text-cyan-glow text-sm font-semibold uppercase tracking-wider">Notre processus</span>
+              <h2 className="text-3xl md:text-4xl font-bold text-white mt-2 mb-3">Comment ça marche ?</h2>
+              <p className="text-white/50 max-w-2xl mx-auto">De votre idée à la réalisation, nous vous accompagnons à chaque étape.</p>
+            </div>
             <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
               {PROCESS_STEPS.map((step, i) => (
-                <div key={step.title} className="text-center">
-                  <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-blue-corporate/10 to-cyan-glow/10 flex items-center justify-center mx-auto mb-4">
-                    <step.icon className="w-7 h-7 text-blue-corporate" />
+                <div key={step.title} className="glass-card rounded-2xl p-6 text-center hover:bg-white/[0.06] transition-colors">
+                  <div className="w-12 h-12 rounded-2xl glass-card-glow flex items-center justify-center mx-auto mb-4">
+                    <step.icon className="w-6 h-6 text-cyan-glow" />
                   </div>
-                  <div className="text-xs font-bold text-cyan-glow mb-1">Étape {i + 1}</div>
-                  <h3 className="font-bold text-navy-dark mb-2">{step.title}</h3>
-                  <p className="text-gray-500 text-sm">{step.desc}</p>
+                  <div className="text-xs font-bold text-cyan-glow/60 mb-2">Étape {i + 1}</div>
+                  <h3 className="font-bold text-white mb-2">{step.title}</h3>
+                  <p className="text-white/50 text-sm leading-relaxed">{step.desc}</p>
                 </div>
               ))}
             </div>
@@ -243,57 +263,67 @@ export function ProductLocalPage({ product, dept, commune, segment }: ProductLoc
         </section>
 
         {/* ── Avantages + Avis ─────────────────────────── */}
-        <section className="py-16 bg-gray-50">
+        <section className="py-20">
           <div className="container mx-auto px-6">
-            <div className="grid lg:grid-cols-2 gap-12 items-center">
-              <div>
-                <h2 className="text-3xl font-bold text-navy-dark mb-6">
+            <div className="grid lg:grid-cols-5 gap-12 items-start">
+              <div className="lg:col-span-3">
+                <h2 className="text-3xl md:text-4xl font-bold text-navy-dark mb-8">
                   Pourquoi choisir AZ Construction {prepLoc} {locationName} ?
                 </h2>
-                <ul className="space-y-3">
+                <div className="grid sm:grid-cols-2 gap-4">
                   {product.benefits.map(b => (
-                    <li key={b} className="flex items-start gap-3">
-                      <CheckCircle2 className="w-5 h-5 text-cyan-glow flex-shrink-0 mt-0.5" />
-                      <span className="text-gray-700">{b}</span>
-                    </li>
-                  ))}
-                </ul>
-                <div className="mt-6 flex flex-wrap gap-2">
-                  {product.features.map(f => (
-                    <span key={f} className="px-3 py-1 bg-blue-50 text-blue-corporate text-sm rounded-full font-medium">{f}</span>
+                    <div key={b} className="flex items-start gap-3 p-4 bg-gray-50 rounded-xl">
+                      <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-cyan-glow/10 to-blue-corporate/10 flex items-center justify-center flex-shrink-0">
+                        <CheckCircle2 className="w-4 h-4 text-cyan-glow" />
+                      </div>
+                      <span className="text-gray-700 text-sm leading-relaxed">{b}</span>
+                    </div>
                   ))}
                 </div>
               </div>
-              <div className="bg-navy-dark rounded-3xl p-8 text-center">
-                <div className="flex items-center justify-center gap-1 mb-3">
-                  {[1, 2, 3, 4, 5].map(i => (
-                    <Star key={i} className="w-6 h-6 fill-yellow-400 text-yellow-400" aria-hidden="true" />
-                  ))}
+              <div className="lg:col-span-2">
+                <div className="bg-navy-dark rounded-3xl p-8 text-center relative overflow-hidden">
+                  <div className="absolute inset-0 mesh-gradient opacity-20" />
+                  <div className="relative z-10">
+                    <div className="flex items-center justify-center gap-1 mb-3">
+                      {[1, 2, 3, 4, 5].map(i => (
+                        <Star key={i} className="w-5 h-5 fill-yellow-400 text-yellow-400" aria-hidden="true" />
+                      ))}
+                    </div>
+                    <p className="text-4xl font-bold text-white mb-1">4.9<span className="text-lg text-white/40"> / 5</span></p>
+                    <p className="text-white/40 text-sm mb-6">47 avis clients vérifiés</p>
+                    <div className="glass-card rounded-xl p-4">
+                      <p className="text-white/70 italic text-sm leading-relaxed">
+                        &quot;Fabrication impeccable, pose soignée. Le résultat correspond exactement
+                        à nos attentes. Je recommande sans hésitation.&quot;
+                      </p>
+                      <p className="text-cyan-glow text-xs mt-3 font-medium">— Client {prepLoc} {locationName}</p>
+                    </div>
+                  </div>
                 </div>
-                <p className="text-3xl font-bold text-white mb-1">4.9 / 5</p>
-                <p className="text-white/60 text-sm mb-6">Basé sur 47 avis clients</p>
-                <p className="text-white/80 italic text-sm">
-                  &quot;Fabrication impeccable, pose soignée. Le résultat correspond exactement
-                  à nos attentes. Je recommande AZ Construction sans hésitation.&quot;
-                </p>
-                <p className="text-cyan-glow text-sm mt-3 font-medium">— Client {prepLoc} {locationName}</p>
               </div>
             </div>
           </div>
         </section>
 
-        {/* ── FAQ ──────────────────────────────────────── */}
+        {/* ── FAQ — Clean design ──────────────────────── */}
         {product.faq.length > 0 && (
-          <section className="py-16">
+          <section className="py-20 bg-gray-50">
             <div className="container mx-auto px-6 max-w-3xl">
-              <h2 className="text-3xl font-bold text-navy-dark mb-8 text-center">
-                Questions fréquentes — {product.name} {prepLoc} {locationName}
-              </h2>
-              <div className="space-y-4">
+              <div className="text-center mb-12">
+                <h2 className="text-3xl md:text-4xl font-bold text-navy-dark mb-3">
+                  Questions fréquentes
+                </h2>
+                <p className="text-gray-500">{product.name} {prepLoc} {locationName}</p>
+              </div>
+              <div className="space-y-3">
                 {product.faq.map(f => (
-                  <details key={f.question} className="bg-gray-50 rounded-xl border border-gray-200 overflow-hidden">
-                    <summary className="px-6 py-4 cursor-pointer font-semibold text-navy-dark hover:text-blue-corporate transition-colors">{f.question}</summary>
-                    <p className="px-6 pb-4 text-gray-600">{f.answer}</p>
+                  <details key={f.question} className="bg-white rounded-2xl border border-gray-100 overflow-hidden group shadow-sm">
+                    <summary className="px-6 py-5 cursor-pointer font-semibold text-navy-dark hover:text-blue-corporate transition-colors flex items-center justify-between">
+                      {f.question}
+                      <ArrowRight className="w-4 h-4 text-gray-300 group-open:rotate-90 transition-transform flex-shrink-0" />
+                    </summary>
+                    <p className="px-6 pb-5 text-gray-600 leading-relaxed">{f.answer}</p>
                   </details>
                 ))}
               </div>
@@ -301,34 +331,39 @@ export function ProductLocalPage({ product, dept, commune, segment }: ProductLoc
           </section>
         )}
 
-        {/* ── Communes list / nearby ──────────────────── */}
+        {/* ── Communes ────────────────────────────────── */}
         {isCity ? (
           <NearbyCommunes product={product} dept={dept} currentCommune={commune} />
         ) : (
           <DepartmentCommunesList product={product} dept={dept} />
         )}
 
-        {/* ── CTA ─────────────────────────────────────── */}
-        <section className="py-16 bg-navy-dark">
-          <div className="container mx-auto px-6 text-center">
-            <h2 className="text-3xl font-bold text-white mb-4">
+        {/* ── CTA final — Premium ─────────────────────── */}
+        <section className="relative py-20 bg-navy-dark overflow-hidden">
+          <div className="absolute inset-0 mesh-gradient opacity-20" />
+          <div className="absolute bottom-0 left-1/3 w-[600px] h-[600px] rounded-full opacity-10" style={{ background: 'radial-gradient(circle, rgba(0,212,255,0.2) 0%, transparent 70%)' }} />
+          <div className="container mx-auto px-6 text-center relative z-10">
+            <div className="inline-flex items-center gap-2 glass-card-glow px-4 py-2 mb-6">
+              <span className="text-cyan-glow text-sm font-medium">Démarrez votre projet</span>
+            </div>
+            <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">
               Votre projet {product.nameWithArticle} {prepLoc} {locationName}
             </h2>
-            <p className="text-white/60 text-lg mb-8 max-w-xl mx-auto">
+            <p className="text-white/50 text-lg mb-8 max-w-xl mx-auto">
               Devis gratuit sous 48h. Fabrication sur mesure, pose professionnelle, garantie décennale.
             </p>
             <div className="flex flex-wrap gap-4 justify-center">
-              <Link href="/contact" className="inline-flex items-center gap-2 px-8 py-4 bg-cyan-glow text-navy-dark font-bold rounded-2xl hover:bg-cyan-pale transition-colors text-lg">
+              <Link href="/contact" className="btn-glow inline-flex items-center gap-2 px-8 py-4 bg-gradient-to-r from-cyan-glow to-cyan-400 text-navy-dark font-bold rounded-2xl hover:shadow-lg hover:shadow-cyan-glow/25 transition-all text-lg">
                 Demander un devis gratuit <ArrowRight className="w-5 h-5" />
               </Link>
-              <a href="tel:0971357496" className="inline-flex items-center gap-2 px-8 py-4 bg-white/10 text-white rounded-2xl hover:bg-white/20 transition-colors text-lg">
+              <a href="tel:0971357496" className="inline-flex items-center gap-2 px-8 py-4 glass-card text-white rounded-2xl hover:bg-white/10 transition-all text-lg">
                 <Phone className="w-5 h-5" /> 09 71 35 74 96
               </a>
             </div>
           </div>
         </section>
 
-        {/* ── Cross-links footer ──────────────────────── */}
+        {/* ── Cross-links ─────────────────────────────── */}
         <ProductDeptFooter currentProduct={product} currentDept={dept} />
       </div>
     </>
