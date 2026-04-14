@@ -31,7 +31,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   return {
     title: `${product.metaTitle(dept)}${segment.metaTitleSuffix}`,
     description: product.metaDescription(dept),
-    alternates: { canonical: `https://azconstruction.fr/${SEGMENT_SLUG}/${product.slug}/${dept.slug}` },
+    alternates: { canonical: `https://azconstruction.fr/${product.slug}/${dept.slug}` },
   }
 }
 
