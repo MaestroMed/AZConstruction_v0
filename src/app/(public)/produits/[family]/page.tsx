@@ -8,9 +8,7 @@ import Image from "next/image";
 import {
   ArrowRight,
   ArrowLeft,
-  Phone,
   CheckCircle2,
-  Star,
   Shield,
   Award,
   Palette,
@@ -23,16 +21,16 @@ import {
   Heart,
   ChevronLeft,
   ChevronRight,
-  X,
-  Images,
-  ZoomIn,
 } from "lucide-react";
-import { GlowButton, GlassCard, MeshGradient, ParticleBackground, GradientOrb } from "@/components/ui";
+import { GlowButton, GlassCard, MeshGradient, GradientOrb } from "@/components/ui";
 import { Button } from "@/components/ui/Button";
 import { Card, CardContent } from "@/components/ui/Card";
 import { PhoneLink } from "@/components/ui/PhoneLink";
 import { getProductFamilyBySlug } from "@/lib/data/product-families";
 import { cn } from "@/lib/utils";
+import { type VariantWithImages, getVariantImages } from "@/components/products/variant-utils";
+import { VariantCardImage } from "@/components/products/VariantCardImage";
+import { VariantGalleryModal } from "@/components/products/VariantGalleryModal";
 
 // Icon map for dynamic rendering
 const iconMap: Record<string, React.ComponentType<{ className?: string }>> = {
@@ -47,199 +45,6 @@ const iconMap: Record<string, React.ComponentType<{ className?: string }>> = {
   Zap,
   Heart,
 };
-
-// ── Variant type with multi-images ──────────────────────────
-interface VariantWithImages {
-  id: string;
-  name: string;
-  description?: string;
-  features?: string[];
-  imageUrl?: string;
-  images?: string[];
-  startingPrice?: string;
-}
-
-function getVariantImages(variant: VariantWithImages): string[] {
-  if (variant.images?.length) return variant.images;
-  if (variant.imageUrl) return [variant.imageUrl];
-  return [];
-}
-
-// ── Variant mini-carousel on card ───────────────────────────
-function VariantCardImage({
-  variant,
-  onOpenGallery,
-}: {
-  variant: VariantWithImages;
-  onOpenGallery: () => void;
-}) {
-  const imgs = getVariantImages(variant);
-  const [idx, setIdx] = React.useState(0);
-
-  // Auto-advance if multiple images
-  React.useEffect(() => {
-    if (imgs.length <= 1) return;
-    const t = setInterval(() => setIdx((i) => (i + 1) % imgs.length), 5000);
-    return () => clearInterval(t);
-  }, [imgs.length]);
-
-  if (imgs.length === 0) {
-    return (
-      <div className="w-full h-full bg-gradient-to-br from-navy-dark via-blue-corporate to-cyan-800 flex items-center justify-center">
-        <span className="text-7xl font-bold text-white/10 select-none">{variant.name.charAt(0)}</span>
-      </div>
-    );
-  }
-
-  return (
-    <>
-      <AnimatePresence mode="wait">
-        <motion.div
-          key={idx}
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          exit={{ opacity: 0 }}
-          transition={{ duration: 0.5 }}
-          className="absolute inset-0"
-        >
-          <Image
-            src={imgs[idx]}
-            alt={`${variant.name} ${idx + 1}`}
-            fill
-            className="object-contain"
-          />
-        </motion.div>
-      </AnimatePresence>
-
-      {/* Dots for multiple images */}
-      {imgs.length > 1 && (
-        <div className="absolute bottom-10 left-1/2 -translate-x-1/2 flex gap-1.5 z-10">
-          {imgs.map((_, i) => (
-            <button
-              key={i}
-              onClick={(e) => { e.stopPropagation(); setIdx(i); }}
-              className={cn("rounded-full transition-all", i === idx ? "w-5 h-1.5 bg-white" : "w-1.5 h-1.5 bg-white/40")}
-            />
-          ))}
-        </div>
-      )}
-
-      {/* Gallery button */}
-      {imgs.length > 1 && (
-        <button
-          onClick={(e) => { e.stopPropagation(); onOpenGallery(); }}
-          className="absolute top-3 right-3 z-10 flex items-center gap-1 px-2 py-1 bg-black/40 backdrop-blur-sm rounded-full text-white text-xs border border-white/20 hover:bg-black/60 transition-all"
-        >
-          <Images className="w-3 h-3" />
-          {imgs.length}
-        </button>
-      )}
-    </>
-  );
-}
-
-// ── Gallery popup ────────────────────────────────────────────
-function VariantGalleryModal({
-  variant,
-  onClose,
-}: {
-  variant: VariantWithImages;
-  onClose: () => void;
-}) {
-  const imgs = getVariantImages(variant);
-  const [idx, setIdx] = React.useState(0);
-
-  React.useEffect(() => {
-    const handler = (e: KeyboardEvent) => {
-      if (e.key === "Escape") onClose();
-      if (e.key === "ArrowLeft") setIdx((i) => (i - 1 + imgs.length) % imgs.length);
-      if (e.key === "ArrowRight") setIdx((i) => (i + 1) % imgs.length);
-    };
-    window.addEventListener("keydown", handler);
-    return () => window.removeEventListener("keydown", handler);
-  }, [imgs.length, onClose]);
-
-  return (
-    <motion.div
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      exit={{ opacity: 0 }}
-      className="fixed inset-0 z-[200] flex items-center justify-center bg-black/90 backdrop-blur-sm p-4"
-      onClick={onClose}
-    >
-      <motion.div
-        initial={{ scale: 0.9, opacity: 0 }}
-        animate={{ scale: 1, opacity: 1 }}
-        exit={{ scale: 0.9, opacity: 0 }}
-        className="relative w-full max-w-4xl max-h-[90vh] rounded-2xl overflow-hidden bg-navy-dark"
-        onClick={(e) => e.stopPropagation()}
-      >
-        {/* Main image */}
-        <div className="relative aspect-[4/3] w-full bg-gray-900">
-          <Image src={imgs[idx]} alt={`${variant.name} ${idx + 1}`} fill className="object-contain" />
-
-          {/* Navigation */}
-          {imgs.length > 1 && (
-            <>
-              <button
-                onClick={() => setIdx((i) => (i - 1 + imgs.length) % imgs.length)}
-                className="absolute left-4 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-black/50 backdrop-blur-sm flex items-center justify-center text-white hover:bg-black/70 transition-all border border-white/20"
-              >
-                <ChevronLeft className="w-5 h-5" />
-              </button>
-              <button
-                onClick={() => setIdx((i) => (i + 1) % imgs.length)}
-                className="absolute right-4 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-black/50 backdrop-blur-sm flex items-center justify-center text-white hover:bg-black/70 transition-all border border-white/20"
-              >
-                <ChevronRight className="w-5 h-5" />
-              </button>
-            </>
-          )}
-
-          {/* Counter */}
-          <div className="absolute bottom-4 right-4 px-3 py-1 bg-black/60 rounded-full text-white text-xs">
-            <ZoomIn className="w-3 h-3 inline mr-1" />
-            {idx + 1} / {imgs.length}
-          </div>
-        </div>
-
-        {/* Info bar */}
-        <div className="p-5 flex items-center justify-between">
-          <div>
-            <h3 className="text-white font-bold text-lg">{variant.name}</h3>
-            {variant.description && <p className="text-white/60 text-sm mt-0.5">{variant.description}</p>}
-          </div>
-          <Link href="/contact" onClick={onClose}>
-            <GlowButton icon={<ArrowRight className="w-4 h-4" />}>Demander un devis</GlowButton>
-          </Link>
-        </div>
-
-        {/* Thumbnails */}
-        {imgs.length > 1 && (
-          <div className="flex gap-2 px-5 pb-5 overflow-x-auto">
-            {imgs.map((img, i) => (
-              <button
-                key={i}
-                onClick={() => setIdx(i)}
-                className={cn("relative w-16 h-12 rounded-lg overflow-hidden flex-shrink-0 border-2 transition-all", i === idx ? "border-cyan-400" : "border-transparent opacity-60 hover:opacity-100")}
-              >
-                <Image src={img} alt="" fill className="object-cover" sizes="64px" />
-              </button>
-            ))}
-          </div>
-        )}
-
-        {/* Close */}
-        <button
-          onClick={onClose}
-          className="absolute top-4 right-4 w-10 h-10 rounded-full bg-black/50 backdrop-blur-sm flex items-center justify-center text-white hover:bg-black/70 transition-all border border-white/20"
-        >
-          <X className="w-5 h-5" />
-        </button>
-      </motion.div>
-    </motion.div>
-  );
-}
 
 export default function ProductFamilyPage() {
   const params = useParams();
