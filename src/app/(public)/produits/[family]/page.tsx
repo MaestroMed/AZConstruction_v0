@@ -31,6 +31,7 @@ import { cn } from "@/lib/utils";
 import { type VariantWithImages, getVariantImages } from "@/components/products/variant-utils";
 import { VariantCardImage } from "@/components/products/VariantCardImage";
 import { VariantGalleryModal } from "@/components/products/VariantGalleryModal";
+import { useProductFamilyData } from "@/components/products/useProductFamilyData";
 
 // Icon map for dynamic rendering
 const iconMap: Record<string, React.ComponentType<{ className?: string }>> = {
@@ -56,83 +57,12 @@ export default function ProductFamilyPage() {
     notFound();
   }
 
-  // Hero images: load from DB first, fallback to static
-  const [heroImages, setHeroImages] = React.useState<string[]>(product.heroImages);
-  const [heroIndex, setHeroIndex] = React.useState(0);
-
-  // DB variants (may have imageUrl/images)
-  const [dbVariants, setDbVariants] = React.useState<VariantWithImages[]>(product.variants);
-
-  // DB specs and benefits (fallback to static)
-  const [dbSpecs, setDbSpecs] = React.useState(product.specifications);
-  const [dbBenefits, setDbBenefits] = React.useState(product.benefits);
-
-  // Other families for "Découvrez aussi" carousel
-  const [otherFamilies, setOtherFamilies] = React.useState<{ id: string; nom: string; slug: string; imageUrl?: string }[]>([]);
-
-  // Gallery popup state
-  const [galleryVariant, setGalleryVariant] = React.useState<VariantWithImages | null>(null);
-
-  React.useEffect(() => {
-    // Load hero images from DB
-    fetch(`/api/product-families/images?familySlug=${slug}`)
-      .then((r) => r.json())
-      .then((data) => {
-        if (data.success && data.images?.length) {
-          setHeroImages(data.images.map((img: { imageUrl: string }) => img.imageUrl));
-        }
-      })
-      .catch(() => {});
-
-    // Load DB family (for variant images, specs, benefits)
-    fetch(`/api/product-families?slug=${slug}`)
-      .then((r) => r.json())
-      .then((data) => {
-        if (data.success && data.family) {
-          const fam = data.family;
-
-          // DB is authoritative for variants if explicitly set (even empty array)
-          if (fam.variants !== null && fam.variants !== undefined) {
-            const dbVars = fam.variants as VariantWithImages[];
-            setDbVariants(
-              dbVars.map((dbV) => {
-                const staticV = product.variants.find((sv) => sv.id === dbV.id);
-                return staticV ? { ...staticV, ...dbV } : dbV;
-              })
-            );
-          }
-          // If null/undefined → keep static variants (family not yet synced)
-
-          // Use DB specs if available
-          if (fam.specifications?.length) {
-            setDbSpecs(fam.specifications as typeof product.specifications);
-          }
-
-          // Use DB benefits if available
-          if (fam.benefits?.length) {
-            setDbBenefits(fam.benefits as typeof product.benefits);
-          }
-        }
-      })
-      .catch(() => {});
-
-    // Load other families for carousel
-    fetch("/api/product-families")
-      .then((r) => r.json())
-      .then((data) => {
-        if (data.success && data.families) {
-          setOtherFamilies(data.families.filter((f: { slug: string }) => f.slug !== slug));
-        }
-      })
-      .catch(() => {});
-  }, [slug]);
-
-  // Auto-advance hero
-  React.useEffect(() => {
-    if (heroImages.length <= 1) return;
-    const t = setInterval(() => setHeroIndex((i) => (i + 1) % heroImages.length), 5000);
-    return () => clearInterval(t);
-  }, [heroImages.length]);
+  const {
+    heroImages, heroIndex, setHeroIndex,
+    dbVariants, dbSpecs, dbBenefits,
+    otherFamilies,
+    galleryVariant, setGalleryVariant,
+  } = useProductFamilyData(slug, product);
 
   return (
     <div className="min-h-screen bg-white">
