@@ -23,7 +23,6 @@ import {
 import { ConfirmDialog } from "@/components/admin/ui/Modal";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
-import { ConfirmDialog } from "@/components/admin/ui/Modal";
 
 // ── Client-side compression ──────────────────────────────
 async function compressImage(file: File, maxWidth = 1920, quality = 0.85): Promise<File> {
