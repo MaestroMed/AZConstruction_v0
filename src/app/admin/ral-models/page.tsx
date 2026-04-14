@@ -18,6 +18,7 @@ import {
   Bike,
   DoorOpen,
 } from "lucide-react";
+import { ConfirmDialog } from "@/components/admin/ui/Modal";
 import { toast } from "sonner";
 
 // Types
@@ -60,6 +61,7 @@ export default function RALModelsAdminPage() {
   const [uploadingCell, setUploadingCell] = React.useState<string | null>(null);
   const fileInputRef = React.useRef<HTMLInputElement>(null);
   const [pendingUpload, setPendingUpload] = React.useState<{ modelId: string; ralCode: string } | null>(null);
+  const [confirmDelete, setConfirmDelete] = React.useState<{ modelId: string; ralCode: string } | null>(null);
 
   // Charger les données
   React.useEffect(() => {
@@ -174,8 +176,6 @@ export default function RALModelsAdminPage() {
 
   // Supprimer une image
   const handleDeleteImage = async (modelId: string, ralCode: string) => {
-    if (!confirm("Supprimer cette image ?")) return;
-
     try {
       const response = await fetch(`/api/ral-models?model=${modelId}&ral=${ralCode}`, {
         method: "DELETE",
@@ -365,7 +365,7 @@ export default function RALModelsAdminPage() {
                     <button
                       onClick={(e) => {
                         e.stopPropagation();
-                        handleDeleteImage(currentModel.id, color.code);
+                        setConfirmDelete({ modelId: currentModel.id, ralCode: color.code });
                       }}
                       className="absolute -top-2 -right-2 w-6 h-6 bg-red-500 text-white rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity hover:bg-red-600"
                     >
@@ -404,6 +404,16 @@ export default function RALModelsAdminPage() {
           </div>
         </div>
       </div>
+
+      <ConfirmDialog
+        isOpen={!!confirmDelete}
+        onClose={() => setConfirmDelete(null)}
+        onConfirm={() => { if (confirmDelete) handleDeleteImage(confirmDelete.modelId, confirmDelete.ralCode); setConfirmDelete(null); }}
+        title="Supprimer l'image"
+        message="Supprimer cette image ? Cette action est irréversible."
+        confirmText="Supprimer"
+        variant="danger"
+      />
     </div>
   );
 }

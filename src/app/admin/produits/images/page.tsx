@@ -20,8 +20,10 @@ import {
   Edit3,
   X,
 } from "lucide-react";
+import { ConfirmDialog } from "@/components/admin/ui/Modal";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
+import { ConfirmDialog } from "@/components/admin/ui/Modal";
 
 // ── Client-side compression ──────────────────────────────
 async function compressImage(file: File, maxWidth = 1920, quality = 0.85): Promise<File> {
@@ -365,6 +367,7 @@ export default function ProduitsImagesPage() {
   const [uploadingHero, setUploadingHero] = React.useState<string | null>(null);
   const [uploadingVariant, setUploadingVariant] = React.useState<string | null>(null);
   const [savingVariant, setSavingVariant] = React.useState(false);
+  const [confirmDeleteVariantId, setConfirmDeleteVariantId] = React.useState<string | null>(null);
 
   const activeFamily = families.find((f) => f.slug === activeFamilySlug);
   const variants: VariantItem[] = activeFamily?.variants ?? [];
@@ -545,7 +548,6 @@ export default function ProduitsImagesPage() {
   };
 
   const handleVariantDelete = async (id: string) => {
-    if (!confirm("Supprimer ce modèle ?")) return;
     await saveVariants(variants.filter((v) => v.id !== id));
     toast.success("Modèle supprimé");
   };
@@ -735,7 +737,7 @@ export default function ProduitsImagesPage() {
                             onRemoveImage={() => handleVariantImageRemove(variant)}
                             onRemoveImageByIndex={(idx) => handleVariantImageRemoveByIndex(variant, idx)}
                             onSave={handleVariantSave}
-                            onDelete={() => handleVariantDelete(variant.id)}
+                            onDelete={() => setConfirmDeleteVariantId(variant.id)}
                           />
                         ))}
                       </div>
@@ -755,6 +757,16 @@ export default function ProduitsImagesPage() {
           Images compressées automatiquement (max 1920px, qualité 85%). Modifications appliquées immédiatement.
         </div>
       </div>
+
+      <ConfirmDialog
+        isOpen={!!confirmDeleteVariantId}
+        onClose={() => setConfirmDeleteVariantId(null)}
+        onConfirm={() => { if (confirmDeleteVariantId) handleVariantDelete(confirmDeleteVariantId); setConfirmDeleteVariantId(null); }}
+        title="Supprimer le modèle"
+        message="Supprimer ce modèle ? Cette action est irréversible."
+        confirmText="Supprimer"
+        variant="danger"
+      />
     </div>
   );
 }

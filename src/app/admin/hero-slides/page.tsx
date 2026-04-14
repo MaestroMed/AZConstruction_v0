@@ -166,6 +166,8 @@ export default function HeroSlidesAdminPage() {
   const [slides, setSlides] = React.useState<HeroSlide[]>([]);
   const [loading, setLoading] = React.useState(true);
   const [seeding, setSeeding] = React.useState(false);
+  const [confirmSeed, setConfirmSeed] = React.useState(false);
+  const [confirmDeleteId, setConfirmDeleteId] = React.useState<string | null>(null);
 
   React.useEffect(() => {
     fetch("/api/hero-slides")
@@ -182,10 +184,6 @@ export default function HeroSlidesAdminPage() {
   }, []);
 
   const seedSlides = async () => {
-    const msg = slides.length > 0
-      ? `Il y a déjà ${slides.length} slide(s). Ajouter les 3 slides par défaut en plus ?`
-      : "Initialiser les 3 slides par défaut ? Cela créera 3 entrées en base de données.";
-    if (!confirm(msg)) return;
     setSeeding(true);
     try {
       const created: HeroSlide[] = [];
@@ -217,7 +215,6 @@ export default function HeroSlidesAdminPage() {
   };
 
   const deleteSlide = async (id: string) => {
-    if (!confirm("Supprimer ce slide ?")) return;
     if (!id.startsWith("new-")) {
       await fetch(`/api/hero-slides?id=${id}`, { method: "DELETE" });
     }
@@ -256,7 +253,7 @@ export default function HeroSlidesAdminPage() {
         </div>
         <div className="flex items-center gap-2">
           <button
-            onClick={seedSlides}
+            onClick={() => setConfirmSeed(true)}
             disabled={seeding}
             title="Initialise (ou complète) les 3 slides par défaut depuis les données statiques"
             className="inline-flex items-center gap-2 px-4 py-2.5 bg-blue-600 text-white rounded-xl text-sm font-semibold hover:bg-blue-700 transition-colors disabled:opacity-50"
@@ -290,7 +287,7 @@ export default function HeroSlidesAdminPage() {
           <p className="mb-2 text-gray-600 font-medium">Aucun slide en base de données</p>
           <p className="mb-6 text-sm">Les slides par défaut sont actuellement utilisés sur le site.</p>
           <div className="flex flex-col sm:flex-row gap-3 justify-center">
-            <button onClick={seedSlides} disabled={seeding}
+            <button onClick={() => setConfirmSeed(true)} disabled={seeding}
               className="inline-flex items-center gap-2 px-5 py-2.5 bg-blue-600 text-white rounded-xl text-sm font-semibold hover:bg-blue-700 transition-colors disabled:opacity-50">
               {seeding ? <Loader2 className="w-4 h-4 animate-spin" /> : <Database className="w-4 h-4" />}
               Initialiser depuis les données par défaut
@@ -308,7 +305,7 @@ export default function HeroSlidesAdminPage() {
               slide={slide}
               index={index}
               onSave={saveSlide}
-              onDelete={deleteSlide}
+              onDelete={(id) => setConfirmDeleteId(id)}
               onToggle={toggleSlide}
               getImage={getImage}
             />
@@ -323,6 +320,28 @@ export default function HeroSlidesAdminPage() {
           </button>
         </div>
       )}
+
+      <ConfirmDialog
+        isOpen={!!confirmDeleteId}
+        onClose={() => setConfirmDeleteId(null)}
+        onConfirm={() => { if (confirmDeleteId) deleteSlide(confirmDeleteId); setConfirmDeleteId(null); }}
+        title="Supprimer le slide"
+        message="Supprimer ce slide ? Cette action est irréversible."
+        confirmText="Supprimer"
+        variant="danger"
+      />
+
+      <ConfirmDialog
+        isOpen={confirmSeed}
+        onClose={() => setConfirmSeed(false)}
+        onConfirm={() => { setConfirmSeed(false); seedSlides(); }}
+        title="Initialiser les slides"
+        message={slides.length > 0
+          ? `Il y a déjà ${slides.length} slide(s). Ajouter les 3 slides par défaut en plus ?`
+          : "Initialiser les 3 slides par défaut ? Cela créera 3 entrées en base de données."}
+        confirmText="Initialiser"
+        variant="info"
+      />
     </div>
   );
 }
