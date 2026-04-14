@@ -17,6 +17,8 @@ import {
   CheckCircle2,
 } from "lucide-react";
 
+import { PageSkeleton } from "@/components/admin/ui/PageSkeleton";
+
 interface DashboardData {
   kpis: {
     contactNew: number;
@@ -90,11 +92,7 @@ export default function AdminDashboard() {
   React.useEffect(() => { loadData(); }, []);
 
   if (loading) {
-    return (
-      <div className="flex items-center justify-center h-64">
-        <Loader2 className="w-8 h-8 animate-spin text-cyan-500" />
-      </div>
-    );
+    return <PageSkeleton variant="dashboard" />;
   }
 
   if (error || !data) {

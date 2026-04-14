@@ -38,14 +38,28 @@ export function ProductLocalPage({ product, dept, commune, segment }: ProductLoc
   // Schema.org
   const localBusinessSchema = {
     '@context': 'https://schema.org',
-    '@type': 'LocalBusiness',
+    '@type': ['LocalBusiness', 'Service'],
     name: 'AZ Construction',
     description: `Fabricant ${product.nameWithArticle} sur mesure ${prepLoc} ${locationName}`,
     url: canonicalUrl,
     telephone: '09 71 35 74 96',
     email: 'contact@azconstruction.fr',
     address: { '@type': 'PostalAddress', streetAddress: '23 Chemin du Bac des Aubins', addressLocality: 'Bruyères-sur-Oise', postalCode: '95820', addressCountry: 'FR' },
-    areaServed: { '@type': isCity ? 'City' : 'AdministrativeArea', name: locationName },
+    areaServed: {
+      '@type': isCity ? 'City' : 'AdministrativeArea',
+      name: locationName,
+      ...(isCity && { containedInPlace: { '@type': 'AdministrativeArea', name: dept.name } }),
+    },
+    serviceType: `Fabrication et pose ${product.nameWithArticle} sur mesure`,
+    provider: { '@type': 'Organization', name: 'AZ Construction', telephone: '09 71 35 74 96' },
+    hasOfferCatalog: {
+      '@type': 'OfferCatalog',
+      name: product.name,
+      itemListElement: product.variants.map(v => ({
+        '@type': 'Offer',
+        itemOffered: { '@type': 'Service', name: v.name, description: v.description },
+      })),
+    },
     priceRange: '€€',
     aggregateRating: { '@type': 'AggregateRating', ratingValue: '4.9', reviewCount: '47' },
   }

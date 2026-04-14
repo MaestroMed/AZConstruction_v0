@@ -7,6 +7,7 @@ import {
   ArrowLeft, BookOpen, Calendar, Tag, Clock,
 } from "lucide-react";
 import { toast } from "sonner";
+import { PageSkeleton } from "@/components/admin/ui/PageSkeleton";
 import { cn } from "@/lib/utils";
 import { ConfirmDialog } from "@/components/admin/ui/Modal";
 
@@ -375,7 +376,7 @@ export default function AdminBlogPage() {
 
       {/* List */}
       {loading ? (
-        <div className="flex items-center justify-center py-20"><Loader2 className="w-8 h-8 animate-spin text-blue-600" /></div>
+        <PageSkeleton variant="table" />
       ) : filtered.length === 0 ? (
         <div className="text-center py-20 bg-white rounded-2xl border border-gray-200">
           <BookOpen className="w-12 h-12 text-gray-200 mx-auto mb-3" />

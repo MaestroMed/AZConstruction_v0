@@ -21,6 +21,7 @@ import {
   ExternalLink,
 } from "lucide-react";
 import { toast } from "sonner";
+import { PageSkeleton } from "@/components/admin/ui/PageSkeleton";
 import { cn } from "@/lib/utils";
 import { PageHeader } from "@/components/admin/ui/PageHeader";
 import { EmptyState } from "@/components/admin/ui/EmptyState";
@@ -213,9 +214,7 @@ export default function AdminContactPage() {
         {/* Message list */}
         <div className={cn("flex flex-col gap-2 overflow-y-auto", selectedMessage ? "w-2/5 min-w-0" : "w-full")}>
           {loading ? (
-            <div className="flex items-center justify-center py-20">
-              <Loader2 className="w-8 h-8 animate-spin text-blue-600" />
-            </div>
+            <PageSkeleton variant="table" />
           ) : filtered.length === 0 ? (
             <EmptyState
               icon={MessageSquare}
