@@ -22,9 +22,9 @@ const advantages = [
   },
   {
     icon: Layers,
-    title: "10 gammes produits",
+    title: "Tous nos produits",
     description:
-      "Garde-corps, escaliers, portails, fenêtres Jansen, verrières... tout sur mesure.",
+      "Garde-corps, escaliers, portails, fenêtres, verrières, pergolas... tout sur mesure.",
     link: "/produits",
   },
 ];
