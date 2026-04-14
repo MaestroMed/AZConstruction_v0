@@ -625,6 +625,7 @@ export default function ProfessionnelsPage() {
                     <select required value={formData.secteur} onChange={(e) => setFormData({ ...formData, secteur: e.target.value })}
                       className="w-full pl-12 pr-4 py-3 border border-gray-200 bg-white rounded-xl focus:ring-2 focus:ring-cyan-500 focus:border-transparent transition-all appearance-none">
                       <option value="">Sélectionnez votre secteur</option>
+                      <option value="entreprise-generale">Entreprise générale</option>
                       <option value="constructeur">Constructeur de maisons</option>
                       <option value="architecte">Architecte / Bureau d&apos;études</option>
                       <option value="promoteur">Promoteur immobilier</option>
