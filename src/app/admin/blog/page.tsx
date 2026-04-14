@@ -31,13 +31,18 @@ interface BlogPost {
 }
 
 const CATEGORIES = [
-  { value: "garde-corps", label: "Garde-corps" },
-  { value: "normes", label: "Normes & Réglementation" },
+  // 7 clusters thématiques SEO (plan éditorial)
+  { value: "garde-corps-normes", label: "Garde-corps & Normes" },
+  { value: "escaliers-metal", label: "Escaliers métal" },
+  { value: "thermolaquage", label: "Thermolaquage" },
+  { value: "renovation-idf", label: "Rénovation IDF" },
+  { value: "architecture-metal-verrieres", label: "Architecture métal & Verrières" },
+  { value: "professionnels-btp", label: "Professionnels BTP" },
+  { value: "pergolas-amenagement-exterieur", label: "Pergolas & Aménagement extérieur" },
+  // Catégories transverses
   { value: "guide", label: "Guides pratiques" },
   { value: "prix", label: "Prix & Devis" },
-  { value: "local-seo", label: "Île-de-France" },
-  { value: "thermolaquage", label: "Thermolaquage" },
-  { value: "escaliers", label: "Escaliers" },
+  { value: "normes", label: "Normes & Réglementation" },
   { value: "inspirations", label: "Inspirations" },
   { value: "actualites", label: "Actualités" },
 ];

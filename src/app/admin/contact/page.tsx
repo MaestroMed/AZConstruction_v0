@@ -25,6 +25,7 @@ import { PageSkeleton } from "@/components/admin/ui/PageSkeleton";
 import { cn } from "@/lib/utils";
 import { PageHeader } from "@/components/admin/ui/PageHeader";
 import { EmptyState } from "@/components/admin/ui/EmptyState";
+import { ConfirmDialog } from "@/components/admin/ui/Modal";
 
 interface ContactMessage {
   id: string;
@@ -65,9 +66,9 @@ export default function AdminContactPage() {
   const [savingNotes, setSavingNotes] = React.useState(false);
   const [updatingStatus, setUpdatingStatus] = React.useState<string | null>(null);
   const [deleting, setDeleting] = React.useState(false);
+  const [confirmDeleteMsgId, setConfirmDeleteMsgId] = React.useState<string | null>(null);
 
   const deleteMessage = async (id: string) => {
-    if (!confirm("Supprimer ce message définitivement ?")) return;
     setDeleting(true);
     try {
       const res = await fetch(`/api/contact?id=${id}`, { method: "DELETE" });
@@ -386,7 +387,7 @@ export default function AdminContactPage() {
                 Répondre par email
               </a>
               <button
-                onClick={() => deleteMessage(selectedMessage.id)}
+                onClick={() => setConfirmDeleteMsgId(selectedMessage.id)}
                 disabled={deleting}
                 className="inline-flex items-center gap-2 px-4 py-2 bg-red-50 text-red-600 rounded-lg text-sm font-medium hover:bg-red-100 transition-colors disabled:opacity-50"
               >
@@ -397,6 +398,17 @@ export default function AdminContactPage() {
           </div>
         )}
       </div>
+
+      <ConfirmDialog
+        isOpen={!!confirmDeleteMsgId}
+        onClose={() => setConfirmDeleteMsgId(null)}
+        onConfirm={() => confirmDeleteMsgId && deleteMessage(confirmDeleteMsgId)}
+        title="Supprimer ce message"
+        message="Cette action est irréversible. Le message sera définitivement supprimé."
+        confirmText="Supprimer"
+        variant="danger"
+        loading={deleting}
+      />
     </div>
   );
 }
