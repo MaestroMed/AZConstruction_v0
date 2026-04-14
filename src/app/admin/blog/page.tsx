@@ -109,6 +109,9 @@ export default function AdminBlogPage() {
   };
 
   const handleTogglePublish = async (post: BlogPost) => {
+    // Optimistic update
+    const prevPosts = [...posts];
+    setPosts(prev => prev.map(p => p.id === post.id ? { ...p, published: !p.published } : p));
     try {
       await fetch("/api/blog", {
         method: "POST",
@@ -116,8 +119,10 @@ export default function AdminBlogPage() {
         body: JSON.stringify({ ...post, published: !post.published }),
       });
       toast.success(post.published ? "Article dépublié" : "Article publié !");
-      await loadPosts();
-    } catch { toast.error("Erreur"); }
+    } catch {
+      setPosts(prevPosts); // Revert on error
+      toast.error("Erreur");
+    }
   };
 
   const handleDelete = async (id: string) => {
