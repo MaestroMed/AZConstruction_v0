@@ -103,11 +103,41 @@ export default function AdminBlogPage() {
     p.category.toLowerCase().includes(search.toLowerCase())
   );
 
-  const handleNew = () => setEditing({
-    title: "", slug: "", excerpt: "", content: "", category: "guide",
-    tags: [], author: "L'équipe AZ Construction", published: false,
-    seoTitle: "", seoDescription: "", readingTime: 5,
-  });
+  const ARTICLE_TEMPLATES: Record<string, { category: string; content: string; tags: string[]; readingTime: number }> = {
+    blank: {
+      category: "guide",
+      content: "",
+      tags: [],
+      readingTime: 5,
+    },
+    "guide-prix": {
+      category: "prix",
+      content: "## Introduction\n\n[Contexte du produit et pourquoi le prix est important]\n\n## Les facteurs qui influencent le prix\n\n### Type de structure\n\n### Matériaux et finitions\n\n### Complexité de la pose\n\n## Fourchettes de prix détaillées\n\n| Type | Prix indicatif |\n|------|---------------|\n| Entrée de gamme | X € |\n| Milieu de gamme | X € |\n| Haut de gamme | X € |\n\n## Coût de la pose en Île-de-France\n\n## Comment comparer des devis\n\n## Conclusion\n\nDemandez votre [devis gratuit](/contact) pour un chiffrage personnalisé.",
+      tags: ["prix", "devis", "budget"],
+      readingTime: 8,
+    },
+    "guide-normes": {
+      category: "normes",
+      content: "## Introduction\n\n[Contexte réglementaire]\n\n## Que dit la norme ?\n\n### Champ d'application\n\n### Exigences principales\n\n## Cas pratiques\n\n### Habitation\n\n### ERP (Établissements Recevant du Public)\n\n### Copropriété\n\n## Que risque-t-on en cas de non-conformité ?\n\n## Comment s'assurer de la conformité\n\n## Conclusion\n\nNos [garde-corps](/produits/garde-corps) sont tous conformes aux normes en vigueur.",
+      tags: ["norme", "réglementation", "conformité"],
+      readingTime: 10,
+    },
+    "guide-comparatif": {
+      category: "guide",
+      content: "## Introduction\n\n[Pourquoi ce comparatif est utile]\n\n## Option A\n\n### Avantages\n\n### Inconvénients\n\n### Prix indicatif\n\n## Option B\n\n### Avantages\n\n### Inconvénients\n\n### Prix indicatif\n\n## Tableau comparatif\n\n| Critère | Option A | Option B |\n|---------|----------|----------|\n| Prix | | |\n| Durabilité | | |\n| Esthétique | | |\n| Entretien | | |\n\n## Notre recommandation\n\n## Conclusion",
+      tags: ["comparatif", "guide"],
+      readingTime: 7,
+    },
+  };
+
+  const handleNew = (templateKey = "blank") => {
+    const tpl = ARTICLE_TEMPLATES[templateKey] || ARTICLE_TEMPLATES.blank;
+    setEditing({
+      title: "", slug: "", excerpt: "", content: tpl.content, category: tpl.category,
+      tags: tpl.tags, author: "L'équipe AZ Construction", published: false,
+      seoTitle: "", seoDescription: "", readingTime: tpl.readingTime,
+    });
+  };
 
   const handleEdit = (post: BlogPost) => setEditing({ ...post });
 
@@ -360,10 +390,18 @@ export default function AdminBlogPage() {
             className="inline-flex items-center gap-2 px-4 py-2 bg-white border border-gray-200 text-gray-700 rounded-xl text-sm hover:bg-gray-50 transition-colors">
             <Eye className="w-4 h-4" /> Voir le blog
           </Link>
-          <button onClick={handleNew}
-            className="inline-flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-xl text-sm font-semibold hover:bg-blue-700 transition-colors">
-            <Plus className="w-4 h-4" /> Nouvel article
-          </button>
+          <div className="relative group">
+            <button onClick={() => handleNew()}
+              className="inline-flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-xl text-sm font-semibold hover:bg-blue-700 transition-colors">
+              <Plus className="w-4 h-4" /> Nouvel article
+            </button>
+            <div className="absolute right-0 top-full mt-1 bg-white rounded-xl shadow-xl border border-gray-200 py-1 w-56 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all z-50">
+              <button onClick={() => handleNew("blank")} className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-50">Article vierge</button>
+              <button onClick={() => handleNew("guide-prix")} className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-50">Template Guide prix</button>
+              <button onClick={() => handleNew("guide-normes")} className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-50">Template Normes &amp; réglementation</button>
+              <button onClick={() => handleNew("guide-comparatif")} className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-50">Template Comparatif</button>
+            </div>
+          </div>
         </div>
       </div>
 
