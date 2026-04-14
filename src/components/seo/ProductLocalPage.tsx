@@ -3,6 +3,7 @@ import { MapPin, CheckCircle2, ArrowRight, Phone, Star } from 'lucide-react'
 import type { Department, Commune, SEOProduct, SEOSegment } from '@/data/seo/types'
 import { DepartmentCommunesList } from './DepartmentCommunesList'
 import { NearbyCommunes } from './NearbyCommunes'
+import { ProductDeptFooter } from './ProductDeptFooter'
 
 interface ProductLocalPageProps {
   product: SEOProduct
@@ -297,6 +298,9 @@ export function ProductLocalPage({ product, dept, commune, segment }: ProductLoc
             </div>
           </div>
         </section>
+
+        {/* ── Cross-links footer ──────────────────────── */}
+        <ProductDeptFooter currentProduct={product} currentDept={dept} />
       </div>
     </>
   )

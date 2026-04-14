@@ -4,6 +4,7 @@ import type { Department, Commune, SEOSegment } from '@/data/seo/types'
 import { getSeoProductBySlug } from '@/data/seo/products'
 import { DepartmentCommunesList } from './DepartmentCommunesList'
 import { NearbyCommunes } from './NearbyCommunes'
+import { ProductDeptFooter } from './ProductDeptFooter'
 
 interface ThermolaquageLocalPageProps {
   dept: Department
@@ -250,6 +251,9 @@ export function ThermolaquageLocalPage({ dept, commune, segment }: Thermolaquage
             </div>
           </div>
         </section>
+
+        {/* ── Cross-links footer ──────────────────────── */}
+        <ProductDeptFooter currentProduct={product} currentDept={dept} />
       </div>
     </>
   )

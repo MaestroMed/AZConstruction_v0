@@ -772,6 +772,47 @@ export default function ProductFamilyPage() {
       </section>
 
       {/* ============================================
+          SEO — Disponible par département
+          ============================================ */}
+      <section className="py-16 bg-white border-t border-gray-100">
+        <div className="container mx-auto px-6">
+          <h2 className="text-2xl font-bold text-navy-dark mb-2">
+            {product.name} par département
+          </h2>
+          <p className="text-gray-500 mb-8">
+            Retrouvez nos {product.name.toLowerCase()} sur mesure dans votre département.
+          </p>
+          <div className="grid sm:grid-cols-2 md:grid-cols-3 gap-4">
+            {[
+              { name: 'Paris (75)', slug: 'paris-75' },
+              { name: 'Seine-et-Marne (77)', slug: 'seine-et-marne-77' },
+              { name: 'Yvelines (78)', slug: 'yvelines-78' },
+              { name: 'Essonne (91)', slug: 'essonne-91' },
+              { name: 'Hauts-de-Seine (92)', slug: 'hauts-de-seine-92' },
+              { name: 'Seine-Saint-Denis (93)', slug: 'seine-saint-denis-93' },
+              { name: 'Val-de-Marne (94)', slug: 'val-de-marne-94' },
+              { name: "Val-d'Oise (95)", slug: 'val-doise-95' },
+              { name: 'Oise (60)', slug: 'oise-60' },
+            ].map(dept => (
+              <Link
+                key={dept.slug}
+                href={`/${slug}/${dept.slug}`}
+                className="flex items-center gap-3 p-4 bg-gray-50 rounded-xl border border-gray-200 hover:border-blue-300 hover:shadow-sm transition-all group"
+              >
+                <svg className="w-5 h-5 text-cyan-500 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M15 10.5a3 3 0 11-6 0 3 3 0 016 0z" />
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1115 0z" />
+                </svg>
+                <span className="font-semibold text-navy-dark group-hover:text-blue-corporate transition-colors">
+                  {product.name} {dept.name}
+                </span>
+              </Link>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ============================================
           OTHER PRODUCTS — Carrousel familles
           ============================================ */}
       {otherFamilies.length > 0 && (
