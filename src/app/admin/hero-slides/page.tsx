@@ -3,10 +3,31 @@
 import * as React from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { ArrowLeft, Plus, Save, Trash2, Eye, EyeOff, Loader2, GripVertical, ChevronDown, ChevronUp, Database } from "lucide-react";
+import {
+  Plus, Save, Trash2, Eye, EyeOff, Loader2, GripVertical,
+  Database, Monitor, Smartphone, ArrowRight,
+} from "lucide-react";
+import {
+  DndContext,
+  closestCenter,
+  PointerSensor,
+  useSensor,
+  useSensors,
+  type DragEndEvent,
+} from "@dnd-kit/core";
+import {
+  SortableContext,
+  useSortable,
+  verticalListSortingStrategy,
+  arrayMove,
+} from "@dnd-kit/sortable";
+import { CSS } from "@dnd-kit/utilities";
 import { ConfirmDialog } from "@/components/admin/ui/Modal";
+import { PageHeader } from "@/components/admin/ui/PageHeader";
+import { PageSkeleton } from "@/components/admin/ui/PageSkeleton";
 import { toast } from "sonner";
 import { useSiteImages } from "@/lib/hooks/useSiteImages";
+import { cn } from "@/lib/utils";
 
 const IMAGE_KEYS = ["hero-carousel-1", "hero-carousel-2", "hero-carousel-3", "hero-carousel-4", "hero-carousel-5", "hero-carousel-6"];
 
@@ -23,138 +44,107 @@ interface HeroSlide {
 }
 
 const EMPTY_SLIDE: Omit<HeroSlide, "id"> = {
-  ordre: 0,
-  active: true,
-  imageKey: "hero-carousel-1",
-  headline: "",
-  headlineAccent: "",
-  subheadline: "",
-  ctaText: "Découvrir",
-  ctaLink: "/produits",
+  ordre: 0, active: true, imageKey: "hero-carousel-1",
+  headline: "", headlineAccent: "", subheadline: "",
+  ctaText: "Découvrir", ctaLink: "/produits",
 };
 
-function SlideEditor({ slide, index, onSave, onDelete, onToggle, getImage }: {
+// ── Sortable slide card ─────────────────────────────────────
+function SortableSlideCard({
+  slide, isSelected, onClick, onToggle, getImage,
+}: {
   slide: HeroSlide;
-  index: number;
-  onSave: (slide: HeroSlide) => Promise<void>;
-  onDelete: (id: string) => Promise<void>;
-  onToggle: (id: string, active: boolean) => Promise<void>;
+  isSelected: boolean;
+  onClick: () => void;
+  onToggle: () => void;
   getImage: (key: string) => string;
 }) {
-  const [form, setForm] = React.useState(slide);
-  const [saving, setSaving] = React.useState(false);
-  const [expanded, setExpanded] = React.useState(false);
+  const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({ id: slide.id });
 
-  const handleSave = async () => {
-    setSaving(true);
-    try { await onSave(form); toast.success("Slide sauvegardé"); }
-    catch { toast.error("Erreur sauvegarde"); }
-    finally { setSaving(false); }
+  const style = {
+    transform: CSS.Transform.toString(transform),
+    transition,
+    opacity: isDragging ? 0.5 : 1,
   };
 
   return (
-    <div className={`border rounded-2xl overflow-hidden ${slide.active ? "border-gray-200" : "border-gray-100 opacity-60"}`}>
-      {/* Header row */}
-      <div className="flex items-center gap-3 px-5 py-4 bg-white">
-        <GripVertical className="w-5 h-5 text-gray-300 flex-shrink-0" />
-        <div className="relative w-16 h-10 rounded-lg overflow-hidden bg-gray-100 flex-shrink-0">
-          <Image src={getImage(slide.imageKey)} alt="" fill className="object-cover" />
-        </div>
-        <div className="flex-1 min-w-0">
-          <p className="font-semibold text-gray-900 truncate">{slide.headline} <span className="text-cyan-600">{slide.headlineAccent}</span></p>
-          <p className="text-xs text-gray-400">Image : {slide.imageKey}</p>
-        </div>
-        <div className="flex items-center gap-2">
-          <span className={`text-xs px-2 py-1 rounded-full ${slide.active ? "bg-green-100 text-green-700" : "bg-gray-100 text-gray-500"}`}>
-            {slide.active ? "Actif" : "Inactif"}
+    <div
+      ref={setNodeRef}
+      style={style}
+      onClick={onClick}
+      className={cn(
+        "flex items-center gap-3 px-4 py-3 rounded-xl cursor-pointer transition-all border-2",
+        isSelected
+          ? "border-cyan-500 bg-cyan-50/50 shadow-sm"
+          : "border-transparent hover:border-gray-200 hover:bg-gray-50",
+        !slide.active && "opacity-50"
+      )}
+    >
+      <button {...attributes} {...listeners} className="cursor-grab active:cursor-grabbing p-1 text-gray-300 hover:text-gray-500 touch-none">
+        <GripVertical className="w-4 h-4" />
+      </button>
+      <div className="relative w-14 h-9 rounded-lg overflow-hidden bg-gray-100 flex-shrink-0">
+        <Image src={getImage(slide.imageKey)} alt="" fill className="object-cover" />
+      </div>
+      <div className="flex-1 min-w-0">
+        <p className="text-sm font-semibold text-gray-900 truncate">
+          {slide.headline || "Sans titre"}{" "}
+          <span className="text-cyan-600">{slide.headlineAccent}</span>
+        </p>
+        <p className="text-xs text-gray-400">{slide.imageKey.replace("hero-carousel-", "Image #")}</p>
+      </div>
+      <button
+        onClick={(e) => { e.stopPropagation(); onToggle(); }}
+        className={cn("p-1.5 rounded-lg transition-colors", slide.active ? "text-green-600 hover:bg-green-50" : "text-gray-400 hover:bg-gray-100")}
+      >
+        {slide.active ? <Eye className="w-4 h-4" /> : <EyeOff className="w-4 h-4" />}
+      </button>
+    </div>
+  );
+}
+
+// ── Live preview ────────────────────────────────────────────
+function SlidePreview({ slide, getImage, previewMode }: {
+  slide: HeroSlide | null;
+  getImage: (key: string) => string;
+  previewMode: "desktop" | "mobile";
+}) {
+  if (!slide) {
+    return (
+      <div className="flex items-center justify-center h-full text-gray-400">
+        <p className="text-sm">Sélectionnez un slide pour le prévisualiser</p>
+      </div>
+    );
+  }
+
+  return (
+    <div className={cn("relative overflow-hidden rounded-xl bg-navy-dark", previewMode === "mobile" ? "max-w-[375px] mx-auto aspect-[9/16]" : "w-full aspect-video")}>
+      <Image src={getImage(slide.imageKey)} alt="" fill className="object-cover opacity-40" />
+      <div className="absolute inset-0 bg-gradient-to-t from-navy-dark via-navy-dark/60 to-transparent" />
+      <div className="absolute inset-0 flex flex-col justify-end p-6 md:p-10">
+        <h2 className={cn("font-bold text-white mb-2 leading-tight", previewMode === "mobile" ? "text-2xl" : "text-4xl")}>
+          {slide.headline || "Titre"}{" "}
+          <span className="text-cyan-400">{slide.headlineAccent || "accent"}</span>
+        </h2>
+        <p className={cn("text-white/60 mb-4 max-w-lg", previewMode === "mobile" ? "text-sm" : "text-lg")}>
+          {slide.subheadline || "Sous-titre du slide..."}
+        </p>
+        <div className="flex gap-3">
+          <span className="inline-flex items-center gap-2 px-4 py-2 bg-cyan-400 text-navy-dark text-sm font-bold rounded-lg">
+            {slide.ctaText || "CTA"} <ArrowRight className="w-3 h-3" />
           </span>
-          <button onClick={() => onToggle(slide.id, !slide.active)} className="p-1.5 text-gray-400 hover:text-gray-700 rounded-lg hover:bg-gray-100 transition-colors">
-            {slide.active ? <Eye className="w-4 h-4" /> : <EyeOff className="w-4 h-4" />}
-          </button>
-          <button onClick={() => setExpanded(!expanded)} className="p-1.5 text-gray-400 hover:text-gray-700 rounded-lg hover:bg-gray-100 transition-colors">
-            {expanded ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
-          </button>
         </div>
       </div>
-
-      {/* Expanded editor */}
-      {expanded && (
-        <div className="px-5 pb-5 pt-2 bg-gray-50 border-t border-gray-100 space-y-4">
-          {/* Image selector */}
-          <div>
-            <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wide mb-2">Image (clé)</label>
-            <div className="grid grid-cols-3 md:grid-cols-6 gap-2">
-              {IMAGE_KEYS.map((key) => (
-                <button
-                  key={key}
-                  onClick={() => setForm({ ...form, imageKey: key })}
-                  className={`relative h-16 rounded-xl overflow-hidden border-2 transition-all ${form.imageKey === key ? "border-cyan-500 ring-2 ring-cyan-200" : "border-gray-200 hover:border-gray-400"}`}
-                >
-                  <Image src={getImage(key)} alt={key} fill className="object-cover" />
-                  <div className="absolute inset-0 bg-black/30 flex items-end justify-center pb-1">
-                    <span className="text-white text-[9px] font-bold">{key.replace("hero-carousel-", "#")}</span>
-                  </div>
-                </button>
-              ))}
-            </div>
-            <p className="text-xs text-gray-400 mt-1">Gérez les images dans Admin → Paramètres → Images → Hero Carousel</p>
-          </div>
-
-          <div className="grid md:grid-cols-2 gap-4">
-            <div>
-              <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1">Titre principal</label>
-              <input type="text" value={form.headline} onChange={e => setForm({ ...form, headline: e.target.value })}
-                className="w-full px-3 py-2 border border-gray-200 rounded-xl text-sm focus:ring-2 focus:ring-cyan-300 outline-none"
-                placeholder="Garde-corps" />
-            </div>
-            <div>
-              <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1">Accent (en couleur)</label>
-              <input type="text" value={form.headlineAccent} onChange={e => setForm({ ...form, headlineAccent: e.target.value })}
-                className="w-full px-3 py-2 border border-gray-200 rounded-xl text-sm focus:ring-2 focus:ring-cyan-300 outline-none"
-                placeholder="sur mesure." />
-            </div>
-          </div>
-
-          <div>
-            <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1">Sous-titre</label>
-            <textarea rows={2} value={form.subheadline} onChange={e => setForm({ ...form, subheadline: e.target.value })}
-              className="w-full px-3 py-2 border border-gray-200 rounded-xl text-sm focus:ring-2 focus:ring-cyan-300 outline-none resize-none"
-              placeholder="Description courte..." />
-          </div>
-
-          <div className="grid md:grid-cols-2 gap-4">
-            <div>
-              <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1">Texte du bouton</label>
-              <input type="text" value={form.ctaText} onChange={e => setForm({ ...form, ctaText: e.target.value })}
-                className="w-full px-3 py-2 border border-gray-200 rounded-xl text-sm focus:ring-2 focus:ring-cyan-300 outline-none"
-                placeholder="Découvrir" />
-            </div>
-            <div>
-              <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1">Lien du bouton</label>
-              <input type="text" value={form.ctaLink} onChange={e => setForm({ ...form, ctaLink: e.target.value })}
-                className="w-full px-3 py-2 border border-gray-200 rounded-xl text-sm focus:ring-2 focus:ring-cyan-300 outline-none"
-                placeholder="/produits/garde-corps" />
-            </div>
-          </div>
-
-          {/* Actions */}
-          <div className="flex items-center justify-between pt-2">
-            <button onClick={() => onDelete(slide.id)}
-              className="inline-flex items-center gap-2 px-4 py-2 text-red-600 hover:bg-red-50 rounded-lg text-sm transition-colors">
-              <Trash2 className="w-4 h-4" /> Supprimer
-            </button>
-            <button onClick={handleSave} disabled={saving}
-              className="inline-flex items-center gap-2 px-5 py-2.5 bg-cyan-500 text-white rounded-xl text-sm font-semibold hover:bg-cyan-600 transition-colors disabled:opacity-50">
-              {saving ? <Loader2 className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4" />}
-              Sauvegarder
-            </button>
-          </div>
+      {!slide.active && (
+        <div className="absolute top-3 right-3 px-2 py-1 bg-red-500/80 text-white text-xs rounded-full font-medium">
+          Inactif
         </div>
       )}
     </div>
   );
 }
 
+// ── Main page ───────────────────────────────────────────────
 const DEFAULT_SLIDES_DATA = [
   { ordre: 0, active: true, imageKey: "hero-carousel-1", headline: "Garde-corps", headlineAccent: "sur mesure.", subheadline: "Verre feuilleté, câbles acier, barreaux design — fabriqués dans notre atelier de 1 800m² à Bruyères-sur-Oise.", ctaText: "Découvrir les garde-corps", ctaLink: "/produits/garde-corps" },
   { ordre: 1, active: true, imageKey: "hero-carousel-2", headline: "Escaliers", headlineAccent: "d'exception.", subheadline: "Droits, hélicoïdaux, quart-tournant — chaque escalier est une pièce unique conçue sur mesure.", ctaText: "Voir nos escaliers", ctaLink: "/produits/escaliers" },
@@ -166,22 +156,63 @@ export default function HeroSlidesAdminPage() {
   const [slides, setSlides] = React.useState<HeroSlide[]>([]);
   const [loading, setLoading] = React.useState(true);
   const [seeding, setSeeding] = React.useState(false);
+  const [selectedId, setSelectedId] = React.useState<string | null>(null);
+  const [form, setForm] = React.useState<HeroSlide | null>(null);
+  const [saving, setSaving] = React.useState(false);
+  const [previewMode, setPreviewMode] = React.useState<"desktop" | "mobile">("desktop");
   const [confirmSeed, setConfirmSeed] = React.useState(false);
   const [confirmDeleteId, setConfirmDeleteId] = React.useState<string | null>(null);
 
+  const sensors = useSensors(useSensor(PointerSensor, { activationConstraint: { distance: 5 } }));
+
   React.useEffect(() => {
-    fetch("/api/hero-slides")
-      .then(r => r.json())
-      .then(data => {
-        if (data.success) {
-          // Ne montrer que les slides en DB (pas les défauts statiques)
-          const dbSlides = data.slides.filter((s: HeroSlide) => !s.id?.startsWith("default-"));
-          setSlides(dbSlides);
-        }
-      })
-      .catch(() => {})
-      .finally(() => setLoading(false));
+    fetch("/api/hero-slides").then(r => r.json()).then(data => {
+      if (data.success) {
+        const dbSlides = data.slides.filter((s: HeroSlide) => !s.id?.startsWith("default-"));
+        setSlides(dbSlides);
+        if (dbSlides.length > 0) { setSelectedId(dbSlides[0].id); setForm(dbSlides[0]); }
+      }
+    }).catch(() => {}).finally(() => setLoading(false));
   }, []);
+
+  const selectSlide = (slide: HeroSlide) => {
+    setSelectedId(slide.id);
+    setForm({ ...slide });
+  };
+
+  const handleDragEnd = async (event: DragEndEvent) => {
+    const { active, over } = event;
+    if (!over || active.id === over.id) return;
+    const oldIdx = slides.findIndex(s => s.id === active.id);
+    const newIdx = slides.findIndex(s => s.id === over.id);
+    const reordered = arrayMove(slides, oldIdx, newIdx).map((s, i) => ({ ...s, ordre: i }));
+    setSlides(reordered);
+    // Save order to DB
+    for (const s of reordered) {
+      if (!s.id.startsWith("new-")) {
+        await fetch("/api/hero-slides", { method: "PUT", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ id: s.id, ordre: s.ordre }) });
+      }
+    }
+    toast.success("Ordre mis à jour");
+  };
+
+  const handleSave = async () => {
+    if (!form) return;
+    setSaving(true);
+    try {
+      const isNew = form.id.startsWith("new-");
+      const method = isNew ? "POST" : "PUT";
+      const body = isNew ? (({ id: _, ...rest }) => rest)(form) : form;
+      const res = await fetch("/api/hero-slides", { method, headers: { "Content-Type": "application/json" }, body: JSON.stringify(body) });
+      if (!res.ok) throw new Error();
+      const data = await res.json();
+      setSlides(prev => prev.map(s => s.id === form.id ? data.slide : s));
+      setSelectedId(data.slide.id);
+      setForm(data.slide);
+      toast.success("Slide sauvegardé");
+    } catch { toast.error("Erreur"); }
+    finally { setSaving(false); }
+  };
 
   const seedSlides = async () => {
     setSeeding(true);
@@ -192,156 +223,190 @@ export default function HeroSlidesAdminPage() {
         if (res.ok) { const data = await res.json(); created.push(data.slide); }
       }
       setSlides(prev => [...prev, ...created]);
-      toast.success("3 slides créés avec succès !");
-    } catch {
-      toast.error("Erreur lors de l'initialisation");
-    } finally {
-      setSeeding(false);
-    }
-  };
-
-  const saveSlide = async (slide: HeroSlide) => {
-    const isNew = slide.id.startsWith("new-");
-    const method = isNew ? "POST" : "PUT";
-    const body = isNew ? (({ id: _, ...rest }) => rest)(slide) : slide;
-    const res = await fetch("/api/hero-slides", { method, headers: { "Content-Type": "application/json" }, body: JSON.stringify(body) });
-    if (!res.ok) throw new Error();
-    const data = await res.json();
-    if (isNew) {
-      setSlides(prev => prev.map(s => s.id === slide.id ? data.slide : s));
-    } else {
-      setSlides(prev => prev.map(s => s.id === slide.id ? data.slide : s));
-    }
+      if (created.length > 0) { setSelectedId(created[0].id); setForm(created[0]); }
+      toast.success(`${created.length} slides créés !`);
+    } catch { toast.error("Erreur"); }
+    finally { setSeeding(false); }
   };
 
   const deleteSlide = async (id: string) => {
-    if (!id.startsWith("new-")) {
-      await fetch(`/api/hero-slides?id=${id}`, { method: "DELETE" });
-    }
+    if (!id.startsWith("new-")) await fetch(`/api/hero-slides?id=${id}`, { method: "DELETE" });
     setSlides(prev => prev.filter(s => s.id !== id));
+    if (selectedId === id) { setSelectedId(null); setForm(null); }
     toast.success("Slide supprimé");
+    setConfirmDeleteId(null);
   };
 
-  const toggleSlide = async (id: string, active: boolean) => {
-    const res = await fetch("/api/hero-slides", { method: "PUT", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ id, active }) });
-    if (res.ok) {
-      setSlides(prev => prev.map(s => s.id === id ? { ...s, active } : s));
-    }
+  const toggleSlide = async (id: string) => {
+    const slide = slides.find(s => s.id === id);
+    if (!slide) return;
+    const newActive = !slide.active;
+    setSlides(prev => prev.map(s => s.id === id ? { ...s, active: newActive } : s));
+    if (form?.id === id) setForm(prev => prev ? { ...prev, active: newActive } : prev);
+    await fetch("/api/hero-slides", { method: "PUT", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ id, active: newActive }) });
   };
 
   const addSlide = () => {
-    const newSlide: HeroSlide = {
-      ...EMPTY_SLIDE,
-      id: `new-${Date.now()}`,
-      ordre: slides.length,
-    };
+    const newSlide: HeroSlide = { ...EMPTY_SLIDE, id: `new-${Date.now()}`, ordre: slides.length };
     setSlides(prev => [...prev, newSlide]);
+    setSelectedId(newSlide.id);
+    setForm(newSlide);
   };
 
   return (
     <div className="space-y-6">
-      {/* Header */}
-      <div className="flex items-center justify-between">
-        <div className="flex items-center gap-4">
-          <Link href="/admin" className="p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-lg transition-colors">
-            <ArrowLeft className="w-5 h-5" />
-          </Link>
-          <div>
-            <h1 className="text-2xl font-bold text-gray-900">Slides Hero Homepage</h1>
-            <p className="text-gray-500 text-sm mt-1">Gérez le carousel de la page d&apos;accueil — jusqu&apos;à 6 slides</p>
-          </div>
-        </div>
-        <div className="flex items-center gap-2">
-          <button
-            onClick={() => setConfirmSeed(true)}
-            disabled={seeding}
-            title="Initialise (ou complète) les 3 slides par défaut depuis les données statiques"
-            className="inline-flex items-center gap-2 px-4 py-2.5 bg-blue-600 text-white rounded-xl text-sm font-semibold hover:bg-blue-700 transition-colors disabled:opacity-50"
-          >
-            {seeding ? <Loader2 className="w-4 h-4 animate-spin" /> : <Database className="w-4 h-4" />}
-            Initialiser les données
-          </button>
-          <button
-            onClick={addSlide}
-            disabled={slides.length >= 6}
-            className="inline-flex items-center gap-2 px-4 py-2.5 bg-cyan-500 text-white rounded-xl text-sm font-semibold hover:bg-cyan-600 transition-colors disabled:opacity-40"
-          >
-            <Plus className="w-4 h-4" />
-            Ajouter un slide
-          </button>
-        </div>
-      </div>
-
-      {/* Info */}
-      <div className="bg-blue-50 border border-blue-200 rounded-xl p-4 text-sm text-blue-700">
-        <strong>Conseil :</strong> Activez/désactivez chaque slide sans le supprimer. Les slides désactivés n&apos;apparaissent pas sur le site. Les images sont configurées dans <Link href="/admin/parametres/images" className="underline font-semibold">Paramètres → Images → Hero Carousel 1-6</Link>.
-      </div>
+      <PageHeader
+        title="Slides Hero Homepage"
+        description={`${slides.length}/6 slides — Gérez le carousel de la page d'accueil`}
+        backHref="/admin"
+        actions={[
+          { label: "Initialiser", icon: Database, onClick: () => setConfirmSeed(true), variant: "secondary", disabled: seeding },
+          { label: "Ajouter un slide", icon: Plus, onClick: addSlide, disabled: slides.length >= 6 },
+        ]}
+      />
 
       {loading ? (
-        <div className="flex items-center justify-center py-16">
-          <Loader2 className="w-8 h-8 animate-spin text-cyan-500" />
-        </div>
+        <PageSkeleton variant="grid" />
       ) : slides.length === 0 ? (
-        <div className="text-center py-16 text-gray-400">
+        <div className="text-center py-16 bg-white rounded-2xl border border-dashed border-gray-200">
           <Database className="w-12 h-12 mx-auto mb-4 text-gray-300" />
-          <p className="mb-2 text-gray-600 font-medium">Aucun slide en base de données</p>
-          <p className="mb-6 text-sm">Les slides par défaut sont actuellement utilisés sur le site.</p>
-          <div className="flex flex-col sm:flex-row gap-3 justify-center">
+          <p className="text-gray-600 font-medium mb-2">Aucun slide en base de données</p>
+          <p className="text-gray-400 text-sm mb-6">Les slides par défaut sont utilisés sur le site.</p>
+          <div className="flex gap-3 justify-center">
             <button onClick={() => setConfirmSeed(true)} disabled={seeding}
-              className="inline-flex items-center gap-2 px-5 py-2.5 bg-blue-600 text-white rounded-xl text-sm font-semibold hover:bg-blue-700 transition-colors disabled:opacity-50">
-              {seeding ? <Loader2 className="w-4 h-4 animate-spin" /> : <Database className="w-4 h-4" />}
-              Initialiser depuis les données par défaut
+              className="inline-flex items-center gap-2 px-5 py-2.5 bg-blue-600 text-white rounded-xl text-sm font-semibold hover:bg-blue-700 disabled:opacity-50">
+              <Database className="w-4 h-4" /> Initialiser
             </button>
             <button onClick={addSlide} className="inline-flex items-center gap-2 px-4 py-2 bg-cyan-500 text-white rounded-xl text-sm font-semibold hover:bg-cyan-600">
-              <Plus className="w-4 h-4" /> Créer un nouveau slide
+              <Plus className="w-4 h-4" /> Créer un slide
             </button>
           </div>
         </div>
       ) : (
-        <div className="space-y-3">
-          {slides.map((slide, index) => (
-            <SlideEditor
-              key={slide.id}
-              slide={slide}
-              index={index}
-              onSave={saveSlide}
-              onDelete={(id) => setConfirmDeleteId(id)}
-              onToggle={toggleSlide}
-              getImage={getImage}
-            />
-          ))}
+        <div className="grid lg:grid-cols-5 gap-6">
+          {/* ── Left: Slide list (draggable) ──────────── */}
+          <div className="lg:col-span-2 space-y-2">
+            <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
+              <SortableContext items={slides} strategy={verticalListSortingStrategy}>
+                {slides.map(slide => (
+                  <SortableSlideCard
+                    key={slide.id}
+                    slide={slide}
+                    isSelected={selectedId === slide.id}
+                    onClick={() => selectSlide(slide)}
+                    onToggle={() => toggleSlide(slide.id)}
+                    getImage={getImage}
+                  />
+                ))}
+              </SortableContext>
+            </DndContext>
+
+            {slides.length < 6 && (
+              <button onClick={addSlide}
+                className="w-full flex items-center justify-center gap-2 px-4 py-3 border-2 border-dashed border-gray-200 text-gray-400 rounded-xl text-sm hover:border-cyan-400 hover:text-cyan-600 transition-colors">
+                <Plus className="w-4 h-4" /> Ajouter ({slides.length}/6)
+              </button>
+            )}
+          </div>
+
+          {/* ── Right: Preview + Editor ───────────────── */}
+          <div className="lg:col-span-3 space-y-4">
+            {/* Preview tabs */}
+            <div className="flex items-center justify-between">
+              <h3 className="text-sm font-semibold text-gray-500 uppercase tracking-wider">Aperçu en direct</h3>
+              <div className="flex items-center gap-1 bg-gray-100 rounded-lg p-0.5">
+                <button onClick={() => setPreviewMode("desktop")}
+                  className={cn("p-1.5 rounded-md transition-colors", previewMode === "desktop" ? "bg-white shadow-sm text-gray-900" : "text-gray-400")}>
+                  <Monitor className="w-4 h-4" />
+                </button>
+                <button onClick={() => setPreviewMode("mobile")}
+                  className={cn("p-1.5 rounded-md transition-colors", previewMode === "mobile" ? "bg-white shadow-sm text-gray-900" : "text-gray-400")}>
+                  <Smartphone className="w-4 h-4" />
+                </button>
+              </div>
+            </div>
+
+            {/* Live preview */}
+            <SlidePreview slide={form} getImage={getImage} previewMode={previewMode} />
+
+            {/* Editor form */}
+            {form && (
+              <div className="bg-white rounded-2xl border border-gray-200 p-5 space-y-4">
+                <div>
+                  <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wide mb-2">Image</label>
+                  <div className="grid grid-cols-3 md:grid-cols-6 gap-2">
+                    {IMAGE_KEYS.map(key => (
+                      <button key={key} onClick={() => setForm({ ...form, imageKey: key })}
+                        className={cn("relative h-14 rounded-xl overflow-hidden border-2 transition-all",
+                          form.imageKey === key ? "border-cyan-500 ring-2 ring-cyan-200" : "border-gray-200 hover:border-gray-400")}>
+                        <Image src={getImage(key)} alt={key} fill className="object-cover" />
+                        <div className="absolute inset-0 bg-black/20 flex items-end justify-center pb-0.5">
+                          <span className="text-white text-[8px] font-bold">{key.replace("hero-carousel-", "#")}</span>
+                        </div>
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                <div className="grid md:grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1">Titre</label>
+                    <input type="text" value={form.headline} onChange={e => setForm({ ...form, headline: e.target.value })}
+                      className="w-full px-3 py-2 border border-gray-200 rounded-xl text-sm focus:ring-2 focus:ring-cyan-300 outline-none" placeholder="Garde-corps" />
+                  </div>
+                  <div>
+                    <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1">Accent <span className="text-cyan-500">(en couleur)</span></label>
+                    <input type="text" value={form.headlineAccent} onChange={e => setForm({ ...form, headlineAccent: e.target.value })}
+                      className="w-full px-3 py-2 border border-gray-200 rounded-xl text-sm focus:ring-2 focus:ring-cyan-300 outline-none" placeholder="sur mesure." />
+                  </div>
+                </div>
+
+                <div>
+                  <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1">Sous-titre</label>
+                  <textarea rows={2} value={form.subheadline} onChange={e => setForm({ ...form, subheadline: e.target.value })}
+                    className="w-full px-3 py-2 border border-gray-200 rounded-xl text-sm focus:ring-2 focus:ring-cyan-300 outline-none resize-none" placeholder="Description courte..." />
+                </div>
+
+                <div className="grid md:grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1">Texte bouton</label>
+                    <input type="text" value={form.ctaText} onChange={e => setForm({ ...form, ctaText: e.target.value })}
+                      className="w-full px-3 py-2 border border-gray-200 rounded-xl text-sm focus:ring-2 focus:ring-cyan-300 outline-none" placeholder="Découvrir" />
+                  </div>
+                  <div>
+                    <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1">Lien bouton</label>
+                    <input type="text" value={form.ctaLink} onChange={e => setForm({ ...form, ctaLink: e.target.value })}
+                      className="w-full px-3 py-2 border border-gray-200 rounded-xl text-sm focus:ring-2 focus:ring-cyan-300 outline-none" placeholder="/produits/garde-corps" />
+                  </div>
+                </div>
+
+                <div className="flex items-center justify-between pt-2 border-t border-gray-100">
+                  <button onClick={() => setConfirmDeleteId(form.id)}
+                    className="inline-flex items-center gap-2 px-4 py-2 text-red-500 hover:bg-red-50 rounded-lg text-sm transition-colors">
+                    <Trash2 className="w-4 h-4" /> Supprimer
+                  </button>
+                  <button onClick={handleSave} disabled={saving}
+                    className="inline-flex items-center gap-2 px-6 py-2.5 bg-cyan-500 text-white rounded-xl text-sm font-semibold hover:bg-cyan-600 transition-colors disabled:opacity-50">
+                    {saving ? <Loader2 className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4" />}
+                    Sauvegarder
+                  </button>
+                </div>
+              </div>
+            )}
+          </div>
         </div>
       )}
 
-      {slides.length > 0 && slides.length < 6 && (
-        <div className="text-center">
-          <button onClick={addSlide} className="inline-flex items-center gap-2 px-4 py-2 border-2 border-dashed border-gray-300 text-gray-500 rounded-xl text-sm hover:border-cyan-400 hover:text-cyan-600 transition-colors">
-            <Plus className="w-4 h-4" /> Ajouter un slide ({slides.length}/6)
-          </button>
-        </div>
-      )}
+      <ConfirmDialog isOpen={!!confirmDeleteId} onClose={() => setConfirmDeleteId(null)}
+        onConfirm={() => confirmDeleteId && deleteSlide(confirmDeleteId)}
+        title="Supprimer le slide" message="Ce slide sera définitivement supprimé."
+        confirmText="Supprimer" variant="danger" />
 
-      <ConfirmDialog
-        isOpen={!!confirmDeleteId}
-        onClose={() => setConfirmDeleteId(null)}
-        onConfirm={() => { if (confirmDeleteId) deleteSlide(confirmDeleteId); setConfirmDeleteId(null); }}
-        title="Supprimer le slide"
-        message="Supprimer ce slide ? Cette action est irréversible."
-        confirmText="Supprimer"
-        variant="danger"
-      />
-
-      <ConfirmDialog
-        isOpen={confirmSeed}
-        onClose={() => setConfirmSeed(false)}
+      <ConfirmDialog isOpen={confirmSeed} onClose={() => setConfirmSeed(false)}
         onConfirm={() => { setConfirmSeed(false); seedSlides(); }}
         title="Initialiser les slides"
-        message={slides.length > 0
-          ? `Il y a déjà ${slides.length} slide(s). Ajouter les 3 slides par défaut en plus ?`
-          : "Initialiser les 3 slides par défaut ? Cela créera 3 entrées en base de données."}
-        confirmText="Initialiser"
-        variant="info"
-      />
+        message={slides.length > 0 ? `Ajouter 3 slides par défaut aux ${slides.length} existant(s) ?` : "Créer les 3 slides par défaut ?"}
+        confirmText="Initialiser" variant="info" />
     </div>
   );
 }
