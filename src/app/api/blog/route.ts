@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
+import { logActivity } from "@/lib/activity-log";
 
 // GET /api/blog — liste les articles publiés (ou tous si admin=true)
 export async function GET(request: NextRequest) {
@@ -101,6 +102,13 @@ export async function POST(request: NextRequest) {
           update: data,
           create: data,
         });
+
+    await logActivity(
+      id ? "update" : "create",
+      "blog",
+      `Article: ${title}`,
+      post.id,
+    );
 
     return NextResponse.json({ success: true, post });
   } catch (error) {

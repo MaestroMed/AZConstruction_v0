@@ -686,3 +686,22 @@ model BlogPost {
 
   @@map("blog_posts")
 }
+
+// ============================================
+// ACTIVITY LOG (Audit trail)
+// ============================================
+
+model ActivityLog {
+  id        String   @id @default(cuid())
+  action    String   // "create", "update", "delete", "publish", "unpublish"
+  entity    String   // "blog", "realization", "product", "slide", "contact", "devis"
+  entityId  String?  // ID of the affected entity
+  label     String   // Human-readable: "Article: Prix garde-corps"
+  metadata  Json?    // Additional context (old/new values)
+
+  createdAt DateTime @default(now())
+
+  @@map("activity_logs")
+  @@index([entity])
+  @@index([createdAt])
+}
