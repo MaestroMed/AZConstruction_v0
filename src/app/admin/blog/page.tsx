@@ -8,6 +8,7 @@ import {
 } from "lucide-react";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
+import { ConfirmDialog } from "@/components/admin/ui/Modal";
 
 interface BlogPost {
   id: string;
@@ -57,6 +58,7 @@ export default function AdminBlogPage() {
   const [editing, setEditing] = React.useState<Partial<BlogPost> | null>(null);
   const [saving, setSaving] = React.useState(false);
   const [deleting, setDeleting] = React.useState<string | null>(null);
+  const [confirmDeleteId, setConfirmDeleteId] = React.useState<string | null>(null);
 
   const loadPosts = async () => {
     setLoading(true);
@@ -119,14 +121,13 @@ export default function AdminBlogPage() {
   };
 
   const handleDelete = async (id: string) => {
-    if (!confirm("Supprimer cet article définitivement ?")) return;
     setDeleting(id);
     try {
       await fetch(`/api/blog?id=${id}`, { method: "DELETE" });
       toast.success("Article supprimé");
       await loadPosts();
     } catch { toast.error("Erreur"); }
-    finally { setDeleting(null); }
+    finally { setDeleting(null); setConfirmDeleteId(null); }
   };
 
   // ── Editor ────────────────────────────────────────────
@@ -408,7 +409,7 @@ export default function AdminBlogPage() {
                       <button onClick={() => handleEdit(post)} className="p-1.5 text-blue-600 hover:bg-blue-50 rounded-lg transition-colors">
                         <Edit2 className="w-4 h-4" />
                       </button>
-                      <button onClick={() => handleDelete(post.id)} disabled={deleting === post.id}
+                      <button onClick={() => setConfirmDeleteId(post.id)} disabled={deleting === post.id}
                         className="p-1.5 text-red-500 hover:bg-red-50 rounded-lg transition-colors disabled:opacity-50">
                         {deleting === post.id ? <Loader2 className="w-4 h-4 animate-spin" /> : <Trash2 className="w-4 h-4" />}
                       </button>
@@ -420,6 +421,16 @@ export default function AdminBlogPage() {
           </table>
         </div>
       )}
+      <ConfirmDialog
+        isOpen={!!confirmDeleteId}
+        onClose={() => setConfirmDeleteId(null)}
+        onConfirm={() => confirmDeleteId && handleDelete(confirmDeleteId)}
+        title="Supprimer l'article"
+        message="Cette action est irréversible. L'article sera définitivement supprimé."
+        confirmText="Supprimer"
+        variant="danger"
+        loading={!!deleting}
+      />
     </div>
   );
 }

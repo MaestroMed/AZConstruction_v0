@@ -284,7 +284,7 @@ export default function ParametresPage() {
         </button>
       </div>
 
-      <div className="grid lg:grid-cols-4 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
         {/* Navigation */}
         <div className="lg:col-span-1">
           <nav className="bg-white rounded-xl border border-gray-200 overflow-hidden">

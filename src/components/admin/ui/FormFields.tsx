@@ -102,8 +102,19 @@ export const Textarea = React.forwardRef<HTMLTextAreaElement, TextareaProps>(
           rows={4}
           {...props}
         />
-        {error && <p className="text-sm text-red-500">{error}</p>}
-        {hint && !error && <p className="text-sm text-gray-500">{hint}</p>}
+        {props.maxLength ? (
+          <div className="flex justify-between items-center">
+            <div>{error ? <p className="text-sm text-red-500">{error}</p> : hint ? <p className="text-sm text-gray-500">{hint}</p> : null}</div>
+            <p className={cn("text-xs tabular-nums", typeof props.value === "string" && props.value.length > props.maxLength * 0.9 ? "text-orange-500" : "text-gray-400")}>
+              {typeof props.value === "string" ? props.value.length : 0}/{props.maxLength}
+            </p>
+          </div>
+        ) : (
+          <>
+            {error && <p className="text-sm text-red-500">{error}</p>}
+            {hint && !error && <p className="text-sm text-gray-500">{hint}</p>}
+          </>
+        )}
       </div>
     );
   }
