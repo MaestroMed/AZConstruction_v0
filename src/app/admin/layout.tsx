@@ -7,11 +7,12 @@ import {
   ChevronLeft,
   ChevronRight,
   Bell,
-  Search,
   LogOut,
   Menu,
   X,
   ChevronDown,
+  Moon,
+  Sun,
 } from "lucide-react";
 import { navigationItems, breadcrumbLabels } from "./navigation";
 import { CommandPalette } from "@/components/admin/ui/CommandPalette";
@@ -146,6 +147,26 @@ function AdminLayoutContent({
   const pathname = usePathname();
   const [collapsed, setCollapsed] = React.useState(false);
   const [mobileOpen, setMobileOpen] = React.useState(false);
+  const [darkMode, setDarkMode] = React.useState(false);
+
+  // Load dark mode preference
+  React.useEffect(() => {
+    const saved = localStorage.getItem("adminDarkMode");
+    if (saved === "true") {
+      setDarkMode(true);
+      document.documentElement.classList.add("dark");
+    }
+  }, []);
+
+  const toggleDarkMode = () => {
+    setDarkMode(prev => {
+      const next = !prev;
+      localStorage.setItem("adminDarkMode", String(next));
+      if (next) document.documentElement.classList.add("dark");
+      else document.documentElement.classList.remove("dark");
+      return next;
+    });
+  };
   const [searchOpen, setSearchOpen] = React.useState(false);
   const { handleLogout } = useAdminLogout();
 
@@ -252,7 +273,7 @@ function AdminLayoutContent({
         )}
       >
         {/* Header */}
-        <header className="h-16 bg-white border-b border-gray-200 sticky top-0 z-30 flex items-center justify-between px-4 lg:px-6">
+        <header className="h-16 bg-white dark:bg-slate-900 border-b border-gray-200 dark:border-slate-700 sticky top-0 z-30 flex items-center justify-between px-4 lg:px-6">
           <div className="flex items-center gap-4">
             {/* Mobile menu button */}
             <button
@@ -270,8 +291,17 @@ function AdminLayoutContent({
             {/* Command Palette trigger */}
             <CommandPalette />
 
+            {/* Dark mode toggle */}
+            <button
+              onClick={toggleDarkMode}
+              className="p-2 text-gray-500 hover:text-gray-700 hover:bg-gray-100 dark:text-gray-400 dark:hover:text-gray-200 dark:hover:bg-gray-700 rounded-lg transition-colors"
+              title={darkMode ? "Mode clair" : "Mode sombre"}
+            >
+              {darkMode ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
+            </button>
+
             {/* Notifications */}
-            <button className="relative p-2 text-gray-500 hover:text-gray-700 hover:bg-gray-100 rounded-lg">
+            <button className="relative p-2 text-gray-500 hover:text-gray-700 hover:bg-gray-100 dark:text-gray-400 dark:hover:text-gray-200 dark:hover:bg-gray-700 rounded-lg">
               <Bell className="w-5 h-5" />
               <span className="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full" />
             </button>
@@ -303,7 +333,7 @@ function AdminLayoutContent({
         )}
 
         {/* Page content */}
-        <main className="p-4 lg:p-6">{children}</main>
+        <main className="p-4 lg:p-6 bg-gray-50 dark:bg-slate-950 min-h-[calc(100vh-4rem)] transition-colors">{children}</main>
       </div>
 
       {/* Toast notifications */}
