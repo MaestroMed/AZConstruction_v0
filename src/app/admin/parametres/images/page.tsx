@@ -318,101 +318,14 @@ function VideoUploadCard({
   const [progress, setProgress] = React.useState("");
   const [dragOver, setDragOver] = React.useState(false);
 
-  // Client-side video optimization: compress & convert to MP4 using Canvas + MediaRecorder
-  const optimizeVideo = async (file: File): Promise<File> => {
-    // If already MP4 and < 15MB, skip conversion
-    if (file.type === "video/mp4" && file.size < 15 * 1024 * 1024) {
-      return file;
+  const handleFile = (file: File) => {
+    // Skip client-side re-encoding — upload directly to Vercel Blob
+    // A 720p/1080p MP4 under 50MB is already web-optimized
+    if (file.size > 50 * 1024 * 1024) {
+      toast.error(`Vidéo trop volumineuse (${(file.size / 1024 / 1024).toFixed(0)} Mo). Maximum : 50 Mo.`);
+      return;
     }
-
-    // For larger or non-MP4 files, attempt client-side re-encoding via MediaRecorder
-    // This converts to WebM (VP8/VP9) which is well-supported
-    if (typeof MediaRecorder === "undefined" || !MediaRecorder.isTypeSupported("video/webm")) {
-      // Browser doesn't support MediaRecorder, upload as-is
-      return file;
-    }
-
-    setConverting(true);
-    setProgress("Optimisation en cours...");
-
-    try {
-      const videoEl = document.createElement("video");
-      videoEl.muted = true;
-      videoEl.playsInline = true;
-      const url = URL.createObjectURL(file);
-      videoEl.src = url;
-
-      await new Promise<void>((resolve, reject) => {
-        videoEl.onloadedmetadata = () => resolve();
-        videoEl.onerror = () => reject(new Error("Impossible de lire cette vidéo"));
-      });
-
-      // Limit resolution to 1080p for web
-      const maxH = 1080;
-      let { videoWidth: w, videoHeight: h } = videoEl;
-      if (h > maxH) {
-        w = Math.round((w * maxH) / h);
-        h = maxH;
-      }
-
-      const canvas = document.createElement("canvas");
-      canvas.width = w;
-      canvas.height = h;
-      const ctx = canvas.getContext("2d")!;
-
-      const stream = canvas.captureStream(30);
-      const recorder = new MediaRecorder(stream, {
-        mimeType: "video/webm",
-        videoBitsPerSecond: 2_500_000, // 2.5 Mbps — good quality, reasonable size
-      });
-
-      const chunks: BlobPart[] = [];
-      recorder.ondataavailable = (e) => { if (e.data.size > 0) chunks.push(e.data); };
-
-      const done = new Promise<Blob>((resolve) => {
-        recorder.onstop = () => resolve(new Blob(chunks, { type: "video/webm" }));
-      });
-
-      recorder.start();
-      videoEl.currentTime = 0;
-      await videoEl.play();
-
-      setProgress("Ré-encodage vidéo...");
-
-      // Draw frames to canvas
-      const drawFrame = () => {
-        if (videoEl.ended || videoEl.paused) {
-          recorder.stop();
-          return;
-        }
-        ctx.drawImage(videoEl, 0, 0, w, h);
-        const pct = Math.round((videoEl.currentTime / videoEl.duration) * 100);
-        setProgress(`Ré-encodage... ${pct}%`);
-        requestAnimationFrame(drawFrame);
-      };
-      requestAnimationFrame(drawFrame);
-
-      const blob = await done;
-      URL.revokeObjectURL(url);
-
-      const optimizedName = file.name.replace(/\.[^.]+$/, ".webm");
-      const optimized = new File([blob], optimizedName, { type: "video/webm", lastModified: Date.now() });
-
-      setProgress(`Terminé ! ${(file.size / 1024 / 1024).toFixed(1)}MB → ${(optimized.size / 1024 / 1024).toFixed(1)}MB`);
-
-      // Use optimized if smaller, otherwise original
-      return optimized.size < file.size ? optimized : file;
-    } catch (err) {
-      console.warn("Video optimization failed, using original:", err);
-      return file;
-    } finally {
-      setConverting(false);
-    }
-  };
-
-  const handleFile = async (file: File) => {
-    const optimized = await optimizeVideo(file);
-    onUpload(optimized);
+    onUpload(file);
   };
 
   return (
@@ -691,48 +604,19 @@ export default function ImagesSettingsPage() {
   const handleVideoUpload = async (key: string, file: File) => {
     setVideoUploading(key);
     try {
-      let videoUrl: string;
+      // Upload via dedicated video route (server-side put() to Vercel Blob)
+      toast.loading(`Upload vidéo (${(file.size / 1024 / 1024).toFixed(1)} Mo)...`, { id: "video-upload" });
+      const fd = new FormData();
+      fd.append("file", file);
+      const upRes = await fetch("/api/upload/video", { method: "POST", body: fd });
+      toast.dismiss("video-upload");
 
-      // Try Vercel Blob client upload first (bypasses 4.5MB serverless limit)
-      if (process.env.NEXT_PUBLIC_BLOB_READ_WRITE_TOKEN || typeof window !== "undefined") {
-        try {
-          toast.loading("Upload vidéo en cours...", { id: "video-upload" });
-          const { upload } = await import("@vercel/blob/client");
-          const blob = await upload(
-            `hero-videos/${key}-${Date.now()}.${file.name.split(".").pop()}`,
-            file,
-            { access: "public", handleUploadUrl: "/api/upload/video" }
-          );
-          videoUrl = blob.url;
-          toast.dismiss("video-upload");
-        } catch (blobErr) {
-          toast.dismiss("video-upload");
-          console.warn("Blob client upload failed, trying FormData fallback:", blobErr);
-          // Fallback: standard FormData upload (works if file < 4.5MB or on Pro plan)
-          const fd = new FormData();
-          fd.append("files", file);
-          fd.append("folder", "hero-videos");
-          toast.loading("Upload vidéo (fallback)...", { id: "video-upload" });
-          const upRes = await fetch("/api/upload", { method: "POST", body: fd });
-          toast.dismiss("video-upload");
-          if (!upRes.ok) {
-            const e = await upRes.json().catch(() => ({}));
-            throw new Error(e.error || "Erreur upload vidéo — fichier trop volumineux ? (max ~4.5 MB via API classique)");
-          }
-          const upData = await upRes.json();
-          videoUrl = upData.files?.[0]?.url;
-        }
-      } else {
-        // No blob config — direct FormData
-        const fd = new FormData();
-        fd.append("files", file);
-        fd.append("folder", "hero-videos");
-        const upRes = await fetch("/api/upload", { method: "POST", body: fd });
-        if (!upRes.ok) throw new Error("Erreur upload vidéo");
-        const upData = await upRes.json();
-        videoUrl = upData.files?.[0]?.url;
+      if (!upRes.ok) {
+        const e = await upRes.json().catch(() => ({}));
+        throw new Error(e.error || "Erreur upload vidéo");
       }
 
+      const { url: videoUrl } = await upRes.json();
       if (!videoUrl) throw new Error("Pas d'URL vidéo retournée");
 
       toast.loading("Enregistrement...", { id: "video-save" });
