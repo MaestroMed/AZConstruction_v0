@@ -604,25 +604,21 @@ export default function ImagesSettingsPage() {
   const handleVideoUpload = async (key: string, file: File) => {
     setVideoUploading(key);
     try {
-      // Upload via PUT streaming (bypasses 4.5MB serverless body limit)
-      // The raw file is sent as the request body, not in FormData
+      // Vercel Blob client upload: file goes directly from browser to Blob storage
+      // Only a small JSON token request goes through the serverless function
       toast.loading(`Upload vidéo (${(file.size / 1024 / 1024).toFixed(1)} Mo)...`, { id: "video-upload" });
-      const upRes = await fetch("/api/upload/video", {
-        method: "PUT",
-        headers: {
-          "content-type": file.type || "video/mp4",
-          "x-filename": file.name,
-        },
-        body: file,
-      });
+      const { upload } = await import("@vercel/blob/client");
+      const blob = await upload(
+        `hero-videos/${key}-${Date.now()}.${file.name.split(".").pop() || "mp4"}`,
+        file,
+        {
+          access: "public",
+          handleUploadUrl: "/api/upload/video",
+        }
+      );
       toast.dismiss("video-upload");
 
-      if (!upRes.ok) {
-        const e = await upRes.json().catch(() => ({}));
-        throw new Error(e.error || "Erreur upload vidéo");
-      }
-
-      const { url: videoUrl } = await upRes.json();
+      const videoUrl = blob.url;
       if (!videoUrl) throw new Error("Pas d'URL vidéo retournée");
 
       toast.loading("Enregistrement...", { id: "video-save" });
