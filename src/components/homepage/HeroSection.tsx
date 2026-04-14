@@ -57,10 +57,11 @@ export default function HeroSection() {
   const [slideIndex, setSlideIndex] = React.useState(0);
 
   React.useEffect(() => {
+    const controller = new AbortController();
     const load = async () => {
       // Charger les slides depuis l'API
       try {
-        const res = await fetch("/api/hero-slides");
+        const res = await fetch("/api/hero-slides", { signal: controller.signal });
         if (res.ok) {
           const data = await res.json();
           if (data.success && data.slides?.length) {
@@ -99,7 +100,10 @@ export default function HeroSection() {
       setSettings({ ...defaultSettings, ...e.detail });
     };
     window.addEventListener("az_hero_updated", handleUpdate as EventListener);
-    return () => window.removeEventListener("az_hero_updated", handleUpdate as EventListener);
+    return () => {
+      controller.abort();
+      window.removeEventListener("az_hero_updated", handleUpdate as EventListener);
+    };
   }, []);
 
   const currentSlide = slides[slideIndex] ?? slides[0];
