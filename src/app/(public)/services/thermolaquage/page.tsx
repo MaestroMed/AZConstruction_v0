@@ -273,6 +273,8 @@ export default function ThermolaquagePage() {
   const [modelImages, setModelImages] = React.useState<ModelColorImages>({});
   const [isImageLoading, setIsImageLoading] = React.useState(false);
   const [demandsItems, setDemandsItems] = React.useState<{ id: string; label: string; imageUrl: string; href?: string | null; size: string }[]>([]);
+  const [isVideoLoaded, setIsVideoLoaded] = React.useState(false);
+  const videoRef = React.useRef<HTMLVideoElement>(null);
   const { getImage } = useSiteImages();
   const heroImage = getImage("hero-thermolaquage");
 
@@ -369,17 +371,36 @@ export default function ThermolaquagePage() {
         {/* Particles */}
         <ParticleBackground count={10} />
         
-        {/* Background Image with Parallax */}
+        {/* Background Video with Parallax (falls back to image if no video) */}
         <motion.div
           className="absolute inset-0"
           style={{ y: heroY, opacity: heroOpacity }}
         >
+          {/* Video Background */}
+          <video
+            ref={videoRef}
+            autoPlay
+            muted
+            loop
+            playsInline
+            poster={heroImage}
+            onCanPlay={() => setIsVideoLoaded(true)}
+            className={`absolute inset-0 w-full h-full object-cover object-center opacity-55 transition-opacity duration-1000 ${
+              isVideoLoaded ? "opacity-55" : "opacity-0"
+            }`}
+          >
+            <source src="/videos/hero-thermolaquage.mp4" type="video/mp4" />
+            <source src="/videos/hero-thermolaquage.webm" type="video/webm" />
+          </video>
+          {/* Fallback Image (shown while video loads or if video fails) */}
           <Image
             src={heroImage}
             alt="Thermolaquage Professionnel - AZ Construction"
             fill
             priority
-            className="object-cover object-center opacity-55"
+            className={`object-cover object-center transition-opacity duration-1000 ${
+              isVideoLoaded ? "opacity-0" : "opacity-55"
+            }`}
             quality={85}
           />
           {/* Overlay for text readability */}
