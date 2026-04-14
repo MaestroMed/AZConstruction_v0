@@ -34,9 +34,9 @@ export function PageHeader({
     primary:
       "bg-cyan-600 text-white hover:bg-cyan-700",
     secondary:
-      "bg-gray-100 text-gray-700 hover:bg-gray-200",
+      "bg-gray-100 text-gray-700 hover:bg-gray-200 dark:bg-slate-800 dark:text-gray-300 dark:hover:bg-slate-700",
     danger:
-      "bg-red-50 text-red-600 hover:bg-red-100",
+      "bg-red-50 text-red-600 hover:bg-red-100 dark:bg-red-900/20 dark:text-red-400",
   };
 
   return (
@@ -45,14 +45,14 @@ export function PageHeader({
         {backHref && (
           <Link
             href={backHref}
-            className="inline-flex items-center gap-1.5 text-sm text-gray-500 hover:text-cyan-600 transition-colors mb-2"
+            className="inline-flex items-center gap-1.5 text-sm text-gray-500 dark:text-gray-400 hover:text-cyan-600 transition-colors mb-2"
           >
             <ArrowLeft className="w-4 h-4" />
             {backLabel}
           </Link>
         )}
         <div className="flex items-center gap-3">
-          <h1 className="text-2xl font-bold text-gray-900">{title}</h1>
+          <h1 className="text-2xl font-bold text-gray-900 dark:text-white">{title}</h1>
           {badge && (
             <span
               className={`text-xs font-medium px-2.5 py-1 rounded-full ${
@@ -64,7 +64,7 @@ export function PageHeader({
           )}
         </div>
         {description && (
-          <p className="text-gray-500 text-sm mt-1">{description}</p>
+          <p className="text-gray-500 dark:text-gray-400 text-sm mt-1">{description}</p>
         )}
       </div>
 

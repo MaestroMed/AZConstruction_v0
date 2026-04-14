@@ -83,16 +83,16 @@ export function Modal({
             aria-modal="true"
             aria-label={title || "Modal"}
             className={cn(
-              "relative w-full bg-white rounded-2xl shadow-2xl overflow-hidden",
+              "relative w-full bg-white dark:bg-slate-900 rounded-2xl shadow-2xl overflow-hidden",
               sizes[size]
             )}
           >
             {/* Header */}
             {(title || showCloseButton) && (
-              <div className="flex items-start justify-between p-6 border-b border-gray-100">
+              <div className="flex items-start justify-between p-6 border-b border-gray-100 dark:border-slate-700">
                 <div>
                   {title && (
-                    <h2 className="text-xl font-semibold text-gray-900">{title}</h2>
+                    <h2 className="text-xl font-semibold text-gray-900 dark:text-white">{title}</h2>
                   )}
                   {description && (
                     <p className="mt-1 text-sm text-gray-500">{description}</p>
@@ -306,10 +306,10 @@ export function SlideOver({
             )}
           >
             {/* Header */}
-            <div className="flex items-start justify-between p-6 border-b border-gray-100">
+            <div className="flex items-start justify-between p-6 border-b border-gray-100 dark:border-slate-700">
               <div>
                 {title && (
-                  <h2 className="text-xl font-semibold text-gray-900">{title}</h2>
+                  <h2 className="text-xl font-semibold text-gray-900 dark:text-white">{title}</h2>
                 )}
                 {description && (
                   <p className="mt-1 text-sm text-gray-500">{description}</p>

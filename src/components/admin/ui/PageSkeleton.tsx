@@ -3,7 +3,7 @@
 import { cn } from "@/lib/utils";
 
 function SkeletonPulse({ className }: { className?: string }) {
-  return <div className={cn("animate-pulse bg-gray-200 rounded-lg", className)} />;
+  return <div className={cn("animate-pulse bg-gray-200 dark:bg-slate-700 rounded-lg", className)} />;
 }
 
 interface PageSkeletonProps {
