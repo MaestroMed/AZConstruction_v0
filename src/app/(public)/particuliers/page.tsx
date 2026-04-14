@@ -231,6 +231,60 @@ function ProcessStep({ item, index, total }: { item: typeof processSteps[0]; ind
 export default function ParticuliersPage() {
   const { getImage } = useSiteImages();
 
+  // CMS sections override (from backoffice)
+  const [cmsData, setCmsData] = React.useState<Record<string, Record<string, unknown>>>({});
+
+  React.useEffect(() => {
+    fetch("/api/sections?page=particuliers")
+      .then(r => r.json())
+      .then(data => {
+        if (data.success && data.sections?.length) {
+          const map: Record<string, Record<string, unknown>> = {};
+          data.sections.forEach((s: { sectionKey: string; content: Record<string, unknown> }) => {
+            map[s.sectionKey] = s.content;
+          });
+          setCmsData(map);
+        }
+      })
+      .catch(() => {});
+  }, []);
+
+  // Merge CMS data with hardcoded defaults
+  const cmsServices = cmsData.services?.items as Array<Record<string, string>> | undefined;
+  const activeServices = cmsServices?.length
+    ? cmsServices.map((s, i) => ({
+        icon: services[i]?.icon ?? Shield,
+        title: s.title || services[i]?.title || "",
+        description: s.description || services[i]?.description || "",
+        features: (s.features || "").split("\n").filter(Boolean).length > 0
+          ? (s.features || "").split("\n").filter(Boolean)
+          : services[i]?.features || [],
+        imageKey: services[i]?.imageKey || `product-${i}`,
+        configLink: services[i]?.configLink || null,
+        href: s.href || services[i]?.href,
+        accent: services[i]?.accent || "from-cyan-glow to-blue-400",
+      }))
+    : services;
+
+  const cmsFaqs = cmsData.faq?.items as Array<Record<string, string>> | undefined;
+  const activeFaqs = cmsFaqs?.length
+    ? cmsFaqs.map(f => ({ question: f.question, answer: f.answer }))
+    : faqs;
+
+  const cmsGuarantees = cmsData.guarantees?.items as Array<Record<string, string>> | undefined;
+  const activeGuarantees = cmsGuarantees?.length
+    ? cmsGuarantees.map((g, i) => ({
+        icon: guarantees[i]?.icon ?? Shield,
+        title: g.title || guarantees[i]?.title || "",
+        description: g.description || guarantees[i]?.description || "",
+      }))
+    : guarantees;
+
+  const cmsStats = cmsData.stats?.items as Array<Record<string, string>> | undefined;
+  const activeStats = cmsStats?.length
+    ? cmsStats.map(s => ({ number: s.value, label: s.label }))
+    : heroStats;
+
   // Familles de produits pour le carrousel
   const [families, setFamilies] = React.useState<{ id: string; nom: string; slug: string; imageUrl?: string }[]>([]);
   const [carouselIdx, setCarouselIdx] = React.useState(0);
@@ -365,7 +419,7 @@ export default function ParticuliersPage() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.5, duration: 0.7 }}
           >
-            {heroStats.map((stat, i) => (
+            {activeStats.map((stat, i) => (
               <motion.div
                 key={stat.label}
                 className="glass-card rounded-2xl p-6 text-center border border-white/10"
@@ -394,7 +448,7 @@ export default function ParticuliersPage() {
       {/* ═══════════════════════════════════════════════════════
           SERVICES — Sections pleine largeur, fond blanc partout
       ═══════════════════════════════════════════════════════ */}
-      {services.map((service, index) => (
+      {activeServices.map((service, index) => (
         <section
           key={index}
           className="relative overflow-hidden bg-white"
@@ -635,7 +689,7 @@ export default function ParticuliersPage() {
           </motion.div>
 
           <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {guarantees.map((item, index) => (
+            {activeGuarantees.map((item, index) => (
               <motion.div
                 key={index}
                 initial={{ opacity: 0, y: 30 }}
@@ -715,7 +769,7 @@ export default function ParticuliersPage() {
           </motion.div>
 
           <div className="max-w-3xl mx-auto space-y-4">
-            {faqs.map((faq, index) => (
+            {activeFaqs.map((faq, index) => (
               <FAQItem key={index} faq={faq} index={index} />
             ))}
             <div className="text-center pt-6">

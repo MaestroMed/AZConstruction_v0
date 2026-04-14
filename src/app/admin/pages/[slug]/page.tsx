@@ -140,7 +140,90 @@ const pageConfigs: Record<string, PageConfig> = {
         fields: [
           { name: "title", label: "Titre principal", type: "text" },
           { name: "subtitle", label: "Sous-titre", type: "textarea" },
+          { name: "badge", label: "Badge (au-dessus du titre)", type: "text" },
+          { name: "ctaText", label: "Texte bouton principal", type: "text" },
+          { name: "ctaLink", label: "Lien bouton principal", type: "text" },
+          { name: "cta2Text", label: "Texte bouton secondaire", type: "text" },
+          { name: "cta2Link", label: "Lien bouton secondaire", type: "text" },
         ],
+      },
+      {
+        key: "stats",
+        label: "Statistiques (Hero)",
+        listField: {
+          name: "items",
+          label: "Stats",
+          itemFields: [
+            { name: "value", label: "Valeur (ex: 1500+)", type: "text" },
+            { name: "label", label: "Label", type: "text" },
+          ],
+        },
+      },
+      {
+        key: "services",
+        label: "Services / Produits",
+        fields: [
+          { name: "sectionTitle", label: "Titre de section", type: "text" },
+          { name: "sectionSubtitle", label: "Sous-titre", type: "text" },
+        ],
+        listField: {
+          name: "items",
+          label: "Services",
+          itemFields: [
+            { name: "title", label: "Titre", type: "text" },
+            { name: "description", label: "Description", type: "textarea" },
+            { name: "icon", label: "Icône (nom Lucide)", type: "text" },
+            { name: "href", label: "Lien (ex: /produits/garde-corps)", type: "text" },
+            { name: "features", label: "Caractéristiques (une par ligne)", type: "textarea" },
+          ],
+        },
+      },
+      {
+        key: "guarantees",
+        label: "Garanties",
+        fields: [
+          { name: "sectionTitle", label: "Titre de section", type: "text" },
+        ],
+        listField: {
+          name: "items",
+          label: "Garanties",
+          itemFields: [
+            { name: "title", label: "Titre", type: "text" },
+            { name: "description", label: "Description", type: "textarea" },
+            { name: "icon", label: "Icône (nom Lucide)", type: "text" },
+          ],
+        },
+      },
+      {
+        key: "process",
+        label: "Processus / Parcours client",
+        fields: [
+          { name: "sectionTitle", label: "Titre de section", type: "text" },
+        ],
+        listField: {
+          name: "steps",
+          label: "Étapes",
+          itemFields: [
+            { name: "title", label: "Titre", type: "text" },
+            { name: "description", label: "Description", type: "textarea" },
+            { name: "icon", label: "Icône (nom Lucide)", type: "text" },
+          ],
+        },
+      },
+      {
+        key: "faq",
+        label: "FAQ",
+        fields: [
+          { name: "sectionTitle", label: "Titre de section", type: "text" },
+        ],
+        listField: {
+          name: "items",
+          label: "Questions",
+          itemFields: [
+            { name: "question", label: "Question", type: "text" },
+            { name: "answer", label: "Réponse", type: "textarea" },
+          ],
+        },
       },
     ],
   },
