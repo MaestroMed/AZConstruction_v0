@@ -18,6 +18,8 @@ import {
   RefreshCw,
 } from "lucide-react";
 import { Modal, ConfirmDialog } from "@/components/admin/ui/Modal";
+import { PageHeader } from "@/components/admin/ui/PageHeader";
+import { EmptyState } from "@/components/admin/ui/EmptyState";
 import { toast } from "sonner";
 import { format } from "date-fns";
 import { fr } from "date-fns/locale";
@@ -165,35 +167,14 @@ export default function MediasPage() {
 
   return (
     <div className="space-y-6">
-      {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-        <div>
-          <h1 className="text-2xl font-bold text-gray-900">Médiathèque</h1>
-          <p className="text-gray-500 mt-1">
-            Gérez vos images, documents et modèles 3D
-          </p>
-        </div>
-        <div className="flex items-center gap-2">
-          <button
-            onClick={loadFiles}
-            className="inline-flex items-center gap-2 px-3 py-2 bg-gray-100 text-gray-700 rounded-lg text-sm font-medium hover:bg-gray-200 transition-colors"
-          >
-            <RefreshCw className={`w-4 h-4 ${loading ? "animate-spin" : ""}`} />
-          </button>
-          <button
-            onClick={open}
-            disabled={uploading}
-            className="inline-flex items-center gap-2 px-4 py-2 bg-cyan-500 text-white rounded-lg text-sm font-medium hover:bg-cyan-600 transition-colors disabled:opacity-50"
-          >
-            {uploading ? (
-              <Loader2 className="w-4 h-4 animate-spin" />
-            ) : (
-              <Upload className="w-4 h-4" />
-            )}
-            {uploading ? "Upload en cours..." : "Ajouter des fichiers"}
-          </button>
-        </div>
-      </div>
+      <PageHeader
+        title="Médiathèque"
+        description="Gérez vos images, documents et modèles 3D"
+        actions={[
+          { label: "", icon: RefreshCw, onClick: loadFiles, variant: "secondary", loading },
+          { label: uploading ? "Upload en cours..." : "Ajouter des fichiers", icon: Upload, onClick: open, disabled: uploading },
+        ]}
+      />
 
       {/* Upload zone */}
       <div

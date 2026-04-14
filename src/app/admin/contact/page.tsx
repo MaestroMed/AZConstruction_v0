@@ -22,6 +22,8 @@ import {
 } from "lucide-react";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
+import { PageHeader } from "@/components/admin/ui/PageHeader";
+import { EmptyState } from "@/components/admin/ui/EmptyState";
 
 interface ContactMessage {
   id: string;
@@ -159,28 +161,14 @@ export default function AdminContactPage() {
 
   return (
     <div className="flex flex-col h-full">
-      {/* Header */}
-      <div className="flex items-center justify-between mb-6">
-        <div>
-          <h1 className="text-2xl font-bold text-gray-900 flex items-center gap-2">
-            <MessageSquare className="w-6 h-6 text-blue-600" />
-            Messages de contact
-            {counts.nouveau > 0 && (
-              <span className="inline-flex items-center justify-center w-6 h-6 bg-red-500 text-white text-xs font-bold rounded-full">
-                {counts.nouveau}
-              </span>
-            )}
-          </h1>
-          <p className="text-gray-500 text-sm mt-1">{counts.all} message{counts.all !== 1 ? "s" : ""} au total</p>
-        </div>
-        <button
-          onClick={loadMessages}
-          className="inline-flex items-center gap-2 px-3 py-2 bg-gray-100 rounded-lg text-sm text-gray-600 hover:bg-gray-200 transition-colors"
-        >
-          <RefreshCw className="w-4 h-4" />
-          Actualiser
-        </button>
-      </div>
+      <PageHeader
+        title="Messages de contact"
+        description={`${counts.all} message${counts.all !== 1 ? "s" : ""} au total`}
+        badge={counts.nouveau > 0 ? { label: `${counts.nouveau} nouveau${counts.nouveau > 1 ? "x" : ""}`, color: "bg-red-100 text-red-700" } : undefined}
+        actions={[
+          { label: "Actualiser", icon: RefreshCw, onClick: loadMessages, variant: "secondary" },
+        ]}
+      />
 
       {/* Filters */}
       <div className="flex flex-col sm:flex-row gap-3 mb-4">
@@ -229,10 +217,11 @@ export default function AdminContactPage() {
               <Loader2 className="w-8 h-8 animate-spin text-blue-600" />
             </div>
           ) : filtered.length === 0 ? (
-            <div className="text-center py-20 text-gray-400">
-              <MessageSquare className="w-12 h-12 mx-auto mb-3 opacity-30" />
-              <p>Aucun message</p>
-            </div>
+            <EmptyState
+              icon={MessageSquare}
+              title="Aucun message"
+              description={searchTerm || statusFilter !== "all" ? "Essayez de modifier vos filtres." : "Les messages de contact apparaîtront ici."}
+            />
           ) : (
             filtered.map((msg) => (
               <button

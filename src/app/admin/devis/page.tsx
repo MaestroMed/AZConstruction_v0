@@ -8,6 +8,7 @@ import { type ColumnDef } from "@tanstack/react-table";
 import { format, differenceInDays } from "date-fns";
 import { fr } from "date-fns/locale";
 import { toast } from "sonner";
+import { PageHeader } from "@/components/admin/ui/PageHeader";
 
 interface Quote {
   id: string;
@@ -244,28 +245,14 @@ export default function QuotesPage() {
 
   return (
     <div className="space-y-6">
-      {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-        <div>
-          <h1 className="text-2xl font-bold text-gray-900">Devis</h1>
-          <p className="text-gray-500 mt-1">
-            Gérez vos demandes de devis
-          </p>
-        </div>
-        <div className="flex items-center gap-3">
-          <button className="inline-flex items-center gap-2 px-4 py-2 bg-white border border-gray-200 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50 transition-colors">
-            <Download className="w-4 h-4" />
-            Exporter
-          </button>
-          <Link
-            href="/admin/devis/nouveau"
-            className="inline-flex items-center gap-2 px-4 py-2 bg-cyan-500 text-white rounded-lg text-sm font-medium hover:bg-cyan-600 transition-colors"
-          >
-            <Plus className="w-4 h-4" />
-            Nouveau devis
-          </Link>
-        </div>
-      </div>
+      <PageHeader
+        title="Devis"
+        description="Gérez vos demandes de devis"
+        actions={[
+          { label: "Exporter", icon: Download, variant: "secondary", onClick: () => {} },
+          { label: "Nouveau devis", icon: Plus, href: "/admin/devis/nouveau" },
+        ]}
+      />
 
       {/* Status tabs */}
       <div className="flex flex-wrap items-center gap-2">

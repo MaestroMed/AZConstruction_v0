@@ -1,9 +1,11 @@
 "use client";
 
 import * as React from "react";
-import { Plus, Edit, Trash2, Upload, Search } from "lucide-react";
+import { Plus, Edit, Trash2, Upload, Search, Palette } from "lucide-react";
 import { Modal, ConfirmDialog } from "@/components/admin/ui/Modal";
 import { Input, ColorPicker } from "@/components/admin/ui/FormFields";
+import { PageHeader } from "@/components/admin/ui/PageHeader";
+import { EmptyState } from "@/components/admin/ui/EmptyState";
 import { toast } from "sonner";
 
 interface RALColor {
@@ -94,34 +96,14 @@ export default function CouleursPage() {
 
   return (
     <div className="space-y-6">
-      {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-        <div>
-          <h1 className="text-2xl font-bold text-gray-900">Couleurs RAL</h1>
-          <p className="text-gray-500 mt-1">
-            Gérez le nuancier de couleurs disponibles
-          </p>
-        </div>
-        <div className="flex items-center gap-3">
-          <button
-            onClick={handleImport}
-            className="inline-flex items-center gap-2 px-4 py-2 bg-white border border-gray-200 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50 transition-colors"
-          >
-            <Upload className="w-4 h-4" />
-            Importer
-          </button>
-          <button
-            onClick={() => {
-              setEditingColor(null);
-              setIsModalOpen(true);
-            }}
-            className="inline-flex items-center gap-2 px-4 py-2 bg-cyan-500 text-white rounded-lg text-sm font-medium hover:bg-cyan-600 transition-colors"
-          >
-            <Plus className="w-4 h-4" />
-            Ajouter une couleur
-          </button>
-        </div>
-      </div>
+      <PageHeader
+        title="Couleurs RAL"
+        description="Gérez le nuancier de couleurs disponibles"
+        actions={[
+          { label: "Importer", icon: Upload, onClick: handleImport, variant: "secondary" },
+          { label: "Ajouter une couleur", icon: Plus, onClick: () => { setEditingColor(null); setIsModalOpen(true); } },
+        ]}
+      />
 
       {/* Search */}
       <div className="relative max-w-md">
@@ -182,11 +164,13 @@ export default function CouleursPage() {
         ))}
       </div>
 
-      {/* Empty state */}
       {filteredColors.length === 0 && (
-        <div className="text-center py-12">
-          <p className="text-gray-500">Aucune couleur trouvée</p>
-        </div>
+        <EmptyState
+          icon={Palette}
+          title="Aucune couleur trouvée"
+          description={search ? "Essayez de modifier votre recherche." : "Ajoutez votre première couleur au nuancier."}
+          action={!search ? { label: "Ajouter une couleur", onClick: () => { setEditingColor(null); setIsModalOpen(true); } } : undefined}
+        />
       )}
 
       {/* Edit Modal */}
