@@ -1,4 +1,5 @@
 import { prisma } from "@/lib/prisma";
+import { Prisma } from "@prisma/client";
 
 type ActivityAction = "create" | "update" | "delete" | "publish" | "unpublish";
 type ActivityEntity = "blog" | "realization" | "product" | "slide" | "contact" | "devis" | "settings" | "image";
@@ -17,11 +18,10 @@ export async function logActivity(
         entity,
         entityId: entityId || null,
         label,
-        metadata: metadata || null,
+        metadata: metadata ? (metadata as Prisma.InputJsonValue) : Prisma.JsonNull,
       },
     });
   } catch (error) {
-    // Non-blocking — don't fail the main operation if logging fails
     console.error("Activity log error:", error);
   }
 }
