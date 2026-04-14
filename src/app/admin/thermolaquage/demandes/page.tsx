@@ -27,7 +27,7 @@ const SIZE_OPTIONS = [
 function ItemRow({ item, onSave, onDelete, onToggle }: {
   item: DemandItem;
   onSave: (item: DemandItem) => Promise<void>;
-  onDelete: (id: string) => Promise<void>;
+  onDelete: (id: string) => void;
   onToggle: (id: string, active: boolean) => Promise<void>;
 }) {
   const [editing, setEditing] = React.useState(item.id.startsWith("new-"));
