@@ -79,6 +79,9 @@ export function Modal({
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.95, y: 10 }}
             transition={{ duration: 0.2, ease: "easeOut" }}
+            role="dialog"
+            aria-modal="true"
+            aria-label={title || "Modal"}
             className={cn(
               "relative w-full bg-white rounded-2xl shadow-2xl overflow-hidden",
               sizes[size]

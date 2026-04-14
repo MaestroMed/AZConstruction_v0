@@ -13,7 +13,7 @@ export const communes95: Commune[] = [
   { name: 'Taverny', slug: 'taverny', codePostal: '95150', departement: '95' },
   { name: 'Villiers-le-Bel', slug: 'villiers-le-bel', codePostal: '95400', departement: '95' },
   { name: 'Gonesse', slug: 'gonesse', codePostal: '95500', departement: '95' },
-  { name: 'Pontoise', slug: 'pontoise', codePostal: '95300', departement: '95' },
+  { name: 'Pontoise', slug: 'pontoise', codePostal: '95300', departement: '95', population: 31000 },
   { name: 'Cormeilles-en-Parisis', slug: 'cormeilles-en-parisis', codePostal: '95240', departement: '95' },
   { name: 'Deuil-la-Barre', slug: 'deuil-la-barre', codePostal: '95170', departement: '95' },
   { name: 'Montmorency', slug: 'montmorency', codePostal: '95160', departement: '95' },
