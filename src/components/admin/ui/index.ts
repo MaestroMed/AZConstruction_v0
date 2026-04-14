@@ -12,3 +12,4 @@ export * from "./FormFieldSection";
 export * from "./BulkActionBar";
 export * from "./PageSkeleton";
 export * from "./TabNav";
+export * from "./FilterBar";
