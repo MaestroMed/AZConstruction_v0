@@ -1,13 +1,13 @@
 import type { Commune } from '../types'
 
 export const communes94: Commune[] = [
-  { name: 'Créteil', slug: 'creteil', codePostal: '94000', departement: '94' },
-  { name: 'Vitry-sur-Seine', slug: 'vitry-sur-seine', codePostal: '94400', departement: '94' },
-  { name: 'Saint-Maur-des-Fossés', slug: 'saint-maur-des-fosses', codePostal: '94100', departement: '94' },
-  { name: 'Champigny-sur-Marne', slug: 'champigny-sur-marne', codePostal: '94500', departement: '94' },
-  { name: 'Ivry-sur-Seine', slug: 'ivry-sur-seine', codePostal: '94200', departement: '94' },
-  { name: 'Maisons-Alfort', slug: 'maisons-alfort', codePostal: '94700', departement: '94' },
-  { name: 'Fontenay-sous-Bois', slug: 'fontenay-sous-bois', codePostal: '94120', departement: '94' },
+  { name: 'Créteil', slug: 'creteil', codePostal: '94000', departement: '94', population: 92000 },
+  { name: 'Vitry-sur-Seine', slug: 'vitry-sur-seine', codePostal: '94400', departement: '94', population: 94000 },
+  { name: 'Saint-Maur-des-Fossés', slug: 'saint-maur-des-fosses', codePostal: '94100', departement: '94', population: 77000 },
+  { name: 'Champigny-sur-Marne', slug: 'champigny-sur-marne', codePostal: '94500', departement: '94', population: 77000 },
+  { name: 'Ivry-sur-Seine', slug: 'ivry-sur-seine', codePostal: '94200', departement: '94', population: 64000 },
+  { name: 'Maisons-Alfort', slug: 'maisons-alfort', codePostal: '94700', departement: '94', population: 56000 },
+  { name: 'Fontenay-sous-Bois', slug: 'fontenay-sous-bois', codePostal: '94120', departement: '94', population: 53000 },
   { name: 'Villejuif', slug: 'villejuif', codePostal: '94800', departement: '94' },
   { name: 'Vincennes', slug: 'vincennes', codePostal: '94300', departement: '94' },
   { name: 'Alfortville', slug: 'alfortville', codePostal: '94140', departement: '94' },

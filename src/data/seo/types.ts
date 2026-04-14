@@ -15,6 +15,7 @@ export interface Commune {
   slug: string;        // "boulogne-billancourt"
   codePostal: string;  // "92100"
   departement: string; // "92"
+  population?: number; // ~120 000 — for unique content generation
 }
 
 export interface SEOProduct {

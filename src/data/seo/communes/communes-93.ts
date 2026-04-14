@@ -1,13 +1,13 @@
 import type { Commune } from '../types'
 
 export const communes93: Commune[] = [
-  { name: 'Saint-Denis', slug: 'saint-denis', codePostal: '93200', departement: '93' },
-  { name: 'Montreuil', slug: 'montreuil', codePostal: '93100', departement: '93' },
-  { name: 'Aubervilliers', slug: 'aubervilliers', codePostal: '93300', departement: '93' },
-  { name: 'Aulnay-sous-Bois', slug: 'aulnay-sous-bois', codePostal: '93600', departement: '93' },
-  { name: 'Drancy', slug: 'drancy', codePostal: '93700', departement: '93' },
-  { name: 'Noisy-le-Grand', slug: 'noisy-le-grand', codePostal: '93160', departement: '93' },
-  { name: 'Pantin', slug: 'pantin', codePostal: '93500', departement: '93' },
+  { name: 'Saint-Denis', slug: 'saint-denis', codePostal: '93200', departement: '93', population: 113000 },
+  { name: 'Montreuil', slug: 'montreuil', codePostal: '93100', departement: '93', population: 109000 },
+  { name: 'Aubervilliers', slug: 'aubervilliers', codePostal: '93300', departement: '93', population: 87000 },
+  { name: 'Aulnay-sous-Bois', slug: 'aulnay-sous-bois', codePostal: '93600', departement: '93', population: 83000 },
+  { name: 'Drancy', slug: 'drancy', codePostal: '93700', departement: '93', population: 72000 },
+  { name: 'Noisy-le-Grand', slug: 'noisy-le-grand', codePostal: '93160', departement: '93', population: 67000 },
+  { name: 'Pantin', slug: 'pantin', codePostal: '93500', departement: '93', population: 58000 },
   { name: 'Bondy', slug: 'bondy', codePostal: '93140', departement: '93' },
   { name: 'Épinay-sur-Seine', slug: 'epinay-sur-seine', codePostal: '93800', departement: '93' },
   { name: 'Sevran', slug: 'sevran', codePostal: '93270', departement: '93' },

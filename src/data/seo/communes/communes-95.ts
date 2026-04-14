@@ -1,14 +1,14 @@
 import type { Commune } from '../types'
 
 export const communes95: Commune[] = [
-  { name: 'Cergy', slug: 'cergy', codePostal: '95000', departement: '95' },
-  { name: 'Argenteuil', slug: 'argenteuil', codePostal: '95100', departement: '95' },
-  { name: 'Sarcelles', slug: 'sarcelles', codePostal: '95200', departement: '95' },
-  { name: 'Garges-lès-Gonesse', slug: 'garges-les-gonesse', codePostal: '95140', departement: '95' },
-  { name: 'Franconville', slug: 'franconville', codePostal: '95130', departement: '95' },
+  { name: 'Cergy', slug: 'cergy', codePostal: '95000', departement: '95', population: 67000 },
+  { name: 'Argenteuil', slug: 'argenteuil', codePostal: '95100', departement: '95', population: 113000 },
+  { name: 'Sarcelles', slug: 'sarcelles', codePostal: '95200', departement: '95', population: 58000 },
+  { name: 'Garges-lès-Gonesse', slug: 'garges-les-gonesse', codePostal: '95140', departement: '95', population: 43000 },
+  { name: 'Franconville', slug: 'franconville', codePostal: '95130', departement: '95', population: 36000 },
   { name: 'Goussainville', slug: 'goussainville', codePostal: '95190', departement: '95' },
-  { name: 'Bezons', slug: 'bezons', codePostal: '95870', departement: '95' },
-  { name: 'Ermont', slug: 'ermont', codePostal: '95120', departement: '95' },
+  { name: 'Bezons', slug: 'bezons', codePostal: '95870', departement: '95', population: 30000 },
+  { name: 'Ermont', slug: 'ermont', codePostal: '95120', departement: '95', population: 29000 },
   { name: 'Herblay-sur-Seine', slug: 'herblay-sur-seine', codePostal: '95220', departement: '95' },
   { name: 'Taverny', slug: 'taverny', codePostal: '95150', departement: '95' },
   { name: 'Villiers-le-Bel', slug: 'villiers-le-bel', codePostal: '95400', departement: '95' },
