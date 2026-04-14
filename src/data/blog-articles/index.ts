@@ -5,6 +5,9 @@ import { article04 } from './article-04-verriere-atelier'
 import { article05 } from './article-05-hauteur-garde-corps'
 import { article06 } from './article-06-escalier-metal'
 import { article07 } from './article-07-prix-escalier'
+import { article08 } from './article-08-couleurs-ral'
+import { article09 } from './article-09-verriere-cuisine'
+import { article10 } from './article-10-pergola-metal'
 
 export const blogArticles = [
   article01,
@@ -14,5 +17,7 @@ export const blogArticles = [
   article05,
   article06,
   article07,
-  // Articles 8-10 being written by agents
+  article08,
+  article09,
+  article10,
 ]
