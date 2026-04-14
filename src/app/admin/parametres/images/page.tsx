@@ -691,16 +691,13 @@ export default function ImagesSettingsPage() {
   const handleVideoUpload = async (key: string, file: File) => {
     setVideoUploading(key);
     try {
-      const fd = new FormData();
-      fd.append("files", file);
-      fd.append("folder", "hero-videos");
-      const upRes = await fetch("/api/upload", { method: "POST", body: fd });
-      if (!upRes.ok) {
-        const e = await upRes.json().catch(() => ({}));
-        throw new Error(e.error || "Erreur upload vidéo");
-      }
-      const upData = await upRes.json();
-      const videoUrl = upData.files[0]?.url;
+      // Upload directly to Vercel Blob (bypasses 4.5MB serverless body limit)
+      const { upload } = await import("@vercel/blob/client");
+      const blob = await upload(`hero-videos/${key}-${Date.now()}.${file.name.split('.').pop()}`, file, {
+        access: "public",
+        handleUploadUrl: "/api/upload/video",
+      });
+      const videoUrl = blob.url;
       if (!videoUrl) throw new Error("Pas d'URL vidéo");
       const saveRes = await fetch("/api/site-images", {
         method: "POST",
