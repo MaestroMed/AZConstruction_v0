@@ -1,6 +1,38 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { logActivity } from "@/lib/activity-log";
+import { blogArticles } from "@/data/blog-articles";
+
+// Auto-seed: insert default articles if DB is empty (runs once)
+let seeded = false;
+async function autoSeedIfEmpty() {
+  if (seeded) return;
+  try {
+    const count = await prisma.blogPost.count();
+    if (count === 0 && blogArticles.length > 0) {
+      for (const article of blogArticles) {
+        await prisma.blogPost.create({
+          data: {
+            slug: article.slug,
+            title: article.title,
+            excerpt: article.excerpt,
+            content: article.content,
+            category: article.category,
+            tags: article.tags,
+            author: article.author,
+            published: article.published,
+            readingTime: article.readingTime,
+            seoTitle: article.seoTitle,
+            seoDescription: article.seoDescription,
+            publishedAt: new Date(),
+          },
+        }).catch(() => {}); // Skip if slug already exists
+      }
+      console.log(`[Blog] Auto-seeded ${blogArticles.length} articles`);
+    }
+    seeded = true;
+  } catch { /* ignore seed errors */ }
+}
 
 // GET /api/blog — liste les articles publiés (ou tous si admin=true)
 export async function GET(request: NextRequest) {
@@ -11,6 +43,8 @@ export async function GET(request: NextRequest) {
   const limit = searchParams.get("limit") ? parseInt(searchParams.get("limit")!) : undefined;
 
   try {
+    await autoSeedIfEmpty();
+
     // Article unique par slug
     if (slug) {
       const post = await prisma.blogPost.findUnique({
