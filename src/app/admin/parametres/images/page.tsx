@@ -604,11 +604,17 @@ export default function ImagesSettingsPage() {
   const handleVideoUpload = async (key: string, file: File) => {
     setVideoUploading(key);
     try {
-      // Upload via dedicated video route (server-side put() to Vercel Blob)
+      // Upload via PUT streaming (bypasses 4.5MB serverless body limit)
+      // The raw file is sent as the request body, not in FormData
       toast.loading(`Upload vidéo (${(file.size / 1024 / 1024).toFixed(1)} Mo)...`, { id: "video-upload" });
-      const fd = new FormData();
-      fd.append("file", file);
-      const upRes = await fetch("/api/upload/video", { method: "POST", body: fd });
+      const upRes = await fetch("/api/upload/video", {
+        method: "PUT",
+        headers: {
+          "content-type": file.type || "video/mp4",
+          "x-filename": file.name,
+        },
+        body: file,
+      });
       toast.dismiss("video-upload");
 
       if (!upRes.ok) {
