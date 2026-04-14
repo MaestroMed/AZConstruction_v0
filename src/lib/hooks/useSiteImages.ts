@@ -125,7 +125,7 @@ async function fetchSiteImages(): Promise<FetchResult> {
     };
   } catch (error) {
     console.warn("Failed to fetch site images, using fallbacks:", error);
-    return { images: FALLBACK_IMAGES, customImages: new Set() };
+    return { images: FALLBACK_IMAGES, zooms: {}, customImages: new Set() };
   }
 }
 
