@@ -445,6 +445,7 @@ export async function GET(request: NextRequest) {
             label: defaultImage.label,
             description: defaultImage.description,
             imageUrl: null,
+            videoUrl: null,
             fallbackUrl: defaultImage.fallbackUrl,
             url: defaultImage.fallbackUrl,
           },
@@ -455,12 +456,12 @@ export async function GET(request: NextRequest) {
     }
 
     // Récupérer toutes les images de la DB
-    let dbImages: { key: string; imageUrl: string | null; zoom: number; updatedAt: Date }[] = [];
+    let dbImages: { key: string; imageUrl: string | null; videoUrl: string | null; zoom: number; updatedAt: Date }[] = [];
     try {
       dbImages = await prisma.siteImage.findMany({
         where: category ? { category } : undefined,
         orderBy: { key: "asc" },
-        select: { key: true, imageUrl: true, zoom: true, updatedAt: true },
+        select: { key: true, imageUrl: true, videoUrl: true, zoom: true, updatedAt: true },
       });
     } catch (dbError) {
       console.error("DB error fetching images, using defaults:", dbError);
@@ -483,13 +484,14 @@ export async function GET(request: NextRequest) {
         imageUrl: dbImage?.imageUrl || null,
         fallbackUrl: def.fallbackUrl,
         url: dbImage?.imageUrl || def.fallbackUrl,
+        videoUrl: dbImage?.videoUrl || null,
         zoom: dbImage?.zoom ?? 1.0,
         updatedAt: dbImage?.updatedAt || null,
       };
     });
 
     // 2) Custom DB-only images (e.g. user-created partner logos)
-    let customDbImages: { key: string; category: string; label: string; description: string | null; imageUrl: string | null; fallbackUrl: string; zoom: number; updatedAt: Date }[] = [];
+    let customDbImages: { key: string; category: string; label: string; description: string | null; imageUrl: string | null; videoUrl: string | null; fallbackUrl: string; zoom: number; updatedAt: Date }[] = [];
     try {
       customDbImages = await prisma.siteImage.findMany({
         where: {
@@ -509,6 +511,7 @@ export async function GET(request: NextRequest) {
         imageUrl: db.imageUrl,
         fallbackUrl: db.fallbackUrl,
         url: db.imageUrl || db.fallbackUrl,
+        videoUrl: db.videoUrl || null,
         zoom: db.zoom ?? 1.0,
         updatedAt: db.updatedAt,
       });
@@ -548,7 +551,7 @@ export async function GET(request: NextRequest) {
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-    const { key, imageUrl, zoom } = body;
+    const { key, imageUrl, videoUrl, zoom } = body;
 
     if (!key) {
       return NextResponse.json({ error: "Key is required" }, { status: 400 });
@@ -574,6 +577,7 @@ export async function POST(request: NextRequest) {
       updatedAt: new Date(),
     };
     if (imageUrl !== undefined) updateData.imageUrl = imageUrl || null;
+    if (videoUrl !== undefined) updateData.videoUrl = videoUrl || null;
     if (zoom !== undefined) updateData.zoom = Math.max(0.5, Math.min(3.0, Number(zoom) || 1.0));
 
     // Upsert l'image
@@ -587,6 +591,7 @@ export async function POST(request: NextRequest) {
         description: ref.description,
         fallbackUrl: ref.fallbackUrl,
         imageUrl: imageUrl || null,
+        videoUrl: videoUrl || null,
         zoom: zoom !== undefined ? Math.max(0.5, Math.min(3.0, Number(zoom) || 1.0)) : 1.0,
       },
     });

@@ -8,12 +8,14 @@ interface SiteImage {
   label: string;
   description: string;
   imageUrl: string | null;
+  videoUrl?: string | null;
   fallbackUrl: string;
   url: string;
 }
 
 interface SiteImagesState {
   images: Record<string, string>; // key -> url
+  videos: Record<string, string>; // key -> video url
   zooms: Record<string, number>; // key -> zoom factor (1.0 = normal)
   customImages: Set<string>; // keys of images that have custom URLs (not fallbacks)
   loading: boolean;
@@ -96,6 +98,7 @@ const FALLBACK_IMAGES: Record<string, string> = {
 
 interface FetchResult {
   images: Record<string, string>;
+  videos: Record<string, string>;
   zooms: Record<string, number>;
   customImages: Set<string>;
 }
@@ -104,14 +107,16 @@ async function fetchSiteImages(): Promise<FetchResult> {
   try {
     const response = await fetch("/api/site-images");
     if (!response.ok) throw new Error("Failed to fetch");
-    
+
     const data = await response.json();
     const imageMap: Record<string, string> = {};
+    const videoMap: Record<string, string> = {};
     const zoomMap: Record<string, number> = {};
     const customImages = new Set<string>();
 
     (data.images || []).forEach((img: SiteImage & { zoom?: number }) => {
       imageMap[img.key] = img.url;
+      if (img.videoUrl) videoMap[img.key] = img.videoUrl;
       if (img.zoom && img.zoom !== 1.0) zoomMap[img.key] = img.zoom;
       if (img.imageUrl) {
         customImages.add(img.key);
@@ -120,12 +125,13 @@ async function fetchSiteImages(): Promise<FetchResult> {
 
     return {
       images: { ...FALLBACK_IMAGES, ...imageMap },
+      videos: videoMap,
       zooms: zoomMap,
       customImages
     };
   } catch (error) {
     console.warn("Failed to fetch site images, using fallbacks:", error);
-    return { images: FALLBACK_IMAGES, zooms: {}, customImages: new Set() };
+    return { images: FALLBACK_IMAGES, videos: {}, zooms: {}, customImages: new Set() };
   }
 }
 
@@ -138,11 +144,13 @@ let cachedResult: FetchResult | null = null;
  */
 export function useSiteImages(): SiteImagesState & {
   getImage: (key: string) => string;
+  getVideo: (key: string) => string | null;
   getZoom: (key: string) => number;
   isPlaceholder: (key: string) => boolean;
 } {
   const [state, setState] = useState<SiteImagesState>({
     images: cachedResult?.images || cachedImages || FALLBACK_IMAGES,
+    videos: cachedResult?.videos || {},
     zooms: cachedResult?.zooms || {},
     customImages: cachedResult?.customImages || new Set(),
     loading: !cachedResult && !cachedImages,
@@ -153,6 +161,7 @@ export function useSiteImages(): SiteImagesState & {
     if (cachedResult) {
       setState({
         images: cachedResult.images,
+        videos: cachedResult.videos,
         zooms: cachedResult.zooms,
         customImages: cachedResult.customImages,
         loading: false,
@@ -171,6 +180,7 @@ export function useSiteImages(): SiteImagesState & {
         cachedResult = result;
         setState({
           images: result.images,
+          videos: result.videos,
           zooms: result.zooms,
           customImages: result.customImages,
           loading: false,
@@ -180,6 +190,7 @@ export function useSiteImages(): SiteImagesState & {
       .catch((error) => {
         setState({
           images: FALLBACK_IMAGES,
+          videos: {},
           zooms: {},
           customImages: new Set(),
           loading: false,
@@ -193,6 +204,13 @@ export function useSiteImages(): SiteImagesState & {
       return state.images[key] || FALLBACK_IMAGES[key] || "";
     },
     [state.images]
+  );
+
+  const getVideo = useCallback(
+    (key: string): string | null => {
+      return state.videos[key] || null;
+    },
+    [state.videos]
   );
 
   const getZoom = useCallback(
@@ -209,7 +227,7 @@ export function useSiteImages(): SiteImagesState & {
     [state.customImages]
   );
 
-  return { ...state, getImage, getZoom, isPlaceholder };
+  return { ...state, getImage, getVideo, getZoom, isPlaceholder };
 }
 
 /**

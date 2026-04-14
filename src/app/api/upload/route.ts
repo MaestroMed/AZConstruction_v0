@@ -7,11 +7,12 @@ import { writeFile, mkdir } from "fs/promises";
 // Types de fichiers autorisés
 const ALLOWED_TYPES = {
   image: ["image/jpeg", "image/png", "image/webp", "image/gif", "image/svg+xml"],
+  video: ["video/mp4", "video/webm", "video/quicktime", "video/x-msvideo", "video/x-matroska"],
   document: ["application/pdf"],
   model: ["model/gltf-binary", "model/gltf+json", "application/octet-stream"],
 };
 
-const MAX_FILE_SIZE = 50 * 1024 * 1024; // 50MB
+const MAX_FILE_SIZE = 100 * 1024 * 1024; // 100MB (videos can be larger)
 
 // Vérifier si Vercel Blob est configuré
 const useVercelBlob = !!process.env.BLOB_READ_WRITE_TOKEN;
@@ -66,6 +67,8 @@ export async function POST(request: NextRequest) {
       let fileType = "unknown";
       if (ALLOWED_TYPES.image.includes(file.type)) {
         fileType = "image";
+      } else if (ALLOWED_TYPES.video.includes(file.type) || /\.(mp4|webm|mov|avi|mkv)$/i.test(file.name)) {
+        fileType = "video";
       } else if (ALLOWED_TYPES.document.includes(file.type)) {
         fileType = "document";
       } else if (
