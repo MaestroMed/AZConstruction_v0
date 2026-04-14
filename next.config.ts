@@ -1,6 +1,16 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
+  experimental: {
+    optimizePackageImports: [
+      "lucide-react",
+      "framer-motion",
+      "date-fns",
+      "recharts",
+      "@dnd-kit/core",
+      "@dnd-kit/sortable",
+    ],
+  },
   images: {
     remotePatterns: [
       {
@@ -19,7 +29,6 @@ const nextConfig: NextConfig = {
         pathname: "/**",
       },
     ],
-    // Allow data: URLs for base64 images
     dangerouslyAllowSVG: true,
   },
 };

@@ -1,6 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 
+// Cache realizations for 1 hour (ISR-like behavior for API)
+export const revalidate = 3600;
+
 // GET: Récupérer toutes les réalisations publiées
 export async function GET(request: NextRequest) {
   try {

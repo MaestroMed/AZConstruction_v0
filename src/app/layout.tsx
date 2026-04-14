@@ -14,9 +14,9 @@ const inter = Inter({
 // Police moderne géométrique comme Apple SF Pro
 const spaceGrotesk = Space_Grotesk({
   variable: "--font-display",
-  subsets: ["latin", "latin-ext"],
+  subsets: ["latin"],
   display: "swap",
-  weight: ["300", "400", "500", "600", "700"],
+  weight: ["500", "700"],
 });
 
 export const viewport: Viewport = {

@@ -33,7 +33,7 @@ export function CookieBanner({ className }: CookieBannerProps) {
       if (!hasConsent()) {
         setIsVisible(true);
       }
-    }, 1000);
+    }, 100);
 
     return () => clearTimeout(timer);
   }, []);
