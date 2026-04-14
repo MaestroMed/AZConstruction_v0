@@ -117,17 +117,17 @@ function Breadcrumbs({ pathname }: { pathname: string }) {
   const segments = pathname.split("/").filter(Boolean);
   const breadcrumbs = segments.map((segment, index) => {
     const href = "/" + segments.slice(0, index + 1).join("/");
-    const label = segment.charAt(0).toUpperCase() + segment.slice(1).replace(/-/g, " ");
+    const label = breadcrumbLabels[segment] || segment.charAt(0).toUpperCase() + segment.slice(1).replace(/-/g, " ");
     return { href, label };
   });
 
   return (
-    <nav className="flex items-center gap-2 text-sm text-gray-500">
+    <nav className="flex items-center gap-2 text-sm text-gray-500 dark:text-gray-400">
       {breadcrumbs.map((crumb, index) => (
         <React.Fragment key={crumb.href}>
-          {index > 0 && <span>/</span>}
+          {index > 0 && <span className="text-gray-300 dark:text-gray-600">/</span>}
           {index === breadcrumbs.length - 1 ? (
-            <span className="text-gray-900 font-medium">{crumb.label}</span>
+            <span className="text-gray-900 dark:text-gray-100 font-medium">{crumb.label}</span>
           ) : (
             <Link href={crumb.href} className="hover:text-cyan-600 transition-colors">
               {crumb.label}
@@ -339,6 +339,7 @@ function AdminLayoutContent({
       {/* Toast notifications */}
       <Toaster
         position="top-right"
+        duration={3000}
         toastOptions={{
           style: {
             background: "#0a1628",
