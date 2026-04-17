@@ -12,6 +12,7 @@ import {
   type SubCollection,
 } from "@/lib/data/thermolaquage-items";
 import { GlowButton } from "@/components/ui/GlowButton";
+import { CollectionHeroMosaic } from "./_CollectionHeroMosaic";
 
 interface CollectionPageProps {
   collection: RALCollection;
@@ -125,42 +126,37 @@ export function CollectionPage({ collection }: CollectionPageProps) {
     <div className="min-h-screen bg-white">
       {/* ── Hero ── */}
       <section
-        className={`relative min-h-[60vh] flex items-end overflow-hidden bg-gradient-to-br ${collection.bgGradient}`}
+        className={`relative min-h-[80vh] lg:min-h-[88vh] flex items-end overflow-hidden bg-gradient-to-br ${collection.bgGradient}`}
       >
-        {/* Dot pattern */}
+        {/* Cinematic background mosaic */}
+        <CollectionHeroMosaic
+          finishes={collection.finishes}
+          accentColor={collection.accentColor}
+        />
+
+        {/* Subtle dot pattern on top of mosaic */}
         <div
-          className="absolute inset-0 opacity-10"
+          className="absolute inset-0 opacity-[0.04] pointer-events-none z-[1]"
           style={{
             backgroundImage: `radial-gradient(circle at 2px 2px, white 1px, transparent 0)`,
             backgroundSize: "24px 24px",
           }}
         />
 
-        {/* Thumbnail preview (hero decorative) */}
-        <div className="absolute top-12 right-12 hidden md:grid grid-cols-3 gap-2 opacity-60 max-w-[240px]">
-          {collection.finishes.slice(0, 9).map((f, i) => (
-            <motion.div
-              key={f.id}
-              initial={{ opacity: 0, scale: 0.8 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ delay: i * 0.05 }}
-              className="relative w-16 h-16 rounded-lg overflow-hidden ring-1 ring-white/30"
-              style={f.imageUrl ? undefined : { backgroundColor: f.hex || "#888" }}
-            >
-              {f.imageUrl && (
-                <Image
-                  src={f.imageUrl}
-                  alt=""
-                  fill
-                  sizes="64px"
-                  className="object-cover"
-                />
-              )}
-            </motion.div>
-          ))}
-        </div>
+        {/* Big "ghost" finish count, decorative */}
+        <motion.div
+          initial={{ opacity: 0, x: -20 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ duration: 1, delay: 0.4 }}
+          className="absolute -bottom-10 -left-6 lg:-left-12 select-none pointer-events-none z-[2]"
+          aria-hidden
+        >
+          <span className="font-display text-[14rem] lg:text-[20rem] font-bold leading-none text-white/[0.04] tracking-tighter">
+            {String(collection.finishes.length).padStart(2, "0")}
+          </span>
+        </motion.div>
 
-        <div className="container mx-auto px-6 pb-16 pt-32 relative z-10">
+        <div className="container mx-auto px-6 pb-20 pt-32 relative z-10">
           {/* Breadcrumb */}
           <nav className="flex items-center gap-2 text-white/40 text-sm mb-8">
             <Link href="/couleurs-ral" className="hover:text-white/70 transition-colors">
@@ -170,28 +166,82 @@ export function CollectionPage({ collection }: CollectionPageProps) {
             <span className="text-white/70">{collection.nom}</span>
           </nav>
 
-          <motion.div initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }}>
-            <div className="inline-flex items-center gap-2 px-3 py-1.5 bg-white/10 border border-white/20 rounded-full text-white/70 text-xs mb-6">
+          <motion.div
+            initial="hidden"
+            animate="visible"
+            variants={{
+              hidden: { opacity: 0 },
+              visible: { opacity: 1, transition: { staggerChildren: 0.08, delayChildren: 0.1 } },
+            }}
+            className="max-w-2xl"
+          >
+            <motion.div
+              variants={{ hidden: { opacity: 0, y: 12 }, visible: { opacity: 1, y: 0 } }}
+              className="inline-flex items-center gap-2 px-3 py-1.5 bg-white/10 border border-white/20 backdrop-blur-md rounded-full text-white/80 text-xs mb-6"
+            >
+              <span
+                className="w-1.5 h-1.5 rounded-full"
+                style={{ backgroundColor: collection.accentColor }}
+              />
               {collection.subtitle}
-            </div>
-            <h1 className="text-4xl md:text-6xl font-bold text-white mb-4">
-              {collection.nom}
+              <span className="text-white/40">·</span>
+              <span className="text-white/60">{collection.finishes.length} finitions</span>
+            </motion.div>
+
+            {/* Title — word-by-word reveal */}
+            <h1 className="font-display text-5xl md:text-7xl lg:text-8xl font-bold text-white mb-6 leading-[0.95] tracking-tight drop-shadow-2xl">
+              {collection.nom.split(" ").map((word, i, arr) => (
+                <motion.span
+                  key={i}
+                  variants={{
+                    hidden: { opacity: 0, y: 30, filter: "blur(8px)" },
+                    visible: { opacity: 1, y: 0, filter: "blur(0px)" },
+                  }}
+                  transition={{ duration: 0.7, ease: [0.25, 0.46, 0.45, 0.94] }}
+                  className="inline-block mr-3"
+                >
+                  {i === arr.length - 1 ? (
+                    <span
+                      className="text-transparent bg-clip-text bg-gradient-to-r"
+                      style={{
+                        backgroundImage: `linear-gradient(135deg, ${collection.accentColor}, white 70%)`,
+                      }}
+                    >
+                      {word}
+                    </span>
+                  ) : (
+                    word
+                  )}
+                </motion.span>
+              ))}
             </h1>
-            <p className="text-white/60 text-xl max-w-2xl mb-8">
+
+            <motion.p
+              variants={{ hidden: { opacity: 0, y: 20 }, visible: { opacity: 1, y: 0 } }}
+              className="text-white/75 text-lg md:text-xl max-w-2xl mb-8 leading-relaxed drop-shadow-lg"
+            >
               {collection.description}
-            </p>
-            <div className="flex flex-wrap gap-2 mb-8">
+            </motion.p>
+
+            <motion.div
+              variants={{ hidden: { opacity: 0, y: 20 }, visible: { opacity: 1, y: 0 } }}
+              className="flex flex-wrap gap-2 mb-10"
+            >
               {collection.tags.map((tag) => (
                 <span
                   key={tag}
-                  className="inline-flex items-center gap-1 px-3 py-1 bg-white/10 text-white/60 rounded-full text-xs border border-white/10"
+                  className="inline-flex items-center gap-1 px-3 py-1 bg-white/10 backdrop-blur-md text-white/70 rounded-full text-xs border border-white/15"
                 >
                   <Tag className="w-3 h-3" />
                   {tag}
                 </span>
               ))}
-            </div>
-            <div className="flex flex-col sm:flex-row gap-4">
+            </motion.div>
+
+            <motion.div
+              variants={{ hidden: { opacity: 0, y: 20 }, visible: { opacity: 1, y: 0 } }}
+              className="flex flex-col sm:flex-row gap-4"
+            >
               <Link href="/contact">
                 <GlowButton icon={<ArrowRight className="w-4 h-4" />}>
                   Demander un devis
@@ -201,12 +251,12 @@ export function CollectionPage({ collection }: CollectionPageProps) {
                 href={collection.url}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex items-center gap-2 px-6 py-3 bg-white/10 border border-white/20 text-white rounded-xl hover:bg-white/15 transition-colors text-sm font-medium"
+                className="inline-flex items-center gap-2 px-6 py-3 bg-white/10 backdrop-blur-md border border-white/20 text-white rounded-xl hover:bg-white/15 transition-colors text-sm font-medium"
               >
-                Voir le catalogue Adaptacolor
+                Catalogue Adaptacolor
                 <ExternalLink className="w-4 h-4" />
               </a>
-            </div>
+            </motion.div>
           </motion.div>
         </div>
       </section>
