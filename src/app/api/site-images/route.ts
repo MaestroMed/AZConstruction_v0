@@ -167,6 +167,59 @@ const DEFAULT_IMAGES: {
     fallbackUrl: "/placeholder.svg",
   },
 
+  // === SEO PRODUITS — pages dept/ville (utilisé par les ~280k pages SEO) ===
+  // Clés alignées sur les slugs de routes. Une photo par produit suffit :
+  // les sous-produits + segments × ville en héritent automatiquement.
+  {
+    key: "product-thermolaquage",
+    category: "seo-products",
+    label: "Hero SEO — Thermolaquage",
+    description: "Photo principale pour les pages /services/thermolaquage/[dept]/[ville]",
+    fallbackUrl: "/placeholder.svg",
+  },
+  {
+    key: "product-grilles-ventilation",
+    category: "seo-products",
+    label: "Hero SEO — Grilles de ventilation (alias)",
+    description: "Alias slug-aligné de product-grilles. Utilisée si product-grilles est vide.",
+    fallbackUrl: "/placeholder.svg",
+  },
+  {
+    key: "product-garde-corps-verre",
+    category: "seo-products",
+    label: "Hero SEO — Garde-corps verre",
+    description: "Photo pour les pages /garde-corps-verre/[dept]/[ville]. Hérite de product-garde-corps si vide.",
+    fallbackUrl: "/placeholder.svg",
+  },
+  {
+    key: "product-escalier-helicoidal",
+    category: "seo-products",
+    label: "Hero SEO — Escalier hélicoïdal",
+    description: "Photo pour les pages /escalier-helicoidal/[dept]/[ville]. Hérite de product-escaliers si vide.",
+    fallbackUrl: "/placeholder.svg",
+  },
+  {
+    key: "product-portail-coulissant",
+    category: "seo-products",
+    label: "Hero SEO — Portail coulissant",
+    description: "Photo pour les pages /portail-coulissant/[dept]/[ville]. Hérite de product-portails si vide.",
+    fallbackUrl: "/placeholder.svg",
+  },
+  {
+    key: "product-portail-autoportant",
+    category: "seo-products",
+    label: "Hero SEO — Portail autoportant",
+    description: "Photo pour les pages /portail-autoportant/[dept]/[ville]. Hérite de product-portails si vide.",
+    fallbackUrl: "/placeholder.svg",
+  },
+  {
+    key: "product-verriere-atelier",
+    category: "seo-products",
+    label: "Hero SEO — Verrière atelier",
+    description: "Photo pour les pages /verriere-atelier/[dept]/[ville]. Hérite de product-verrieres si vide.",
+    fallbackUrl: "/placeholder.svg",
+  },
+
   // === PAGES ===
   {
     key: "page-atelier",

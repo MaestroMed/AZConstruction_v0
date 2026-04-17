@@ -122,11 +122,12 @@ export const navigationItems: NavItem[] = [
     subItems: [
       { title: "Général", href: "/admin/parametres" },
       { title: "Images du site", href: "/admin/parametres/images" },
+      { title: "Images SEO (familles)", href: "/admin/parametres/seo/images" },
       { title: "Réalisations Pro", href: "/admin/parametres/realisations-pro" },
       { title: "Stripe (Paiement)", href: "/admin/parametres/stripe" },
       { title: "E-commerce", href: "/admin/parametres/ecommerce" },
       { title: "Emails", href: "/admin/parametres/emails" },
-      { title: "SEO", href: "/admin/parametres/seo" },
+      { title: "SEO (meta)", href: "/admin/parametres/seo" },
     ],
   },
 ];

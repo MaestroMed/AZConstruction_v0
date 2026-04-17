@@ -33,7 +33,9 @@
       "Bash(curl -sIL \"https://www.azconstruction.fr/sitemap.xml\")",
       "Bash(curl -sL \"https://www.azconstruction.fr/robots.txt\")",
       "Bash(node scripts/fix-canonical-www.mjs)",
-      "Bash(git commit *)"
+      "Bash(git commit *)",
+      "Bash(git stash *)",
+      "Bash(git merge *)"
     ]
   }
 }

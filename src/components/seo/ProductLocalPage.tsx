@@ -13,6 +13,7 @@ import { TrustStrip } from './TrustStrip'
 import { WhyCustomBlock } from './WhyCustomBlock'
 import { RelatedProductsBlock } from './RelatedProductsBlock'
 import { StickyCTABar } from './StickyCTABar'
+import { ProductHeroVisual } from './ProductHeroVisual'
 import dynamic from 'next/dynamic'
 
 const PartnersCarousel = dynamic(() => import('@/components/homepage/PartnersCarousel'))
@@ -31,8 +32,6 @@ const PROCESS_STEPS = [
   { icon: Shield, title: 'Décennale dans la poche', desc: 'Attestation fournie avant la pose. SAV joignable directement à l\'atelier.' },
 ]
 
-const PRODUCT_HERO_FALLBACK = '/images/hero/atelier-facade.jpg'
-
 // Sub-product → parent product mapping. When a sub-product has no specific
 // hero image (DB or family), we fall back to the parent's hero so the page
 // looks visually relevant (e.g. "garde-corps-verre" inherits "garde-corps").
@@ -44,18 +43,35 @@ const SUBPRODUCT_PARENT: Record<string, string> = {
   'verriere-atelier': 'verrieres',
 }
 
-async function fetchSiteImageHero(key: string): Promise<string | null> {
+// Some legacy SiteImage keys don't follow the slug convention (e.g. the
+// homepage tile for grilles-ventilation is just `product-grilles`).
+const LEGACY_SITE_IMAGE_KEY: Record<string, string> = {
+  'grilles-ventilation': 'product-grilles',
+}
+
+function siteImageKey(slug: string): string {
+  return LEGACY_SITE_IMAGE_KEY[slug] ?? `product-${slug}`
+}
+
+async function fetchSiteImage(key: string): Promise<string | null> {
   try {
     const row = await prisma.siteImage.findUnique({ where: { key } })
-    return row?.imageUrl || row?.fallbackUrl || null
+    // Only return imageUrl (a real upload), NOT fallbackUrl which is just
+    // the placeholder. We want null when no real image exists so the caller
+    // renders the generated visual instead.
+    return row?.imageUrl ?? null
   } catch {
     return null
   }
 }
 
-async function resolveProductHero(slug: string, fromFamily: string | undefined): Promise<string> {
+/**
+ * Resolves the product hero image URL. Returns `null` if no real photo
+ * exists anywhere — the caller should then render `<ProductHeroVisual>`.
+ */
+async function resolveProductHero(slug: string, fromFamily: string | undefined): Promise<string | null> {
   // 1. Specific SiteImage for this product/sub-product
-  const own = await fetchSiteImageHero(`product-${slug}-hero`)
+  const own = await fetchSiteImage(siteImageKey(slug))
   if (own) return own
 
   // 2. Family heroImages (if real, not placeholder)
@@ -64,15 +80,15 @@ async function resolveProductHero(slug: string, fromFamily: string | undefined):
   // 3. Parent product fallback (for sub-products only)
   const parentSlug = SUBPRODUCT_PARENT[slug]
   if (parentSlug) {
-    const parentImg = await fetchSiteImageHero(`product-${parentSlug}-hero`)
+    const parentImg = await fetchSiteImage(siteImageKey(parentSlug))
     if (parentImg) return parentImg
     const parentFamily = getProductFamilyBySlug(parentSlug)
     const parentHero = parentFamily?.heroImages?.[0]
     if (parentHero && parentHero !== '/placeholder.svg') return parentHero
   }
 
-  // 4. Last resort
-  return PRODUCT_HERO_FALLBACK
+  // 4. No real photo — caller renders generated visual
+  return null
 }
 
 export async function ProductLocalPage({ product, dept, commune, segment }: ProductLocalPageProps) {
@@ -154,8 +170,8 @@ export async function ProductLocalPage({ product, dept, commune, segment }: Prod
       <div className="min-h-screen bg-white">
         {/* ── Hero — Premium style ────────────────────── */}
         <section className="relative min-h-[70vh] flex items-end overflow-hidden">
-          {/* Background image */}
-          {heroImage && (
+          {/* Background : real photo if uploaded, generated visual otherwise */}
+          {heroImage ? (
             <Image
               src={heroImage}
               alt={`${product.name} sur mesure ${prepLoc} ${locationName} — AZ Construction`}
@@ -163,11 +179,15 @@ export async function ProductLocalPage({ product, dept, commune, segment }: Prod
               className="object-cover"
               priority
             />
+          ) : (
+            <ProductHeroVisual productSlug={product.slug} productName={product.name} />
           )}
-          {/* Overlay gradient */}
-          <div className="absolute inset-0 bg-gradient-to-t from-navy-dark via-navy-dark/80 to-navy-dark/30" />
+          {/* Overlay gradient — only when there's a photo (the visual already has its own treatment) */}
+          {heroImage && (
+            <div className="absolute inset-0 bg-gradient-to-t from-navy-dark via-navy-dark/80 to-navy-dark/30" />
+          )}
           {/* Radial glow */}
-          <div className="absolute top-1/4 left-1/4 w-[600px] h-[600px] rounded-full opacity-20" style={{ background: 'radial-gradient(circle, rgba(0,212,255,0.15) 0%, transparent 70%)' }} />
+          <div className="absolute top-1/4 left-1/4 w-[600px] h-[600px] rounded-full opacity-20 pointer-events-none" style={{ background: 'radial-gradient(circle, rgba(0,212,255,0.15) 0%, transparent 70%)' }} />
 
           <div className="container mx-auto px-6 pb-16 pt-32 relative z-10">
             <nav className="flex items-center gap-2 text-white/40 text-sm mb-8 flex-wrap" aria-label="Fil d'Ariane">
@@ -264,22 +284,24 @@ export async function ProductLocalPage({ product, dept, commune, segment }: Prod
                   <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
                 </Link>
               </div>
-              {heroImage && (
-                <div className="relative aspect-[4/3] rounded-3xl overflow-hidden shadow-2xl shadow-navy-dark/10">
+              <div className="relative aspect-[4/3] rounded-3xl overflow-hidden shadow-2xl shadow-navy-dark/10">
+                {heroImage ? (
                   <Image
                     src={heroImage}
                     alt={`${product.name} fabriqué par AZ Construction — installation ${prepLoc} ${locationName}`}
                     fill
                     className="object-cover"
                   />
-                  <div className="absolute inset-0 bg-gradient-to-t from-navy-dark/50 via-transparent to-transparent" />
-                  <div className="absolute bottom-5 left-5 right-5">
-                    <p className="text-white text-sm font-medium drop-shadow-lg">
-                      {product.name} sur mesure — Atelier AZ Construction, Bruyères-sur-Oise
-                    </p>
-                  </div>
+                ) : (
+                  <ProductHeroVisual productSlug={product.slug} productName={product.name} />
+                )}
+                <div className="absolute inset-0 bg-gradient-to-t from-navy-dark/50 via-transparent to-transparent" />
+                <div className="absolute bottom-5 left-5 right-5">
+                  <p className="text-white text-sm font-medium drop-shadow-lg">
+                    {product.name} sur mesure — Atelier AZ Construction, Bruyères-sur-Oise
+                  </p>
                 </div>
-              )}
+              </div>
             </div>
           </div>
         </section>
