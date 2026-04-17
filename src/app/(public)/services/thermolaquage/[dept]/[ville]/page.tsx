@@ -1,13 +1,14 @@
 import { notFound } from 'next/navigation'
 import type { Metadata } from 'next'
 import { ThermolaquageLocalPage } from '@/components/seo/ThermolaquageLocalPage'
-import { getDepartmentBySlug, getSeoProductBySlug, getCommuneBySlug } from '@/data/seo'
+import { getDepartmentBySlug, getSeoProductBySlug, getCommuneBySlug, getPriorityDeptVilleParams } from '@/data/seo'
 
 export const revalidate = 604800
 export const dynamicParams = true
 
 export function generateStaticParams() {
-  return []
+  // Pre-render priority cities (chef-lieu + top-populated). Other cities served via ISR.
+  return getPriorityDeptVilleParams()
 }
 
 interface Props { params: Promise<{ dept: string; ville: string }> }

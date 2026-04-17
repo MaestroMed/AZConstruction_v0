@@ -29,3 +29,8 @@ export {
   getCommuneBySlug,
   communeSlugsForDepartment,
 } from './communes'
+
+export {
+  getPriorityDeptVilleParams,
+  getPriorityProductDeptVilleParams,
+} from './priority-communes'

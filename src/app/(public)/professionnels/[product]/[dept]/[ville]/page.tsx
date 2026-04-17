@@ -7,6 +7,8 @@ import {
   getSeoProductBySlug,
   getSegmentBySlug,
   getCommuneBySlug,
+  getPriorityProductDeptVilleParams,
+  seoProductSlugs,
 } from '@/data/seo'
 
 const SEGMENT_SLUG = 'professionnels'
@@ -15,7 +17,8 @@ export const revalidate = 604800
 export const dynamicParams = true
 
 export function generateStaticParams() {
-  return []
+  // Pre-render priority cities × all products. Other cities served via ISR.
+  return getPriorityProductDeptVilleParams(seoProductSlugs)
 }
 
 interface Props { params: Promise<{ product: string; dept: string; ville: string }> }
