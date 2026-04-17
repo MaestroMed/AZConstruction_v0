@@ -32,10 +32,10 @@ export const seoProducts: SEOProduct[] = [
     ctaLabel: 'Demander un devis garde-corps',
     features: ['Norme NF P01-012', 'Garantie décennale', '8 modèles', '200+ couleurs RAL'],
     benefits: [
-      'Fabrication dans nos ateliers de Bruyères-sur-Oise (95)',
-      'Pose par nos équipes en Île-de-France',
-      'Devis gratuit sous 48h',
-      'Garantie décennale',
+      'Soudé dans notre atelier de 1800 m² à Bruyères-sur-Oise (95) — pas sous-traité',
+      'Conforme NF P01-012, calculé pour résister à 100 daN/ml — papiers fournis',
+      'Métré sur place gratuit, devis chiffré sous 48 h sans relance commerciale',
+      'Décennale dans la poche, SAV joignable à l\'atelier en direct',
     ],
     variants: [
       { name: 'Garde-corps verre feuilleté', description: 'Transparence et élégance pour balcons et terrasses', href: '/produits/garde-corps' },
@@ -69,7 +69,12 @@ export const seoProducts: SEOProduct[] = [
       `Besoin d'un escalier métal sur mesure ${prep(v)} ${loc(d, v)} ? AZ Construction fabrique des escaliers hélicoïdaux, droits et quart-tournant en acier thermolaqué. Chaque escalier est conçu sur mesure dans nos ateliers.`,
     ctaLabel: 'Demander un devis escalier',
     features: ['Sur mesure', 'Acier thermolaqué', '4 types', '200+ couleurs RAL'],
-    benefits: ['Fabrication atelier Bruyères-sur-Oise', 'Pose en Île-de-France', 'Devis gratuit sous 48h', 'Garantie décennale'],
+    benefits: [
+      'Soudé et ajusté à la main par nos compagnons — chaque escalier est une pièce unique',
+      'Métré sur place gratuit dans tout le 95, 92, 75, 60, 78',
+      'Marches bois massif ou tôle pliée, finition thermolaquée maison (200+ teintes)',
+      'Garantie décennale incluse — attestation fournie avant la pose',
+    ],
     variants: [
       { name: 'Escalier hélicoïdal', description: 'Gain de place, design sculptural', href: '/produits/escaliers' },
       { name: 'Escalier droit', description: 'Classique et fonctionnel', href: '/produits/escaliers' },
@@ -101,7 +106,12 @@ export const seoProducts: SEOProduct[] = [
       `Vous recherchez un portail sur mesure ${prep(v)} ${loc(d, v)} ? AZ Construction fabrique des portails battants, coulissants et autoportants en acier thermolaqué. Motorisation et automatisation disponibles.`,
     ctaLabel: 'Demander un devis portail',
     features: ['Battant & coulissant', 'Motorisation', 'Acier thermolaqué', '200+ couleurs'],
-    benefits: ['Fabrication atelier', 'Pose en Île-de-France', 'Devis gratuit sous 48h', 'Garantie décennale'],
+    benefits: [
+      'Cadre soudé MIG dans notre atelier 1800 m² — acier 60/80, pas du bricolage',
+      'Pose et raccordement motorisation par notre équipe interne, en une journée',
+      'Devis chiffré sous 48 h après visite, prix ferme sans surprise',
+      'Décennale + SAV moteur traité directement à l\'atelier (pas un call-center)',
+    ],
     variants: [
       { name: 'Portail battant', description: 'Ouverture classique, 1 ou 2 vantaux', href: '/produits/portails' },
       { name: 'Portail coulissant', description: 'Idéal pour les entrées étroites', href: '/produits/portails' },
@@ -133,7 +143,12 @@ export const seoProducts: SEOProduct[] = [
       `Besoin d'une clôture sur mesure ${prep(v)} ${loc(d, v)} ? AZ Construction fabrique des clôtures barreaudées, grillagées et à lames en acier thermolaqué pour sécuriser et embellir votre propriété.`,
     ctaLabel: 'Demander un devis clôture',
     features: ['Barreaudée & grillagée', 'Acier thermolaqué', 'Sur mesure', '200+ couleurs'],
-    benefits: ['Fabrication atelier', 'Pose en Île-de-France', 'Devis gratuit sous 48h', 'Garantie décennale'],
+    benefits: [
+      'Panneaux soudés à la mesure de vos longueurs réelles, pas de "presque"',
+      'Acier galva + thermolaqué dans la même chaîne — résiste aux hivers franciliens',
+      'Pose y compris terrassement et scellement, on gère la totalité',
+      'Conseil PLU offert — on connaît les hauteurs réglementaires par commune',
+    ],
     variants: [
       { name: 'Clôture barreaudée', description: 'Classique et sécurisante', href: '/produits/clotures' },
       { name: 'Clôture grillagée', description: 'Économique et fonctionnelle', href: '/produits/clotures' },
@@ -164,7 +179,12 @@ export const seoProducts: SEOProduct[] = [
       `Besoin d'une porte métal sur mesure ${prep(v)} ${loc(d, v)} ? AZ Construction fabrique des portes de hall, SAS, tôlées, coupe-feu et style atelier en acier thermolaqué.`,
     ctaLabel: 'Demander un devis porte',
     features: ['Hall & SAS', 'Coupe-feu', 'Style atelier', '200+ couleurs RAL'],
-    benefits: ['Fabrication atelier', 'Pose en Île-de-France', 'Devis gratuit sous 48h', 'Garantie décennale'],
+    benefits: [
+      'Cadres et vantaux soudés/redressés à l\'atelier — ouverture parfaite à la pose',
+      'Portes coupe-feu certifiées EI30/EI60 fournies avec PV en règle',
+      'Quincaillerie pro (Vachette, Bricard, Heracles) montée et réglée par nos poseurs',
+      'Devis sous 48 h, pose en une journée pour la plupart des configurations',
+    ],
     variants: [
       { name: 'Porte de hall / SAS', description: 'Entrée d\'immeuble sécurisée', href: '/produits/portes' },
       { name: 'Porte tôlée', description: 'Robuste, 1 ou 2 vantaux', href: '/produits/portes' },

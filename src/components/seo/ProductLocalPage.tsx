@@ -3,9 +3,11 @@ import Image from 'next/image'
 import { MapPin, CheckCircle2, ArrowRight, Phone, Star, Wrench, Truck, FileText, Shield } from 'lucide-react'
 import type { Department, Commune, SEOProduct, SEOSegment } from '@/data/seo/types'
 import { getProductFamilyBySlug } from '@/lib/data/product-families'
+import { prisma } from '@/lib/prisma'
 import { DepartmentCommunesList } from './DepartmentCommunesList'
 import { NearbyCommunes } from './NearbyCommunes'
 import { ProductDeptFooter } from './ProductDeptFooter'
+import { RealizationsForLocation } from './RealizationsForLocation'
 
 interface ProductLocalPageProps {
   product: SEOProduct
@@ -15,19 +17,33 @@ interface ProductLocalPageProps {
 }
 
 const PROCESS_STEPS = [
-  { icon: FileText, title: 'Devis gratuit', desc: 'Contactez-nous avec vos dimensions et envies. Réponse sous 48h.' },
-  { icon: Wrench, title: 'Fabrication atelier', desc: 'Réalisation sur mesure dans notre atelier de 1800m² à Bruyères-sur-Oise.' },
-  { icon: Truck, title: 'Livraison & pose', desc: 'Nos équipes livrent et posent dans tout votre département.' },
-  { icon: Shield, title: 'Garantie décennale', desc: 'Tous nos ouvrages sont couverts par la garantie décennale.' },
+  { icon: FileText, title: 'Devis chiffré sous 48 h', desc: 'Vos dimensions au téléphone, votre devis dans la boîte mail. Pas de relance commerciale.' },
+  { icon: Wrench, title: 'Fabriqué par nos soudeurs', desc: 'Notre atelier de 1800 m² à Bruyères-sur-Oise (95). Pas de sous-traitance, on signe ce qu\'on fait.' },
+  { icon: Truck, title: 'Livré et posé par nos équipes', desc: 'Notre camion sort tous les matins. Pose interne, pas d\'intérimaires sur vos chantiers.' },
+  { icon: Shield, title: 'Décennale dans la poche', desc: 'Attestation fournie avant la pose. SAV joignable directement à l\'atelier.' },
 ]
 
-export function ProductLocalPage({ product, dept, commune, segment }: ProductLocalPageProps) {
+const PRODUCT_HERO_FALLBACK = '/images/hero/atelier-facade.jpg'
+
+async function resolveProductHero(slug: string, fromFamily: string | undefined): Promise<string> {
+  try {
+    const row = await prisma.siteImage.findUnique({ where: { key: `product-${slug}-hero` } })
+    if (row?.imageUrl) return row.imageUrl
+    if (row?.fallbackUrl) return row.fallbackUrl
+  } catch {
+    // ignore — fall through
+  }
+  if (fromFamily && fromFamily !== '/placeholder.svg') return fromFamily
+  return PRODUCT_HERO_FALLBACK
+}
+
+export async function ProductLocalPage({ product, dept, commune, segment }: ProductLocalPageProps) {
   const locationName = commune ? commune.name : dept.fullName
   const isCity = !!commune
   const prepLoc = isCity ? 'à' : 'en'
 
   const productFamily = getProductFamilyBySlug(product.slug)
-  const heroImage = productFamily?.heroImages?.[0]
+  const heroImage = await resolveProductHero(product.slug, productFamily?.heroImages?.[0])
 
   const productPath = `/${product.slug}`
   const canonicalUrl = isCity
@@ -282,6 +298,9 @@ export function ProductLocalPage({ product, dept, commune, segment }: ProductLoc
             </div>
           </div>
         </section>
+
+        {/* ── Réalisations près de chez vous ─────────────── */}
+        <RealizationsForLocation dept={dept} commune={commune} productSlug={product.slug} />
 
         {/* ── Avantages + Avis ─────────────────────────── */}
         <section className="py-20">

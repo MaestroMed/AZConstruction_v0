@@ -3,9 +3,12 @@ import Image from 'next/image'
 import { ArrowRight, Phone, Star, Truck, Clock, Palette, ShieldCheck, Flame, CheckCircle2 } from 'lucide-react'
 import type { Department, Commune, SEOSegment } from '@/data/seo/types'
 import { getSeoProductBySlug } from '@/data/seo/products'
+import { prisma } from '@/lib/prisma'
 import { DepartmentCommunesList } from './DepartmentCommunesList'
 import { NearbyCommunes } from './NearbyCommunes'
 import { ProductDeptFooter } from './ProductDeptFooter'
+import { AdaptaCollectionsBlock } from './AdaptaCollectionsBlock'
+import { RealizationsForLocation } from './RealizationsForLocation'
 
 interface ThermolaquageLocalPageProps {
   dept: Department
@@ -14,19 +17,34 @@ interface ThermolaquageLocalPageProps {
 }
 
 const AVANTAGES = [
-  { icon: Truck, title: 'Enlèvement gratuit', desc: 'Nous récupérons vos pièces directement chez vous ou sur votre chantier.' },
-  { icon: Clock, title: 'Délai 5-7 jours', desc: 'Traitement rapide dans notre four professionnel. Retour dans la semaine.' },
-  { icon: Palette, title: '200+ couleurs RAL', desc: 'Toutes les teintes RAL classiques, satinées, mates et métallisées.' },
-  { icon: ShieldCheck, title: 'Garantie 10 ans', desc: 'Résistance anti-corrosion, UV et chocs. Finition durable garantie.' },
+  { icon: Truck, title: 'On vient chercher vos pièces', desc: "Notre camion passe partout en Île-de-France. Vos pièces voyagent calées, jamais en vrac." },
+  { icon: Clock, title: 'Sortie de four en 5 à 7 jours', desc: "Sablage, accrochage, cuisson 200°C. Quand on dit jeudi, c'est jeudi." },
+  { icon: Palette, title: 'Tout le RAL, et au-delà', desc: '200+ teintes en stock + collections premium Adapta. Une couleur exotique ? On la commande.' },
+  { icon: ShieldCheck, title: 'Tenue 10 ans garantie', desc: 'Poudre époxy cuite, pas peinte. Anti-UV, anti-corrosion, anti-griffes du quotidien.' },
 ]
 
-const THERMO_HERO_IMAGE = '/placeholder.svg'
+const THERMO_HERO_FALLBACK = '/images/hero/atelier-facade.jpg'
+const THERMO_ATELIER_FALLBACK = '/images/hero/atelier-facade.jpg'
 
-export function ThermolaquageLocalPage({ dept, commune, segment }: ThermolaquageLocalPageProps) {
+async function resolveSiteImage(key: string, fallback: string): Promise<string> {
+  try {
+    const row = await prisma.siteImage.findUnique({ where: { key } })
+    return row?.imageUrl || row?.fallbackUrl || fallback
+  } catch {
+    return fallback
+  }
+}
+
+export async function ThermolaquageLocalPage({ dept, commune, segment }: ThermolaquageLocalPageProps) {
   const product = getSeoProductBySlug('thermolaquage')!
   const locationName = commune ? commune.name : dept.fullName
   const isCity = !!commune
   const prepLoc = isCity ? 'à' : 'en'
+
+  const [heroImageUrl, atelierImageUrl] = await Promise.all([
+    resolveSiteImage('hero-thermolaquage', THERMO_HERO_FALLBACK),
+    resolveSiteImage('atelier-thermolaquage', THERMO_ATELIER_FALLBACK),
+  ])
 
   const canonicalUrl = isCity
     ? `https://azconstruction.fr/services/thermolaquage/${dept.slug}/${commune.slug}`
@@ -64,7 +82,7 @@ export function ThermolaquageLocalPage({ dept, commune, segment }: Thermolaquage
         {/* ── Hero — Premium ─────────────────────────── */}
         <section className="relative min-h-[70vh] flex items-end overflow-hidden">
           <Image
-            src={THERMO_HERO_IMAGE}
+            src={heroImageUrl}
             alt={`Thermolaquage professionnel ${prepLoc} ${locationName} — AZ Construction`}
             fill
             className="object-cover"
@@ -171,7 +189,7 @@ export function ThermolaquageLocalPage({ dept, commune, segment }: Thermolaquage
                 </Link>
               </div>
               <div className="relative aspect-[4/3] rounded-3xl overflow-hidden shadow-2xl shadow-navy-dark/10">
-                <Image src={THERMO_HERO_IMAGE} alt={`Four de thermolaquage AZ Construction ${prepLoc} ${locationName}`} fill className="object-cover" />
+                <Image src={atelierImageUrl} alt={`Four de thermolaquage AZ Construction ${prepLoc} ${locationName}`} fill className="object-cover" />
                 <div className="absolute inset-0 bg-gradient-to-t from-navy-dark/50 via-transparent to-transparent" />
                 <div className="absolute bottom-5 left-5 right-5">
                   <p className="text-white text-sm font-medium drop-shadow-lg">Atelier de thermolaquage — AZ Construction, Bruyères-sur-Oise (95)</p>
@@ -203,6 +221,12 @@ export function ThermolaquageLocalPage({ dept, commune, segment }: Thermolaquage
             </div>
           </div>
         </section>
+
+        {/* ── Réalisations près de chez vous ─────────────── */}
+        <RealizationsForLocation dept={dept} commune={commune} />
+
+        {/* ── Collections premium Adapta ────────────────── */}
+        <AdaptaCollectionsBlock />
 
         {/* ── Avis ─────────────────────────────────────── */}
         <section className="py-20">

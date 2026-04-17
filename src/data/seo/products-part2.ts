@@ -28,7 +28,12 @@ export const seoProductsPart2: SEOProduct[] = [
       `Vous cherchez des fenêtres acier sur mesure ${prep(v)} ${loc(d, v)} ? AZ Construction fabrique des fenêtres fixes, oscillo-battantes et style atelier en acier thermolaqué.`,
     ctaLabel: 'Demander un devis fenêtre',
     features: ['Style atelier', 'Oscillo-battante', 'Acier thermolaqué', '200+ couleurs'],
-    benefits: ['Fabrication atelier', 'Pose en Île-de-France', 'Devis gratuit sous 48h', 'Garantie décennale'],
+    benefits: [
+      'Profils acier 40 mm assemblés à l\'atelier, vitrage feuilleté monté sur place',
+      'Style atelier authentique — pas de l\'aluminium qui imite, du vrai acier soudé',
+      'Métré gratuit, devis chiffré sous 48 h avec rendu 3D si besoin',
+      'Décennale + garantie 10 ans sur l\'étanchéité des joints',
+    ],
     variants: [
       { name: 'Fenêtre fixe', description: 'Luminosité maximale sans ouverture', href: '/produits/fenetres' },
       { name: 'Fenêtre oscillo-battante', description: 'Ventilation et ouverture complète', href: '/produits/fenetres' },
@@ -59,7 +64,12 @@ export const seoProductsPart2: SEOProduct[] = [
       `Envie d'une verrière intérieure ${prep(v)} ${loc(d, v)} ? AZ Construction crée des verrières style atelier en acier et verre pour séparer vos espaces tout en laissant passer la lumière.`,
     ctaLabel: 'Demander un devis verrière',
     features: ['Style atelier', 'Acier & verre', 'Sur mesure', '200+ couleurs'],
-    benefits: ['Fabrication atelier', 'Pose en Île-de-France', 'Devis gratuit sous 48h', 'Garantie décennale'],
+    benefits: [
+      'Cadre acier soudé sur-mesure, verre feuilleté 44.2 (8 mm) sécurité posé à l\'atelier',
+      'Pose en une demi-journée chez vous, dépoussiérage compris — on laisse propre',
+      'Choix entre 6 trames (carreaux 30×60, 30×80…) avec rendu 3D avant validation',
+      'Atelier à Bruyères-sur-Oise (95) — équipe interne, jamais d\'intérimaires',
+    ],
     variants: [
       { name: 'Verrière fixe', description: 'Cloison vitrée sans ouverture', href: '/produits/verrieres' },
       { name: 'Verrière avec porte', description: 'Cloison vitrée avec accès', href: '/produits/verrieres' },
@@ -90,7 +100,12 @@ export const seoProductsPart2: SEOProduct[] = [
       `Vous souhaitez une pergola sur mesure ${prep(v)} ${loc(d, v)} ? AZ Construction conçoit des pergolas en acier thermolaqué, bioclimatiques ou classiques, pour terrasses et jardins.`,
     ctaLabel: 'Demander un devis pergola',
     features: ['Bioclimatique', 'Acier thermolaqué', 'Motorisation', '200+ couleurs'],
-    benefits: ['Fabrication atelier', 'Pose en Île-de-France', 'Devis gratuit sous 48h', 'Garantie décennale'],
+    benefits: [
+      'Structure acier dimensionnée pour la neige + vent IDF (calcul fournis si DP)',
+      'Lames orientables motorisées (Somfy/Nice) — domotique compatible Alexa/Google',
+      'Pose en une journée pour les modèles standards, scellement chimique inclus',
+      'Aide DP/PC : on prépare votre dossier urbanisme gratuitement sur demande',
+    ],
     variants: [
       { name: 'Pergola bioclimatique', description: 'Lames orientables motorisées', href: '/produits/pergolas' },
       { name: 'Pergola adossée', description: 'Fixée contre la façade', href: '/produits/pergolas' },
@@ -119,7 +134,12 @@ export const seoProductsPart2: SEOProduct[] = [
       `Besoin d'une marquise ${prep(v)} ${loc(d, v)} ? AZ Construction fabrique des marquises et auvents en acier et verre pour protéger vos entrées avec élégance.`,
     ctaLabel: 'Demander un devis marquise',
     features: ['Verre & acier', 'Design moderne', 'Sur mesure', '200+ couleurs'],
-    benefits: ['Fabrication atelier', 'Pose en Île-de-France', 'Devis gratuit sous 48h', 'Garantie décennale'],
+    benefits: [
+      'Châssis acier soudé + verre feuilleté 44.2 — étanche et sécurisé',
+      'Fixation copropriété acceptée : on fournit la note de calcul pour votre AG',
+      'Pose en demi-journée, échafaudage léger compris',
+      'Décennale + traitement anti-rouille électro-zingué, pas juste de la peinture',
+    ],
     variants: [
       { name: 'Marquise porte d\'entrée', description: 'Protection élégante', href: '/produits/marquises' },
       { name: 'Marquise verre', description: 'Transparence et modernité', href: '/produits/marquises' },
@@ -149,7 +169,12 @@ export const seoProductsPart2: SEOProduct[] = [
       `Besoin de grilles de ventilation sur mesure ${prep(v)} ${loc(d, v)} ? AZ Construction fabrique des grilles techniques et décoratives en acier thermolaqué pour bâtiments résidentiels et industriels.`,
     ctaLabel: 'Demander un devis grille',
     features: ['Technique & décorative', 'Acier thermolaqué', 'Sur mesure', 'Normes ventilation'],
-    benefits: ['Fabrication atelier', 'Pose en Île-de-France', 'Devis gratuit sous 48h', 'Garantie'],
+    benefits: [
+      'Découpe laser haute précision + pliage — vos motifs personnalisés réalisés à l\'unité',
+      'Calculs de section libre fournis pour respecter les normes ventilation (DTU 68.3)',
+      'Fixation par cadre alu ou directement vissé — on s\'adapte au support',
+      'Petites séries acceptées (1 à 50 pièces) — pas de minimum de commande',
+    ],
     variants: [
       { name: 'Grille décorative', description: 'Design soigné pour façades', href: '/produits/grilles-ventilation' },
       { name: 'Grille technique', description: 'Ventilation industrielle', href: '/produits/grilles-ventilation' },
@@ -179,7 +204,12 @@ export const seoProductsPart2: SEOProduct[] = [
       `Besoin d'un service de thermolaquage ${prep(v)} ${loc(d, v)} ? AZ Construction propose le thermolaquage (peinture poudre époxy) de toutes pièces métalliques. Enlèvement gratuit, 200+ couleurs RAL, délai 5 à 7 jours.`,
     ctaLabel: 'Demander un devis thermolaquage',
     features: ['200+ couleurs RAL', 'Enlèvement gratuit', 'Délai 5-7 jours', 'Garantie 10 ans'],
-    benefits: ['Enlèvement et livraison gratuits', 'Plus de 200 teintes RAL', 'Délai rapide 5-7 jours', 'Garantie 10 ans anti-corrosion'],
+    benefits: [
+      'Notre camion vient chercher vos pièces partout en Île-de-France — calage compris',
+      'Sablage + dégraissage + couche d\'accroche + cuisson 200°C, le vrai process pro',
+      '200+ teintes RAL en stock + collections premium Adapta sur commande',
+      'Tenue 10 ans anti-UV/anti-corrosion — pas de la peinture qui s\'écaille au bout de 2 ans',
+    ],
     variants: [
       { name: 'Thermolaquage jantes', description: 'Rénovation jantes auto/moto', href: '/services/thermolaquage/jantes' },
       { name: 'Thermolaquage moto', description: 'Cadres, réservoirs, pièces moto', href: '/services/thermolaquage/moto-art' },
