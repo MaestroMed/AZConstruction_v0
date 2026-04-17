@@ -238,7 +238,7 @@ export default function ContactPage() {
                         09 71 35 74 96
                       </a>
                       <p className="text-sm text-gray-400 mt-1">
-                        Du lundi au vendredi, 8h-18h
+                        Du lundi au vendredi, 7h-17h
                       </p>
                     </div>
                   </div>
@@ -309,14 +309,10 @@ export default function ContactPage() {
                       <div className="space-y-1 text-gray-600 text-sm">
                         <p className="flex justify-between">
                           <span>Lundi - Vendredi</span>
-                          <span className="font-medium">8h00 - 18h00</span>
-                        </p>
-                        <p className="flex justify-between">
-                          <span>Samedi</span>
-                          <span className="font-medium">9h00 - 12h00</span>
+                          <span className="font-medium">7h00 - 17h00</span>
                         </p>
                         <p className="flex justify-between text-gray-400">
-                          <span>Dimanche</span>
+                          <span>Samedi - Dimanche</span>
                           <span>Fermé</span>
                         </p>
                       </div>
@@ -625,6 +621,12 @@ export default function ContactPage() {
                             .
                           </label>
                         </div>
+
+                        {error && (
+                          <div className="p-3 bg-red-50 border border-red-200 rounded-xl text-sm text-red-700">
+                            {error}
+                          </div>
+                        )}
 
                         <Button
                           type="submit"

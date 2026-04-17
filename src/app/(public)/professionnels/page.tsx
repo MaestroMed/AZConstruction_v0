@@ -418,7 +418,7 @@ export default function ProfessionnelsPage() {
                 description: "Constructions neuves ou rénovations, nous accompagnons tous vos projets de métallerie.",
                 icon: Building,
                 imageKey: "sector-btp",
-                fallback: "/placeholder.svg",
+                fallback: "https://images.unsplash.com/photo-1504307651254-35680f356dfd?w=600&q=80",
               },
               {
                 step: "02",
@@ -426,7 +426,7 @@ export default function ProfessionnelsPage() {
                 description: "Collaborons sur vos projets ambitieux avec plans d'exécution sur mesure.",
                 icon: Ruler,
                 imageKey: "sector-architecte",
-                fallback: "/placeholder.svg",
+                fallback: "https://images.unsplash.com/photo-1503387762-592deb58ef4e?w=600&q=80",
               },
               {
                 step: "03",
@@ -434,7 +434,7 @@ export default function ProfessionnelsPage() {
                 description: "Sous-traitance métallerie avec délais adaptés à vos contraintes chantier.",
                 icon: Hammer,
                 imageKey: "sector-artisan",
-                fallback: "/placeholder.svg",
+                fallback: "https://images.unsplash.com/photo-1581092162384-8987c1d64718?w=600&q=80",
               },
               {
                 step: "04",
@@ -442,7 +442,7 @@ export default function ProfessionnelsPage() {
                 description: "Structures, passerelles et équipements industriels fabriqués en atelier.",
                 icon: Factory,
                 imageKey: "sector-industrie",
-                fallback: "/placeholder.svg",
+                fallback: "https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?w=600&q=80",
               },
             ].map((sector, i) => {
               const imgSrc = getImage(sector.imageKey);

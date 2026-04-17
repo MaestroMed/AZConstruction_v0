@@ -8,7 +8,12 @@ import { writeFile, mkdir } from "fs/promises";
 const ALLOWED_TYPES = {
   image: ["image/jpeg", "image/png", "image/webp", "image/gif", "image/svg+xml"],
   video: ["video/mp4", "video/webm", "video/quicktime", "video/x-msvideo", "video/x-matroska"],
-  document: ["application/pdf"],
+  document: [
+    "application/pdf",
+    "application/msword",
+    "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+    "application/octet-stream",
+  ],
   model: ["model/gltf-binary", "model/gltf+json", "application/octet-stream"],
 };
 

@@ -23,8 +23,7 @@ const companyData = {
     longitude: 2.3333,
   },
   openingHours: [
-    "Mo-Fr 08:00-18:00",
-    "Sa 09:00-12:00",
+    "Mo-Fr 07:00-17:00",
   ],
   priceRange: "€€",
   image: "https://www.azconstruction.fr/og-image.jpg",
@@ -87,14 +86,8 @@ export function LocalBusinessSchema() {
       {
         "@type": "OpeningHoursSpecification",
         dayOfWeek: ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"],
-        opens: "08:00",
-        closes: "18:00",
-      },
-      {
-        "@type": "OpeningHoursSpecification",
-        dayOfWeek: "Saturday",
-        opens: "09:00",
-        closes: "12:00",
+        opens: "07:00",
+        closes: "17:00",
       },
     ],
     areaServed: companyData.areaServed.map((area) => ({

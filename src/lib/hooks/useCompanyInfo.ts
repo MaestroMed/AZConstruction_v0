@@ -50,8 +50,8 @@ const DEFAULT_INFO: CompanyInfo = {
   logoLightUrl: "",
   faviconUrl: "",
   horaires: {
-    semaine: "8h00 - 18h00",
-    samedi: "9h00 - 12h00",
+    semaine: "7h00 - 17h00",
+    samedi: "Fermé",
     dimanche: "Fermé",
   },
 };
