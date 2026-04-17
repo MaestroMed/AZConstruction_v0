@@ -33,15 +33,45 @@ const PROCESS_STEPS = [
 
 const PRODUCT_HERO_FALLBACK = '/images/hero/atelier-facade.jpg'
 
-async function resolveProductHero(slug: string, fromFamily: string | undefined): Promise<string> {
+// Sub-product → parent product mapping. When a sub-product has no specific
+// hero image (DB or family), we fall back to the parent's hero so the page
+// looks visually relevant (e.g. "garde-corps-verre" inherits "garde-corps").
+const SUBPRODUCT_PARENT: Record<string, string> = {
+  'garde-corps-verre': 'garde-corps',
+  'escalier-helicoidal': 'escaliers',
+  'portail-coulissant': 'portails',
+  'portail-autoportant': 'portails',
+  'verriere-atelier': 'verrieres',
+}
+
+async function fetchSiteImageHero(key: string): Promise<string | null> {
   try {
-    const row = await prisma.siteImage.findUnique({ where: { key: `product-${slug}-hero` } })
-    if (row?.imageUrl) return row.imageUrl
-    if (row?.fallbackUrl) return row.fallbackUrl
+    const row = await prisma.siteImage.findUnique({ where: { key } })
+    return row?.imageUrl || row?.fallbackUrl || null
   } catch {
-    // ignore — fall through
+    return null
   }
+}
+
+async function resolveProductHero(slug: string, fromFamily: string | undefined): Promise<string> {
+  // 1. Specific SiteImage for this product/sub-product
+  const own = await fetchSiteImageHero(`product-${slug}-hero`)
+  if (own) return own
+
+  // 2. Family heroImages (if real, not placeholder)
   if (fromFamily && fromFamily !== '/placeholder.svg') return fromFamily
+
+  // 3. Parent product fallback (for sub-products only)
+  const parentSlug = SUBPRODUCT_PARENT[slug]
+  if (parentSlug) {
+    const parentImg = await fetchSiteImageHero(`product-${parentSlug}-hero`)
+    if (parentImg) return parentImg
+    const parentFamily = getProductFamilyBySlug(parentSlug)
+    const parentHero = parentFamily?.heroImages?.[0]
+    if (parentHero && parentHero !== '/placeholder.svg') return parentHero
+  }
+
+  // 4. Last resort
   return PRODUCT_HERO_FALLBACK
 }
 
