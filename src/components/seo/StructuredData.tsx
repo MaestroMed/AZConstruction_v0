@@ -306,3 +306,193 @@ export function HomepageStructuredData() {
     </>
   );
 }
+
+/**
+ * Schema.org BlogPosting / Article pour les articles de blog
+ * https://schema.org/BlogPosting
+ */
+export function ArticleSchema({
+  title,
+  description,
+  image,
+  author,
+  datePublished,
+  dateModified,
+  url,
+  category,
+}: {
+  title: string;
+  description: string;
+  image: string;
+  author: string;
+  datePublished: string;
+  dateModified: string;
+  url: string;
+  category?: string;
+}) {
+  const absoluteUrl = url.startsWith("http") ? url : `${companyData.url}${url}`;
+  const absoluteImage = image.startsWith("http") ? image : `${companyData.url}${image}`;
+
+  const schema = {
+    "@context": "https://schema.org",
+    "@type": "BlogPosting",
+    headline: title,
+    description,
+    image: absoluteImage,
+    author: {
+      "@type": "Person",
+      name: author,
+    },
+    publisher: {
+      "@type": "Organization",
+      name: companyData.name,
+      logo: {
+        "@type": "ImageObject",
+        url: companyData.logo,
+      },
+    },
+    datePublished,
+    dateModified,
+    mainEntityOfPage: {
+      "@type": "WebPage",
+      "@id": absoluteUrl,
+    },
+    url: absoluteUrl,
+    ...(category && { articleSection: category }),
+    inLanguage: "fr-FR",
+  };
+
+  return (
+    <script
+      type="application/ld+json"
+      dangerouslySetInnerHTML={{ __html: JSON.stringify(schema) }}
+    />
+  );
+}
+
+/**
+ * Schema.org Review + AggregateRating
+ * S'attache à un LocalBusiness ou un Product.
+ * https://schema.org/Review
+ */
+export function ReviewSchema({
+  itemName,
+  itemType = "LocalBusiness",
+  reviews,
+  aggregateRating,
+}: {
+  itemName: string;
+  itemType?: "LocalBusiness" | "Product" | "Service";
+  reviews: Array<{
+    author: string;
+    rating: number;
+    text: string;
+    datePublished?: string;
+  }>;
+  aggregateRating?: { value: number; count: number };
+}) {
+  if (!reviews || reviews.length === 0) return null;
+
+  const schema = {
+    "@context": "https://schema.org",
+    "@type": itemType,
+    name: itemName,
+    ...(itemType === "LocalBusiness" && {
+      "@id": `${companyData.url}/#organization`,
+    }),
+    ...(aggregateRating && {
+      aggregateRating: {
+        "@type": "AggregateRating",
+        ratingValue: aggregateRating.value.toFixed(1),
+        reviewCount: aggregateRating.count,
+        bestRating: "5",
+        worstRating: "1",
+      },
+    }),
+    review: reviews.map((r) => ({
+      "@type": "Review",
+      author: {
+        "@type": "Person",
+        name: r.author,
+      },
+      reviewRating: {
+        "@type": "Rating",
+        ratingValue: r.rating.toString(),
+        bestRating: "5",
+        worstRating: "1",
+      },
+      reviewBody: r.text,
+      ...(r.datePublished && { datePublished: r.datePublished }),
+    })),
+  };
+
+  return (
+    <script
+      type="application/ld+json"
+      dangerouslySetInnerHTML={{ __html: JSON.stringify(schema) }}
+    />
+  );
+}
+
+/**
+ * Schema.org HowTo pour les guides étape-par-étape
+ * https://schema.org/HowTo
+ */
+export function HowToSchema({
+  name,
+  description,
+  totalTime,
+  estimatedCost,
+  tool,
+  supply,
+  steps,
+}: {
+  name: string;
+  description: string;
+  totalTime?: string;
+  estimatedCost?: { currency: string; value: number };
+  tool?: string[];
+  supply?: string[];
+  steps: Array<{
+    name: string;
+    text: string;
+    image?: string;
+    url?: string;
+  }>;
+}) {
+  const schema = {
+    "@context": "https://schema.org",
+    "@type": "HowTo",
+    name,
+    description,
+    ...(totalTime && { totalTime }),
+    ...(estimatedCost && {
+      estimatedCost: {
+        "@type": "MonetaryAmount",
+        currency: estimatedCost.currency,
+        value: estimatedCost.value,
+      },
+    }),
+    ...(tool && tool.length > 0 && {
+      tool: tool.map((t) => ({ "@type": "HowToTool", name: t })),
+    }),
+    ...(supply && supply.length > 0 && {
+      supply: supply.map((s) => ({ "@type": "HowToSupply", name: s })),
+    }),
+    step: steps.map((step, i) => ({
+      "@type": "HowToStep",
+      position: i + 1,
+      name: step.name,
+      text: step.text,
+      ...(step.image && { image: step.image }),
+      ...(step.url && { url: step.url }),
+    })),
+  };
+
+  return (
+    <script
+      type="application/ld+json"
+      dangerouslySetInnerHTML={{ __html: JSON.stringify(schema) }}
+    />
+  );
+}

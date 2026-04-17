@@ -3,6 +3,7 @@
 import * as React from "react";
 import { Star, ExternalLink } from "lucide-react";
 import { motion } from "framer-motion";
+import { ReviewSchema } from "@/components/seo/StructuredData";
 
 // Static reviews — will be replaced by Google Places API when GBP is set up
 const REVIEWS = [
@@ -35,6 +36,16 @@ const REVIEWS = [
 export default function GoogleReviewsSection() {
   return (
     <section className="py-16 bg-white">
+      <ReviewSchema
+        itemName="AZ Construction"
+        itemType="LocalBusiness"
+        reviews={REVIEWS.map((r) => ({
+          author: r.name,
+          rating: r.rating,
+          text: r.text,
+        }))}
+        aggregateRating={{ value: 5.0, count: REVIEWS.length }}
+      />
       <div className="container mx-auto px-6">
         <motion.div
           initial={{ opacity: 0, y: 20 }}

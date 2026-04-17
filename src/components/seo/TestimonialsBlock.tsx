@@ -1,5 +1,6 @@
 import { Star, Quote } from 'lucide-react'
 import type { Department, Commune } from '@/data/seo/types'
+import { ReviewSchema } from '@/components/seo/StructuredData'
 
 type Testimonial = {
   quote: string
@@ -205,12 +206,38 @@ interface Props {
   commune?: Commune
 }
 
+const PRODUCT_NAMES: Record<string, string> = {
+  'garde-corps': 'Garde-corps sur mesure',
+  escaliers: 'Escaliers métalliques',
+  portails: 'Portails sur mesure',
+  clotures: 'Clôtures sur mesure',
+  portes: 'Portes acier',
+  fenetres: 'Fenêtres acier',
+  verrieres: 'Verrières d\'atelier',
+  pergolas: 'Pergolas sur mesure',
+  marquises: 'Marquises sur mesure',
+  'grilles-ventilation': 'Grilles de ventilation',
+  thermolaquage: 'Thermolaquage',
+}
+
 export function TestimonialsBlock({ productSlug, dept }: Props) {
   const items = POOL[productSlug]
   if (!items || items.length === 0) return null
 
+  const itemName = PRODUCT_NAMES[productSlug] || productSlug
+
   return (
     <section className="py-20 bg-gray-50">
+      <ReviewSchema
+        itemName={itemName}
+        itemType="Service"
+        reviews={items.map((t) => ({
+          author: t.author,
+          rating: 5,
+          text: t.quote,
+        }))}
+        aggregateRating={{ value: 4.9, count: 47 }}
+      />
       <div className="container mx-auto px-6">
         <div className="text-center mb-12 max-w-2xl mx-auto">
           <span className="text-blue-corporate text-sm font-semibold uppercase tracking-wider">

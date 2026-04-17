@@ -4,6 +4,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { prisma } from "@/lib/prisma";
 import { Calendar, Clock, Tag, ArrowLeft, ArrowRight, ChevronRight } from "lucide-react";
+import { ArticleSchema, BreadcrumbSchema } from "@/components/seo/StructuredData";
 
 interface Props {
   params: Promise<{ slug: string }>;
@@ -77,39 +78,25 @@ export default async function BlogArticlePage({ params }: Props) {
 
   const related = await getRelatedPosts(post.category, slug);
 
-  // Schema.org Article
-  const articleSchema = {
-    "@context": "https://schema.org",
-    "@type": "Article",
-    "headline": post.title,
-    "description": post.excerpt || post.title,
-    "image": post.featuredImage || "",
-    "author": { "@type": "Organization", "name": post.author, "url": "https://www.azconstruction.fr" },
-    "publisher": {
-      "@type": "Organization",
-      "name": "AZ Construction",
-      "url": "https://www.azconstruction.fr",
-      "logo": { "@type": "ImageObject", "url": "https://www.azconstruction.fr/icons/icon.svg" }
-    },
-    "datePublished": post.publishedAt?.toISOString(),
-    "dateModified": post.updatedAt.toISOString(),
-    "mainEntityOfPage": { "@type": "WebPage", "@id": `https://www.azconstruction.fr/blog/${post.slug}` },
-  };
-
-  const breadcrumbSchema = {
-    "@context": "https://schema.org",
-    "@type": "BreadcrumbList",
-    "itemListElement": [
-      { "@type": "ListItem", "position": 1, "name": "Accueil", "item": "https://www.azconstruction.fr" },
-      { "@type": "ListItem", "position": 2, "name": "Blog", "item": "https://www.azconstruction.fr/blog" },
-      { "@type": "ListItem", "position": 3, "name": post.title, "item": `https://www.azconstruction.fr/blog/${post.slug}` },
-    ]
-  };
-
   return (
     <>
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(articleSchema) }} />
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }} />
+      <ArticleSchema
+        title={post.title}
+        description={post.excerpt || post.title}
+        image={post.featuredImage || "/og-image.jpg"}
+        author={post.author}
+        datePublished={post.publishedAt?.toISOString() || post.updatedAt.toISOString()}
+        dateModified={post.updatedAt.toISOString()}
+        url={`/blog/${post.slug}`}
+        category={CATEGORY_LABELS[post.category] || post.category}
+      />
+      <BreadcrumbSchema
+        items={[
+          { name: "Accueil", url: "/" },
+          { name: "Blog", url: "/blog" },
+          { name: post.title, url: `/blog/${post.slug}` },
+        ]}
+      />
 
       <div className="min-h-screen bg-white">
         {/* Breadcrumb */}
