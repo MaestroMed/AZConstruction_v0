@@ -40,7 +40,16 @@ export async function generateSitemaps() {
   return ids
 }
 
-export default async function sitemap({ id }: { id: number }): Promise<MetadataRoute.Sitemap> {
+export default async function sitemap(
+  { id: idInput }: { id: number | string | Promise<string | number> }
+): Promise<MetadataRoute.Sitemap> {
+  // Next.js 16 passes id as a Promise<string> (resolved from URL segment).
+  // Earlier versions passed it as a number. Normalize to number.
+  const rawId = typeof (idInput as { then?: unknown })?.then === 'function'
+    ? await (idInput as Promise<string | number>)
+    : (idInput as number | string)
+  const id = typeof rawId === 'number' ? rawId : Number(rawId)
+
   const productCount = seoProducts.length
   const segmentCount = segmentSlugs.length
   const subProductCount = seoSubProducts.length
