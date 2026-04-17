@@ -8,6 +8,14 @@ import { DepartmentCommunesList } from './DepartmentCommunesList'
 import { NearbyCommunes } from './NearbyCommunes'
 import { ProductDeptFooter } from './ProductDeptFooter'
 import { RealizationsForLocation } from './RealizationsForLocation'
+import { TestimonialsBlock } from './TestimonialsBlock'
+import { TrustStrip } from './TrustStrip'
+import { WhyCustomBlock } from './WhyCustomBlock'
+import { RelatedProductsBlock } from './RelatedProductsBlock'
+import { StickyCTABar } from './StickyCTABar'
+import dynamic from 'next/dynamic'
+
+const PartnersCarousel = dynamic(() => import('@/components/homepage/PartnersCarousel'))
 
 interface ProductLocalPageProps {
   product: SEOProduct
@@ -190,6 +198,9 @@ export async function ProductLocalPage({ product, dept, commune, segment }: Prod
           <div className="absolute bottom-0 left-0 right-0 h-24 bg-gradient-to-t from-white to-transparent" />
         </section>
 
+        {/* ── Trust strip ──────────────────────────────── */}
+        <TrustStrip />
+
         {/* ── Intro + Product image ────────────────────── */}
         <section className="py-20">
           <div className="container mx-auto px-6">
@@ -302,6 +313,18 @@ export async function ProductLocalPage({ product, dept, commune, segment }: Prod
         {/* ── Réalisations près de chez vous ─────────────── */}
         <RealizationsForLocation dept={dept} commune={commune} productSlug={product.slug} />
 
+        {/* ── Témoignages ──────────────────────────────── */}
+        <TestimonialsBlock productSlug={product.slug} dept={dept} commune={commune} />
+
+        {/* ── Pourquoi sur mesure ──────────────────────── */}
+        <WhyCustomBlock product={product} dept={dept} commune={commune} />
+
+        {/* ── Services associés ────────────────────────── */}
+        <RelatedProductsBlock currentProductSlug={product.slug} dept={dept} commune={commune} />
+
+        {/* ── Partners carousel ────────────────────────── */}
+        <PartnersCarousel />
+
         {/* ── Avantages + Avis ─────────────────────────── */}
         <section className="py-20">
           <div className="container mx-auto px-6">
@@ -406,6 +429,8 @@ export async function ProductLocalPage({ product, dept, commune, segment }: Prod
         {/* ── Cross-links ─────────────────────────────── */}
         <ProductDeptFooter currentProduct={product} currentDept={dept} />
       </div>
+
+      <StickyCTABar ctaLabel={product.ctaLabel.replace('Demander un devis', 'Devis')} />
     </>
   )
 }

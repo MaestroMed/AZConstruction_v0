@@ -298,6 +298,14 @@ export default function ThermolaquageSection({ lite = false }: { lite?: boolean 
                 </GlowButton>
               </Link>
               <PhoneLink variant="button" className="justify-center" />
+              <a
+                href="https://azepoxy.fr"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center justify-center gap-2 px-6 py-3 bg-orange-500/10 text-orange-200 border border-orange-400/30 rounded-xl hover:bg-orange-500/20 hover:text-orange-100 transition-all text-sm font-medium"
+              >
+                Site dédié azepoxy.fr ↗
+              </a>
             </motion.div>
           </motion.div>
 

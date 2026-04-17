@@ -58,6 +58,7 @@ export default function PiecesMetalliquesPage() {
       processSteps={processSteps}
       ctaTitle="Un projet de métallerie ?"
       ctaDescription="Devis gratuit sous 24h. Enlèvement et livraison sur toute la région."
+      azepoxyContext="pieces"
     />
   );
 }

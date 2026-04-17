@@ -59,6 +59,7 @@ export default function JantesPage() {
       processSteps={processSteps}
       ctaTitle="Envie de nouvelles jantes ?"
       ctaDescription="Envoyez-nous des photos pour un devis gratuit sous 24h. Livraison possible."
+      azepoxyContext="jantes"
     />
   );
 }

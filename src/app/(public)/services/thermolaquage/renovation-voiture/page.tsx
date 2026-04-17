@@ -58,6 +58,7 @@ export default function RenovationVoiturePage() {
       processSteps={processSteps}
       ctaTitle="Un projet de restauration ?"
       ctaDescription="Contactez-nous pour un devis personnalisé et gratuit. Photos bienvenues."
+      azepoxyContext="voiture"
     />
   );
 }

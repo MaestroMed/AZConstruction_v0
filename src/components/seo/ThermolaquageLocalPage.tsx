@@ -9,6 +9,15 @@ import { NearbyCommunes } from './NearbyCommunes'
 import { ProductDeptFooter } from './ProductDeptFooter'
 import { AdaptaCollectionsBlock } from './AdaptaCollectionsBlock'
 import { RealizationsForLocation } from './RealizationsForLocation'
+import { TestimonialsBlock } from './TestimonialsBlock'
+import { TrustStrip } from './TrustStrip'
+import { WhyCustomBlock } from './WhyCustomBlock'
+import { RelatedProductsBlock } from './RelatedProductsBlock'
+import { StickyCTABar } from './StickyCTABar'
+import { AzepoxyCalloutCompact, AzepoxyCalloutBlock } from './AzepoxyCallout'
+import dynamic from 'next/dynamic'
+
+const PartnersCarousel = dynamic(() => import('@/components/homepage/PartnersCarousel'))
 
 interface ThermolaquageLocalPageProps {
   dept: Department
@@ -61,6 +70,7 @@ export async function ThermolaquageLocalPage({ dept, commune, segment }: Thermol
     address: { '@type': 'PostalAddress', streetAddress: '23 Chemin du Bac des Aubins', addressLocality: 'Bruyères-sur-Oise', postalCode: '95820', addressCountry: 'FR' },
     areaServed: { '@type': isCity ? 'City' : 'AdministrativeArea', name: locationName },
     priceRange: '€€',
+    sameAs: ['https://azepoxy.fr'],
   }
 
   const faqSchema = {
@@ -120,13 +130,14 @@ export async function ThermolaquageLocalPage({ dept, commune, segment }: Thermol
               </h1>
               <p className="text-xl text-white/60 mb-8 max-w-2xl">{product.heroSubtitle(dept, commune)}</p>
 
-              <div className="flex flex-wrap gap-4 mb-8">
+              <div className="flex flex-wrap gap-3 mb-8">
                 <Link href="/contact" className="btn-glow inline-flex items-center gap-2 px-7 py-3.5 bg-gradient-to-r from-cyan-glow to-cyan-400 text-navy-dark font-bold rounded-xl hover:shadow-lg hover:shadow-cyan-glow/25 transition-all">
                   Devis gratuit thermolaquage <ArrowRight className="w-4 h-4" />
                 </Link>
                 <a href="tel:0971357496" className="inline-flex items-center gap-2 px-6 py-3.5 glass-card text-white rounded-xl hover:bg-white/10 transition-all">
                   <Phone className="w-4 h-4" /> 09 71 35 74 96
                 </a>
+                <AzepoxyCalloutCompact label="Site dédié azepoxy.fr" className="px-5 py-3.5" />
               </div>
 
               <div className="flex flex-wrap gap-3">
@@ -141,6 +152,9 @@ export async function ThermolaquageLocalPage({ dept, commune, segment }: Thermol
           </div>
           <div className="absolute bottom-0 left-0 right-0 h-24 bg-gradient-to-t from-white to-transparent" />
         </section>
+
+        {/* ── Trust strip ──────────────────────────────── */}
+        <TrustStrip />
 
         {/* ── Avantages — Glass cards dark ────────────── */}
         <section className="relative py-20 bg-navy-dark overflow-hidden">
@@ -228,6 +242,21 @@ export async function ThermolaquageLocalPage({ dept, commune, segment }: Thermol
         {/* ── Collections premium Adapta ────────────────── */}
         <AdaptaCollectionsBlock />
 
+        {/* ── Témoignages ──────────────────────────────── */}
+        <TestimonialsBlock productSlug="thermolaquage" dept={dept} commune={commune} />
+
+        {/* ── Pourquoi sur mesure ──────────────────────── */}
+        <WhyCustomBlock product={product} dept={dept} commune={commune} />
+
+        {/* ── Services associés ────────────────────────── */}
+        <RelatedProductsBlock currentProductSlug="thermolaquage" dept={dept} commune={commune} />
+
+        {/* ── Partners carousel ────────────────────────── */}
+        <PartnersCarousel />
+
+        {/* ── Site spécialisé azepoxy.fr ──────────────── */}
+        <AzepoxyCalloutBlock context="thermolaquage" />
+
         {/* ── Avis ─────────────────────────────────────── */}
         <section className="py-20">
           <div className="container mx-auto px-6 max-w-3xl">
@@ -301,6 +330,8 @@ export async function ThermolaquageLocalPage({ dept, commune, segment }: Thermol
 
         <ProductDeptFooter currentProduct={product} currentDept={dept} />
       </div>
+
+      <StickyCTABar ctaLabel="Devis thermolaquage" />
     </>
   )
 }

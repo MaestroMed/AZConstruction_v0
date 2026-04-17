@@ -58,6 +58,7 @@ export default function MotoArtPage() {
       processSteps={processSteps}
       ctaTitle="Un projet artistique ?"
       ctaDescription="Partagez votre vision. Nous créons ensemble une pièce unique."
+      azepoxyContext="moto"
     />
   );
 }

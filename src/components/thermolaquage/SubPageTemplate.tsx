@@ -21,6 +21,7 @@ import {
   GradientOrb,
   AnimatedCounter,
 } from "@/components/ui";
+import { AzepoxyCalloutBlock } from "@/components/seo/AzepoxyCallout";
 
 interface Benefit {
   icon: LucideIcon;
@@ -47,22 +48,25 @@ interface ThermolaquageSubPageProps {
   titleAccent: string;
   description: string;
   heroImage: string;
-  
+
   // Stats (optional)
   stats?: Array<{ value: number; suffix: string; label: string }>;
-  
+
   // Benefits section
   benefits: Benefit[];
-  
+
   // Colors section
   colors: ColorFinish[];
-  
+
   // Process section
   processSteps: ProcessStep[];
-  
+
   // CTA section
   ctaTitle: string;
   ctaDescription: string;
+
+  // Optional: render an azepoxy.fr cross-site callout block after the CTA
+  azepoxyContext?: 'thermolaquage' | 'jantes' | 'moto' | 'voiture' | 'pieces';
 }
 
 export default function ThermolaquageSubPageTemplate({
@@ -78,6 +82,7 @@ export default function ThermolaquageSubPageTemplate({
   processSteps,
   ctaTitle,
   ctaDescription,
+  azepoxyContext,
 }: ThermolaquageSubPageProps) {
   const [selectedColor, setSelectedColor] = React.useState(colors[0]);
 
@@ -439,6 +444,8 @@ export default function ThermolaquageSubPageTemplate({
           </motion.div>
         </div>
       </section>
+
+      {azepoxyContext && <AzepoxyCalloutBlock context={azepoxyContext} />}
     </div>
   );
 }
