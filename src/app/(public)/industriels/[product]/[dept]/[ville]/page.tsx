@@ -7,8 +7,6 @@ import {
   getSeoProductBySlug,
   getSegmentBySlug,
   getCommuneBySlug,
-  getPriorityProductDeptVilleParams,
-  seoProductSlugs,
 } from '@/data/seo'
 
 const SEGMENT_SLUG = 'industriels'
@@ -16,9 +14,11 @@ const SEGMENT_SLUG = 'industriels'
 export const revalidate = 604800
 export const dynamicParams = true
 
+// Segment city pages = long-tail (~1430 paths × 11 products = too big to pre-render
+// without overflowing Vercel's deploy upload). All served via ISR — first visit
+// generates + caches for 7 days. Sitemap still lists them so Google crawls them.
 export function generateStaticParams() {
-  // Pre-render priority cities × all products. Other cities served via ISR.
-  return getPriorityProductDeptVilleParams(seoProductSlugs)
+  return []
 }
 
 interface Props { params: Promise<{ product: string; dept: string; ville: string }> }

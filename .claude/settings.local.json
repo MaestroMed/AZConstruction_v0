@@ -1,0 +1,39 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(git pull *)",
+      "Read(//d/AZConstruction/az-construction/**)",
+      "Bash(unzip -l public/adapta.zip)",
+      "Bash(awk '{print $NF}')",
+      "Bash(grep -E '/$')",
+      "Bash(unzip -p public/adapta.zip \"adapta/Nouveau Document texte.txt\")",
+      "Bash(mkdir -p public/images/collections/adapta)",
+      "Bash(unzip -q -o public/adapta.zip -d __TRACKED_VAR__/public/images/collections/)",
+      "Bash(node scripts/build-adapta.mjs)",
+      "Bash(rm -rf public/images/collections/adapta/polaris)",
+      "Bash(unzip -q -o -j public/adapta.zip \"adapta/polaris/*\" -x \"adapta/polaris/Hydra/*\" -x \"adapta/polaris/Sculptur/*\" -x \"adapta/polaris/Boreal/*\" -x \"adapta/polaris/Chamaleon/*\" -x \"adapta/polaris/Orion/*\" -x \"adapta/polaris/Pegassus/*\" -x \"adapta/polaris/Phoenix/*\")",
+      "Bash(unzip -q -o public/adapta.zip \"adapta/polaris/*\" -d /tmp/adapta-reextract/)",
+      "Bash(cp -r /tmp/adapta-reextract/adapta/polaris __TRACKED_VAR__/public/images/collections/adapta/)",
+      "Bash(unzip -q -o public/adapta.zip \"adapta/polaris/*\" -d /tmp/adapta-re/)",
+      "Read(//tmp/adapta-re/adapta/**)",
+      "Bash(unzip -q -o public/adapta.zip -d /tmp/adapta-re/)",
+      "Bash(npx tsc *)",
+      "Bash(npx next *)",
+      "Bash(npx prisma *)",
+      "Bash(git check-ignore *)",
+      "Bash(git add *)",
+      "Bash(git commit -m ' *)",
+      "Bash(git push *)",
+      "Bash(node scripts/optimize-adapta.mjs)",
+      "Bash(git fetch *)",
+      "Bash(curl -sI \"https://azconstruction.fr/sitemap.xml\")",
+      "Bash(curl -sI \"https://azconstruction.fr/sitemap/0.xml\")",
+      "Bash(curl -s \"https://azconstruction.fr/robots.txt\")",
+      "Bash(curl -sL \"https://www.azconstruction.fr/sitemap.xml\")",
+      "Bash(curl -sIL \"https://www.azconstruction.fr/sitemap.xml\")",
+      "Bash(curl -sL \"https://www.azconstruction.fr/robots.txt\")",
+      "Bash(node scripts/fix-canonical-www.mjs)",
+      "Bash(git commit *)"
+    ]
+  }
+}

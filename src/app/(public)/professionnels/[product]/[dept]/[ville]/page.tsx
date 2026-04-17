@@ -7,8 +7,6 @@ import {
   getSeoProductBySlug,
   getSegmentBySlug,
   getCommuneBySlug,
-  getPriorityProductDeptVilleParams,
-  seoProductSlugs,
 } from '@/data/seo'
 
 const SEGMENT_SLUG = 'professionnels'
@@ -16,9 +14,9 @@ const SEGMENT_SLUG = 'professionnels'
 export const revalidate = 604800
 export const dynamicParams = true
 
+// Long-tail — too many to pre-render. Served via ISR (cached 7 days after first hit).
 export function generateStaticParams() {
-  // Pre-render priority cities × all products. Other cities served via ISR.
-  return getPriorityProductDeptVilleParams(seoProductSlugs)
+  return []
 }
 
 interface Props { params: Promise<{ product: string; dept: string; ville: string }> }
