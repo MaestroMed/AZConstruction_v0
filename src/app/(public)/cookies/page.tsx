@@ -7,12 +7,12 @@ export const metadata: Metadata = {
   title: "Politique des Cookies",
   description: "Politique de gestion des cookies du site AZ Construction. Découvrez comment nous utilisons les cookies et gérez vos préférences.",
   alternates: {
-    canonical: "https://azconstruction.fr/cookies",
+    canonical: "https://www.azconstruction.fr/cookies",
   },
   openGraph: {
     title: "Politique des Cookies ",
     description: "Politique de gestion des cookies du site AZ Construction.",
-    url: "https://azconstruction.fr/cookies",
+    url: "https://www.azconstruction.fr/cookies",
   },
 };
 

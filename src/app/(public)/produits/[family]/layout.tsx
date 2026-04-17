@@ -23,7 +23,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     product.description ||
     `Découvrez nos ${product.name.toLowerCase()} sur mesure, fabriqués en Île-de-France. Devis gratuit sous 48h.`;
 
-  const canonicalUrl = `https://azconstruction.fr/produits/${product.slug}`;
+  const canonicalUrl = `https://www.azconstruction.fr/produits/${product.slug}`;
 
   return {
     title,
@@ -49,7 +49,7 @@ function ProductSchema({ family }: { family: string }) {
   const product = getProductFamilyBySlug(family);
   if (!product) return null;
 
-  const canonicalUrl = `https://azconstruction.fr/produits/${product.slug}`;
+  const canonicalUrl = `https://www.azconstruction.fr/produits/${product.slug}`;
 
   const productSchema = {
     "@context": "https://schema.org",
@@ -65,7 +65,7 @@ function ProductSchema({ family }: { family: string }) {
     "manufacturer": {
       "@type": "Organization",
       "name": "AZ Construction",
-      "url": "https://azconstruction.fr",
+      "url": "https://www.azconstruction.fr",
       "address": {
         "@type": "PostalAddress",
         "streetAddress": "23 Chemin du Bac des Aubins",
@@ -98,13 +98,13 @@ function ProductSchema({ family }: { family: string }) {
         "@type": "ListItem",
         "position": 1,
         "name": "Accueil",
-        "item": "https://azconstruction.fr"
+        "item": "https://www.azconstruction.fr"
       },
       {
         "@type": "ListItem",
         "position": 2,
         "name": "Produits",
-        "item": "https://azconstruction.fr/produits"
+        "item": "https://www.azconstruction.fr/produits"
       },
       {
         "@type": "ListItem",

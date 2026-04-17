@@ -1,8 +1,10 @@
 import { MetadataRoute } from 'next'
 import { headers } from 'next/headers'
 
+// Canonical with www — apex (azconstruction.fr) 307-redirects here on Vercel.
+const CANONICAL_BASE = 'https://www.azconstruction.fr'
+
 export default async function robots(): Promise<MetadataRoute.Robots> {
-  const baseUrl = 'https://azconstruction.fr'
   const headersList = await headers()
   const host = headersList.get('host') || ''
 
@@ -28,6 +30,6 @@ export default async function robots(): Promise<MetadataRoute.Robots> {
         ],
       },
     ],
-    sitemap: `${baseUrl}/sitemap.xml`,
+    sitemap: `${CANONICAL_BASE}/sitemap-index.xml`,
   }
 }

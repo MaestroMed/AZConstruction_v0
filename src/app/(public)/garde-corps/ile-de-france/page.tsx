@@ -6,11 +6,11 @@ export const metadata: Metadata = {
   title: "Garde-corps sur mesure Île-de-France | Fabricant AZ Construction",
   description:
     "Fabricant de garde-corps sur mesure en Île-de-France. Acier thermolaqué, verre feuilleté, câbles. Norme NF P01-012. Devis gratuit sous 48h pour Paris et tous les départements IDF.",
-  alternates: { canonical: "https://azconstruction.fr/garde-corps/ile-de-france" },
+  alternates: { canonical: "https://www.azconstruction.fr/garde-corps/ile-de-france" },
   openGraph: {
     title: "Garde-corps sur mesure Île-de-France ",
     description: "Fabricant artisanal de garde-corps en IDF depuis 2018. Acier, verre, câbles. Devis gratuit sous 48h.",
-    url: "https://azconstruction.fr/garde-corps/ile-de-france",
+    url: "https://www.azconstruction.fr/garde-corps/ile-de-france",
     type: "website",
   },
 };
@@ -31,9 +31,9 @@ export default function GardeCorpsIleDeFrancePage() {
     "@context": "https://schema.org",
     "@type": "BreadcrumbList",
     "itemListElement": [
-      { "@type": "ListItem", "position": 1, "name": "Accueil", "item": "https://azconstruction.fr" },
-      { "@type": "ListItem", "position": 2, "name": "Garde-corps", "item": "https://azconstruction.fr/produits/garde-corps" },
-      { "@type": "ListItem", "position": 3, "name": "Île-de-France", "item": "https://azconstruction.fr/garde-corps/ile-de-france" },
+      { "@type": "ListItem", "position": 1, "name": "Accueil", "item": "https://www.azconstruction.fr" },
+      { "@type": "ListItem", "position": 2, "name": "Garde-corps", "item": "https://www.azconstruction.fr/produits/garde-corps" },
+      { "@type": "ListItem", "position": 3, "name": "Île-de-France", "item": "https://www.azconstruction.fr/garde-corps/ile-de-france" },
     ],
   };
 

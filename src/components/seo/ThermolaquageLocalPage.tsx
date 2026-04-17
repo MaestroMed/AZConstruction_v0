@@ -56,8 +56,8 @@ export async function ThermolaquageLocalPage({ dept, commune, segment }: Thermol
   ])
 
   const canonicalUrl = isCity
-    ? `https://azconstruction.fr/services/thermolaquage/${dept.slug}/${commune.slug}`
-    : `https://azconstruction.fr/services/thermolaquage/${dept.slug}`
+    ? `https://www.azconstruction.fr/services/thermolaquage/${dept.slug}/${commune.slug}`
+    : `https://www.azconstruction.fr/services/thermolaquage/${dept.slug}`
 
   const localBusinessSchema = {
     '@context': 'https://schema.org',

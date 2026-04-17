@@ -128,7 +128,7 @@ export const emailTemplates = {
             </p>
             
             <div style="margin-top: 30px; text-align: center;">
-              <a href="https://azconstruction.fr/realisations" style="display: inline-block; background: linear-gradient(135deg, #0ea5e9 0%, #22d3ee 100%); color: #ffffff; text-decoration: none; padding: 14px 28px; border-radius: 8px; font-weight: 600;">
+              <a href="https://www.azconstruction.fr/realisations" style="display: inline-block; background: linear-gradient(135deg, #0ea5e9 0%, #22d3ee 100%); color: #ffffff; text-decoration: none; padding: 14px 28px; border-radius: 8px; font-weight: 600;">
                 Voir nos réalisations
               </a>
             </div>
@@ -225,7 +225,7 @@ export const emailTemplates = {
           ` : ""}
           
           <div style="margin-top: 30px; text-align: center;">
-            <a href="https://azconstruction.fr/admin" style="display: inline-block; background-color: #1e3a5f; color: #ffffff; text-decoration: none; padding: 12px 24px; border-radius: 6px; font-weight: 500;">
+            <a href="https://www.azconstruction.fr/admin" style="display: inline-block; background-color: #1e3a5f; color: #ffffff; text-decoration: none; padding: 12px 24px; border-radius: 6px; font-weight: 500;">
               Accéder au back-office
             </a>
           </div>

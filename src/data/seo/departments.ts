@@ -74,6 +74,38 @@ export const departments: Department[] = [
     region: 'Hauts-de-France',
     prefecture: 'Beauvais',
   },
+  {
+    code: '02',
+    name: 'Aisne',
+    slug: 'aisne-02',
+    fullName: 'Aisne (02)',
+    region: 'Hauts-de-France',
+    prefecture: 'Laon',
+  },
+  {
+    code: '80',
+    name: 'Somme',
+    slug: 'somme-80',
+    fullName: 'Somme (80)',
+    region: 'Hauts-de-France',
+    prefecture: 'Amiens',
+  },
+  {
+    code: '27',
+    name: 'Eure',
+    slug: 'eure-27',
+    fullName: 'Eure (27)',
+    region: 'Normandie',
+    prefecture: 'Évreux',
+  },
+  {
+    code: '28',
+    name: 'Eure-et-Loir',
+    slug: 'eure-et-loir-28',
+    fullName: 'Eure-et-Loir (28)',
+    region: 'Centre-Val de Loire',
+    prefecture: 'Chartres',
+  },
 ]
 
 // ─── Lookup helpers ─────────────────────────────────────────────────

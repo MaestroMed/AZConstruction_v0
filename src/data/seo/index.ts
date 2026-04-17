@@ -13,8 +13,11 @@ export {
 
 export {
   seoProducts,
+  seoSubProducts,
   getSeoProductBySlug,
   seoProductSlugs,
+  seoSubProductSlugs,
+  allSeoProductSlugs,
 } from './products'
 
 export {

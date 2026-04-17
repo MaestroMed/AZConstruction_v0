@@ -49,7 +49,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
   const title = post.seoTitle || post.title;
   const description = post.seoDescription || post.excerpt || post.title;
-  const canonicalUrl = `https://azconstruction.fr/blog/${post.slug}`;
+  const canonicalUrl = `https://www.azconstruction.fr/blog/${post.slug}`;
 
   return {
     title: `${title} | Blog`,
@@ -84,25 +84,25 @@ export default async function BlogArticlePage({ params }: Props) {
     "headline": post.title,
     "description": post.excerpt || post.title,
     "image": post.featuredImage || "",
-    "author": { "@type": "Organization", "name": post.author, "url": "https://azconstruction.fr" },
+    "author": { "@type": "Organization", "name": post.author, "url": "https://www.azconstruction.fr" },
     "publisher": {
       "@type": "Organization",
       "name": "AZ Construction",
-      "url": "https://azconstruction.fr",
-      "logo": { "@type": "ImageObject", "url": "https://azconstruction.fr/icons/icon.svg" }
+      "url": "https://www.azconstruction.fr",
+      "logo": { "@type": "ImageObject", "url": "https://www.azconstruction.fr/icons/icon.svg" }
     },
     "datePublished": post.publishedAt?.toISOString(),
     "dateModified": post.updatedAt.toISOString(),
-    "mainEntityOfPage": { "@type": "WebPage", "@id": `https://azconstruction.fr/blog/${post.slug}` },
+    "mainEntityOfPage": { "@type": "WebPage", "@id": `https://www.azconstruction.fr/blog/${post.slug}` },
   };
 
   const breadcrumbSchema = {
     "@context": "https://schema.org",
     "@type": "BreadcrumbList",
     "itemListElement": [
-      { "@type": "ListItem", "position": 1, "name": "Accueil", "item": "https://azconstruction.fr" },
-      { "@type": "ListItem", "position": 2, "name": "Blog", "item": "https://azconstruction.fr/blog" },
-      { "@type": "ListItem", "position": 3, "name": post.title, "item": `https://azconstruction.fr/blog/${post.slug}` },
+      { "@type": "ListItem", "position": 1, "name": "Accueil", "item": "https://www.azconstruction.fr" },
+      { "@type": "ListItem", "position": 2, "name": "Blog", "item": "https://www.azconstruction.fr/blog" },
+      { "@type": "ListItem", "position": 3, "name": post.title, "item": `https://www.azconstruction.fr/blog/${post.slug}` },
     ]
   };
 

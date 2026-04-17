@@ -12,7 +12,7 @@ import { revalidatePath } from 'next/cache'
  * Auth: header `x-revalidate-token` must match `REVALIDATE_TOKEN` env var.
  *
  * Usage from terminal after a deploy:
- *   curl -X POST https://azconstruction.fr/api/admin/revalidate-seo \
+ *   curl -X POST https://www.azconstruction.fr/api/admin/revalidate-seo \
  *        -H "x-revalidate-token: $REVALIDATE_TOKEN"
  */
 export async function POST(req: Request) {

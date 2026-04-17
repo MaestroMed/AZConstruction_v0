@@ -55,8 +55,8 @@ export async function ProductLocalPage({ product, dept, commune, segment }: Prod
 
   const productPath = `/${product.slug}`
   const canonicalUrl = isCity
-    ? `https://azconstruction.fr${productPath}/${dept.slug}/${commune.slug}`
-    : `https://azconstruction.fr${productPath}/${dept.slug}`
+    ? `https://www.azconstruction.fr${productPath}/${dept.slug}/${commune.slug}`
+    : `https://www.azconstruction.fr${productPath}/${dept.slug}`
   const productCatalogUrl = `/produits/${product.slug}`
 
   // Schema.org
@@ -92,11 +92,11 @@ export async function ProductLocalPage({ product, dept, commune, segment }: Prod
     '@context': 'https://schema.org',
     '@type': 'BreadcrumbList',
     itemListElement: [
-      { '@type': 'ListItem', position: 1, name: 'Accueil', item: 'https://azconstruction.fr' },
-      { '@type': 'ListItem', position: 2, name: product.name, item: `https://azconstruction.fr${productCatalogUrl}` },
+      { '@type': 'ListItem', position: 1, name: 'Accueil', item: 'https://www.azconstruction.fr' },
+      { '@type': 'ListItem', position: 2, name: product.name, item: `https://www.azconstruction.fr${productCatalogUrl}` },
       ...(isCity
         ? [
-            { '@type': 'ListItem', position: 3, name: dept.fullName, item: `https://azconstruction.fr${productPath}/${dept.slug}` },
+            { '@type': 'ListItem', position: 3, name: dept.fullName, item: `https://www.azconstruction.fr${productPath}/${dept.slug}` },
             { '@type': 'ListItem', position: 4, name: commune.name, item: canonicalUrl },
           ]
         : [{ '@type': 'ListItem', position: 3, name: dept.fullName, item: canonicalUrl }]),

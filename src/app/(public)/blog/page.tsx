@@ -8,11 +8,11 @@ export const metadata: Metadata = {
   title: "Blog Métallerie & Garde-corps | Conseils & Guides ",
   description:
     "Guides pratiques, normes, prix et inspirations pour vos projets de garde-corps, escaliers, portails et thermolaquage sur mesure en Île-de-France.",
-  alternates: { canonical: "https://azconstruction.fr/blog" },
+  alternates: { canonical: "https://www.azconstruction.fr/blog" },
   openGraph: {
     title: "Blog AZ Construction — Métallerie sur mesure",
     description: "Conseils d'experts, guides prix, normes et inspirations pour vos projets métallerie en Île-de-France.",
-    url: "https://azconstruction.fr/blog",
+    url: "https://www.azconstruction.fr/blog",
     siteName: "AZ Construction",
     locale: "fr_FR",
     type: "website",

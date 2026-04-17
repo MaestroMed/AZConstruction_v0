@@ -3,39 +3,39 @@ import { prisma } from '@/lib/prisma'
 import {
   departments,
   seoProducts,
+  seoSubProducts,
   segmentSlugs,
   getAllCommunes,
 } from '@/data/seo'
 
-const BASE = 'https://azconstruction.fr'
+// Canonical with www — apex 307-redirects here on Vercel. Using www directly
+// in sitemap URLs avoids 307 hops and saves Google crawl budget.
+const BASE = 'https://www.azconstruction.fr'
 const now = new Date()
 
 // ── Sitemap Index — Segmented for optimal crawling ──────────────
 // IDs:
-//   0              = static pages (homepage, blog, legal, etc.)
-//   1..11          = product DEPARTMENT pages (1 per product, ~9 URLs each)
-//   12..22         = product CITY pages (1 per product, ~1000 URLs each)
-//   23..25         = segment DEPARTMENT pages (1 per segment, ~99 URLs each)
-//   26..28         = segment CITY pages (1 per segment, ~11000 URLs each — split further if needed)
-//
-// Total sub-sitemaps: 29
+//   0                          = static pages (homepage, blog, legal, etc.)
+//   1..N                       = product DEPARTMENT pages       (N = product count)
+//   N+1..2N                    = product CITY pages
+//   2N+1..2N+S                 = segment DEPARTMENT pages       (S = segment count)
+//   2N+S+1..2N+2S              = segment CITY pages
+//   2N+2S+1..2N+2S+SP          = sub-product DEPARTMENT pages   (SP = sub-product count)
+//   2N+2S+SP+1..2N+2S+2SP      = sub-product CITY pages
 
 export async function generateSitemaps() {
-  const productCount = seoProducts.length // 11
-  const segmentCount = segmentSlugs.length // 3
+  const productCount = seoProducts.length
+  const segmentCount = segmentSlugs.length
+  const subProductCount = seoSubProducts.length
 
-  const ids = [
-    { id: 0 }, // static
-  ]
+  const ids: { id: number }[] = [{ id: 0 }] // static
 
-  // Product dept pages: IDs 1..11
   for (let i = 0; i < productCount; i++) ids.push({ id: 1 + i })
-  // Product city pages: IDs 12..22
   for (let i = 0; i < productCount; i++) ids.push({ id: 1 + productCount + i })
-  // Segment dept pages: IDs 23..25
   for (let i = 0; i < segmentCount; i++) ids.push({ id: 1 + productCount * 2 + i })
-  // Segment city pages: IDs 26..28
   for (let i = 0; i < segmentCount; i++) ids.push({ id: 1 + productCount * 2 + segmentCount + i })
+  for (let i = 0; i < subProductCount; i++) ids.push({ id: 1 + productCount * 2 + segmentCount * 2 + i })
+  for (let i = 0; i < subProductCount; i++) ids.push({ id: 1 + productCount * 2 + segmentCount * 2 + subProductCount + i })
 
   return ids
 }
@@ -43,29 +43,15 @@ export async function generateSitemaps() {
 export default async function sitemap({ id }: { id: number }): Promise<MetadataRoute.Sitemap> {
   const productCount = seoProducts.length
   const segmentCount = segmentSlugs.length
+  const subProductCount = seoSubProducts.length
 
-  // ID 0: Static pages
   if (id === 0) return staticPages()
-
-  // IDs 1..11: Product DEPARTMENT pages
-  if (id >= 1 && id <= productCount) {
-    return productDeptSitemap(id - 1)
-  }
-
-  // IDs 12..22: Product CITY pages
-  if (id >= 1 + productCount && id <= productCount * 2) {
-    return productCitySitemap(id - 1 - productCount)
-  }
-
-  // IDs 23..25: Segment DEPARTMENT pages
-  if (id >= 1 + productCount * 2 && id <= productCount * 2 + segmentCount) {
-    return segmentDeptSitemap(id - 1 - productCount * 2)
-  }
-
-  // IDs 26..28: Segment CITY pages
-  if (id >= 1 + productCount * 2 + segmentCount) {
-    return segmentCitySitemap(id - 1 - productCount * 2 - segmentCount)
-  }
+  if (id >= 1 && id <= productCount) return productDeptSitemap(id - 1)
+  if (id >= 1 + productCount && id <= productCount * 2) return productCitySitemap(id - 1 - productCount)
+  if (id >= 1 + productCount * 2 && id <= productCount * 2 + segmentCount) return segmentDeptSitemap(id - 1 - productCount * 2)
+  if (id >= 1 + productCount * 2 + segmentCount && id <= productCount * 2 + segmentCount * 2) return segmentCitySitemap(id - 1 - productCount * 2 - segmentCount)
+  if (id >= 1 + productCount * 2 + segmentCount * 2 && id <= productCount * 2 + segmentCount * 2 + subProductCount) return subProductDeptSitemap(id - 1 - productCount * 2 - segmentCount * 2)
+  if (id >= 1 + productCount * 2 + segmentCount * 2 + subProductCount) return subProductCitySitemap(id - 1 - productCount * 2 - segmentCount * 2 - subProductCount)
 
   return []
 }
@@ -187,6 +173,37 @@ function segmentCitySitemap(index: number): MetadataRoute.Sitemap {
           priority: 0.5,
         })
       }
+    }
+  }
+  return entries
+}
+
+// ── Sub-product × Department sitemap (~13 URLs each) ──────────────
+function subProductDeptSitemap(index: number): MetadataRoute.Sitemap {
+  const sub = seoSubProducts[index]
+  return departments.map((dept) => ({
+    url: `${BASE}/${sub.slug}/${dept.slug}`,
+    lastModified: now,
+    changeFrequency: 'weekly' as const,
+    priority: 0.8,
+  }))
+}
+
+// ── Sub-product × City sitemap (~6500 URLs each) ──────────────────
+function subProductCitySitemap(index: number): MetadataRoute.Sitemap {
+  const sub = seoSubProducts[index]
+  const allCommunes = getAllCommunes()
+  const entries: MetadataRoute.Sitemap = []
+
+  for (const dept of departments) {
+    const deptCommunes = allCommunes.filter((c) => c.departement === dept.code)
+    for (const commune of deptCommunes) {
+      entries.push({
+        url: `${BASE}/${sub.slug}/${dept.slug}/${commune.slug}`,
+        lastModified: now,
+        changeFrequency: 'monthly',
+        priority: 0.65,
+      })
     }
   }
   return entries

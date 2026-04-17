@@ -19,7 +19,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   return {
     title: product.metaTitle(dept),
     description: product.metaDescription(dept),
-    alternates: { canonical: `https://azconstruction.fr/services/thermolaquage/${dept.slug}` },
+    alternates: { canonical: `https://www.azconstruction.fr/services/thermolaquage/${dept.slug}` },
   }
 }
 

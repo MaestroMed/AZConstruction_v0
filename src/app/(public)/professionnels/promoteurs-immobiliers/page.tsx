@@ -6,7 +6,7 @@ import { departments } from '@/data/seo'
 export const metadata: Metadata = {
   title: 'Métallerie pour promoteurs immobiliers ',
   description: 'Fabricant de métallerie sur mesure pour promoteurs immobiliers en Île-de-France. Garde-corps, escaliers, portails pour programmes neufs. Délais chantier, documentation technique, garantie décennale.',
-  alternates: { canonical: 'https://azconstruction.fr/professionnels/promoteurs-immobiliers' },
+  alternates: { canonical: 'https://www.azconstruction.fr/professionnels/promoteurs-immobiliers' },
 }
 
 const ATOUTS = [

@@ -8,7 +8,7 @@ const companyData = {
   name: "AZ Construction",
   legalName: "AZ Construction SARL",
   description: "Expert en métallerie sur mesure : garde-corps, escaliers, portes, fenêtres, portails, clôtures et grilles de ventilation. Spécialiste thermolaquage. Profilés Jansen.",
-  url: "https://azconstruction.fr",
+  url: "https://www.azconstruction.fr",
   telephone: "+33 9 71 35 74 96",
   email: "contact@azconstruction.fr",
   address: {
@@ -27,8 +27,8 @@ const companyData = {
     "Sa 09:00-12:00",
   ],
   priceRange: "€€",
-  image: "https://azconstruction.fr/og-image.jpg",
-  logo: "https://azconstruction.fr/logo.png",
+  image: "https://www.azconstruction.fr/og-image.jpg",
+  logo: "https://www.azconstruction.fr/logo.png",
   sameAs: [
     "https://www.facebook.com/azconstruction",
     "https://www.instagram.com/azconstruction",

@@ -52,8 +52,8 @@ export function CommandPalette() {
     { id: "new-slide", label: "Nouveau slide hero", description: "Ajouter un slide au carousel", icon: Plus, action: () => router.push("/admin/hero-slides"), category: "create" },
 
     // Quick actions
-    { id: "view-site", label: "Voir le site", description: "Ouvrir azconstruction.fr", icon: ArrowRight, action: () => window.open("https://azconstruction.fr", "_blank"), category: "action" },
-    { id: "view-blog", label: "Voir le blog", description: "Ouvrir le blog public", icon: ArrowRight, action: () => window.open("https://azconstruction.fr/blog", "_blank"), category: "action" },
+    { id: "view-site", label: "Voir le site", description: "Ouvrir azconstruction.fr", icon: ArrowRight, action: () => window.open("https://www.azconstruction.fr", "_blank"), category: "action" },
+    { id: "view-blog", label: "Voir le blog", description: "Ouvrir le blog public", icon: ArrowRight, action: () => window.open("https://www.azconstruction.fr/blog", "_blank"), category: "action" },
   ], [router]);
 
   const filtered = React.useMemo(() => {

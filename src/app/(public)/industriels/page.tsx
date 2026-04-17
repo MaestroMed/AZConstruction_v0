@@ -22,7 +22,7 @@ export const metadata: Metadata = {
   title: 'Métallerie industrielle sur mesure | Usines, Entrepôts, ERP ',
   description:
     'Fabricant de métallerie industrielle sur mesure en Île-de-France. Garde-corps, escaliers, portails, grilles pour usines, entrepôts, sites industriels et ERP. Normes et conformité.',
-  alternates: { canonical: 'https://azconstruction.fr/industriels' },
+  alternates: { canonical: 'https://www.azconstruction.fr/industriels' },
 }
 
 const SECTORS = [

@@ -374,7 +374,7 @@ export function QuoteConfirmationEmail({
           <tr>
             <td style={{ padding: "0 32px 32px", textAlign: "center" }}>
               <a
-                href="https://azconstruction.fr/compte/devis"
+                href="https://www.azconstruction.fr/compte/devis"
                 style={{
                   display: "inline-block",
                   padding: "14px 32px",

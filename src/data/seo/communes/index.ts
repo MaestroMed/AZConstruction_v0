@@ -8,6 +8,10 @@ import { communes93 } from './communes-93'
 import { communes94 } from './communes-94'
 import { communes95 } from './communes-95'
 import { communes60 } from './communes-60'
+import { communes02 } from './communes-02'
+import { communes80 } from './communes-80'
+import { communes27 } from './communes-27'
+import { communes28 } from './communes-28'
 
 // Map department code → communes array
 const communesByDept: Record<string, Commune[]> = {
@@ -20,6 +24,10 @@ const communesByDept: Record<string, Commune[]> = {
   '94': communes94,
   '95': communes95,
   '60': communes60,
+  '02': communes02,
+  '80': communes80,
+  '27': communes27,
+  '28': communes28,
 }
 
 // All communes concatenated
@@ -57,4 +65,8 @@ export {
   communes94,
   communes95,
   communes60,
+  communes02,
+  communes80,
+  communes27,
+  communes28,
 }
