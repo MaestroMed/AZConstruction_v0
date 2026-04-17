@@ -48,7 +48,9 @@ function FinishTile({
             alt={finish.name}
             fill
             sizes="(max-width: 640px) 33vw, (max-width: 1024px) 20vw, 12vw"
+            quality={65}
             className="object-cover"
+            loading="lazy"
           />
         )}
       </div>
