@@ -1,3 +1,10 @@
+import {
+  ADAPTA_PATINA_SUBS,
+  ADAPTA_POLARIS_SUBS,
+  ADAPTA_DICHROIC_FINISHES,
+  ADAPTA_SFERA_FINISHES,
+} from "./adapta-collections.generated";
+
 // Ce que demandent nos clients - 10 items pour la mosaïque thermolaquage
 // Ces données seront éditables via le CMS (SiteSection) une fois implémenté
 
@@ -382,6 +389,14 @@ export interface RALCollection {
   accentColor: string;     // couleur d'accent pour le design
   bgGradient: string;      // classes Tailwind pour le gradient de fond
   tags: string[];
+  finishes: CollectionFinish[];           // liste aplatie — toutes les finitions
+  subCollections?: SubCollection[];       // sous-collections optionnelles (Patina, Polaris)
+}
+
+export interface SubCollection {
+  id: string;
+  name: string;
+  description?: string;
   finishes: CollectionFinish[];
 }
 
@@ -390,7 +405,7 @@ export interface CollectionFinish {
   name: string;
   description?: string;
   hex?: string;            // couleur approximative si disponible
-  imageUrl?: string;       // sera rempli après le scraping
+  imageUrl?: string;       // image Adapta officielle
 }
 
 export const ralCollections: RALCollection[] = [
@@ -405,20 +420,8 @@ export const ralCollections: RALCollection[] = [
     accentColor: "#A0522D",
     bgGradient: "from-amber-950 via-orange-900 to-stone-900",
     tags: ["Oxyde", "Corten", "Rouille", "Patine", "Naturel", "Architecture"],
-    finishes: [
-      { id: "gentle-erosion", name: "Gentle Erosion", description: "Érosion douce, tons terreux", hex: "#8B6042" },
-      { id: "land-of-fire", name: "Land of Fire", description: "Feu de la terre, orangés profonds", hex: "#8B3A1A" },
-      { id: "turquoise-copper", name: "Turquoise Copper", description: "Cuivre turquoise, patine verte", hex: "#4A8B7A" },
-      { id: "calm-cappadocia", name: "Calm Cappadocia", description: "Beiges et ocres apaisants", hex: "#C4A882" },
-      { id: "resilient-clay", name: "Resilient Clay", description: "Argile, tons chauds", hex: "#A0704C" },
-      { id: "lethargic-savannah", name: "Lethargic Savannah", description: "Savane, tons dorés", hex: "#B8965A" },
-      { id: "frozen-streams", name: "Frozen Streams", description: "Ruisseaux gelés, bleu-gris", hex: "#6B8A98" },
-      { id: "latent-hermits", name: "Latent Hermits", description: "Ermites latents, gris chauds", hex: "#7A6E5C" },
-      { id: "spicy-crater", name: "Spicy Crater", description: "Cratère épicé, rouges intenses", hex: "#7A3020" },
-      { id: "quiet-patagonia", name: "Quiet Patagonia", description: "Patagonie tranquille, gris froids", hex: "#788A8C" },
-      { id: "lost-footprints", name: "Lost Footprints", description: "Empreintes perdues, sables", hex: "#B09070" },
-      { id: "powerful-twister", name: "Powerful Twister", description: "Tourbillon puissant, bruns foncés", hex: "#5C4030" },
-    ],
+    subCollections: ADAPTA_PATINA_SUBS,
+    finishes: ADAPTA_PATINA_SUBS.flatMap((s) => s.finishes),
   },
   {
     id: "polaris",
@@ -431,20 +434,8 @@ export const ralCollections: RALCollection[] = [
     accentColor: "#4A6FA5",
     bgGradient: "from-slate-900 via-blue-950 to-slate-800",
     tags: ["Métallique", "Industriel", "Martelé", "Structuré", "Pantone", "Extérieur"],
-    finishes: [
-      { id: "chamaleon-1", name: "RB-7182-I", description: "Caméléon — effet granit bleu", hex: "#5A6E82" },
-      { id: "chamaleon-2", name: "RB-5112-I", description: "Caméléon — profond bleu", hex: "#3A5272" },
-      { id: "sculptur-silver", name: "RL-1501-XW", description: "Sculptur — argent structuré", hex: "#B8B8B0" },
-      { id: "boreal-hammer", name: "RH-5107", description: "Boreal martelé — bleu-vert", hex: "#4A7280" },
-      { id: "orion-metallic", name: "RX-7188-XW", description: "Orion — graphite métallique", hex: "#5A6070" },
-      { id: "pegassus-1", name: "RL-7193-X", description: "Pegassus — gris métallique", hex: "#808890" },
-      { id: "phoenix-gold", name: "HX-7129-X", description: "Phoenix — or chaud", hex: "#B89840" },
-      { id: "hydra-silver", name: "RX-9006-X", description: "Hydra — argent pur", hex: "#A8A8A8" },
-      { id: "orion-dark", name: "RX-9007-X", description: "Hydra foncé", hex: "#686868" },
-      { id: "zirconium", name: "RX-7167-X", description: "Zirconium métallisé", hex: "#C0C0B8" },
-      { id: "acier", name: "RX-7141-TZ", description: "Acier poli", hex: "#909090" },
-      { id: "aluminium-brille", name: "RX-7100-TZ", description: "Aluminium poli brillant", hex: "#D0D0D0" },
-    ],
+    subCollections: ADAPTA_POLARIS_SUBS,
+    finishes: ADAPTA_POLARIS_SUBS.flatMap((s) => s.finishes),
   },
   {
     id: "dichroic",
@@ -457,14 +448,7 @@ export const ralCollections: RALCollection[] = [
     accentColor: "#7B2FBE",
     bgGradient: "from-violet-950 via-purple-900 to-indigo-950",
     tags: ["Dichroïque", "Irisé", "Changeant", "Luxe", "Architecture", "Design"],
-    finishes: [
-      { id: "dichroic-1", name: "Dichroic Blue-Purple", description: "Bleu-violet selon l'angle", hex: "#5050A0" },
-      { id: "dichroic-2", name: "Dichroic Gold-Green", description: "Or-vert selon l'angle", hex: "#808040" },
-      { id: "dichroic-3", name: "Dichroic Red-Orange", description: "Rouge-orange selon l'angle", hex: "#A04020" },
-      { id: "dichroic-4", name: "Dichroic Silver-Blue", description: "Argent-bleu selon l'angle", hex: "#6080A0" },
-      { id: "dichroic-5", name: "Dichroic Green-Gold", description: "Vert-or selon l'angle", hex: "#607040" },
-      { id: "dichroic-6", name: "Dichroic Purple-Red", description: "Violet-rouge selon l'angle", hex: "#8040A0" },
-    ],
+    finishes: ADAPTA_DICHROIC_FINISHES,
   },
   {
     id: "sfera",
@@ -477,20 +461,7 @@ export const ralCollections: RALCollection[] = [
     accentColor: "#B87333",
     bgGradient: "from-amber-900 via-yellow-900 to-stone-900",
     tags: ["Anodisé", "Cosmos", "Cuivre", "Bronze", "Aluminium", "Premium"],
-    finishes: [
-      { id: "azul-caballa", name: "Azul Caballa", description: "Bleu maquereau anodisé", hex: "#2A5A8A" },
-      { id: "negro-cosmos", name: "Negro Cosmos", description: "Noir cosmos profond", hex: "#1A1A2E" },
-      { id: "plata-cosmos", name: "Plata Cosmos", description: "Argent cosmos brillant", hex: "#C0C0C8" },
-      { id: "rojo-fuego", name: "Rojo Fuego", description: "Rouge feu anodisé", hex: "#8B1A1A" },
-      { id: "azul-anod", name: "Azul Anodizado", description: "Bleu anodisé classique", hex: "#1A5A9A" },
-      { id: "cobre-anod", name: "Cobre Anodizado", description: "Cuivre anodisé", hex: "#B87333" },
-      { id: "verde-anod", name: "Verde Anodizado", description: "Vert anodisé", hex: "#2E8B57" },
-      { id: "laton-anod", name: "Latón Anodizado", description: "Laiton anodisé", hex: "#D4A520" },
-      { id: "acero-anod", name: "Acero Anodizado", description: "Acier anodisé", hex: "#8A9A9A" },
-      { id: "bronce-anod", name: "Bronce Anodizado", description: "Bronze anodisé", hex: "#8B6914" },
-      { id: "gris-plata-anod", name: "Gris Plata Anodizado", description: "Gris argent anodisé", hex: "#A8A8A8" },
-      { id: "plata-anod", name: "Plata Anodizado", description: "Argent anodisé pur", hex: "#C8C8C8" },
-    ],
+    finishes: ADAPTA_SFERA_FINISHES,
   },
 ];
 

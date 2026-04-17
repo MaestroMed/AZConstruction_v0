@@ -3,6 +3,7 @@
 import * as React from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import Link from "next/link";
+import Image from "next/image";
 import { Search, Palette, ArrowRight, ExternalLink, ChevronRight, X } from "lucide-react";
 import { ralColorsAll, ralColors20, ralCollections, RAL_FAMILIES, type RALFamily } from "@/lib/data/thermolaquage-items";
 import { GlowButton } from "@/components/ui/GlowButton";
@@ -280,17 +281,28 @@ export default function CouleurRalPage() {
               >
                 <Link href={`/couleurs-ral/${col.slug}`}>
                   <div className={`relative h-52 rounded-2xl overflow-hidden bg-gradient-to-br ${col.bgGradient} mb-4`}>
-                    {/* Color swatches preview */}
-                    <div className="absolute bottom-4 left-4 right-4 flex flex-wrap gap-1.5">
+                    {/* Finishes image preview */}
+                    <div className="absolute inset-0 grid grid-cols-4 gap-1 p-3 opacity-80">
                       {col.finishes.slice(0, 8).map((f) => (
-                        <span
+                        <div
                           key={f.id}
-                          className="w-6 h-6 rounded-md ring-1 ring-white/20"
-                          style={{ backgroundColor: f.hex || "#888" }}
+                          className="relative rounded-md overflow-hidden ring-1 ring-white/20"
+                          style={f.imageUrl ? undefined : { backgroundColor: f.hex || "#888" }}
                           title={f.name}
-                        />
+                        >
+                          {f.imageUrl && (
+                            <Image
+                              src={f.imageUrl}
+                              alt=""
+                              fill
+                              sizes="80px"
+                              className="object-cover"
+                            />
+                          )}
+                        </div>
                       ))}
                     </div>
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent" />
                     {/* Hover overlay */}
                     <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-all flex items-center justify-center">
                       <span className="opacity-0 group-hover:opacity-100 transition-opacity bg-white/20 backdrop-blur-sm text-white text-sm font-medium px-4 py-2 rounded-xl border border-white/20">
