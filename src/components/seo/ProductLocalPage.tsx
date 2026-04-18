@@ -14,6 +14,7 @@ import { WhyCustomBlock } from './WhyCustomBlock'
 import { RelatedProductsBlock } from './RelatedProductsBlock'
 import { StickyCTABar } from './StickyCTABar'
 import { ProductHeroVisual } from './ProductHeroVisual'
+import { CommuneContextBlock } from './CommuneContextBlock'
 import dynamic from 'next/dynamic'
 
 const PartnersCarousel = dynamic(() => import('@/components/homepage/PartnersCarousel'))
@@ -263,17 +264,14 @@ export async function ProductLocalPage({ product, dept, commune, segment }: Prod
                 </h2>
                 <div className="prose prose-lg text-gray-600">
                   <p>{segment ? segment.introParagraph(product, dept, commune) : product.introParagraph(dept, commune)}</p>
-                  {isCity && commune.population && (
-                    <p>
-                      Avec ses {commune.population.toLocaleString('fr-FR')} habitants, {commune.name} ({commune.codePostal})
-                      est une commune dynamique {dept.region === 'Île-de-France' ? 'd\'Île-de-France' : `de l'${dept.region}`} où
-                      la demande {product.nameWithArticle} sur mesure est forte, tant en rénovation qu&apos;en construction neuve.
-                    </p>
+                  {isCity && (
+                    <CommuneContextBlock product={product} dept={dept} commune={commune} />
                   )}
                   <p>
                     Chaque réalisation est conçue et fabriquée sur mesure dans nos ateliers de
                     Bruyères-sur-Oise (95){isCity ? `, à proximité de ${commune.name}` : ''}. Nous assurons la livraison
-                    et la pose dans l&apos;ensemble du département {dept.fullName}.
+                    et la pose dans l&apos;ensemble du département {dept.fullName}
+                    {dept.region !== 'Île-de-France' ? ` (${dept.region})` : ''}.
                   </p>
                 </div>
                 <Link
