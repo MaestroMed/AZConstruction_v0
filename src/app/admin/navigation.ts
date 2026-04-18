@@ -123,6 +123,7 @@ export const navigationItems: NavItem[] = [
       { title: "Général", href: "/admin/parametres" },
       { title: "Images du site", href: "/admin/parametres/images" },
       { title: "Images SEO (familles)", href: "/admin/parametres/seo/images" },
+      { title: "SEO Premium+ (URLs)", href: "/admin/seo/premium" },
       { title: "Réalisations Pro", href: "/admin/parametres/realisations-pro" },
       { title: "Stripe (Paiement)", href: "/admin/parametres/stripe" },
       { title: "E-commerce", href: "/admin/parametres/ecommerce" },

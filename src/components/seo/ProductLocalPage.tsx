@@ -16,6 +16,12 @@ import { StickyCTABar } from './StickyCTABar'
 import { ProductHeroVisual } from './ProductHeroVisual'
 import { CommuneContextBlock } from './CommuneContextBlock'
 import { DepartmentContextBlock } from './DepartmentContextBlock'
+import { getPremiumCase } from '@/data/seo/premium'
+import { PremiumHero } from './premium/PremiumHero'
+import { CityGuide } from './premium/CityGuide'
+import { CaseStudies } from './premium/CaseStudies'
+import { LocalReviews } from './premium/LocalReviews'
+import { CrossCityTable } from './premium/CrossCityTable'
 import dynamic from 'next/dynamic'
 
 const PartnersCarousel = dynamic(() => import('@/components/homepage/PartnersCarousel'))
@@ -101,6 +107,10 @@ export async function ProductLocalPage({ product, dept, commune, segment }: Prod
   const productFamily = getProductFamilyBySlug(product.slug)
   const heroImage = await resolveProductHero(product.slug, productFamily?.heroImages?.[0])
 
+  // Premium+ lookup — si la page a un PremiumCase publié, on substitue/enrichit
+  // les blocs standards avec les blocs Premium+ correspondants.
+  const premium = getPremiumCase(product.slug, dept.slug, commune?.slug)
+
   const productPath = `/${product.slug}`
   const canonicalUrl = isCity
     ? `https://www.azconstruction.fr${productPath}/${dept.slug}/${commune.slug}`
@@ -172,21 +182,26 @@ export async function ProductLocalPage({ product, dept, commune, segment }: Prod
       <div className="min-h-screen bg-white">
         {/* ── Hero — Premium style ────────────────────── */}
         <section className="relative min-h-[70vh] flex items-end overflow-hidden">
-          {/* Background : real photo if uploaded, generated visual otherwise */}
-          {heroImage ? (
-            <Image
-              src={heroImage}
-              alt={`${product.name} sur mesure ${prepLoc} ${locationName} — AZ Construction`}
-              fill
-              className="object-cover"
-              priority
+          {/* Background : Premium photo > SiteImage photo > generated visual */}
+          {premium ? (
+            <PremiumHero
+              photo={premium.heroPhoto}
+              quote={premium.heroQuote}
+              altContext={`${product.name} sur mesure ${prepLoc} ${locationName}`}
             />
+          ) : heroImage ? (
+            <>
+              <Image
+                src={heroImage}
+                alt={`${product.name} sur mesure ${prepLoc} ${locationName} — AZ Construction`}
+                fill
+                className="object-cover"
+                priority
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-navy-dark via-navy-dark/80 to-navy-dark/30" />
+            </>
           ) : (
             <ProductHeroVisual productSlug={product.slug} productName={product.name} />
-          )}
-          {/* Overlay gradient — only when there's a photo (the visual already has its own treatment) */}
-          {heroImage && (
-            <div className="absolute inset-0 bg-gradient-to-t from-navy-dark via-navy-dark/80 to-navy-dark/30" />
           )}
           {/* Radial glow */}
           <div className="absolute top-1/4 left-1/4 w-[600px] h-[600px] rounded-full opacity-20 pointer-events-none" style={{ background: 'radial-gradient(circle, rgba(0,212,255,0.15) 0%, transparent 70%)' }} />
@@ -307,6 +322,15 @@ export async function ProductLocalPage({ product, dept, commune, segment }: Prod
           </div>
         </section>
 
+        {/* ── Premium+ : Guide ville éditorial (après intro) ─────── */}
+        {premium?.cityGuide && (
+          <CityGuide
+            intro={premium.cityGuide.intro}
+            sections={premium.cityGuide.sections}
+            videoEmbedUrl={premium.videoEmbedUrl}
+          />
+        )}
+
         {/* ── Variants — Glass cards ──────────────────── */}
         {product.variants.length > 0 && (
           <section className="py-20 bg-gray-50">
@@ -366,8 +390,23 @@ export async function ProductLocalPage({ product, dept, commune, segment }: Prod
         {/* ── Réalisations près de chez vous ─────────────── */}
         <RealizationsForLocation dept={dept} commune={commune} productSlug={product.slug} />
 
-        {/* ── Témoignages ──────────────────────────────── */}
-        <TestimonialsBlock productSlug={product.slug} dept={dept} commune={commune} />
+        {/* ── Premium+ : Études de cas locales (vs réalisations génériques) ── */}
+        {premium?.caseStudies && premium.caseStudies.length > 0 && (
+          <CaseStudies
+            cases={premium.caseStudies}
+            locationSuffix={commune ? `à ${commune.name}` : `en ${dept.fullName}`}
+          />
+        )}
+
+        {/* ── Témoignages — Premium reviews if available, sinon stub générique ── */}
+        {premium?.localReviews && premium.localReviews.length > 0 ? (
+          <LocalReviews
+            reviews={premium.localReviews}
+            locationSuffix={commune ? `à ${commune.name}` : `en ${dept.fullName}`}
+          />
+        ) : (
+          <TestimonialsBlock productSlug={product.slug} dept={dept} commune={commune} />
+        )}
 
         {/* ── Pourquoi sur mesure ──────────────────────── */}
         <WhyCustomBlock product={product} dept={dept} commune={commune} />
@@ -452,6 +491,19 @@ export async function ProductLocalPage({ product, dept, commune, segment }: Prod
           <NearbyCommunes product={product} dept={dept} currentCommune={commune} />
         ) : (
           <DepartmentCommunesList product={product} dept={dept} />
+        )}
+
+        {/* ── Premium+ : Comparaison cross-villes ────── */}
+        {premium?.crossCity && (
+          <CrossCityTable
+            intro={premium.crossCity.intro}
+            rows={premium.crossCity.rows}
+            buildHref={(communeSlug) =>
+              product.slug === 'thermolaquage'
+                ? `/services/thermolaquage/${dept.slug}/${communeSlug}`
+                : `/${product.slug}/${dept.slug}/${communeSlug}`
+            }
+          />
         )}
 
         {/* ── CTA final — Premium ─────────────────────── */}
