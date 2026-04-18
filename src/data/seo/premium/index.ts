@@ -22,6 +22,14 @@ import { portailCoulissantParis75Paris16e } from './portail-coulissant-paris-75-
 import { gardeCorpsParis75Paris11e } from './garde-corps-paris-75-paris-11e'
 import { verriereAtelierHautsDeSeine92BoulogneBillancourt } from './verriere-atelier-hauts-de-seine-92-boulogne-billancourt'
 import { gardeCorpsValDoise95Cergy } from './garde-corps-val-doise-95-cergy'
+import { escalierHelicoidalParis75Paris7e } from './escalier-helicoidal-paris-75-paris-7e'
+import { gardeCorpsYvelines78Versailles } from './garde-corps-yvelines-78-versailles'
+import { portailAutoportantHautsDeSeine92Nanterre } from './portail-autoportant-hauts-de-seine-92-nanterre'
+import { verrieresHautsDeSeine92NeuillySurSeine } from './verrieres-hauts-de-seine-92-neuilly-sur-seine'
+import { escaliersParis75Paris15e } from './escaliers-paris-75-paris-15e'
+import { thermolaquageValDoise95Cergy } from './thermolaquage-val-doise-95-cergy'
+import { thermolaquageHautsDeSeine92BoulogneBillancourt } from './thermolaquage-hauts-de-seine-92-boulogne-billancourt'
+import { gardeCorpsVerreHautsDeSeine92NeuillySurSeine } from './garde-corps-verre-hauts-de-seine-92-neuilly-sur-seine'
 
 const PREMIUM_REGISTRY = new Map<string, PremiumCase>([
   [keyOf(gardeCorpsVerreParis75Paris15e), gardeCorpsVerreParis75Paris15e],
@@ -30,6 +38,14 @@ const PREMIUM_REGISTRY = new Map<string, PremiumCase>([
   [keyOf(gardeCorpsParis75Paris11e), gardeCorpsParis75Paris11e],
   [keyOf(verriereAtelierHautsDeSeine92BoulogneBillancourt), verriereAtelierHautsDeSeine92BoulogneBillancourt],
   [keyOf(gardeCorpsValDoise95Cergy), gardeCorpsValDoise95Cergy],
+  [keyOf(escalierHelicoidalParis75Paris7e), escalierHelicoidalParis75Paris7e],
+  [keyOf(gardeCorpsYvelines78Versailles), gardeCorpsYvelines78Versailles],
+  [keyOf(portailAutoportantHautsDeSeine92Nanterre), portailAutoportantHautsDeSeine92Nanterre],
+  [keyOf(verrieresHautsDeSeine92NeuillySurSeine), verrieresHautsDeSeine92NeuillySurSeine],
+  [keyOf(escaliersParis75Paris15e), escaliersParis75Paris15e],
+  [keyOf(thermolaquageValDoise95Cergy), thermolaquageValDoise95Cergy],
+  [keyOf(thermolaquageHautsDeSeine92BoulogneBillancourt), thermolaquageHautsDeSeine92BoulogneBillancourt],
+  [keyOf(gardeCorpsVerreHautsDeSeine92NeuillySurSeine), gardeCorpsVerreHautsDeSeine92NeuillySurSeine],
 ])
 
 function keyOf(c: PremiumCase): string {
