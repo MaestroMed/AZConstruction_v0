@@ -30,6 +30,14 @@ import { escaliersParis75Paris15e } from './escaliers-paris-75-paris-15e'
 import { thermolaquageValDoise95Cergy } from './thermolaquage-val-doise-95-cergy'
 import { thermolaquageHautsDeSeine92BoulogneBillancourt } from './thermolaquage-hauts-de-seine-92-boulogne-billancourt'
 import { gardeCorpsVerreHautsDeSeine92NeuillySurSeine } from './garde-corps-verre-hauts-de-seine-92-neuilly-sur-seine'
+import { portailsSeineSaintDenis93SaintDenis } from './portails-seine-saint-denis-93-saint-denis'
+import { gardeCorpsValDoise95Argenteuil } from './garde-corps-val-doise-95-argenteuil'
+import { portailsValDeMarne94Creteil } from './portails-val-de-marne-94-creteil'
+import { verrieresYvelines78SaintGermainEnLaye } from './verrieres-yvelines-78-saint-germain-en-laye'
+import { portailAutoportantYvelines78LeVesinet } from './portail-autoportant-yvelines-78-le-vesinet'
+import { verriereAtelierHautsDeSeine92LevalloisPerret } from './verriere-atelier-hauts-de-seine-92-levallois-perret'
+import { portailsParis75Paris8e } from './portails-paris-75-paris-8e'
+import { verriereAtelierParis75Paris17e } from './verriere-atelier-paris-75-paris-17e'
 
 const PREMIUM_REGISTRY = new Map<string, PremiumCase>([
   [keyOf(gardeCorpsVerreParis75Paris15e), gardeCorpsVerreParis75Paris15e],
@@ -46,6 +54,14 @@ const PREMIUM_REGISTRY = new Map<string, PremiumCase>([
   [keyOf(thermolaquageValDoise95Cergy), thermolaquageValDoise95Cergy],
   [keyOf(thermolaquageHautsDeSeine92BoulogneBillancourt), thermolaquageHautsDeSeine92BoulogneBillancourt],
   [keyOf(gardeCorpsVerreHautsDeSeine92NeuillySurSeine), gardeCorpsVerreHautsDeSeine92NeuillySurSeine],
+  [keyOf(portailsSeineSaintDenis93SaintDenis), portailsSeineSaintDenis93SaintDenis],
+  [keyOf(gardeCorpsValDoise95Argenteuil), gardeCorpsValDoise95Argenteuil],
+  [keyOf(portailsValDeMarne94Creteil), portailsValDeMarne94Creteil],
+  [keyOf(verrieresYvelines78SaintGermainEnLaye), verrieresYvelines78SaintGermainEnLaye],
+  [keyOf(portailAutoportantYvelines78LeVesinet), portailAutoportantYvelines78LeVesinet],
+  [keyOf(verriereAtelierHautsDeSeine92LevalloisPerret), verriereAtelierHautsDeSeine92LevalloisPerret],
+  [keyOf(portailsParis75Paris8e), portailsParis75Paris8e],
+  [keyOf(verriereAtelierParis75Paris17e), verriereAtelierParis75Paris17e],
 ])
 
 function keyOf(c: PremiumCase): string {
