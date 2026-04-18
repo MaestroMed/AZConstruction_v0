@@ -74,10 +74,18 @@ function ProductSchema({ family }: { family: string }) {
         "addressCountry": "FR"
       }
     },
+    // Offer avec priceSpecification (conforme Google Rich Results — price/priceSpecification requis).
+    // Précédemment sans priceSpecification → risque rejet GSC "parent_node". Fix avril 2026.
     "offers": {
       "@type": "Offer",
+      "priceSpecification": {
+        "@type": "PriceSpecification",
+        "priceCurrency": "EUR",
+        "valueAddedTaxIncluded": true
+      },
       "priceCurrency": "EUR",
       "availability": "https://schema.org/InStock",
+      "businessFunction": "https://purl.org/goodrelations/v1#Sell",
       "seller": {
         "@type": "Organization",
         "name": "AZ Construction"

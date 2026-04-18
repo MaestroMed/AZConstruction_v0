@@ -127,40 +127,25 @@ const jsonLd = {
           name: "Val-d'Oise",
         },
       ],
-      hasOfferCatalog: {
-        "@type": "OfferCatalog",
-        name: "Services Thermolaquage",
-        itemListElement: [
-          {
-            "@type": "Offer",
-            itemOffered: {
-              "@type": "Service",
-              name: "Thermolaquage portails et clôtures",
-            },
-          },
-          {
-            "@type": "Offer",
-            itemOffered: {
-              "@type": "Service",
-              name: "Thermolaquage garde-corps et rampes",
-            },
-          },
-          {
-            "@type": "Offer",
-            itemOffered: {
-              "@type": "Service",
-              name: "Thermolaquage escaliers métalliques",
-            },
-          },
-          {
-            "@type": "Offer",
-            itemOffered: {
-              "@type": "Service",
-              name: "Thermolaquage pièces industrielles",
-            },
-          },
-        ],
-      },
+      // `makesOffer` avec priceSpecification sur chaque Offer (conforme Google Rich Results).
+      // Précédemment `hasOfferCatalog` avec Offers sans price → rejet GSC "parent_node". Fix avril 2026.
+      makesOffer: [
+        "Thermolaquage portails et clôtures",
+        "Thermolaquage garde-corps et rampes",
+        "Thermolaquage escaliers métalliques",
+        "Thermolaquage pièces industrielles",
+      ].map((name) => ({
+        "@type": "Offer",
+        name,
+        itemOffered: { "@type": "Service", name },
+        priceSpecification: {
+          "@type": "PriceSpecification",
+          priceCurrency: "EUR",
+          valueAddedTaxIncluded: true,
+        },
+        availability: "https://schema.org/InStock",
+        businessFunction: "https://purl.org/goodrelations/v1#Sell",
+      })),
     },
     // FAQPage
     {

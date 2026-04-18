@@ -101,18 +101,23 @@ export function LocalBusinessSchema() {
       name: area,
     })),
     sameAs: companyData.sameAs,
-    hasOfferCatalog: {
-      "@type": "OfferCatalog",
-      name: "Services de métallerie",
-      itemListElement: companyData.services.map((service, index) => ({
-        "@type": "Offer",
-        itemOffered: {
-          "@type": "Service",
-          name: service,
-        },
-        position: index + 1,
-      })),
-    },
+    // `makesOffer` avec priceSpecification sur chaque Offer (conforme Google Rich Results).
+    // Précédemment `hasOfferCatalog` avec Offers sans price → rejet GSC "parent_node". Fix avril 2026.
+    makesOffer: companyData.services.map((service) => ({
+      "@type": "Offer",
+      name: service,
+      itemOffered: {
+        "@type": "Service",
+        name: service,
+      },
+      priceSpecification: {
+        "@type": "PriceSpecification",
+        priceCurrency: "EUR",
+        valueAddedTaxIncluded: true,
+      },
+      availability: "https://schema.org/InStock",
+      businessFunction: "https://purl.org/goodrelations/v1#Sell",
+    })),
   };
 
   return (

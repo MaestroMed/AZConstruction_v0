@@ -141,16 +141,30 @@ export async function ProductLocalPage({ product, dept, commune, segment }: Prod
     },
     serviceType: `Fabrication et pose ${product.nameWithArticle} sur mesure`,
     provider: { '@type': 'Organization', name: 'AZ Construction', telephone: '09 71 35 74 96' },
-    hasOfferCatalog: {
-      '@type': 'OfferCatalog',
-      name: product.name,
-      itemListElement: product.variants.map(v => ({
-        '@type': 'Offer',
-        itemOffered: { '@type': 'Service', name: v.name, description: v.description },
-      })),
-    },
+    // `makesOffer` — liste des variantes comme Offers avec priceSpecification "Sur devis".
+    // Google exige price ou priceSpecification sur chaque Offer sinon rejet GSC
+    // ("Type d'objet non valide pour le champ parent_node"). Cf. fix avril 2026.
+    makesOffer: product.variants.map(v => ({
+      '@type': 'Offer',
+      name: v.name,
+      description: v.description,
+      itemOffered: { '@type': 'Service', name: v.name, description: v.description },
+      priceSpecification: {
+        '@type': 'PriceSpecification',
+        priceCurrency: 'EUR',
+        valueAddedTaxIncluded: true,
+      },
+      availability: 'https://schema.org/InStock',
+      businessFunction: 'https://purl.org/goodrelations/v1#Sell',
+    })),
     priceRange: '€€',
-    aggregateRating: { '@type': 'AggregateRating', ratingValue: '4.9', reviewCount: '47' },
+    aggregateRating: {
+      '@type': 'AggregateRating',
+      ratingValue: '4.9',
+      reviewCount: '47',
+      bestRating: '5',
+      worstRating: '1',
+    },
   }
 
   const breadcrumbSchema = {
