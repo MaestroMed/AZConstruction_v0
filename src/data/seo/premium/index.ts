@@ -143,6 +143,121 @@ import { gardeCorpsEure27Vernon } from './garde-corps-eure-27-vernon'
 import { verrieresEureEtLoir28Chartres } from './verrieres-eure-et-loir-28-chartres'
 import { portailsEureEtLoir28Dreux } from './portails-eure-et-loir-28-dreux'
 
+// ── Batch Premium+ +100 URLs (2026-04-18) ────────────────────────
+// Paris 75 (+8)
+import { gardeCorpsParis75Paris2e } from './garde-corps-paris-75-paris-2e'
+import { verriereAtelierParis75Paris4e } from './verriere-atelier-paris-75-paris-4e'
+import { portailsParis75Paris5e } from './portails-paris-75-paris-5e'
+import { escaliersParis75Paris11e } from './escaliers-paris-75-paris-11e'
+import { gardeCorpsVerreParis75Paris12e } from './garde-corps-verre-paris-75-paris-12e'
+import { gardeCorpsVerreParis75Paris13e } from './garde-corps-verre-paris-75-paris-13e'
+import { verrieresParis75Paris14e } from './verrieres-paris-75-paris-14e'
+import { verrieresParis75Paris19e } from './verrieres-paris-75-paris-19e'
+// Hauts-de-Seine 92 (+15)
+import { gardeCorpsVerreHautsDeSeine92LevalloisPerret } from './garde-corps-verre-hauts-de-seine-92-levallois-perret'
+import { portailsHautsDeSeine92Courbevoie } from './portails-hauts-de-seine-92-courbevoie'
+import { portailsHautsDeSeine92Puteaux } from './portails-hauts-de-seine-92-puteaux'
+import { verrieresHautsDeSeine92Meudon } from './verrieres-hauts-de-seine-92-meudon'
+import { gardeCorpsHautsDeSeine92Sevres } from './garde-corps-hauts-de-seine-92-sevres'
+import { portailsHautsDeSeine92SaintCloud } from './portails-hauts-de-seine-92-saint-cloud'
+import { gardeCorpsVerreHautsDeSeine92Garches } from './garde-corps-verre-hauts-de-seine-92-garches'
+import { verrieresHautsDeSeine92Vaucresson } from './verrieres-hauts-de-seine-92-vaucresson'
+import { thermolaquageHautsDeSeine92Malakoff } from './thermolaquage-hauts-de-seine-92-malakoff'
+import { portailsHautsDeSeine92Montrouge } from './portails-hauts-de-seine-92-montrouge'
+import { gardeCorpsHautsDeSeine92ChatenayMalabry } from './garde-corps-hauts-de-seine-92-chatenay-malabry'
+import { verrieresHautsDeSeine92LePlessisRobinson } from './verrieres-hauts-de-seine-92-le-plessis-robinson'
+import { gardeCorpsVerreHautsDeSeine92Sceaux } from './garde-corps-verre-hauts-de-seine-92-sceaux'
+import { portailsHautsDeSeine92FontenayAuxRoses } from './portails-hauts-de-seine-92-fontenay-aux-roses'
+import { thermolaquageHautsDeSeine92Gennevilliers } from './thermolaquage-hauts-de-seine-92-gennevilliers'
+// Val-de-Marne 94 (+10)
+import { gardeCorpsVerreValDeMarne94NogentSurMarne } from './garde-corps-verre-val-de-marne-94-nogent-sur-marne'
+import { verrieresValDeMarne94LePerreuxSurMarne } from './verrieres-val-de-marne-94-le-perreux-sur-marne'
+import { portailsValDeMarne94Cachan } from './portails-val-de-marne-94-cachan'
+import { gardeCorpsValDeMarne94Arcueil } from './garde-corps-val-de-marne-94-arcueil'
+import { thermolaquageValDeMarne94LHayLesRoses } from './thermolaquage-val-de-marne-94-l-hay-les-roses'
+import { gardeCorpsVerreValDeMarne94SaintMande } from './garde-corps-verre-val-de-marne-94-saint-mande'
+import { verriereAtelierValDeMarne94BrySurMarne } from './verriere-atelier-val-de-marne-94-bry-sur-marne'
+import { portailsValDeMarne94LePlessisTrevise } from './portails-val-de-marne-94-le-plessis-trevise'
+import { verrieresValDeMarne94OrmessonSurMarne } from './verrieres-val-de-marne-94-ormesson-sur-marne'
+import { portailsValDeMarne94Villejuif } from './portails-val-de-marne-94-villejuif'
+// Yvelines 78 (+10)
+import { portailsYvelines78MantesLaJolie } from './portails-yvelines-78-mantes-la-jolie'
+import { verrieresYvelines78Plaisir } from './verrieres-yvelines-78-plaisir'
+import { portailsYvelines78Elancourt } from './portails-yvelines-78-elancourt'
+import { gardeCorpsYvelines78Rambouillet } from './garde-corps-yvelines-78-rambouillet'
+import { thermolaquageYvelines78Trappes } from './thermolaquage-yvelines-78-trappes'
+import { gardeCorpsVerreYvelines78Viroflay } from './garde-corps-verre-yvelines-78-viroflay'
+import { verriereAtelierYvelines78LaCelleSaintCloud } from './verriere-atelier-yvelines-78-la-celle-saint-cloud'
+import { gardeCorpsVerreYvelines78Louveciennes } from './garde-corps-verre-yvelines-78-louveciennes'
+import { verrieresYvelines78MarlyLeRoi } from './verrieres-yvelines-78-marly-le-roi'
+import { portailCoulissantYvelines78VelizyVillacoublay } from './portail-coulissant-yvelines-78-velizy-villacoublay'
+// Essonne 91 (+12)
+import { portailsEssonne91SavignySurOrge } from './portails-essonne-91-savigny-sur-orge'
+import { verrieresEssonne91Longjumeau } from './verrieres-essonne-91-longjumeau'
+import { portailsEssonne91BretignySurOrge } from './portails-essonne-91-bretigny-sur-orge'
+import { gardeCorpsEssonne91SaintMichelSurOrge } from './garde-corps-essonne-91-saint-michel-sur-orge'
+import { portailsEssonne91AthisMons } from './portails-essonne-91-athis-mons'
+import { verrieresEssonne91JuvisySurOrge } from './verrieres-essonne-91-juvisy-sur-orge'
+import { portailsEssonne91ViryChatillon } from './portails-essonne-91-viry-chatillon'
+import { thermolaquageEssonne91Grigny } from './thermolaquage-essonne-91-grigny'
+import { verrieresEssonne91VillebonSurYvette } from './verrieres-essonne-91-villebon-sur-yvette'
+import { gardeCorpsVerreEssonne91Orsay } from './garde-corps-verre-essonne-91-orsay'
+import { portailsEssonne91LesUlis } from './portails-essonne-91-les-ulis'
+import { portailsEssonne91VigneuxSurSeine } from './portails-essonne-91-vigneux-sur-seine'
+// Seine-Saint-Denis 93 (+10)
+import { thermolaquageSeineSaintDenis93LaCourneuve } from './thermolaquage-seine-saint-denis-93-la-courneuve'
+import { portailsSeineSaintDenis93Stains } from './portails-seine-saint-denis-93-stains'
+import { verrieresSeineSaintDenis93Bagnolet } from './verrieres-seine-saint-denis-93-bagnolet'
+import { portailsSeineSaintDenis93RosnySousBois } from './portails-seine-saint-denis-93-rosny-sous-bois'
+import { gardeCorpsSeineSaintDenis93NeuillyPlaisance } from './garde-corps-seine-saint-denis-93-neuilly-plaisance'
+import { portailsSeineSaintDenis93LivryGargan } from './portails-seine-saint-denis-93-livry-gargan'
+import { portailsSeineSaintDenis93NoisyLeSec } from './portails-seine-saint-denis-93-noisy-le-sec'
+import { thermolaquageSeineSaintDenis93LeBlancMesnil } from './thermolaquage-seine-saint-denis-93-le-blanc-mesnil'
+import { portailsSeineSaintDenis93Bondy } from './portails-seine-saint-denis-93-bondy'
+import { verrieresSeineSaintDenis93Montfermeil } from './verrieres-seine-saint-denis-93-montfermeil'
+// Oise 60 (+5)
+import { portailsOise60Senlis } from './portails-oise-60-senlis'
+import { gardeCorpsVerreOise60Chantilly } from './garde-corps-verre-oise-60-chantilly'
+import { verrieresOise60Clermont } from './verrieres-oise-60-clermont'
+import { portailsOise60CrepyEnValois } from './portails-oise-60-crepy-en-valois'
+import { thermolaquageOise60NogentSurOise } from './thermolaquage-oise-60-nogent-sur-oise'
+// Seine-et-Marne 77 (+8)
+import { gardeCorpsVerreSeineEtMarne77Fontainebleau } from './garde-corps-verre-seine-et-marne-77-fontainebleau'
+import { portailsSeineEtMarne77MontereauFaultYonne } from './portails-seine-et-marne-77-montereau-fault-yonne'
+import { verrieresSeineEtMarne77Provins } from './verrieres-seine-et-marne-77-provins'
+import { portailsSeineEtMarne77Torcy } from './portails-seine-et-marne-77-torcy'
+import { verrieresSeineEtMarne77Noisiel } from './verrieres-seine-et-marne-77-noisiel'
+import { portailsSeineEtMarne77Lognes } from './portails-seine-et-marne-77-lognes'
+import { portailsSeineEtMarne77BussySaintGeorges } from './portails-seine-et-marne-77-bussy-saint-georges'
+import { thermolaquageSeineEtMarne77VairesSurMarne } from './thermolaquage-seine-et-marne-77-vaires-sur-marne'
+// Val-d'Oise 95 (+10)
+import { portailsValDoise95Bezons } from './portails-val-doise-95-bezons'
+import { portailsValDoise95Herblay } from './portails-val-doise-95-herblay'
+import { verrieresValDoise95BeaumontSurOise } from './verrieres-val-doise-95-beaumont-sur-oise'
+import { portailsValDoise95Persan } from './portails-val-doise-95-persan'
+import { gardeCorpsVerreValDoise95LIsleAdam } from './garde-corps-verre-val-doise-95-l-isle-adam'
+import { verrieresValDoise95Montmorency } from './verrieres-val-doise-95-montmorency'
+import { gardeCorpsVerreValDoise95EnghienLesBains } from './garde-corps-verre-val-doise-95-enghien-les-bains'
+import { portailsValDoise95SaintOuenLAumone } from './portails-val-doise-95-saint-ouen-l-aumone'
+import { verrieresValDoise95SaintLeuLaForet } from './verrieres-val-doise-95-saint-leu-la-foret'
+import { portailsValDoise95Ermont } from './portails-val-doise-95-ermont'
+// Aisne 02 (+3)
+import { portailsAisne02Laon } from './portails-aisne-02-laon'
+import { verrieresAisne02ChateauThierry } from './verrieres-aisne-02-chateau-thierry'
+import { portailsAisne02Tergnier } from './portails-aisne-02-tergnier'
+// Somme 80 (+3)
+import { portailsSomme80Albert } from './portails-somme-80-albert'
+import { portailsSomme80Peronne } from './portails-somme-80-peronne'
+import { verrieresSomme80Doullens } from './verrieres-somme-80-doullens'
+// Eure 27 (+3)
+import { portailsEure27Louviers } from './portails-eure-27-louviers'
+import { verrieresEure27PontAudemer } from './verrieres-eure-27-pont-audemer'
+import { portailsEure27Gisors } from './portails-eure-27-gisors'
+// Eure-et-Loir 28 (+3)
+import { portailsEureEtLoir28NogentLeRotrou } from './portails-eure-et-loir-28-nogent-le-rotrou'
+import { verrieresEureEtLoir28Chateaudun } from './verrieres-eure-et-loir-28-chateaudun'
+import { portailsEureEtLoir28Vernouillet } from './portails-eure-et-loir-28-vernouillet'
+
 const ALL_CASES: PremiumCase[] = [
   // Paris 75
   gardeCorpsVerreParis75Paris15e,
@@ -258,6 +373,121 @@ const ALL_CASES: PremiumCase[] = [
   // Eure-et-Loir 28
   verrieresEureEtLoir28Chartres,
   portailsEureEtLoir28Dreux,
+
+  // ── Batch Premium+ +100 URLs (2026-04-18) ────────────────────────
+  // Paris 75 (+8)
+  gardeCorpsParis75Paris2e,
+  verriereAtelierParis75Paris4e,
+  portailsParis75Paris5e,
+  escaliersParis75Paris11e,
+  gardeCorpsVerreParis75Paris12e,
+  gardeCorpsVerreParis75Paris13e,
+  verrieresParis75Paris14e,
+  verrieresParis75Paris19e,
+  // Hauts-de-Seine 92 (+15)
+  gardeCorpsVerreHautsDeSeine92LevalloisPerret,
+  portailsHautsDeSeine92Courbevoie,
+  portailsHautsDeSeine92Puteaux,
+  verrieresHautsDeSeine92Meudon,
+  gardeCorpsHautsDeSeine92Sevres,
+  portailsHautsDeSeine92SaintCloud,
+  gardeCorpsVerreHautsDeSeine92Garches,
+  verrieresHautsDeSeine92Vaucresson,
+  thermolaquageHautsDeSeine92Malakoff,
+  portailsHautsDeSeine92Montrouge,
+  gardeCorpsHautsDeSeine92ChatenayMalabry,
+  verrieresHautsDeSeine92LePlessisRobinson,
+  gardeCorpsVerreHautsDeSeine92Sceaux,
+  portailsHautsDeSeine92FontenayAuxRoses,
+  thermolaquageHautsDeSeine92Gennevilliers,
+  // Val-de-Marne 94 (+10)
+  gardeCorpsVerreValDeMarne94NogentSurMarne,
+  verrieresValDeMarne94LePerreuxSurMarne,
+  portailsValDeMarne94Cachan,
+  gardeCorpsValDeMarne94Arcueil,
+  thermolaquageValDeMarne94LHayLesRoses,
+  gardeCorpsVerreValDeMarne94SaintMande,
+  verriereAtelierValDeMarne94BrySurMarne,
+  portailsValDeMarne94LePlessisTrevise,
+  verrieresValDeMarne94OrmessonSurMarne,
+  portailsValDeMarne94Villejuif,
+  // Yvelines 78 (+10)
+  portailsYvelines78MantesLaJolie,
+  verrieresYvelines78Plaisir,
+  portailsYvelines78Elancourt,
+  gardeCorpsYvelines78Rambouillet,
+  thermolaquageYvelines78Trappes,
+  gardeCorpsVerreYvelines78Viroflay,
+  verriereAtelierYvelines78LaCelleSaintCloud,
+  gardeCorpsVerreYvelines78Louveciennes,
+  verrieresYvelines78MarlyLeRoi,
+  portailCoulissantYvelines78VelizyVillacoublay,
+  // Essonne 91 (+12)
+  portailsEssonne91SavignySurOrge,
+  verrieresEssonne91Longjumeau,
+  portailsEssonne91BretignySurOrge,
+  gardeCorpsEssonne91SaintMichelSurOrge,
+  portailsEssonne91AthisMons,
+  verrieresEssonne91JuvisySurOrge,
+  portailsEssonne91ViryChatillon,
+  thermolaquageEssonne91Grigny,
+  verrieresEssonne91VillebonSurYvette,
+  gardeCorpsVerreEssonne91Orsay,
+  portailsEssonne91LesUlis,
+  portailsEssonne91VigneuxSurSeine,
+  // Seine-Saint-Denis 93 (+10)
+  thermolaquageSeineSaintDenis93LaCourneuve,
+  portailsSeineSaintDenis93Stains,
+  verrieresSeineSaintDenis93Bagnolet,
+  portailsSeineSaintDenis93RosnySousBois,
+  gardeCorpsSeineSaintDenis93NeuillyPlaisance,
+  portailsSeineSaintDenis93LivryGargan,
+  portailsSeineSaintDenis93NoisyLeSec,
+  thermolaquageSeineSaintDenis93LeBlancMesnil,
+  portailsSeineSaintDenis93Bondy,
+  verrieresSeineSaintDenis93Montfermeil,
+  // Oise 60 (+5)
+  portailsOise60Senlis,
+  gardeCorpsVerreOise60Chantilly,
+  verrieresOise60Clermont,
+  portailsOise60CrepyEnValois,
+  thermolaquageOise60NogentSurOise,
+  // Seine-et-Marne 77 (+8)
+  gardeCorpsVerreSeineEtMarne77Fontainebleau,
+  portailsSeineEtMarne77MontereauFaultYonne,
+  verrieresSeineEtMarne77Provins,
+  portailsSeineEtMarne77Torcy,
+  verrieresSeineEtMarne77Noisiel,
+  portailsSeineEtMarne77Lognes,
+  portailsSeineEtMarne77BussySaintGeorges,
+  thermolaquageSeineEtMarne77VairesSurMarne,
+  // Val-d'Oise 95 (+10)
+  portailsValDoise95Bezons,
+  portailsValDoise95Herblay,
+  verrieresValDoise95BeaumontSurOise,
+  portailsValDoise95Persan,
+  gardeCorpsVerreValDoise95LIsleAdam,
+  verrieresValDoise95Montmorency,
+  gardeCorpsVerreValDoise95EnghienLesBains,
+  portailsValDoise95SaintOuenLAumone,
+  verrieresValDoise95SaintLeuLaForet,
+  portailsValDoise95Ermont,
+  // Aisne 02 (+3)
+  portailsAisne02Laon,
+  verrieresAisne02ChateauThierry,
+  portailsAisne02Tergnier,
+  // Somme 80 (+3)
+  portailsSomme80Albert,
+  portailsSomme80Peronne,
+  verrieresSomme80Doullens,
+  // Eure 27 (+3)
+  portailsEure27Louviers,
+  verrieresEure27PontAudemer,
+  portailsEure27Gisors,
+  // Eure-et-Loir 28 (+3)
+  portailsEureEtLoir28NogentLeRotrou,
+  verrieresEureEtLoir28Chateaudun,
+  portailsEureEtLoir28Vernouillet,
 ]
 
 const PREMIUM_REGISTRY = new Map<string, PremiumCase>(
