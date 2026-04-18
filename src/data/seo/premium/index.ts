@@ -17,9 +17,19 @@ import type { PremiumCase } from './types'
 // Le séparateur `|` est sûr (jamais dans un slug).
 
 import { gardeCorpsVerreParis75Paris15e } from './garde-corps-verre-paris-75-paris-15e'
+import { verriereAtelierParis75Paris7e } from './verriere-atelier-paris-75-paris-7e'
+import { portailCoulissantParis75Paris16e } from './portail-coulissant-paris-75-paris-16e'
+import { gardeCorpsParis75Paris11e } from './garde-corps-paris-75-paris-11e'
+import { verriereAtelierHautsDeSeine92BoulogneBillancourt } from './verriere-atelier-hauts-de-seine-92-boulogne-billancourt'
+import { gardeCorpsValDoise95Cergy } from './garde-corps-val-doise-95-cergy'
 
 const PREMIUM_REGISTRY = new Map<string, PremiumCase>([
   [keyOf(gardeCorpsVerreParis75Paris15e), gardeCorpsVerreParis75Paris15e],
+  [keyOf(verriereAtelierParis75Paris7e), verriereAtelierParis75Paris7e],
+  [keyOf(portailCoulissantParis75Paris16e), portailCoulissantParis75Paris16e],
+  [keyOf(gardeCorpsParis75Paris11e), gardeCorpsParis75Paris11e],
+  [keyOf(verriereAtelierHautsDeSeine92BoulogneBillancourt), verriereAtelierHautsDeSeine92BoulogneBillancourt],
+  [keyOf(gardeCorpsValDoise95Cergy), gardeCorpsValDoise95Cergy],
 ])
 
 function keyOf(c: PremiumCase): string {
