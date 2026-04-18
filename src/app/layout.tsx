@@ -60,13 +60,10 @@ export const metadata: Metadata = {
     address: false,
     telephone: false,
   },
-  metadataBase: new URL(
-    process.env.NEXTAUTH_URL?.startsWith("http") 
-      ? process.env.NEXTAUTH_URL 
-      : process.env.NEXTAUTH_URL 
-        ? `https://${process.env.NEXTAUTH_URL}` 
-        : "https://www.azconstruction.fr"
-  ),
+  // metadataBase : hardcodé sur www.azconstruction.fr pour cohérence canonicals.
+  // Ne pas utiliser NEXTAUTH_URL (qui est pour auth callbacks et peut être sans www).
+  // Les canonicals relatifs ("/") sont résolus par rapport à cette base.
+  metadataBase: new URL("https://www.azconstruction.fr"),
   alternates: {
     canonical: "/",
   },

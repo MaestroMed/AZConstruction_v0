@@ -3,7 +3,7 @@ import { CollectionPage } from "../_CollectionPage";
 import { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Sfera Collection — Effets Anodisés | AZ Construction Thermolaquage",
+  title: "Sfera Collection — Effets Anodisés Thermolaquage",
   description: "Découvrez la Sfera Collection Adaptacolor : effets anodisés et Cosmos double couche. Cuivre, bronze, aluminium anodisé — finitions premium.",
 };
 

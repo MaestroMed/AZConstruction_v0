@@ -16,8 +16,8 @@ export const seoProductsPart2: SEOProduct[] = [
     preposition: 'de',
     metaTitle: (d, v) =>
       v
-        ? `Fenêtre acier sur mesure ${v.name} (${d.code}) | AZ Construction`
-        : `Fenêtre acier sur mesure ${d.fullName} | Fabricant | AZ Construction`,
+        ? `Fenêtre acier sur mesure ${v.name} (${d.code})`
+        : `Fenêtre acier sur mesure ${d.fullName} | Fabricant`,
     metaDescription: (d, v) =>
       `Fabricant de fenêtres acier sur mesure ${prep(v)} ${loc(d, v)}. Fixe, oscillo-battante, style atelier, baie vitrée. Devis gratuit.`,
     heroTitle: (d, v) =>
@@ -58,8 +58,8 @@ export const seoProductsPart2: SEOProduct[] = [
     preposition: 'de',
     metaTitle: (d, v) =>
       v
-        ? `Verrière sur mesure ${v.name} (${d.code}) | AZ Construction`
-        : `Verrière sur mesure ${d.fullName} | Fabricant | AZ Construction`,
+        ? `Verrière sur mesure ${v.name} (${d.code})`
+        : `Verrière sur mesure ${d.fullName} | Fabricant`,
     metaDescription: (d, v) =>
       `Fabricant de verrières intérieures sur mesure ${prep(v)} ${loc(d, v)}. Style atelier, acier et verre. Devis gratuit.`,
     heroTitle: (d, v) =>
@@ -100,8 +100,8 @@ export const seoProductsPart2: SEOProduct[] = [
     preposition: 'de',
     metaTitle: (d, v) =>
       v
-        ? `Pergola acier sur mesure ${v.name} (${d.code}) | AZ Construction`
-        : `Pergola acier sur mesure ${d.fullName} | Fabricant | AZ Construction`,
+        ? `Pergola acier sur mesure ${v.name} (${d.code})`
+        : `Pergola acier sur mesure ${d.fullName} | Fabricant`,
     metaDescription: (d, v) =>
       `Fabricant de pergolas acier sur mesure ${prep(v)} ${loc(d, v)}. Bioclimatique, adossée, autoportante. Devis gratuit.`,
     heroTitle: (d, v) =>
@@ -140,8 +140,8 @@ export const seoProductsPart2: SEOProduct[] = [
     preposition: 'de',
     metaTitle: (d, v) =>
       v
-        ? `Marquise sur mesure ${v.name} (${d.code}) | AZ Construction`
-        : `Marquise sur mesure ${d.fullName} | Fabricant | AZ Construction`,
+        ? `Marquise sur mesure ${v.name} (${d.code})`
+        : `Marquise sur mesure ${d.fullName} | Fabricant`,
     metaDescription: (d, v) =>
       `Fabricant de marquises et auvents sur mesure ${prep(v)} ${loc(d, v)}. Verre, acier, design. Devis gratuit.`,
     heroTitle: (d, v) =>
@@ -181,8 +181,8 @@ export const seoProductsPart2: SEOProduct[] = [
     preposition: 'de',
     metaTitle: (d, v) =>
       v
-        ? `Grille de ventilation sur mesure ${v.name} (${d.code}) | AZ Construction`
-        : `Grille de ventilation sur mesure ${d.fullName} | AZ Construction`,
+        ? `Grille de ventilation sur mesure ${v.name} (${d.code})`
+        : `Grille de ventilation sur mesure ${d.fullName}`,
     metaDescription: (d, v) =>
       `Fabricant de grilles de ventilation acier sur mesure ${prep(v)} ${loc(d, v)}. Techniques et décoratives. Devis gratuit.`,
     heroTitle: (d, v) =>
@@ -222,8 +222,8 @@ export const seoProductsPart2: SEOProduct[] = [
     preposition: 'de',
     metaTitle: (d, v) =>
       v
-        ? `Thermolaquage ${v.name} (${d.code}) | AZ Construction`
-        : `Thermolaquage ${d.fullName} | Livraison & Enlèvement | AZ Construction`,
+        ? `Thermolaquage ${v.name} (${d.code})`
+        : `Thermolaquage ${d.fullName} | Livraison & Enlèvement`,
     metaDescription: (d, v) =>
       `Thermolaquage professionnel ${prep(v)} ${loc(d, v)}. Peinture poudre époxy sur métal. Enlèvement et livraison. 200+ couleurs RAL. Devis gratuit.`,
     heroTitle: (d, v) =>

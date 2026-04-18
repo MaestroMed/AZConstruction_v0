@@ -12,12 +12,12 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
   if (!product) {
     return {
-      title: "Produit non trouvé | AZ Construction",
+      title: "Produit non trouvé",
       description: "Cette famille de produits n'existe pas.",
     };
   }
 
-  const title = product.seoTitle || `${product.name} Sur Mesure | AZ Construction`;
+  const title = product.seoTitle || `${product.name} Sur Mesure`;
   const description =
     product.seoDescription ||
     product.description ||

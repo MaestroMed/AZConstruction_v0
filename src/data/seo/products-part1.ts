@@ -17,8 +17,8 @@ export const seoProducts: SEOProduct[] = [
     preposition: 'de',
     metaTitle: (d, v) =>
       v
-        ? `Garde-corps sur mesure ${v.name} (${d.code}) | AZ Construction`
-        : `Garde-corps sur mesure ${d.fullName} | Fabricant Île-de-France | AZ Construction`,
+        ? `Garde-corps sur mesure ${v.name} (${d.code})`
+        : `Garde-corps sur mesure ${d.fullName} | Fabricant Île-de-France`,
     metaDescription: (d, v) =>
       `Fabricant de garde-corps acier, verre et câbles sur mesure ${prep(v)} ${loc(d, v)}. Balcons, terrasses, escaliers. Norme NF P01-012. Devis gratuit sous 48h.`,
     heroTitle: (d, v) =>
@@ -61,8 +61,8 @@ export const seoProducts: SEOProduct[] = [
     preposition: "d'",
     metaTitle: (d, v) =>
       v
-        ? `Escalier métal sur mesure ${v.name} (${d.code}) | AZ Construction`
-        : `Escalier métal sur mesure ${d.fullName} | Fabricant | AZ Construction`,
+        ? `Escalier métal sur mesure ${v.name} (${d.code})`
+        : `Escalier métal sur mesure ${d.fullName} | Fabricant`,
     metaDescription: (d, v) =>
       `Fabricant d'escaliers métal sur mesure ${prep(v)} ${loc(d, v)}. Hélicoïdal, droit, quart-tournant. Acier thermolaqué. Devis gratuit.`,
     heroTitle: (d, v) =>
@@ -103,8 +103,8 @@ export const seoProducts: SEOProduct[] = [
     preposition: 'de',
     metaTitle: (d, v) =>
       v
-        ? `Portail sur mesure ${v.name} (${d.code}) | AZ Construction`
-        : `Portail sur mesure ${d.fullName} | Fabricant | AZ Construction`,
+        ? `Portail sur mesure ${v.name} (${d.code})`
+        : `Portail sur mesure ${d.fullName} | Fabricant`,
     metaDescription: (d, v) =>
       `Fabricant de portails acier et aluminium sur mesure ${prep(v)} ${loc(d, v)}. Battant, coulissant, autoportant. Motorisation possible. Devis gratuit.`,
     heroTitle: (d, v) =>
@@ -145,8 +145,8 @@ export const seoProducts: SEOProduct[] = [
     preposition: 'de',
     metaTitle: (d, v) =>
       v
-        ? `Clôture sur mesure ${v.name} (${d.code}) | AZ Construction`
-        : `Clôture sur mesure ${d.fullName} | Fabricant | AZ Construction`,
+        ? `Clôture sur mesure ${v.name} (${d.code})`
+        : `Clôture sur mesure ${d.fullName} | Fabricant`,
     metaDescription: (d, v) =>
       `Fabricant de clôtures acier sur mesure ${prep(v)} ${loc(d, v)}. Barreaudée, grillagée, à lames. Devis gratuit.`,
     heroTitle: (d, v) =>
@@ -186,8 +186,8 @@ export const seoProducts: SEOProduct[] = [
     preposition: 'de',
     metaTitle: (d, v) =>
       v
-        ? `Porte métal sur mesure ${v.name} (${d.code}) | AZ Construction`
-        : `Porte métal sur mesure ${d.fullName} | Fabricant | AZ Construction`,
+        ? `Porte métal sur mesure ${v.name} (${d.code})`
+        : `Porte métal sur mesure ${d.fullName} | Fabricant`,
     metaDescription: (d, v) =>
       `Fabricant de portes métal sur mesure ${prep(v)} ${loc(d, v)}. Porte de hall, SAS, tôlée, coupe-feu, atelier. Devis gratuit.`,
     heroTitle: (d, v) =>

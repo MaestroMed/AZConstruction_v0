@@ -1,7 +1,7 @@
 import { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Contact | Devis Gratuit Métallerie & Thermolaquage - AZ Construction",
+  title: "Contact — Devis Gratuit Métallerie & Thermolaquage",
   description:
     "Contactez AZ Construction pour un devis gratuit. Métallerie sur mesure, thermolaquage professionnel. Réponse sous 24h. ☎️ 09 71 35 74 96 - Bruyères-sur-Oise (95)",
   keywords: [
@@ -16,7 +16,7 @@ export const metadata: Metadata = {
     canonical: "https://www.azconstruction.fr/contact",
   },
   openGraph: {
-    title: "Contactez-nous | AZ Construction",
+    title: "Contactez-nous",
     description:
       "Devis gratuit sous 24h. Métallerie sur mesure et thermolaquage professionnel.",
     url: "https://www.azconstruction.fr/contact",

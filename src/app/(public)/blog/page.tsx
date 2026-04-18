@@ -5,7 +5,7 @@ import { prisma } from "@/lib/prisma";
 import { Calendar, Clock, Tag, ArrowRight, BookOpen } from "lucide-react";
 
 export const metadata: Metadata = {
-  title: "Blog Métallerie & Garde-corps | Conseils & Guides ",
+  title: "Blog Métallerie & Garde-corps — Conseils & Guides",
   description:
     "Guides pratiques, normes, prix et inspirations pour vos projets de garde-corps, escaliers, portails et thermolaquage sur mesure en Île-de-France.",
   alternates: { canonical: "https://www.azconstruction.fr/blog" },

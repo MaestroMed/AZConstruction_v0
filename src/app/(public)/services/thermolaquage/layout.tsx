@@ -2,7 +2,7 @@ import { Metadata } from "next";
 import ClickToCallBanner from "@/components/ui/ClickToCallBanner";
 
 export const metadata: Metadata = {
-  title: "Thermolaquage Poudre Epoxy | 200+ Couleurs RAL | Garantie 10 ans - AZ Construction",
+  title: "Thermolaquage Poudre Epoxy — 200+ Couleurs RAL — Garantie 10 ans",
   description:
     "Thermolaquage professionnel en Île-de-France. Peinture poudre epoxy haute résistance, 200+ teintes RAL, finition haut de gamme. Devis gratuit sous 24h. ☎️ 09 71 35 74 96",
   keywords: [

@@ -22,8 +22,8 @@ export const seoSubProducts: SEOProduct[] = [
     preposition: 'de',
     metaTitle: (d, v) =>
       v
-        ? `Garde-corps verre sur mesure ${v.name} (${d.code}) | AZ Construction`
-        : `Garde-corps verre sur mesure ${d.fullName} | Fabricant | AZ Construction`,
+        ? `Garde-corps verre sur mesure ${v.name} (${d.code})`
+        : `Garde-corps verre sur mesure ${d.fullName} | Fabricant`,
     metaDescription: (d, v) =>
       `Fabricant de garde-corps en verre feuilleté sur mesure ${prep(v)} ${loc(d, v)}. Verre 8+8 sécurité, fixations invisibles, NF P01-012. Devis 48 h.`,
     heroTitle: (d, v) =>
@@ -66,8 +66,8 @@ export const seoSubProducts: SEOProduct[] = [
     preposition: "d'",
     metaTitle: (d, v) =>
       v
-        ? `Escalier hélicoïdal sur mesure ${v.name} (${d.code}) | AZ Construction`
-        : `Escalier hélicoïdal sur mesure ${d.fullName} | Fabricant | AZ Construction`,
+        ? `Escalier hélicoïdal sur mesure ${v.name} (${d.code})`
+        : `Escalier hélicoïdal sur mesure ${d.fullName} | Fabricant`,
     metaDescription: (d, v) =>
       `Fabricant d'escaliers hélicoïdaux acier sur mesure ${prep(v)} ${loc(d, v)}. Diamètre dès 130 cm, marches bois ou métal. Devis 48 h.`,
     heroTitle: (d, v) =>
@@ -110,8 +110,8 @@ export const seoSubProducts: SEOProduct[] = [
     preposition: 'de',
     metaTitle: (d, v) =>
       v
-        ? `Portail coulissant sur mesure ${v.name} (${d.code}) | AZ Construction`
-        : `Portail coulissant sur mesure ${d.fullName} | Fabricant | AZ Construction`,
+        ? `Portail coulissant sur mesure ${v.name} (${d.code})`
+        : `Portail coulissant sur mesure ${d.fullName} | Fabricant`,
     metaDescription: (d, v) =>
       `Fabricant de portails coulissants acier sur mesure ${prep(v)} ${loc(d, v)}. Motorisation Somfy/Nice. Devis 48 h, pose en 1 jour.`,
     heroTitle: (d, v) =>
@@ -154,8 +154,8 @@ export const seoSubProducts: SEOProduct[] = [
     preposition: 'de',
     metaTitle: (d, v) =>
       v
-        ? `Verrière atelier sur mesure ${v.name} (${d.code}) | AZ Construction`
-        : `Verrière atelier sur mesure ${d.fullName} | Fabricant | AZ Construction`,
+        ? `Verrière atelier sur mesure ${v.name} (${d.code})`
+        : `Verrière atelier sur mesure ${d.fullName} | Fabricant`,
     metaDescription: (d, v) =>
       `Fabricant de verrières style atelier d'artiste sur mesure ${prep(v)} ${loc(d, v)}. Vrai acier soudé, verre feuilleté 44.2. Pose 1 jour.`,
     heroTitle: (d, v) =>
@@ -198,8 +198,8 @@ export const seoSubProducts: SEOProduct[] = [
     preposition: 'de',
     metaTitle: (d, v) =>
       v
-        ? `Portail autoportant sur mesure ${v.name} (${d.code}) | AZ Construction`
-        : `Portail autoportant sur mesure ${d.fullName} | Fabricant | AZ Construction`,
+        ? `Portail autoportant sur mesure ${v.name} (${d.code})`
+        : `Portail autoportant sur mesure ${d.fullName} | Fabricant`,
     metaDescription: (d, v) =>
       `Fabricant de portails autoportants sans rail au sol ${prep(v)} ${loc(d, v)}. Acier renforcé, motorisation Somfy. Devis 48 h.`,
     heroTitle: (d, v) =>

@@ -3,7 +3,7 @@ import Link from "next/link";
 import { MapPin, ArrowRight, CheckCircle2, Phone } from "lucide-react";
 
 export const metadata: Metadata = {
-  title: "Garde-corps sur mesure Île-de-France | Fabricant AZ Construction",
+  title: "Garde-corps sur mesure Île-de-France — Fabricant",
   description:
     "Fabricant de garde-corps sur mesure en Île-de-France. Acier thermolaqué, verre feuilleté, câbles. Norme NF P01-012. Devis gratuit sous 48h pour Paris et tous les départements IDF.",
   alternates: { canonical: "https://www.azconstruction.fr/garde-corps/ile-de-france" },

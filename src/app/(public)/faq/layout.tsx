@@ -1,7 +1,7 @@
 import { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Questions Fréquentes | FAQ Métallerie & Thermolaquage - AZ Construction",
+  title: "Questions Fréquentes — FAQ Métallerie & Thermolaquage",
   description:
     "Retrouvez les réponses à vos questions sur la métallerie, le thermolaquage, les délais, prix et garanties. Devis gratuit ☎️ 09 71 35 74 96",
   keywords: [
@@ -17,7 +17,7 @@ export const metadata: Metadata = {
     canonical: "https://www.azconstruction.fr/faq",
   },
   openGraph: {
-    title: "Questions Fréquentes | AZ Construction",
+    title: "Questions Fréquentes",
     description:
       "Toutes les réponses à vos questions sur nos services de métallerie et thermolaquage.",
     url: "https://www.azconstruction.fr/faq",
