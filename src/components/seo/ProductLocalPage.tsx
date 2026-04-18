@@ -22,6 +22,12 @@ import { CityGuide } from './premium/CityGuide'
 import { CaseStudies } from './premium/CaseStudies'
 import { LocalReviews } from './premium/LocalReviews'
 import { CrossCityTable } from './premium/CrossCityTable'
+import { EditorialDeepDive } from './premium/EditorialDeepDive'
+import { ComparisonTable } from './premium/ComparisonTable'
+import { LocalFAQ } from './premium/LocalFAQ'
+import { ProcessTimeline } from './premium/ProcessTimeline'
+import { RichSchemaInjector } from './premium/RichSchemaInjector'
+import { MaxiPremiumBadge } from './premium/MaxiPremiumBadge'
 import dynamic from 'next/dynamic'
 
 const PartnersCarousel = dynamic(() => import('@/components/homepage/PartnersCarousel'))
@@ -110,6 +116,7 @@ export async function ProductLocalPage({ product, dept, commune, segment }: Prod
   // Premium+ lookup — si la page a un PremiumCase publié, on substitue/enrichit
   // les blocs standards avec les blocs Premium+ correspondants.
   const premium = getPremiumCase(product.slug, dept.slug, commune?.slug)
+  const isMaxiPremium = premium?.tier === 'maxi'
 
   const productPath = `/${product.slug}`
   const canonicalUrl = isCity
@@ -178,8 +185,17 @@ export async function ProductLocalPage({ product, dept, commune, segment }: Prod
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(localBusinessSchema) }} />
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }} />
       {faqSchema && <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }} />}
+      {isMaxiPremium && (
+        <RichSchemaInjector
+          premium={premium}
+          businessName={`AZ Construction — ${product.name} ${prepLoc} ${locationName}`}
+          url={canonicalUrl}
+        />
+      )}
 
       <div className="min-h-screen bg-white">
+        {isMaxiPremium && <MaxiPremiumBadge />}
+
         {/* ── Hero — Premium style ────────────────────── */}
         <section className="relative min-h-[70vh] flex items-end overflow-hidden">
           {/* Background : Premium photo > SiteImage photo > generated visual */}
@@ -331,6 +347,16 @@ export async function ProductLocalPage({ product, dept, commune, segment }: Prod
           />
         )}
 
+        {/* ── Maxi-Premium : Tribune éditoriale longue ─────────── */}
+        {premium?.editorialDeepDive && (
+          <EditorialDeepDive data={premium.editorialDeepDive} />
+        )}
+
+        {/* ── Maxi-Premium : Timeline du chantier ──────────────── */}
+        {premium?.processTimeline && (
+          <ProcessTimeline data={premium.processTimeline} />
+        )}
+
         {/* ── Variants — Glass cards ──────────────────── */}
         {product.variants.length > 0 && (
           <section className="py-20 bg-gray-50">
@@ -398,6 +424,11 @@ export async function ProductLocalPage({ product, dept, commune, segment }: Prod
           />
         )}
 
+        {/* ── Maxi-Premium : Tableau comparatif technique ────────── */}
+        {premium?.comparisonTable && (
+          <ComparisonTable data={premium.comparisonTable} />
+        )}
+
         {/* ── Témoignages — Premium reviews if available, sinon stub générique ── */}
         {premium?.localReviews && premium.localReviews.length > 0 ? (
           <LocalReviews
@@ -460,6 +491,11 @@ export async function ProductLocalPage({ product, dept, commune, segment }: Prod
             </div>
           </div>
         </section>
+
+        {/* ── Maxi-Premium : FAQ ultra-localisée + rich snippet ── */}
+        {premium?.localFAQ && premium.localFAQ.items.length > 0 && (
+          <LocalFAQ data={premium.localFAQ} />
+        )}
 
         {/* ── FAQ — Clean design ──────────────────────── */}
         {product.faq.length > 0 && (

@@ -136,4 +136,89 @@ export interface PremiumCase {
     /** Notes internes (non rendues) */
     internalNotes?: string
   }
+
+  // ──────────────────────────────────────────────────────────────────
+  // Maxi-Premium — champs optionnels pour les ~5 URLs vitrines.
+  // Si présents, le template injecte des sections supplémentaires
+  // entre les blocs Premium standards. Aucun impact sur les autres URLs.
+  // ──────────────────────────────────────────────────────────────────
+
+  /** Tier visuel — 'maxi' active les composants Maxi-Premium dédiés */
+  tier?: 'standard' | 'maxi'
+
+  /**
+   * Essai éditorial long signé — 800-1500 mots.
+   * Format Medium : titre, sous-titre, 4-6 sections, signature.
+   * Affiché en pleine largeur après le cityGuide.
+   */
+  editorialDeepDive?: {
+    title: string
+    subtitle?: string
+    /** Lecture estimée en minutes (badge UI) */
+    readMinutes?: number
+    /** Sections éditoriales — markdown-light (paragraphes séparés par \n\n) */
+    sections: { heading: string; body: string }[]
+    /** Signature — nom du persona qui signe l'essai */
+    signature?: { name: string; role: string }
+  }
+
+  /**
+   * Tableau comparatif technique multi-critères.
+   * Affiché en card stickyfooter scroll-snap.
+   */
+  comparisonTable?: {
+    title: string
+    intro?: string
+    /** Colonnes (options comparées). 2-4 idéal */
+    columns: string[]
+    /** Lignes (critères techniques). 8-15 idéal */
+    rows: { criterion: string; values: string[]; highlight?: 0 | 1 | 2 | 3 }[]
+    /** Conclusion éditoriale (1-3 phrases) */
+    conclusion?: string
+  }
+
+  /**
+   * FAQ ultra-localisée — 8-15 Q/R.
+   * Génère un schema.org FAQPage pour rich snippets Google.
+   */
+  localFAQ?: {
+    intro?: string
+    items: { question: string; answer: string }[]
+  }
+
+  /**
+   * Timeline visuelle du chantier — phases J-30 → J+90.
+   * Affichée en steppers verticaux avec icônes.
+   */
+  processTimeline?: {
+    title?: string
+    intro?: string
+    steps: {
+      /** Label temporel ex. "J-30" ou "Semaine 1" */
+      when: string
+      /** Titre de l'étape ex. "Métré sur place" */
+      title: string
+      /** Description courte (2-4 phrases) */
+      description: string
+      /** Durée approximative ex. "45 min" ou "3-4 semaines" */
+      duration?: string
+    }[]
+  }
+
+  /**
+   * Données enrichies pour rich schema (JSON-LD étendu).
+   * - GPS coordinates pour Place schema
+   * - PriceSpecification range
+   * - AggregateRating local
+   */
+  richSchema?: {
+    /** Coordonnées GPS de la zone d'intervention principale */
+    geo?: { latitude: number; longitude: number }
+    /** Fourchette prix (pour PriceSpecification schema) */
+    priceRange?: { low: number; high: number; currency?: 'EUR' | 'USD' }
+    /** Rating local agrégé pour cette URL spécifique */
+    aggregateRating?: { value: number; count: number }
+    /** Awards / certifications mises en avant */
+    awards?: string[]
+  }
 }
