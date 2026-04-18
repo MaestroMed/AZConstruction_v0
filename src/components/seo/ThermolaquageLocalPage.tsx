@@ -9,6 +9,8 @@ import { NearbyCommunes } from './NearbyCommunes'
 import { ProductDeptFooter } from './ProductDeptFooter'
 import { AdaptaCollectionsBlock } from './AdaptaCollectionsBlock'
 import { RealizationsForLocation } from './RealizationsForLocation'
+import { CommuneContextBlock } from './CommuneContextBlock'
+import { DepartmentContextBlock } from './DepartmentContextBlock'
 import { TestimonialsBlock } from './TestimonialsBlock'
 import { TrustStrip } from './TrustStrip'
 import { WhyCustomBlock } from './WhyCustomBlock'
@@ -190,10 +192,16 @@ export async function ThermolaquageLocalPage({ dept, commune, segment }: Thermol
               <div className="max-w-xl">
                 <div className="prose prose-lg text-gray-600">
                   <p>{segment ? segment.introParagraph(product, dept, commune) : product.introParagraph(dept, commune)}</p>
+                  {isCity ? (
+                    <CommuneContextBlock product={product} dept={dept} commune={commune} />
+                  ) : (
+                    <DepartmentContextBlock product={product} dept={dept} />
+                  )}
                   <p>
                     Notre atelier de Bruyères-sur-Oise (95) dispose d&apos;un four de polymérisation professionnel
                     pouvant accueillir des pièces jusqu&apos;à 6 mètres de long. Nous assurons l&apos;enlèvement et la
-                    livraison de vos pièces dans tout le département {dept.fullName}.
+                    livraison de vos pièces dans tout le département {dept.fullName}
+                    {dept.region !== 'Île-de-France' ? ` (${dept.region})` : ''}.
                   </p>
                 </div>
                 <Link href="/services/thermolaquage"

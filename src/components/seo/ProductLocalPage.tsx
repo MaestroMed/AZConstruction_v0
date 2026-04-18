@@ -15,6 +15,7 @@ import { RelatedProductsBlock } from './RelatedProductsBlock'
 import { StickyCTABar } from './StickyCTABar'
 import { ProductHeroVisual } from './ProductHeroVisual'
 import { CommuneContextBlock } from './CommuneContextBlock'
+import { DepartmentContextBlock } from './DepartmentContextBlock'
 import dynamic from 'next/dynamic'
 
 const PartnersCarousel = dynamic(() => import('@/components/homepage/PartnersCarousel'))
@@ -264,8 +265,10 @@ export async function ProductLocalPage({ product, dept, commune, segment }: Prod
                 </h2>
                 <div className="prose prose-lg text-gray-600">
                   <p>{segment ? segment.introParagraph(product, dept, commune) : product.introParagraph(dept, commune)}</p>
-                  {isCity && (
+                  {isCity ? (
                     <CommuneContextBlock product={product} dept={dept} commune={commune} />
+                  ) : (
+                    <DepartmentContextBlock product={product} dept={dept} />
                   )}
                   <p>
                     Chaque réalisation est conçue et fabriquée sur mesure dans nos ateliers de
