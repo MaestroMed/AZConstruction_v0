@@ -23,8 +23,17 @@ export function WhyCustomBlock({ product, dept, commune }: Props) {
               Pourquoi du sur mesure ?
             </span>
             <h2 className="text-3xl md:text-4xl font-bold text-navy-dark mt-2 mb-6 leading-tight">
-              Parce qu'un {product.name.toLowerCase().replace(/s$/, '')} de catalogue, ça finit{' '}
-              <span className="text-blue-corporate">toujours par coincer.</span>
+              {product.slug === 'thermolaquage' ? (
+                <>
+                  Parce que le thermolaquage standard, ça finit{' '}
+                  <span className="text-blue-corporate">toujours par s&apos;écailler.</span>
+                </>
+              ) : (
+                <>
+                  Parce que les {productLabel} de catalogue, ça finit{' '}
+                  <span className="text-blue-corporate">toujours par coincer.</span>
+                </>
+              )}
             </h2>
             <div className="prose prose-lg max-w-none text-gray-600 space-y-4">
               <p>
