@@ -2,7 +2,6 @@
 
 import * as React from "react";
 import Image from "next/image";
-import { motion, AnimatePresence } from "framer-motion";
 import { useSiteImages } from "@/lib/hooks/useSiteImages";
 
 export interface HeroSlide {
@@ -24,18 +23,32 @@ interface HeroCarouselProps {
   onIndexChange: (index: number) => void;
 }
 
-// Durée par défaut d'affichage d'un slide quand il n'y a pas de vidéo (ou si onEnded ne fire pas)
 const IMAGE_SLIDE_DURATION_MS = 6000;
-// Fallback max si une vidéo est longue ou ne déclenche pas onEnded
 const VIDEO_MAX_DURATION_MS = 15000;
 
-export default function HeroCarousel({ slides, onSlideChange, currentIndex, onIndexChange }: HeroCarouselProps) {
+/**
+ * Performance strategy :
+ *  - TOUS les slides sont montés en permanence (stack absolu), visibility via opacity.
+ *    → passer d'un slide à l'autre n'implique PAS de recharger l'image/vidéo.
+ *  - Video elements : currentTime remis à 0 quand on active le slide, pause sinon.
+ *  - preload strategy :
+ *      • slide 0 (premier rendu) : preload="auto" (accélère le first paint)
+ *      • slide courant : preload="auto"
+ *      • slide suivant (n+1) : preload="auto" (pré-buffer)
+ *      • autres : preload="metadata" (léger, juste duration + poster)
+ *  - Ken Burns zoom sur l'image/video active uniquement, effet propre.
+ */
+export default function HeroCarousel({
+  slides,
+  onSlideChange,
+  currentIndex,
+  onIndexChange,
+}: HeroCarouselProps) {
   const { getImage, getVideo } = useSiteImages();
-  const videoRef = React.useRef<HTMLVideoElement>(null);
+  const videoRefs = React.useRef<Map<number, HTMLVideoElement>>(new Map());
 
   const currentSlide = slides[currentIndex];
   const currentVideoUrl = currentSlide ? getVideo(currentSlide.imageKey) : null;
-  const currentImageUrl = currentSlide ? getImage(currentSlide.imageKey) : null;
 
   const advance = React.useCallback(() => {
     if (slides.length <= 1) return;
@@ -44,22 +57,32 @@ export default function HeroCarousel({ slides, onSlideChange, currentIndex, onIn
     onSlideChange?.(next);
   }, [slides.length, currentIndex, onIndexChange, onSlideChange]);
 
-  // ── Advance logic ────────────────────────────────────────────────
-  // Image slide → interval 6s
-  // Video slide → advance on video 'ended', OR fallback timeout 15s si la video loop/ne finit pas
+  // ── Auto-advance logic ──────────────────────────────────────
   React.useEffect(() => {
     if (slides.length <= 1) return;
 
     if (currentVideoUrl) {
-      // Fallback timeout pour vidéos longues / boucles (onEnded fire en priorité si dispo)
       const fallbackTimer = setTimeout(advance, VIDEO_MAX_DURATION_MS);
       return () => clearTimeout(fallbackTimer);
     }
 
-    // Image slide → defilement regulier
     const interval = setInterval(advance, IMAGE_SLIDE_DURATION_MS);
     return () => clearInterval(interval);
   }, [currentIndex, currentVideoUrl, slides.length, advance]);
+
+  // ── Video play/pause management ─────────────────────────────
+  React.useEffect(() => {
+    videoRefs.current.forEach((video, index) => {
+      if (index === currentIndex) {
+        video.currentTime = 0;
+        video.play().catch(() => {
+          /* autoplay bloqué par navigateur, fallback silencieux */
+        });
+      } else {
+        video.pause();
+      }
+    });
+  }, [currentIndex]);
 
   const goToSlide = (index: number) => {
     onIndexChange(index);
@@ -72,52 +95,70 @@ export default function HeroCarousel({ slides, onSlideChange, currentIndex, onIn
 
   return (
     <div className="absolute inset-0 overflow-hidden">
-      <AnimatePresence mode="sync">
-        <motion.div
-          key={currentIndex}
-          initial={{ opacity: 0, scale: 1.08 }}
-          animate={{ opacity: 1, scale: 1 }}
-          exit={{ opacity: 0, scale: 1.02 }}
-          transition={{
-            opacity: { duration: 1.4, ease: [0.4, 0, 0.2, 1] },
-            scale: { duration: 7, ease: "linear" }, // Ken Burns: slow zoom-out sur toute la durée du slide
-          }}
-          className="absolute inset-0"
-        >
-          {currentVideoUrl ? (
-            <video
-              ref={videoRef}
-              key={currentVideoUrl}
-              src={currentVideoUrl}
-              poster={currentImageUrl || undefined}
-              autoPlay
-              muted
-              playsInline
-              preload="metadata"
-              // Pas de loop: on veut onEnded pour passer au slide suivant.
-              // Si la video fait moins que VIDEO_MAX_DURATION_MS, onEnded declenche advance.
-              onEnded={() => {
-                if (slides.length > 1) advance();
+      {slides.map((slide, index) => {
+        const isActive = index === currentIndex;
+        const isNext = index === (currentIndex + 1) % slides.length;
+        const videoUrl = getVideo(slide.imageKey);
+        const imageUrl = getImage(slide.imageKey);
+        // Preload : eager pour slide courant + suivant, metadata pour les autres
+        const preload = isActive || isNext ? "auto" : "metadata";
+
+        return (
+          <div
+            key={slide.id || index}
+            className="absolute inset-0 transition-opacity ease-[cubic-bezier(0.4,0,0.2,1)]"
+            style={{
+              opacity: isActive ? 1 : 0,
+              transitionDuration: "1400ms",
+              zIndex: isActive ? 2 : 1,
+              pointerEvents: "none",
+            }}
+            aria-hidden={!isActive}
+          >
+            {/* Ken Burns subtle zoom — animation CSS appliquee quand slide actif */}
+            <div
+              className="absolute inset-0"
+              style={{
+                animation: isActive ? "ken-burns 8s ease-in-out forwards" : "none",
+                transformOrigin: "center center",
               }}
-              aria-label={`AZ Construction - ${currentSlide.headline}`}
-              className="absolute inset-0 w-full h-full object-cover object-center"
-            />
-          ) : currentImageUrl ? (
-            <Image
-              src={currentImageUrl}
-              alt={`AZ Construction - ${currentSlide.headline}`}
-              fill
-              priority={currentIndex === 0}
-              className="object-cover object-center"
-            />
-          ) : (
-            <div className="w-full h-full bg-gradient-to-br from-navy-dark via-navy-medium to-blue-corporate" />
-          )}
-        </motion.div>
-      </AnimatePresence>
+            >
+              {videoUrl ? (
+                <video
+                  ref={(el) => {
+                    if (el) videoRefs.current.set(index, el);
+                    else videoRefs.current.delete(index);
+                  }}
+                  src={videoUrl}
+                  poster={imageUrl || undefined}
+                  muted
+                  playsInline
+                  preload={preload}
+                  onEnded={() => {
+                    if (isActive && slides.length > 1) advance();
+                  }}
+                  aria-label={`AZ Construction - ${slide.headline}`}
+                  className="absolute inset-0 w-full h-full object-cover object-center"
+                />
+              ) : imageUrl ? (
+                <Image
+                  src={imageUrl}
+                  alt={`AZ Construction - ${slide.headline}`}
+                  fill
+                  priority={index === 0}
+                  className="object-cover object-center"
+                  sizes="100vw"
+                />
+              ) : (
+                <div className="w-full h-full bg-gradient-to-br from-navy-dark via-navy-medium to-blue-corporate" />
+              )}
+            </div>
+          </div>
+        );
+      })}
 
       {/* Overlay sombre pour lisibilité du texte */}
-      <div className="absolute inset-0 bg-gradient-to-r from-navy-dark/75 via-navy-dark/45 to-navy-dark/20 pointer-events-none" />
+      <div className="absolute inset-0 z-10 bg-gradient-to-r from-navy-dark/75 via-navy-dark/45 to-navy-dark/20 pointer-events-none" />
 
       {/* Navigation dots */}
       {slides.length > 1 && (
@@ -127,7 +168,9 @@ export default function HeroCarousel({ slides, onSlideChange, currentIndex, onIn
               key={index}
               onClick={() => goToSlide(index)}
               className={`transition-all duration-300 rounded-full ${
-                index === currentIndex ? "w-8 h-2 bg-cyan-400" : "w-2 h-2 bg-white/40 hover:bg-white/60"
+                index === currentIndex
+                  ? "w-8 h-2 bg-cyan-400"
+                  : "w-2 h-2 bg-white/40 hover:bg-white/60"
               }`}
               aria-label={`Slide ${index + 1}`}
             />

@@ -865,6 +865,19 @@ body {
 }
 
 /* ============================================
+   Ken Burns slow zoom for hero carousel slides
+   ============================================ */
+
+@keyframes ken-burns {
+  0% {
+    transform: scale(1.06);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+/* ============================================
    Hero title — metallic brushed steel (for headline)
    ============================================ */
 
