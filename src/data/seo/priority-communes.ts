@@ -6,7 +6,11 @@ import type { Commune, Department } from './types'
 import { departments } from './departments'
 import { getCommunesByDepartment } from './communes'
 
-const TOP_N_PER_DEPT = 10
+// Nombre de communes pre-renderees au build, par departement.
+// Passe de 10 a 3 pour reduire le build time Vercel d'environ 70%.
+// Les autres communes restent accessibles via ISR (generees a la demande, cachees 7j).
+// Impact SEO : aucun, Google crawlera les ISR pages aussi bien.
+const TOP_N_PER_DEPT = 3
 
 /**
  * Returns up to TOP_N_PER_DEPT communes for the given department:
