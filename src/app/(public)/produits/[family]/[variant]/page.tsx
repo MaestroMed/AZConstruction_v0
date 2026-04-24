@@ -2,7 +2,7 @@
 
 import * as React from "react";
 import { useParams, notFound } from "next/navigation";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion } from "framer-motion";
 import Link from "next/link";
 import Image from "next/image";
 import {
@@ -20,6 +20,7 @@ import { GlowButton, GlassCard, MeshGradient, ParticleBackground, GradientOrb } 
 import { Button } from "@/components/ui/Button";
 import { PhoneLink } from "@/components/ui/PhoneLink";
 import { getProductFamilyBySlug } from "@/lib/data/product-families";
+import { HeroMedia } from "@/components/products/HeroMedia";
 
 interface VariantData {
   id: string;
@@ -28,6 +29,7 @@ interface VariantData {
   features?: string[];
   imageUrl?: string;
   images?: string[];
+  heroVideoUrl?: string;
 }
 
 export default function VariantPage() {
@@ -42,6 +44,7 @@ export default function VariantPage() {
   // DB data (overrides static)
   const [variant, setVariant] = React.useState<VariantData | null>(staticVariant ?? null);
   const [familyHeroImages, setFamilyHeroImages] = React.useState<string[]>(family?.heroImages ?? []);
+  const [familyHeroVideoUrl, setFamilyHeroVideoUrl] = React.useState<string | null>(family?.heroVideoUrl ?? null);
   const [heroIndex, setHeroIndex] = React.useState(0);
   const [allVariants, setAllVariants] = React.useState<VariantData[]>(family?.variants ?? []);
 
@@ -51,6 +54,7 @@ export default function VariantPage() {
       .then((r) => r.json())
       .then((data) => {
         if (data.success && data.family) {
+          if (data.family.heroVideoUrl) setFamilyHeroVideoUrl(data.family.heroVideoUrl);
           const dbVariants = (data.family.variants ?? []) as VariantData[];
           if (dbVariants.length > 0) {
             setAllVariants(dbVariants);
@@ -72,14 +76,18 @@ export default function VariantPage() {
       .catch(() => {});
   }, [familySlug, variantId]);
 
-  // Auto-advance gallery
+  // Resolve active video: variant video takes precedence over family video
+  const activeVideoUrl = (variant ?? staticVariant)?.heroVideoUrl ?? familyHeroVideoUrl;
+
+  // Auto-advance gallery (disabled when a video is active)
   React.useEffect(() => {
+    if (activeVideoUrl) return;
     const variantImgs = (variant?.images?.length ? variant.images : variant?.imageUrl ? [variant.imageUrl] : []);
     const images = variantImgs.length > 0 ? [...variantImgs, ...familyHeroImages.filter(u => !variantImgs.includes(u))] : familyHeroImages;
     if (images.length <= 1) return;
     const t = setInterval(() => setHeroIndex((i) => (i + 1) % images.length), 5000);
     return () => clearInterval(t);
-  }, [variant?.imageUrl, variant?.images?.length, familyHeroImages.length]);
+  }, [variant?.imageUrl, variant?.images?.length, familyHeroImages.length, activeVideoUrl]);
 
   if (!family || (!variant && !staticVariant)) {
     notFound();
@@ -98,28 +106,12 @@ export default function VariantPage() {
       <section className="relative min-h-screen flex items-center overflow-hidden">
         {/* Background */}
         <div className="absolute inset-0">
-          <AnimatePresence mode="wait">
-            <motion.div
-              key={heroIndex}
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              transition={{ duration: 1.2 }}
-              className="absolute inset-0"
-            >
-              {galleryImages.length > 0 ? (
-                <Image
-                  src={galleryImages[heroIndex % galleryImages.length]}
-                  alt={currentVariant.name}
-                  fill
-                  priority
-                  className="object-cover"
-                />
-              ) : (
-                <div className="w-full h-full bg-gradient-to-br from-navy-dark via-blue-corporate to-cyan-800" />
-              )}
-            </motion.div>
-          </AnimatePresence>
+          <HeroMedia
+            videoUrl={activeVideoUrl}
+            imageUrl={galleryImages.length > 0 ? galleryImages[heroIndex % galleryImages.length] : undefined}
+            imageIndexKey={heroIndex}
+            alt={currentVariant.name}
+          />
           <div className="absolute inset-0 bg-gradient-to-r from-navy-dark/90 via-navy-dark/65 to-navy-dark/25" />
         </div>
 
@@ -202,8 +194,8 @@ export default function VariantPage() {
           </div>
         </div>
 
-        {/* Carousel nav */}
-        {galleryImages.length > 1 && (
+        {/* Carousel nav (hidden when hero video is active) */}
+        {!activeVideoUrl && galleryImages.length > 1 && (
           <>
             <button
               onClick={() => setHeroIndex((i) => (i - 1 + galleryImages.length) % galleryImages.length)}

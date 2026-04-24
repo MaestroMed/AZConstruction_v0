@@ -24,6 +24,7 @@ export interface ProductVariant {
   startingPrice: string;
   imageUrl?: string;
   images?: string[];
+  heroVideoUrl?: string; // Optional background video for variant hero
 }
 
 export interface ProductFamily {
@@ -35,6 +36,7 @@ export interface ProductFamily {
   description: string;
   longDescription: string;
   heroImages: string[]; // URLs for carousel
+  heroVideoUrl?: string; // Optional background video for family hero
   startingPrice: string;
   unit: string; // e.g., "ml" for mètre linéaire, "pièce", etc.
   features: string[];

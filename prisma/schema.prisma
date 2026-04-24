@@ -84,11 +84,12 @@ model ProductFamily {
   // Landing page content
   tagline          String?                   // Short tagline for hero
   longDescription  String?   @db.Text        // Extended description
+  heroVideoUrl     String?                   // Background video URL for family hero
   startingPrice    String?                   // e.g., "290"
   unit             String?   @default("pièce") // e.g., "ml", "pièce"
   features         String[]                  // Feature tags array
   benefits         Json?                     // Array of {icon, title, description}
-  variants         Json?                     // Array of product variants
+  variants         Json?                     // Array of product variants (each variant may include heroVideoUrl)
   specifications   Json?                     // Technical specs
   seoTitle         String?
   seoDescription   String?   @db.Text
