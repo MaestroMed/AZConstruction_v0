@@ -47,13 +47,12 @@ export const navigationItems: NavItem[] = [
   {
     title: "Produits",
     icon: Package,
-    href: "/admin/produits",
+    href: "/admin/familles",
     subItems: [
-      { title: "Tous les produits", href: "/admin/produits" },
-      { title: "Familles", href: "/admin/produits/familles" },
-      { title: "Images produits", href: "/admin/produits/images" },
+      { title: "Familles & sous-familles", href: "/admin/familles" },
+      { title: "SKU individuels", href: "/admin/produits" },
       { title: "Produits vedettes", href: "/admin/produits/vedettes" },
-      { title: "Options", href: "/admin/produits/options" },
+      { title: "Options (largeur, RAL…)", href: "/admin/produits/options" },
     ],
   },
   {
@@ -160,4 +159,5 @@ export const breadcrumbLabels: Record<string, string> = {
   "hero-slides": "Slides Hero",
   "ral-models": "Modèles RAL",
   nouveau: "Nouveau",
+  variants: "Sous-familles",
 };
