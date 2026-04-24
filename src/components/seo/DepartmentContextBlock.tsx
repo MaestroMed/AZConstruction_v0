@@ -43,13 +43,18 @@ export function DepartmentContextBlock({ product, dept }: Props) {
   else if (totalPopulation >= 150_000) scaleAdj = 'à dominante résidentielle et semi-rurale'
   else scaleAdj = 'à taille humaine, en développement continu'
 
+  // Paris = 1 commune avec 20 arrondissements ; pour les autres départements, on utilise "communes"
+  const isParis = dept.code === '75'
+  const unit = isParis ? 'arrondissements' : 'communes'
+  const coveredLabel = `${communes.length} ${unit}`
+
   return (
     <p>
-      Le département {dept.fullName} regroupe{' '}
-      <strong>
-        {communes.length}+ communes
-      </strong>{' '}
-      couvertes par nos équipes,{' '}
+      {isParis ? (
+        <>Paris regroupe ses <strong>{coveredLabel}</strong> couverts par nos équipes,{' '}</>
+      ) : (
+        <>Le département {dept.fullName} regroupe <strong>{coveredLabel}</strong> couvertes par nos équipes,{' '}</>
+      )}
       {totalPopulation > 0 && (
         <>
           pour environ <strong>{formatPop(totalPopulation)}</strong> habitants desservis, un territoire{' '}
