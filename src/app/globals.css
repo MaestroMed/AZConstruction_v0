@@ -865,6 +865,65 @@ body {
 }
 
 /* ============================================
+   Hero title — metallic brushed steel (for headline)
+   ============================================ */
+
+.hero-title-metallic {
+  /* Brushed steel effect avec highlight qui balaye */
+  background: linear-gradient(
+    110deg,
+    #e2e8f0 0%,
+    #94a3b8 15%,
+    #f1f5f9 30%,
+    #cbd5e1 45%,
+    #94a3b8 60%,
+    #e2e8f0 75%,
+    #cbd5e1 100%
+  );
+  background-size: 250% auto;
+  background-position: 0% center;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  color: transparent;
+  animation: hero-metallic-sheen 6s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+  /* Très léger drop shadow pour donner du relief */
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.25));
+}
+
+@keyframes hero-metallic-sheen {
+  0% {
+    background-position: 0% center;
+  }
+  50% {
+    background-position: 100% center;
+  }
+  100% {
+    background-position: 0% center;
+  }
+}
+
+/* Accent part — gradient cyan qui reprend la charte */
+.hero-title-accent {
+  background: linear-gradient(
+    110deg,
+    #22d3ee 0%,
+    #67e8f9 25%,
+    #00d4ff 50%,
+    #67e8f9 75%,
+    #22d3ee 100%
+  );
+  background-size: 200% auto;
+  background-position: 0% center;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  color: transparent;
+  animation: hero-metallic-sheen 6s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+  filter: drop-shadow(0 0 12px rgba(0, 212, 255, 0.35));
+}
+
+/* ============================================
    Hover Spotlight Effect
    ============================================ */
 
