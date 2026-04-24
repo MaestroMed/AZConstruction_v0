@@ -6,6 +6,7 @@ import { ArrowRight, Play } from "lucide-react";
 import Link from "next/link";
 import ConfiguratorPreview from "./ConfiguratorPreview";
 import HeroCarousel, { type HeroSlide } from "./HeroCarousel";
+import AnimatedHeroTitle from "./AnimatedHeroTitle";
 
 /* ── Fallback statique si DB vide ── */
 const DEFAULT_SLIDES: HeroSlide[] = [
@@ -157,29 +158,22 @@ export default function HeroSection() {
                 </motion.div>
               )}
 
-              {/* Headline animé par slide */}
+              {/* Headline animé par slide — stagger lettre par lettre + métallique */}
               <AnimatePresence mode="wait">
                 <motion.div
                   key={slideIndex}
-                  initial={{ opacity: 0, y: 20 }}
+                  initial={{ opacity: 0, y: 12 }}
                   animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -16 }}
-                  transition={{ duration: 0.5, ease: [0.25, 0.46, 0.45, 0.94] }}
+                  exit={{ opacity: 0, y: -12 }}
+                  transition={{ duration: 0.4, ease: [0.25, 0.46, 0.45, 0.94] }}
                 >
-                  <h1 className="font-display text-5xl md:text-6xl lg:text-7xl font-semibold text-white leading-[1.05] tracking-tight mb-6">
-                    {currentSlide?.headline}{" "}
-                    <span className="relative inline-block">
-                      <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-blue-400">
-                        {currentSlide?.headlineAccent}
-                      </span>
-                      <motion.span
-                        className="absolute -bottom-2 left-0 w-full h-[3px] bg-gradient-to-r from-cyan-400 to-blue-400 rounded-full"
-                        initial={{ scaleX: 0 }}
-                        animate={{ scaleX: 1 }}
-                        transition={{ duration: 0.6, delay: 0.2 }}
-                      />
-                    </span>
-                  </h1>
+                  {currentSlide && (
+                    <AnimatedHeroTitle
+                      headline={currentSlide.headline}
+                      headlineAccent={currentSlide.headlineAccent}
+                      slideKey={slideIndex}
+                    />
+                  )}
 
                   <p className="text-lg md:text-xl text-white/60 max-w-lg leading-relaxed mb-10">
                     {currentSlide?.subheadline}
