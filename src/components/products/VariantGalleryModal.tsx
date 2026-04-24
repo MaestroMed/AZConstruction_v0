@@ -87,7 +87,7 @@ export function VariantGalleryModal({ variant, onClose }: VariantGalleryModalPro
                 onClick={() => setIdx(i)}
                 className={cn("relative w-16 h-12 rounded-lg overflow-hidden flex-shrink-0 border-2 transition-all", i === idx ? "border-cyan-400" : "border-transparent opacity-60 hover:opacity-100")}
               >
-                <Image src={img} alt="" fill className="object-cover" sizes="64px" />
+                <Image src={img} alt="" aria-hidden="true" fill className="object-cover" sizes="64px" />
               </button>
             ))}
           </div>
