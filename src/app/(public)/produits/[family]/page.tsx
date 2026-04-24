@@ -306,19 +306,22 @@ export default function ProductFamilyPage() {
             </p>
           </motion.div>
 
-          <div className="grid md:grid-cols-2 gap-8">
+          {/* Bento / masonry layout : chaque carte prend la hauteur naturelle de sa photo.
+              CSS columns donne un flow Pinterest-like, break-inside-avoid empeche la coupure. */}
+          <div className="columns-1 md:columns-2 gap-8 max-w-6xl mx-auto">
             {dbVariants.map((variant, index) => (
               <motion.div
                 key={variant.id}
-                initial={{ opacity: 0, y: 30 }}
+                initial={{ opacity: 0, y: 24 }}
                 whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: index * 0.1 }}
+                viewport={{ once: true, margin: "-80px" }}
+                transition={{ delay: Math.min(index * 0.08, 0.4), duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
+                className="break-inside-avoid mb-8 group"
               >
-                <Card variant="elevated" hover className="h-full group overflow-hidden">
-                  {/* Mini-hero image — object-contain pour voir l'image entière */}
+                <div className="relative bg-white rounded-3xl overflow-hidden shadow-[0_2px_20px_rgba(10,22,40,0.06)] hover:shadow-[0_20px_60px_rgba(10,22,40,0.12)] transition-all duration-500 hover:-translate-y-1">
+                  {/* Image container (aspect ratio dynamique, Apple-like) */}
                   <div
-                    className="relative h-56 overflow-hidden bg-navy-dark cursor-pointer"
+                    className="relative cursor-pointer"
                     onClick={() => {
                       const imgs = getVariantImages(variant);
                       if (imgs.length > 0) setGalleryVariant(variant);
@@ -328,18 +331,18 @@ export default function ProductFamilyPage() {
                       variant={variant}
                       onOpenGallery={() => setGalleryVariant(variant)}
                     />
-                    {/* Bottom gradient for badge readability */}
-                    <div className="absolute inset-0 bg-gradient-to-t from-navy-dark/70 via-transparent to-transparent pointer-events-none" />
-                    {/* Badge "Sur devis" */}
+                    {/* Overlay degrade bas pour lisibilite du badge */}
+                    <div className="absolute inset-x-0 bottom-0 h-20 bg-gradient-to-t from-black/30 to-transparent pointer-events-none rounded-b-3xl" />
                     <div className="absolute bottom-4 right-4 pointer-events-none">
-                      <span className="inline-flex items-center px-3 py-1 bg-emerald-500/90 backdrop-blur-sm text-white rounded-full text-xs font-semibold">
+                      <span className="inline-flex items-center px-3 py-1 bg-emerald-500/95 backdrop-blur-sm text-white rounded-full text-xs font-semibold shadow-lg">
                         Sur devis
                       </span>
                     </div>
                   </div>
 
-                  <CardContent className="p-6">
-                    <h3 className="text-xl font-bold text-navy-dark group-hover:text-blue-corporate transition-colors mb-2">
+                  {/* Contenu */}
+                  <div className="p-7">
+                    <h3 className="text-xl md:text-2xl font-bold text-navy-dark group-hover:text-blue-corporate transition-colors mb-2 tracking-tight">
                       {variant.name}
                     </h3>
                     <p className="text-gray-500 mb-5 text-sm leading-relaxed">{variant.description}</p>
@@ -370,8 +373,8 @@ export default function ProductFamilyPage() {
                         </Button>
                       </Link>
                     </div>
-                  </CardContent>
-                </Card>
+                  </div>
+                </div>
               </motion.div>
             ))}
           </div>
