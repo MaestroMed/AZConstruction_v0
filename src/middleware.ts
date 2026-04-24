@@ -3,11 +3,46 @@ import type { NextRequest } from "next/server";
 import { getToken } from "next-auth/jwt";
 
 /**
- * Middleware de protection des routes admin et compte client
- * Vérifie l'authentification via NextAuth JWT token
+ * Middleware principal :
+ *  1. SEO canonical host : force https://www.azconstruction.fr (301 des autres variantes)
+ *     → corrige la triple indexation mesurée dans GSC (http://www + https://naked + https://www)
+ *     qui diluait l'autorité sur les 3 hostnames
+ *  2. Protection des routes admin / compte client via NextAuth JWT
  */
+const CANONICAL_HOST = "www.azconstruction.fr";
+
 export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
+
+  // ─── 1. SEO canonical host redirect ────────────────────────────────────
+  // Skip assets (_next, api, files with extensions) et previews Vercel.
+  const host = request.headers.get("host") ?? "";
+  const isPreviewOrDev =
+    host.includes("localhost") ||
+    host.includes("127.0.0.1") ||
+    host.endsWith(".vercel.app");
+
+  const isAssetOrApi =
+    pathname.startsWith("/_next/") ||
+    pathname.startsWith("/api/") ||
+    /\.[a-z0-9]+$/i.test(pathname);
+
+  if (!isPreviewOrDev && !isAssetOrApi) {
+    // Protocol detection : derrière Vercel le protocole reel est dans x-forwarded-proto
+    const forwardedProto = request.headers.get("x-forwarded-proto");
+    const proto = forwardedProto ?? request.nextUrl.protocol.replace(":", "");
+    const isHttps = proto === "https";
+    const isCanonicalHost = host === CANONICAL_HOST;
+
+    if (!isCanonicalHost || !isHttps) {
+      const target = new URL(request.url);
+      target.protocol = "https:";
+      target.host = CANONICAL_HOST;
+      return NextResponse.redirect(target, 301);
+    }
+  }
+
+  // ─── 2. Protection des routes admin / compte client ───────────────────
 
   // Routes admin pages - vérification souple (AuthGuard gère le login)
   if (pathname.startsWith("/admin")) {
@@ -91,11 +126,12 @@ export async function middleware(request: NextRequest) {
 }
 
 export const config = {
-  matcher: [
-    "/admin/:path*",
-    "/compte/:path*",
-    "/api/admin/:path*",
-    "/api/auth/:path*",
-    "/api/contact/:path*",
-  ],
+  // Match TOUTES les routes (sauf les assets statiques) pour que la redirection
+  // canonical host se declenche partout. Les blocs auth interne sont guard\u00e9s par
+  // des `pathname.startsWith("/admin"|"/compte"|"/api/...")` dans la fonction.
+  //
+  // Exclusions :
+  // - /_next/* (assets Next.js)
+  // - Tout ce qui contient un point (fichiers statiques : .ico, .png, .svg, .xml, etc.)
+  matcher: ["/((?!_next/|.*\\..*).*)"],
 };
