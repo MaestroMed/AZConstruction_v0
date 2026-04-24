@@ -45,28 +45,34 @@ export async function POST(request: NextRequest) {
       },
     });
 
-    // Envoyer l'email de confirmation au client
-    const confirmationResult = await sendContactConfirmation(email, nom);
+    // Envoyer l'email de confirmation au client (le message est deja persiste en DB)
+    const [confirmationResult, notificationResult] = await Promise.all([
+      sendContactConfirmation(email, nom),
+      sendContactNotificationToAdmin({
+        name: nom,
+        email,
+        phone: telephone,
+        subject: sujet,
+        message,
+        type,
+        attachments: Array.isArray(attachments) ? attachments : [],
+      }),
+    ]);
+
     if (!confirmationResult.success) {
-      console.warn("Échec envoi confirmation:", confirmationResult.error);
+      console.error("[contact] echec email confirmation client:", confirmationResult.error);
+    }
+    if (!notificationResult.success) {
+      console.error("[contact] echec email notification admin:", notificationResult.error);
     }
 
-    // Envoyer la notification à l'admin
-    const notificationResult = await sendContactNotificationToAdmin({
-      name: nom,
-      email,
-      phone: telephone,
-      subject: sujet,
-      message,
-      type,
-      attachments: Array.isArray(attachments) ? attachments : [],
-    });
-    if (!notificationResult.success) {
-      console.warn("Échec envoi notification admin:", notificationResult.error);
-    }
+    // Le message est en DB meme si les emails echouent → on retourne success.
+    // On inclut un flag pour le monitoring cote dashboard si besoin.
+    const emailsOk = confirmationResult.success && notificationResult.success;
 
     return NextResponse.json({
       success: true,
+      emailsOk,
       message: "Votre message a bien été envoyé. Nous vous répondrons dans les plus brefs délais.",
       id: contactMessage.id,
     });
