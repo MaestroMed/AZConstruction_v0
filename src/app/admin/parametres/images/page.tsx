@@ -299,6 +299,8 @@ function ImageCard({
 // ── Video upload card for hero sections ────────────────────
 function VideoUploadCard({
   siteImageKey,
+  label,
+  description,
   videoUrl,
   posterUrl,
   uploading,
@@ -306,6 +308,8 @@ function VideoUploadCard({
   onRemove,
 }: {
   siteImageKey: string;
+  label: string;
+  description?: string;
   videoUrl: string | null;
   posterUrl: string;
   uploading: boolean;
@@ -319,10 +323,9 @@ function VideoUploadCard({
   const [dragOver, setDragOver] = React.useState(false);
 
   const handleFile = (file: File) => {
-    // Skip client-side re-encoding — upload directly to Vercel Blob
-    // A 720p/1080p MP4 under 50MB is already web-optimized
-    if (file.size > 50 * 1024 * 1024) {
-      toast.error(`Vidéo trop volumineuse (${(file.size / 1024 / 1024).toFixed(0)} Mo). Maximum : 50 Mo.`);
+    // Client-side size guard (server also enforces 100 MB)
+    if (file.size > 100 * 1024 * 1024) {
+      toast.error(`Vidéo trop volumineuse (${(file.size / 1024 / 1024).toFixed(0)} Mo). Maximum : 100 Mo.`);
       return;
     }
     onUpload(file);
@@ -345,47 +348,63 @@ function VideoUploadCard({
     >
       <div className="p-5">
         <div className="flex items-center gap-3 mb-4">
-          <div className="w-10 h-10 rounded-xl bg-purple-100 flex items-center justify-center">
+          <div className="w-10 h-10 rounded-xl bg-purple-100 flex items-center justify-center flex-shrink-0">
             <Video className="w-5 h-5 text-purple-600" />
           </div>
-          <div>
-            <p className="font-semibold text-gray-900 text-sm">Vidéo Hero</p>
-            <p className="text-xs text-gray-500">Vidéo d'arrière-plan pour la section hero. Optimisée automatiquement pour le web.</p>
+          <div className="min-w-0 flex-1">
+            <div className="flex items-center gap-2 flex-wrap">
+              <p className="font-semibold text-gray-900 text-sm">Vidéo — {label}</p>
+              <span className="text-[10px] px-1.5 py-0.5 rounded bg-gray-100 text-gray-500 font-mono">{siteImageKey}</span>
+            </div>
+            <p className="text-xs text-gray-500 mt-0.5">
+              {description || "Vidéo d'arrière-plan (remplace l'image pour cette section si définie)."}
+            </p>
           </div>
           {videoUrl && (
-            <span className="ml-auto text-xs px-2 py-0.5 rounded-full font-medium bg-green-500/90 text-white">
+            <span className="ml-auto text-xs px-2 py-0.5 rounded-full font-medium bg-green-500/90 text-white flex-shrink-0">
               ✓ Active
             </span>
           )}
         </div>
 
-        {/* Video preview */}
-        {videoUrl ? (
-          <div className="relative rounded-xl overflow-hidden bg-gray-900 mb-4">
-            <video
-              ref={videoPreviewRef}
-              src={videoUrl}
-              muted
-              loop
-              playsInline
-              className="w-full aspect-video object-cover"
-              onMouseEnter={(e) => (e.target as HTMLVideoElement).play()}
-              onMouseLeave={(e) => { const v = e.target as HTMLVideoElement; v.pause(); v.currentTime = 0; }}
-            />
-            <div className="absolute inset-0 flex items-center justify-center pointer-events-none opacity-60">
-              <Play className="w-12 h-12 text-white drop-shadow-lg" />
+        {/* Preview side-by-side: current poster image + video slot */}
+        <div className="grid grid-cols-2 gap-3 mb-4">
+          {/* Poster reference */}
+          <div className="relative rounded-xl overflow-hidden bg-gray-100 aspect-video">
+            {posterUrl ? (
+              // eslint-disable-next-line @next/next/no-img-element
+              <img src={posterUrl} alt={`Image de référence — ${label}`} className="w-full h-full object-cover" />
+            ) : (
+              <div className="w-full h-full flex items-center justify-center text-gray-300 text-xs">Pas d'image</div>
+            )}
+            <p className="absolute bottom-1 left-1 text-[10px] text-white bg-black/60 px-1.5 py-0.5 rounded">Image actuelle</p>
+          </div>
+
+          {/* Video slot */}
+          {videoUrl ? (
+            <div className="relative rounded-xl overflow-hidden bg-gray-900 aspect-video">
+              <video
+                ref={videoPreviewRef}
+                src={videoUrl}
+                muted
+                loop
+                playsInline
+                className="w-full h-full object-cover"
+                onMouseEnter={(e) => (e.target as HTMLVideoElement).play()}
+                onMouseLeave={(e) => { const v = e.target as HTMLVideoElement; v.pause(); v.currentTime = 0; }}
+              />
+              <div className="absolute inset-0 flex items-center justify-center pointer-events-none opacity-60">
+                <Play className="w-8 h-8 text-white drop-shadow-lg" />
+              </div>
+              <p className="absolute bottom-1 left-1 text-[10px] text-white bg-black/60 px-1.5 py-0.5 rounded">Vidéo (survol)</p>
             </div>
-            <p className="absolute bottom-2 left-3 text-xs text-white/70 bg-black/40 px-2 py-0.5 rounded">
-              Survolez pour prévisualiser
-            </p>
-          </div>
-        ) : (
-          <div className="rounded-xl border-2 border-dashed border-gray-200 bg-gray-50 p-8 text-center mb-4">
-            <Video className="w-10 h-10 text-gray-300 mx-auto mb-2" />
-            <p className="text-sm text-gray-400">Aucune vidéo configurée</p>
-            <p className="text-xs text-gray-300 mt-1">Glissez-déposez un fichier ou cliquez pour uploader</p>
-          </div>
-        )}
+          ) : (
+            <div className="rounded-xl border-2 border-dashed border-gray-200 bg-gray-50 aspect-video flex flex-col items-center justify-center">
+              <Video className="w-6 h-6 text-gray-300 mb-1" />
+              <p className="text-xs text-gray-400">Aucune vidéo</p>
+            </div>
+          )}
+        </div>
 
         {/* Progress */}
         {(converting || uploading) && (
@@ -433,11 +452,9 @@ function VideoUploadCard({
         {/* Info */}
         <div className="mt-3 flex items-start gap-2 text-[11px] text-gray-400">
           <span className="leading-relaxed">
-            Formats acceptés : MP4, WebM, MOV. Taille max : 100 MB.
-            La vidéo sera automatiquement ré-encodée et optimisée pour le web (1080p, 2.5 Mbps).
+            Formats acceptés : MP4, WebM, MOV. Taille max : 100 Mo. Recommandé : 1080p, 2-3 Mbps, 10-30s en boucle, muet.
           </span>
         </div>
-        <p className="text-[9px] text-gray-300 mt-1.5 font-mono">{siteImageKey}</p>
       </div>
     </div>
   );
@@ -635,7 +652,16 @@ export default function ImagesSettingsPage() {
       toast.dismiss("video-upload");
       toast.dismiss("video-save");
       console.error("[video-upload] error:", e);
-      toast.error(e instanceof Error ? e.message : "Erreur upload vidéo");
+      const msg = e instanceof Error ? e.message : String(e);
+      // Détection erreurs typiques Vercel Blob (token manquant, CORS, etc.)
+      if (/CORS|vercel\.com\/api\/blob|ERR_FAILED|400|No token/i.test(msg)) {
+        toast.error(
+          "Upload impossible : Vercel Blob mal configuré. Vérifiez que BLOB_READ_WRITE_TOKEN est bien lié à un store Blob actif (dashboard Vercel → Storage → Blob), puis redéployez.",
+          { duration: 10000 }
+        );
+      } else {
+        toast.error(`Erreur upload vidéo : ${msg}`);
+      }
     } finally {
       setVideoUploading(null);
     }
@@ -854,6 +880,8 @@ export default function ImagesSettingsPage() {
                 <VideoUploadCard
                   key={`video-${img.key}`}
                   siteImageKey={img.key}
+                  label={img.label}
+                  description={img.description}
                   videoUrl={img.videoUrl || null}
                   posterUrl={img.url}
                   uploading={videoUploading === img.key}

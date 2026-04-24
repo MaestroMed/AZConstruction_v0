@@ -15,6 +15,18 @@ import { NextResponse } from "next/server";
  * so the 4.5MB body limit doesn't apply.
  */
 export async function POST(request: Request): Promise<NextResponse> {
+  // Garde-fou : si le token Blob n'est pas configuré, on retourne un message parlant
+  // au lieu de laisser le SDK générer un token invalide qui fait foirer le client en CORS.
+  if (!process.env.BLOB_READ_WRITE_TOKEN) {
+    return NextResponse.json(
+      {
+        error:
+          "BLOB_READ_WRITE_TOKEN manquant côté serveur. Créer un store Vercel Blob (Dashboard → Storage → Blob) et lier la variable au projet, puis redéployer.",
+      },
+      { status: 500 }
+    );
+  }
+
   const body = (await request.json()) as HandleUploadBody;
 
   try {
