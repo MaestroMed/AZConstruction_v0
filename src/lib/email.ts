@@ -24,28 +24,44 @@ interface EmailResult {
   error?: string;
 }
 
-// Configuration email par défaut
-const DEFAULT_FROM = "AZ Construction <noreply@azconstruction.fr>";
-const DEFAULT_REPLY_TO = "contact@azconstruction.fr";
+// Configuration email par défaut (surchargeable via env)
+const DEFAULT_FROM = process.env.EMAIL_FROM || "AZ Construction <noreply@azconstruction.fr>";
+const DEFAULT_REPLY_TO = process.env.EMAIL_REPLY_TO || "contact@azconstruction.fr";
 
 /**
  * Envoie un email via Resend
+ *
+ * Comportement :
+ * - Production SANS RESEND_API_KEY → success: false (erreur claire côté formulaire,
+ *   au lieu du faux success qui masquait les emails jamais envoyés)
+ * - Développement SANS clé → log + success: true (utile pour debug sans spam réel)
+ * - Avec clé → appel réel Resend, success réflète la réponse API
  */
 export async function sendEmail(options: EmailOptions): Promise<EmailResult> {
   const { to, subject, html, from = DEFAULT_FROM, replyTo = DEFAULT_REPLY_TO, attachments } = options;
-
-  // Vérifier la clé API Resend
   const resendApiKey = process.env.RESEND_API_KEY;
+  const isProd = process.env.NODE_ENV === "production";
 
   if (!resendApiKey) {
-    // En développement sans clé, on log l'email
+    if (isProd) {
+      console.error("[email] RESEND_API_KEY manquant en production — email NON envoyé", {
+        to: Array.isArray(to) ? to.join(", ") : to,
+        subject,
+      });
+      return {
+        success: false,
+        error: "Service email non configuré (RESEND_API_KEY manquant)",
+      };
+    }
+
+    // Dev: log puis faux success (évite de polluer Resend en dev)
     console.log("📧 [DEV] Email qui serait envoyé:");
     console.log(`   To: ${Array.isArray(to) ? to.join(", ") : to}`);
     console.log(`   Subject: ${subject}`);
     console.log(`   From: ${from}`);
     console.log(`   ReplyTo: ${replyTo}`);
     console.log(`   Content: ${html.substring(0, 200)}...`);
-    
+
     return {
       success: true,
       messageId: `dev-${Date.now()}`,
@@ -70,11 +86,11 @@ export async function sendEmail(options: EmailOptions): Promise<EmailResult> {
     });
 
     if (!response.ok) {
-      const errorData = await response.json();
-      console.error("Resend API error:", errorData);
+      const errorData = await response.json().catch(() => ({}));
+      console.error("[email] Resend API error", { status: response.status, errorData });
       return {
         success: false,
-        error: errorData.message || "Erreur lors de l'envoi",
+        error: errorData?.message || `Erreur Resend ${response.status}`,
       };
     }
 
@@ -84,7 +100,7 @@ export async function sendEmail(options: EmailOptions): Promise<EmailResult> {
       messageId: data.id,
     };
   } catch (error) {
-    console.error("Email send error:", error);
+    console.error("[email] send error:", error);
     return {
       success: false,
       error: error instanceof Error ? error.message : "Erreur inconnue",
