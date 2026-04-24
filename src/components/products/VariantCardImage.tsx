@@ -41,7 +41,24 @@ export function VariantCardImage({ variant, onOpenGallery }: VariantCardImagePro
           transition={{ duration: 0.5 }}
           className="absolute inset-0"
         >
-          <Image src={imgs[idx]} alt={`${variant.name} ${idx + 1}`} fill className="object-contain" />
+          {/* Blurred backdrop — fills frame, no black bars whatever the orientation */}
+          <Image
+            src={imgs[idx]}
+            alt=""
+            aria-hidden
+            fill
+            className="object-cover scale-110 blur-2xl opacity-60"
+            sizes="(max-width: 768px) 100vw, 50vw"
+          />
+          <div className="absolute inset-0 bg-navy-dark/30" />
+          {/* Foreground — full image, no crop */}
+          <Image
+            src={imgs[idx]}
+            alt={`${variant.name} ${idx + 1}`}
+            fill
+            className="object-contain"
+            sizes="(max-width: 768px) 100vw, 50vw"
+          />
         </motion.div>
       </AnimatePresence>
 
