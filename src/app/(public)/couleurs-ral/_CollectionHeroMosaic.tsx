@@ -253,7 +253,7 @@ function MarqueeColumn({
           >
             <Image
               src={f.imageUrl!}
-              alt=""
+              alt={`Finition ${f.name} — thermolaquage Adapta`}
               fill
               sizes="(max-width: 640px) 33vw, (max-width: 1024px) 25vw, 18vw"
               quality={55}

@@ -404,7 +404,7 @@ export function CollectionPage({ collection }: CollectionPageProps) {
                           {f.imageUrl && (
                             <Image
                               src={f.imageUrl}
-                              alt=""
+                              alt={`Finition ${f.name} — thermolaquage ${col.nom}`}
                               fill
                               sizes="80px"
                               className="object-cover"

@@ -539,7 +539,7 @@ export default function RealisationsPage() {
                             i === carouselIndex ? "border-cyan-400 opacity-100" : "border-transparent opacity-60 hover:opacity-100"
                           )}
                         >
-                          <Image src={img} alt="" fill className="object-cover" sizes="48px" />
+                          <Image src={img} alt="" aria-hidden="true" fill className="object-cover" sizes="48px" />
                         </button>
                       ))}
                     </div>

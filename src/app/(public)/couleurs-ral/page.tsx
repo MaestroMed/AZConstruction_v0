@@ -293,7 +293,7 @@ export default function CouleurRalPage() {
                           {f.imageUrl && (
                             <Image
                               src={f.imageUrl}
-                              alt=""
+                              alt={`Finition ${f.name} — collection ${col.nom}`}
                               fill
                               sizes="80px"
                               className="object-cover"
