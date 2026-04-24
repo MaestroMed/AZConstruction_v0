@@ -126,11 +126,22 @@ export default function HeroCarousel({
               {videoUrl ? (
                 <video
                   ref={(el) => {
-                    if (el) videoRefs.current.set(index, el);
-                    else videoRefs.current.delete(index);
+                    if (el) {
+                      videoRefs.current.set(index, el);
+                      // Auto-play si slide actif quand l'element est attache
+                      // (evite le delai si useSiteImages renvoie les videos apres le premier render)
+                      if (isActive) {
+                        el.play().catch(() => {
+                          /* autoplay bloque, fallback silencieux */
+                        });
+                      }
+                    } else {
+                      videoRefs.current.delete(index);
+                    }
                   }}
                   src={videoUrl}
                   poster={imageUrl || undefined}
+                  autoPlay={isActive}
                   muted
                   playsInline
                   preload={preload}
