@@ -94,23 +94,97 @@ model ProductFamily {
   seoTitle         String?
   seoDescription   String?   @db.Text
   
-  // Relations
+  // Relations (nouvelles, Megaswarm refactor)
+  productVariants  ProductVariant[]
+  assets           ProductFamilyAsset[]
+
+  // Relations (legacy — gardées pour migration, dropées en Phase deprecate)
   products         Product[]
   heroImages       ProductFamilyImage[]
-  
+
   @@map("product_families")
 }
 
-// Hero images for product family landing pages
+// Sous-familles (variants) avec vraies relations Prisma — remplace variants Json
+model ProductVariant {
+  id            String   @id @default(cuid())
+  familyId      String
+  family        ProductFamily @relation(fields: [familyId], references: [id], onDelete: Cascade)
+
+  slug          String
+  name          String
+  description   String?
+  features      String[]
+  startingPrice String?
+  ordre         Int      @default(0)
+  active        Boolean  @default(true)
+
+  assets        ProductVariantAsset[]
+
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  @@unique([familyId, slug])
+  @@map("product_variants")
+}
+
+// Assets (image + video) unifiés par famille
+enum AssetType {
+  IMAGE
+  VIDEO
+}
+
+enum AssetRole {
+  HERO        // Arriere-plan hero (image ou video)
+  GALLERY     // Image de galerie / carousel secondaire
+  CARD        // Thumbnail principal (card listing)
+}
+
+model ProductFamilyAsset {
+  id        String    @id @default(cuid())
+  familyId  String
+  family    ProductFamily @relation(fields: [familyId], references: [id], onDelete: Cascade)
+
+  type      AssetType
+  role      AssetRole
+  url       String
+  alt       String?
+  posterUrl String?   // pour videos : thumbnail
+  ordre     Int       @default(0)
+
+  createdAt DateTime  @default(now())
+  @@index([familyId, role, ordre])
+  @@map("product_family_assets")
+}
+
+// Assets unifiés par variant
+model ProductVariantAsset {
+  id         String    @id @default(cuid())
+  variantId  String
+  variant    ProductVariant @relation(fields: [variantId], references: [id], onDelete: Cascade)
+
+  type       AssetType
+  role       AssetRole
+  url        String
+  alt        String?
+  posterUrl  String?
+  ordre      Int       @default(0)
+
+  createdAt  DateTime  @default(now())
+  @@index([variantId, role, ordre])
+  @@map("product_variant_assets")
+}
+
+// Hero images for product family landing pages (LEGACY — sera drop apres migration)
 model ProductFamilyImage {
   id               String         @id @default(cuid())
   familyId         String
   family           ProductFamily  @relation(fields: [familyId], references: [id], onDelete: Cascade)
-  
+
   imageUrl         String
   alt              String?
   ordre            Int            @default(0)
-  
+
   createdAt        DateTime       @default(now())
   updatedAt        DateTime       @updatedAt
   

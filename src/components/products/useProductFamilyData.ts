@@ -17,6 +17,71 @@ interface ProductFamilyData {
   setGalleryVariant: React.Dispatch<React.SetStateAction<VariantWithImages | null>>;
 }
 
+// ── DB shapes returned by /api/families/[slug] ───────────────────
+interface DbAsset {
+  id: string;
+  type: "IMAGE" | "VIDEO";
+  role: "HERO" | "GALLERY" | "CARD";
+  url: string;
+  alt?: string | null;
+  posterUrl?: string | null;
+  ordre: number;
+}
+
+interface DbProductVariant {
+  id: string;
+  slug: string;
+  name: string;
+  description?: string | null;
+  features: string[];
+  startingPrice?: string | null;
+  ordre: number;
+  active: boolean;
+  assets: DbAsset[];
+}
+
+interface DbFamily {
+  id: string;
+  slug: string;
+  nom: string;
+  productVariants?: DbProductVariant[];
+  assets?: DbAsset[];
+  specifications?: unknown;
+  benefits?: unknown;
+}
+
+function assetsByRole(
+  assets: DbAsset[] | undefined,
+  role: DbAsset["role"],
+  type?: DbAsset["type"]
+): DbAsset[] {
+  if (!assets) return [];
+  return assets
+    .filter((a) => a.role === role && (type ? a.type === type : true))
+    .sort((a, b) => a.ordre - b.ordre);
+}
+
+function mapDbVariant(v: DbProductVariant): VariantWithImages {
+  const cardAssets = assetsByRole(v.assets, "CARD", "IMAGE");
+  const galleryAssets = assetsByRole(v.assets, "GALLERY", "IMAGE");
+  const heroVideoAsset = assetsByRole(v.assets, "HERO", "VIDEO")[0];
+
+  const imageUrl = cardAssets[0]?.url;
+  const images = galleryAssets.map((a) => a.url);
+  const heroVideoUrl = heroVideoAsset?.url;
+
+  return {
+    id: v.slug,
+    name: v.name,
+    description: v.description ?? "",
+    features: v.features ?? [],
+    startingPrice: v.startingPrice ?? undefined,
+    imageUrl,
+    images: images.length > 0 ? images : undefined,
+    ...(heroVideoUrl ? { heroVideoUrl } : {}),
+  } as VariantWithImages;
+}
+
 export function useProductFamilyData(slug: string, product: ProductFamily): ProductFamilyData {
   const [heroImages, setHeroImages] = React.useState<string[]>(product.heroImages);
   const [heroIndex, setHeroIndex] = React.useState(0);
@@ -29,42 +94,47 @@ export function useProductFamilyData(slug: string, product: ProductFamily): Prod
 
   // Fetch all data
   React.useEffect(() => {
-    fetch(`/api/product-families/images?familySlug=${slug}`)
+    // Nouvelle source de vérité : /api/families/[slug] (ProductVariant + Assets relations)
+    fetch(`/api/families/${slug}`)
       .then((r) => r.json())
-      .then((data) => {
-        if (data.success && data.images?.length) {
-          setHeroImages(data.images.map((img: { imageUrl: string }) => img.imageUrl));
+      .then((data: { success?: boolean; family?: DbFamily }) => {
+        if (!data.success || !data.family) return;
+        const fam = data.family;
+
+        // Hero images viennent désormais de family.assets role=HERO type=IMAGE
+        const heroImageAssets = assetsByRole(fam.assets, "HERO", "IMAGE");
+        if (heroImageAssets.length > 0) {
+          setHeroImages(heroImageAssets.map((a) => a.url));
+        }
+
+        // Hero video : family.assets role=HERO type=VIDEO
+        const heroVideoAsset = assetsByRole(fam.assets, "HERO", "VIDEO")[0];
+        if (heroVideoAsset) {
+          setHeroVideoUrl(heroVideoAsset.url);
+        }
+
+        // Variants : mapper ProductVariant DB vers VariantWithImages
+        if (Array.isArray(fam.productVariants) && fam.productVariants.length > 0) {
+          const mapped = fam.productVariants.map((dbV) => {
+            const base = mapDbVariant(dbV);
+            // Merge avec static (pour conserver les éventuels champs non migrés)
+            const staticV = product.variants.find((sv) => sv.id === base.id);
+            return staticV ? { ...staticV, ...base } : base;
+          });
+          setDbVariants(mapped);
+        }
+
+        // Specs / benefits : format Json existant, on garde tel quel
+        if (Array.isArray(fam.specifications) && fam.specifications.length > 0) {
+          setDbSpecs(fam.specifications as typeof product.specifications);
+        }
+        if (Array.isArray(fam.benefits) && fam.benefits.length > 0) {
+          setDbBenefits(fam.benefits as typeof product.benefits);
         }
       })
       .catch(() => {});
 
-    fetch(`/api/product-families?slug=${slug}`)
-      .then((r) => r.json())
-      .then((data) => {
-        if (data.success && data.family) {
-          const fam = data.family;
-          if (fam.heroVideoUrl) {
-            setHeroVideoUrl(fam.heroVideoUrl);
-          }
-          if (fam.variants !== null && fam.variants !== undefined) {
-            const dbVars = fam.variants as VariantWithImages[];
-            setDbVariants(
-              dbVars.map((dbV) => {
-                const staticV = product.variants.find((sv) => sv.id === dbV.id);
-                return staticV ? { ...staticV, ...dbV } : dbV;
-              })
-            );
-          }
-          if (fam.specifications?.length) {
-            setDbSpecs(fam.specifications as typeof product.specifications);
-          }
-          if (fam.benefits?.length) {
-            setDbBenefits(fam.benefits as typeof product.benefits);
-          }
-        }
-      })
-      .catch(() => {});
-
+    // Liste des autres familles pour la nav secondaire — inchangé
     fetch("/api/product-families")
       .then((r) => r.json())
       .then((data) => {

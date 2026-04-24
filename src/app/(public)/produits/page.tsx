@@ -21,6 +21,40 @@ import { Button } from "@/components/ui/Button";
 import { Card, CardContent } from "@/components/ui/Card";
 
 // ── Type DB ──────────────────────────────────────────────────────
+interface DbAsset {
+  id: string;
+  type: "IMAGE" | "VIDEO";
+  role: "HERO" | "GALLERY" | "CARD";
+  url: string;
+  alt?: string | null;
+  ordre: number;
+}
+
+interface DbProductVariant {
+  id: string;
+  slug: string;
+  name: string;
+  ordre: number;
+  assets?: DbAsset[];
+}
+
+interface DBFamilyRaw {
+  id: string;
+  nom: string;
+  slug: string;
+  description?: string | null;
+  imageUrl?: string | null;
+  tagline?: string | null;
+  features: string[];
+  // Legacy JSON (gardé en DB mais non consommé ici) :
+  variants?: Array<{ id: string; name: string }> | null;
+  // Nouvelle source de vérité :
+  productVariants?: DbProductVariant[];
+  assets?: DbAsset[];
+  active: boolean;
+  ordre: number;
+}
+
 interface DBFamily {
   id: string;
   nom: string;
@@ -131,12 +165,42 @@ export default function ProduitsPage() {
   const [vedettes, setVedettes] = React.useState<{ id: string; titre: string; description: string; imageUrl?: string; href: string; badge?: string }[]>([]);
 
   React.useEffect(() => {
-    // Charger les familles depuis la DB
-    fetch("/api/product-families")
+    // Charger les familles depuis la DB (nouvelle source de vérité)
+    // - active=true : uniquement les familles publiquement visibles
+    // - withAssets=true : inclut family.assets (pour CARD image)
+    // - withVariants=true : inclut productVariants (pour "Modèles populaires")
+    fetch("/api/families?active=true&withAssets=true&withVariants=true")
       .then((r) => r.json())
       .then((data) => {
-        if (data.success && data.families?.length) {
-          setFamilies(data.families);
+        if (data.success && Array.isArray(data.families) && data.families.length) {
+          const mapped = (data.families as DBFamilyRaw[]).map((f): DBFamily => {
+            // imageUrl pour la card : asset role=CARD type=IMAGE, sinon fallback legacy imageUrl
+            const cardAsset = Array.isArray(f.assets)
+              ? f.assets
+                  .filter((a) => a.role === "CARD" && a.type === "IMAGE")
+                  .sort((a, b) => a.ordre - b.ordre)[0]
+              : undefined;
+            const resolvedImageUrl = cardAsset?.url ?? f.imageUrl ?? null;
+
+            // Liste "Modèles populaires" : depuis productVariants (sinon fallback legacy variants JSON)
+            const variantNames = Array.isArray(f.productVariants) && f.productVariants.length > 0
+              ? f.productVariants.map((pv) => ({ id: pv.slug, name: pv.name }))
+              : f.variants ?? null;
+
+            return {
+              id: f.id,
+              nom: f.nom,
+              slug: f.slug,
+              description: f.description ?? null,
+              imageUrl: resolvedImageUrl,
+              tagline: f.tagline ?? null,
+              features: f.features ?? [],
+              variants: variantNames,
+              active: f.active,
+              ordre: f.ordre,
+            };
+          });
+          setFamilies(mapped);
         }
       })
       .catch(() => {})

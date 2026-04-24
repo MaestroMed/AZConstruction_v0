@@ -31,8 +31,7 @@ export function CommandPalette() {
     // Navigation
     { id: "dashboard", label: "Tableau de bord", icon: LayoutDashboard, action: () => router.push("/admin"), category: "navigation", keywords: ["accueil", "home", "kpi"] },
     { id: "produits", label: "Produits", icon: Package, action: () => router.push("/admin/produits"), category: "navigation", keywords: ["catalogue", "familles"] },
-    { id: "produits-familles", label: "Familles de produits", icon: Package, action: () => router.push("/admin/produits/familles"), category: "navigation" },
-    { id: "produits-images", label: "Images produits", icon: Image, action: () => router.push("/admin/produits/images"), category: "navigation" },
+    { id: "produits-familles", label: "Familles & sous-familles", icon: Package, action: () => router.push("/admin/familles"), category: "navigation", keywords: ["famille", "variants", "assets", "produits"] },
     { id: "devis", label: "Devis", icon: FileText, action: () => router.push("/admin/devis"), category: "navigation", keywords: ["quotes", "chiffrage"] },
     { id: "messages", label: "Messages de contact", icon: MessageSquare, action: () => router.push("/admin/contact"), category: "navigation", keywords: ["contact", "email"] },
     { id: "blog", label: "Blog", icon: BookOpen, action: () => router.push("/admin/blog"), category: "navigation", keywords: ["articles", "contenu"] },
