@@ -8,6 +8,7 @@ interface ProductFamilyData {
   heroImages: string[];
   heroIndex: number;
   setHeroIndex: React.Dispatch<React.SetStateAction<number>>;
+  heroVideoUrl: string | null;
   dbVariants: VariantWithImages[];
   dbSpecs: ProductFamily["specifications"];
   dbBenefits: ProductFamily["benefits"];
@@ -19,6 +20,7 @@ interface ProductFamilyData {
 export function useProductFamilyData(slug: string, product: ProductFamily): ProductFamilyData {
   const [heroImages, setHeroImages] = React.useState<string[]>(product.heroImages);
   const [heroIndex, setHeroIndex] = React.useState(0);
+  const [heroVideoUrl, setHeroVideoUrl] = React.useState<string | null>(product.heroVideoUrl ?? null);
   const [dbVariants, setDbVariants] = React.useState<VariantWithImages[]>(product.variants);
   const [dbSpecs, setDbSpecs] = React.useState(product.specifications);
   const [dbBenefits, setDbBenefits] = React.useState(product.benefits);
@@ -41,6 +43,9 @@ export function useProductFamilyData(slug: string, product: ProductFamily): Prod
       .then((data) => {
         if (data.success && data.family) {
           const fam = data.family;
+          if (fam.heroVideoUrl) {
+            setHeroVideoUrl(fam.heroVideoUrl);
+          }
           if (fam.variants !== null && fam.variants !== undefined) {
             const dbVars = fam.variants as VariantWithImages[];
             setDbVariants(
@@ -70,17 +75,19 @@ export function useProductFamilyData(slug: string, product: ProductFamily): Prod
       .catch(() => {});
   }, [slug, product.variants, product.specifications, product.benefits]);
 
-  // Auto-advance hero
+  // Auto-advance hero (disabled when a video is active)
   React.useEffect(() => {
+    if (heroVideoUrl) return;
     if (heroImages.length <= 1) return;
     const t = setInterval(() => setHeroIndex((i) => (i + 1) % heroImages.length), 5000);
     return () => clearInterval(t);
-  }, [heroImages.length]);
+  }, [heroImages.length, heroVideoUrl]);
 
   return {
     heroImages,
     heroIndex,
     setHeroIndex,
+    heroVideoUrl,
     dbVariants,
     dbSpecs,
     dbBenefits,

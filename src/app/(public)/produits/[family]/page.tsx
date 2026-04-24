@@ -32,6 +32,7 @@ import { type VariantWithImages, getVariantImages } from "@/components/products/
 import { VariantCardImage } from "@/components/products/VariantCardImage";
 import { VariantGalleryModal } from "@/components/products/VariantGalleryModal";
 import { useProductFamilyData } from "@/components/products/useProductFamilyData";
+import { HeroMedia } from "@/components/products/HeroMedia";
 
 // Icon map for dynamic rendering
 const iconMap: Record<string, React.ComponentType<{ className?: string }>> = {
@@ -59,6 +60,7 @@ export default function ProductFamilyPage() {
 
   const {
     heroImages, heroIndex, setHeroIndex,
+    heroVideoUrl,
     dbVariants, dbSpecs, dbBenefits,
     otherFamilies,
     galleryVariant, setGalleryVariant,
@@ -72,24 +74,12 @@ export default function ProductFamilyPage() {
       <section className="relative min-h-screen flex items-center overflow-hidden">
         {/* Full-bleed background */}
         <div className="absolute inset-0">
-          <AnimatePresence mode="wait">
-            <motion.div
-              key={heroIndex}
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              transition={{ duration: 1.2 }}
-              className="absolute inset-0"
-            >
-              <Image
-                src={heroImages[heroIndex]}
-                alt={`${product.name} - AZ Construction`}
-                fill
-                priority
-                className="object-cover object-center"
-              />
-            </motion.div>
-          </AnimatePresence>
+          <HeroMedia
+            videoUrl={heroVideoUrl}
+            imageUrl={heroImages[heroIndex]}
+            imageIndexKey={heroIndex}
+            alt={`${product.name} - AZ Construction`}
+          />
           {/* Overlay gradient */}
           <div className="absolute inset-0 bg-gradient-to-r from-navy-dark/88 via-navy-dark/65 to-navy-dark/25" />
         </div>
@@ -200,8 +190,8 @@ export default function ProductFamilyPage() {
           </div>
         </div>
 
-        {/* Carousel navigation */}
-        {heroImages.length > 1 && (
+        {/* Carousel navigation (hidden when hero video is active) */}
+        {!heroVideoUrl && heroImages.length > 1 && (
           <>
             <button
               onClick={() => setHeroIndex((i) => (i - 1 + heroImages.length) % heroImages.length)}
