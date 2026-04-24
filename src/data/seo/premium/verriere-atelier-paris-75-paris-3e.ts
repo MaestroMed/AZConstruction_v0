@@ -298,7 +298,7 @@ Pour une verrière atelier moderne dans un loft Marais, AZ reste plus pertinent.
     sections: [
       {
         heading: 'Pourquoi cette URL est différente des autres',
-        body: `Sur les 14 URLs Maxi-Premium que nous avons produites pour az-construction.fr (ce fichier inclus), la plupart ciblent des clientèles CSP+++ classiques : Neuilly CSP++++, Versailles ABF, Paris 7e Faubourg Saint-Germain, Maisons-Laffitte Parc Mansart hippique. L'URL Paris 3e Marais est radicalement différente.
+        body: `Le Marais Paris 3e occupe une place à part dans nos interventions en Île-de-France. La plupart de nos clients CSP++ ciblent un premium classique : Neuilly, Versailles, Paris 7e Faubourg Saint-Germain, Maisons-Laffitte. Le Marais, lui, est radicalement différent.
 
 La clientèle Marais Paris 3e n'achète pas "premium classique". Elle achète "authentique créatif". Ce positionnement change tout dans l'approche conseil :
 

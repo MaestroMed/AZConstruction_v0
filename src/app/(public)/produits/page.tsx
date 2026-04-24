@@ -389,7 +389,7 @@ export default function ProduitsPage() {
               Ils nous font confiance
             </h2>
             <p className="text-gray-600 max-w-2xl mx-auto">
-              Plus de 1 500 projets réalisés en 10 ans d&apos;activité.
+              Plus de 1 500 projets réalisés depuis 2018.
             </p>
           </motion.div>
 

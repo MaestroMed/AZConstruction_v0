@@ -15,9 +15,9 @@ export async function GET() {
         data: {
           id: "default",
           companyName: "AZ Construction",
-          phone: "04 94 XX XX XX",
+          phone: "09 71 35 74 96",
           email: "contact@azconstruction.fr",
-          address: "Zone Industrielle, 83000 Toulon",
+          address: "Bruyères-sur-Oise, 95820",
           showLogoInHeader: true,
           showConfigurator: false,
           showEspaceClient: false,
@@ -34,7 +34,7 @@ export async function GET() {
       settings: {
         id: "default",
         companyName: "AZ Construction",
-        phone: "04 94 XX XX XX",
+        phone: "09 71 35 74 96",
         email: "contact@azconstruction.fr",
         showLogoInHeader: true,
         showConfigurator: false,
