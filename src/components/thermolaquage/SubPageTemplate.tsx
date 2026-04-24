@@ -187,7 +187,7 @@ export default function ThermolaquageSubPageTemplate({
                     Demander un devis
                   </GlowButton>
                 </Link>
-                <a href="tel:+33494000000">
+                <a href="tel:+33971357496">
                   <GlowButton
                     variant="outline"
                     size="lg"
@@ -195,7 +195,7 @@ export default function ThermolaquageSubPageTemplate({
                     iconPosition="left"
                     glow={false}
                   >
-                    04 94 XX XX XX
+                    09 71 35 74 96
                   </GlowButton>
                 </a>
               </motion.div>
@@ -428,7 +428,7 @@ export default function ThermolaquageSubPageTemplate({
                     Demander un devis gratuit
                   </GlowButton>
                 </Link>
-                <a href="tel:+33494000000">
+                <a href="tel:+33971357496">
                   <GlowButton
                     variant="outline"
                     size="lg"
@@ -436,7 +436,7 @@ export default function ThermolaquageSubPageTemplate({
                     iconPosition="left"
                     glow={false}
                   >
-                    04 94 XX XX XX
+                    09 71 35 74 96
                   </GlowButton>
                 </a>
               </div>

@@ -35,7 +35,7 @@ export const metadata: Metadata = {
     template: "%s | AZ Construction",
   },
   description:
-    "Expert en métallerie sur mesure : garde-corps, escaliers, portes, fenêtres, portails, clôtures et grilles de ventilation. Profilés Jansen. 1800m² d'atelier, 10 ans d'expertise.",
+    "Expert en métallerie sur mesure : garde-corps, escaliers, portes, fenêtres, portails, clôtures et grilles de ventilation. Profilés Jansen. 1800m² d'atelier, expertise depuis 2018.",
   keywords: [
     "métallerie",
     "acier sur mesure",

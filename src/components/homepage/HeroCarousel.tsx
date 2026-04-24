@@ -25,18 +25,22 @@ interface HeroCarouselProps {
 }
 
 export default function HeroCarousel({ slides, onSlideChange, currentIndex, onIndexChange }: HeroCarouselProps) {
-  const { getImage } = useSiteImages();
+  const { getImage, getVideo } = useSiteImages();
 
-  // Défilement automatique toutes les 5s
+  const currentSlide = slides[currentIndex];
+  const currentVideoUrl = currentSlide ? getVideo(currentSlide.imageKey) : null;
+
+  // Défilement automatique toutes les 5s (désactivé si slide courante est une vidéo)
   React.useEffect(() => {
     if (slides.length <= 1) return;
+    if (currentVideoUrl) return;
     const interval = setInterval(() => {
       const next = (currentIndex + 1) % slides.length;
       onIndexChange(next);
       onSlideChange?.(next);
     }, 5000);
     return () => clearInterval(interval);
-  }, [slides.length, currentIndex, onIndexChange, onSlideChange]);
+  }, [slides.length, currentIndex, currentVideoUrl, onIndexChange, onSlideChange]);
 
   const goToSlide = (index: number) => {
     onIndexChange(index);
@@ -47,21 +51,33 @@ export default function HeroCarousel({ slides, onSlideChange, currentIndex, onIn
     return <div className="absolute inset-0 bg-gradient-to-br from-navy-dark via-navy-medium to-navy-dark" />;
   }
 
-  const currentSlide = slides[currentIndex];
   const imageUrl = getImage(currentSlide.imageKey);
 
   return (
     <div className="absolute inset-0 overflow-hidden">
       <AnimatePresence mode="wait">
         <motion.div
-          key={currentIndex}
+          key={`${currentIndex}-${currentVideoUrl ? "v" : "i"}`}
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
           transition={{ duration: 1.2, ease: "easeInOut" }}
           className="absolute inset-0"
         >
-          {imageUrl ? (
+          {currentVideoUrl ? (
+            <video
+              key={currentVideoUrl}
+              src={currentVideoUrl}
+              poster={imageUrl || undefined}
+              autoPlay
+              loop
+              muted
+              playsInline
+              preload="metadata"
+              aria-label={`AZ Construction - ${currentSlide.headline}`}
+              className="absolute inset-0 w-full h-full object-cover object-center"
+            />
+          ) : imageUrl ? (
             <Image
               src={imageUrl}
               alt={`AZ Construction - ${currentSlide.headline}`}

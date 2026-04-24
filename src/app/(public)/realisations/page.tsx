@@ -37,9 +37,12 @@ interface Realization {
   clientLogoUrl?: string | null;
 }
 
+const COMPANY_FOUNDED_YEAR = 2018;
+const yearsActive = new Date().getFullYear() - COMPANY_FOUNDED_YEAR;
+
 const stats = [
   { number: "1 500+", label: "Projets réalisés" },
-  { number: "10", label: "Années d'expérience" },
+  { number: `${yearsActive}`, label: "Années d'expérience" },
   { number: "98%", label: "Clients satisfaits" },
   { number: "1 800m²", label: "D'atelier" },
 ];
