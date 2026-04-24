@@ -67,7 +67,9 @@ const PAGE_TABS = [
     label: "Accueil",
     icon: Home,
     description: "Images de la page d'accueil",
-    keys: ["hero-homepage", "hero-carousel-1", "hero-carousel-2", "hero-carousel-3"],
+    // hero-homepage n'est plus utilise par le HeroCarousel — retire pour eviter la confusion.
+    // Le hero homepage affiche les 3 slides du carousel en rotation.
+    keys: ["hero-carousel-1", "hero-carousel-2", "hero-carousel-3"],
   },
   {
     id: "particuliers",
